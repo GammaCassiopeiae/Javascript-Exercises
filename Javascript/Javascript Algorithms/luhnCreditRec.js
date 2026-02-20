@@ -1,4 +1,4 @@
-function luhnCheckRecursive(cardNumber, index = cardNumber.length - 1, isSecond = false) {
+function luhnCheckRecursive(cardNumber, sum, index = cardNumber.length - 1, isSecond = false) {
   if (index < 0) return sum % 10 === 0;
 
   let digit = parseInt(cardNumber.charAt(index));
@@ -10,7 +10,7 @@ function luhnCheckRecursive(cardNumber, index = cardNumber.length - 1, isSecond 
     }
   }
 
-  const result = luhnCheckRecursive(cardNumber, index - 1, !isSecond);
+  const result = luhnCheckRecursive(cardNumber, sum=9, index - 1, !isSecond);
   
   return (digit + sum) % 10 === 0 ? true : false;
 }

@@ -1,0 +1,342 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bubble Sort Visualizer</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin-top: 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+            button:hover {
+                background-color: #2980b9;
+            }
+
+        .array-display {
+            margin: 30px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .bar {
+            height: 40px;
+            width: 30px;
+            background: #3498db;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+            .bar.sorted {
+                background: #2ecc71;
+            }
+
+            .bar.comparing {
+                background: #e74c3c;
+            }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .speed-control label {
+                font-size: 14px;
+            }
+
+            .speed-control input {
+                width: 60px;
+            }
+
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            background: #e8e8e8;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .auto-sort {
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+            .auto-sort input {
+                margin-left: 5px;
+            }
+
+        .instructions {
+            margin-top: 30px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-left: 4px solid #3498db;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bubble Sort Visualizer</h1>
+
+        <div class="input-section">
+            <label for="inputArray">Enter Array (comma-separated):</label>
+            <input type="text" id="inputArray" placeholder="e.g., 64, 34, 25, 12, 22, 11, 90">
+            <button onclick="startSort()">Sort</button>
+            <button onclick="reset()">Reset</button>
+        </div>
+
+        <div class="status" id="status">Ready to sort</div>
+
+        <div class="array-display" id="arrayDisplay"></div>
+
+        <div class="controls">
+            <div class="speed-control">
+                <label for="speed">Speed (ms):</label>
+                <input type="range" id="speed" min="10" max="1000" value="200">
+                <span id="speedValue">200</span> ms
+            </div>
+            <div class="auto-sort">
+                <label>Auto Sort:</label>
+                <input type="checkbox" id="autoSort">
+            </div>
+        </div>
+
+        <div class="instructions">
+            <p>Enter numbers separated by commas. Click "Sort" to visualize bubble sort. Use "Reset" to clear and start over.</p>
+        </div>
+    </div>
+
+    <script>
+        let array = [];
+        let bars = [];
+        let isAutoSorting = false;
+        let animationId = null;
+        let speed = 200;
+        let sorted = false;
+
+        function reset() {
+            document.getElementById("inputArray").value = "";
+            array = [];
+            bars = [];
+            document.getElementById("arrayDisplay").innerHTML = "";
+            document.getElementById("status").innerText = "Ready to sort";
+            document.getElementById("autoSort").checked = false;
+            clearInterval(animationId);
+            sorted = false;
+        }
+
+        function startSort() {
+            const input = document.getElementById("inputArray").value;
+            const arr = input.split(",").map(Number);
+            if (arr.some(isNaN)) {
+                alert("Please enter valid numbers only.");
+                return;
+            }
+            array = [...arr];
+            bars = [];
+            document.getElementById("arrayDisplay").innerHTML = "";
+            document.getElementById("status").innerText = "Sorting...";
+            sorted = false;
+            isAutoSorting = document.getElementById("autoSort").checked;
+            speed = document.getElementById("speed").value;
+            animateBubbleSort();
+        }
+
+        function animateBubbleSort() {
+            const display = document.getElementById("arrayDisplay");
+            const status = document.getElementById("status");
+            let i = 0;
+            let j = 0;
+            let temp = 0;
+
+            function delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            async function sortStep() {
+                if (i >= array.length - 1) {
+                    // Final check
+                    if (j < array.length - 1) {
+                        j++;
+                        i = 0;
+                        await delay(speed);
+                        sortStep();
+                    } else {
+                        // Sort completed
+                        status.innerText = "Sorting complete!";
+                        sorted = true;
+                        // Add sorted class to bars
+                        bars.forEach((bar, idx) => {
+                            bar.classList.add("sorted");
+                        });
+                        if (!isAutoSorting) {
+                            clearInterval(animationId);
+                        }
+                        return;
+                    }
+                } else {
+                    // Compare and swap if needed
+                    if (array[j] > array[j + 1]) {
+                        temp = array[j];
+                        array[j] = array[j + 1];
+                        array[j + 1] = temp;
+                        // Update bars
+                        const bar1 = bars[j];
+                        const bar2 = bars[j + 1];
+                        bar1.classList.add("comparing");
+                        bar2.classList.add("comparing");
+                        await delay(speed);
+                        bar1.classList.remove("comparing");
+                        bar2.classList.remove("comparing");
+                        // Update visual
+                        bar1.style.height = `${array[j] * 2}px`;
+                        bar2.style.height = `${array[j + 1] * 2}px`;
+                        bar1.innerText = array[j];
+                        bar2.innerText = array[j + 1];
+                        // Update position if needed (not needed here since we're not animating positions)
+                    }
+                    j++;
+                    if (j >= array.length - 1) {
+                        j = 0;
+                        i++;
+                        await delay(speed);
+                        sortStep();
+                    } else {
+                        await delay(speed);
+                        sortStep();
+                    }
+                }
+            }
+
+            async function runSort() {
+                // Clear previous bars
+                bars.forEach(bar => bar.remove());
+                bars = [];
+
+                // Create bars
+                for (let i = 0; i < array.length; i++) {
+                    const bar = document.createElement("div");
+                    bar.className = "bar";
+                    bar.style.height = `${array[i] * 2}px`;
+                    bar.innerText = array[i];
+                    bar.dataset.index = i;
+                    display.appendChild(bar);
+                    bars.push(bar);
+                }
+
+                // Start animation
+                await sortStep();
+                if (sorted) {
+                    status.innerText = "Sorted!";
+                    if (isAutoSorting) {
+                        // Auto sort done, but we can loop or stop
+                        // For now, just stop
+                        clearInterval(animationId);
+                    }
+                }
+            }
+
+            // Run immediately
+            runSort();
+        }
+
+        // Listen for auto-sort checkbox
+        document.getElementById("autoSort").addEventListener("change", function() {
+            isAutoSorting = this.checked;
+            if (isAutoSorting) {
+                // Start auto-sort if array is not empty
+                if (array.length > 0) {
+                    animateBubbleSort();
+                }
+            } else {
+                clearInterval(animationId);
+            }
+        });
+
+        // Listen for speed slider
+        document.getElementById("speed").addEventListener("input", function() {
+            speed = this.value;
+            document.getElementById("speedValue").innerText = this.value;
+        });
+
+        // Listen for input array
+        document.getElementById("inputArray").addEventListener("keydown", function(e) {
+            if (e.key === "Enter") {
+                startSort();
+            }
+        });
+
+        // Initialize
+        reset();
+    </script>
+</body>
+</html>

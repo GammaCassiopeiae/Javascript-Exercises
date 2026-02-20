@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Line Chart with Hover</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+
+    canvas {
+      display: block;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      cursor: crosshair;
+    }
+
+    .tooltip {
+      position: absolute;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 5px;
+      font-size: 14px;
+      pointer-events: none;
+      display: none;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Monthly Data Chart</h1>
+    <canvas id="lineChart" width="800" height="500"></canvas>
+    <div class="tooltip" id="tooltip"></div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('lineChart');
+    const ctx = canvas.getContext('2d');
+    const tooltip = document.getElementById('tooltip');
+
+    const month = ["j", "f", "m", "a", "m", "j", "j", "a", "s", "o", "n", "d"];
+    const num = [2.33, 4.23, 5.77, 2.22, 3.67, 4.66, 9.88, 3.45, 2, 21, 4, 55, 6.77];
+
+    // Chart configuration
+    const padding = 70;
+    const chartWidth = canvas.width - 2 * padding;
+    const chartHeight = canvas.height - 2 * padding;
+
+    // Find min and max values
+    const min = Math.min(...num);
+    const max = Math.max(...num);
+    const range = max - min;
+
+    // Store point coordinates for hover detection
+    let pointCoordinates = [];
+
+    function drawChart() {
+      // Clear canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw background
+      ctx.fillStyle = '#f9f9f9';
+      ctx.fillRect(padding, padding, chartWidth, chartHeight);
+
+      // Draw grid lines
+      ctx.strokeStyle = '#e0e0e0';
+      ctx.lineWidth = 1;
+      const gridLines = 5;
+      for (let i = 0; i <= gridLines; i++) {
+        const y = padding + (chartHeight * i) / gridLines;
+        ctx.beginPath();
+        ctx.moveTo(padding, y);
+        ctx.lineTo(canvas.width - padding, y);
+        ctx.stroke();
+      }
+
+      // Draw axes
+      ctx.strokeStyle = '#333';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(padding, padding);
+      ctx.lineTo(padding, canvas.height - padding);
+      ctx.lineTo(canvas.width - padding, canvas.height - padding);
+      ctx.stroke();
+
+      // Draw y-axis labels
+      ctx.fillStyle = '#333';
+      ctx.font = 'bold 12px Arial';
+      ctx.textAlign = 'right';
+      for (let i = 0; i <= gridLines; i++) {
+        const y = padding + (chartHeight * i) / gridLines;
+        const value = max - (max - min) * (i / gridLines);
+        ctx.fillText(value.toFixed(2), padding - 15, y + 5);
+      }
+
+      // Draw x-axis labels and tick marks
+      ctx.textAlign = 'center';
+      month.forEach((label, index) => {
+        const x = padding + (index * chartWidth) / (month.length - 1);
+        ctx.beginPath();
+        ctx.moveTo(x, padding);
+        ctx.lineTo(x, padding - 10);
+        ctx.stroke();
+        ctx.fillText(label, x, padding - 20);
+      });
+
+      // Draw line and points
+      ctx.beginPath();
+      num.forEach((value, index) => {
+        const x = padding + (index * chartWidth) / (num.length - 1);
+        const y = padding + chartHeight - ((value - min) / range) * chartHeight;
+        
+        // Store point coordinates
+        pointCoordinates.push({ x, y, value, index });
+        
+        if (index === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+        
+        // Draw point
+        ctx.beginPath();
+        ctx.arc(x, y, 5, 0, 2 * Math.PI);
+        ctx.fillStyle = '#3498db';
+        ctx.fill();
+      });
+      ctx.strokeStyle = '#3498db';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Draw title
+      ctx.fillStyle = '#333';
+      ctx.font = 'bold 18px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('Monthly Data Chart', canvas.width / 2, 30);
+    }
+
+    // Event listeners
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      // Check if mouse is within chart area
+      if (mouseX >= padding && mouseX <= canvas.width - padding && 
+          mouseY >= padding && mouseY <= canvas.height - padding) {
+        
+        // Find closest point
+        let closestPoint = null;
+        let minDistance = Infinity;
+        
+        pointCoordinates.forEach(point => {
+          const distance = Math.sqrt((point.x - mouseX) ** 2 + (point.y - mouseY) ** 2);
+          if (distance < minDistance && distance < 15) {
+            minDistance = distance;
+            closestPoint = point;
+          }
+        });
+
+        // Show tooltip if point is found
+        if (closestPoint) {
+          tooltip.style.display = 'block';
+          tooltip.style.left = (mouseX + 10) + 'px';
+          tooltip.style.top = (mouseY - 20) + 'px';
+          tooltip.textContent = `${month[closestPoint.index]}: ${closestPoint.value.toFixed(2)}`;
+        } else {
+          tooltip.style.display = 'none';
+        }
+      } else {
+        tooltip.style.display = 'none';
+      }
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+      tooltip.style.display = 'none';
+    });
+
+    // Initial draw
+    drawChart();
+  </script>
+</body>
+</html>

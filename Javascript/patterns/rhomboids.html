@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>40 Algoritmičnih Geometrijskih Vzorcev</title>
+    <style>
+        body { background: #0f0f0f; color: #00d4ff; font-family: 'Courier New', monospace; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; padding: 20px; }
+        .pattern-box { border: 1px dashed #444; padding: 10px; background: #1a1a1a; transition: 0.3s; }
+        .pattern-box:hover { border-color: #00d4ff; box-shadow: 0 0 10px #00d4ff; }
+        h4 { margin: 0 0 10px 0; font-size: 11px; color: #ffcc00; text-transform: uppercase; }
+        pre { font-size: 12px; line-height: 1; margin: 0; white-space: pre; }
+    </style>
+</head>
+<body>
+
+<script>
+    const S = 10; // Globalna resolucija vzorca
+
+    function render(title, logic) {
+        const div = document.createElement('div');
+        div.className = 'pattern-box';
+        const h = document.createElement('h4');
+        h.textContent = title;
+        const p = document.createElement('pre');
+        p.textContent = logic();
+        div.append(h, p);
+        document.body.appendChild(div);
+    }
+
+    // --- 1-10: KVADRATI & PRAVOKOTNIKI (Algoritmične variacije) ---
+    for(let i=1; i<=10; i++) {
+        render(`Kvadrat Variacija ${i}`, () => {
+            let res = "";
+            for(let y=0; y<S; y++) {
+                for(let x=0; x<S; x++) {
+                    if(i===1) res += "* "; // Poln
+                    else if(i===2) res += (x===0||x===S-1||y===0||y===S-1) ? "* " : "  "; // Okvir
+                    else if(i===3) res += (x===y || x+y===S-1) ? "* " : "  "; // X-notranjost
+                    else if(i===4) res += (x%2===0) ? "* " : "  "; // Črte
+                    else res += ((x+y)%i===0) ? "* " : "  "; // Dinamični vzorec
+                }
+                res += "\n";
+            }
+            return res;
+        });
+    }
+
+    // --- 11-20: ROMBOIDI & PARALELOGRAMI ---
+    for(let i=1; i<=10; i++) {
+        render(`Romboid ${i}`, () => {
+            let res = "";
+            for(let y=0; y<S; y++) {
+                res += " ".repeat(i % 2 === 0 ? y : S-y);
+                for(let x=0; x<S; x++) {
+                    if(i<15) res += "* ";
+                    else res += (x===0||x===S-1||y===0||y===S-1) ? "* " : "  ";
+                }
+                res += "\n";
+            }
+            return res;
+        });
+    }
+
+    // --- 21-30: PENTAGONI (Aproksimacija v 2D mreži) ---
+    for(let i=1; i<=10; i++) {
+        render(`Pentagon Tip ${i}`, () => {
+            let res = "";
+            let mid = Math.floor(S/2);
+            for(let y=0; y<S; y++) {
+                let row = "";
+                for(let x=0; x<S; x++) {
+                    // Logika: Trikotna streha + pravokotna baza
+                    let isRoof = y <= mid && (x >= mid-y && x <= mid+y);
+                    let isBase = y > mid && (x >= 1 && x <= S-2);
+                    if(i % 2 === 0) { // Votli pentagoni
+                        let edge = (y <= mid && (x === mid-y || x === mid+y)) || 
+                                   (y > mid && (x === 1 || x === S-2)) || 
+                                   (y === S-1 && x >= 1 && x <= S-2);
+                        row += edge ? "* " : "  ";
+                    } else {
+                        row += (isRoof || isBase) ? "* " : "  ";
+                    }
+                }
+                res += row + "\n";
+            }
+            return res;
+        });
+    }
+
+    // --- 31-40: HEXAGONI (Šestkotniki) ---
+    for(let i=1; i<=10; i++) {
+        render(`Hexagon Algoritem ${i}`, () => {
+            let res = "";
+            let width = S;
+            for(let y=0; y<S; y++) {
+                let offset = Math.abs(Math.floor(S/2) - y);
+                let line = " ".repeat(offset);
+                for(let x=0; x < (S - offset); x++) {
+                    if(i % 2 === 0) { // Alternacija med polnim in votlim
+                        let isEdge = (x === 0 || x === (S - offset - 1) || y === 0 || y === S-1);
+                        line += isEdge ? "* " : "  ";
+                    } else {
+                        line += "* ";
+                    }
+                }
+                res += line + "\n";
+            }
+            return res;
+        });
+    }
+</script>
+
+</body>
+</html>

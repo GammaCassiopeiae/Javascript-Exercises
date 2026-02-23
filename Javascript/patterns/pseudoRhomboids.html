@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>50 Asimetričnih 2D Vzorcev</title>
+    <style>
+        body { 
+            background: #050505; 
+            color: #00ffaa; 
+            font-family: 'Courier New', monospace; 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 20px; 
+            padding: 30px;
+        }
+        .pattern-card { 
+            border-left: 3px solid #ff0055; 
+            background: #111; 
+            padding: 15px; 
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+        .pattern-card:hover { 
+            transform: scale(1.02);
+            background: #151515;
+        }
+        h5 { 
+            margin: 0 0 10px 0; 
+            font-size: 10px; 
+            color: #ff0055; 
+            letter-spacing: 1px;
+        }
+        pre { 
+            font-size: 11px; 
+            line-height: 1.1; 
+            margin: 0; 
+            white-space: pre;
+            color: #00ffaa;
+        }
+        .asym-label { color: #888; font-style: italic; font-size: 9px; }
+    </style>
+</head>
+<body>
+
+<script>
+    const SIZE = 12;
+
+    /**
+     * Glavna funkcija za ustvarjanje vzorca
+     */
+    function createPattern(index, formula) {
+        const card = document.createElement('div');
+        card.className = 'pattern-card';
+        
+        const title = document.createElement('h5');
+        title.innerHTML = `VZOREC #${index} <span class="asym-label">Asimetrični Algoritem</span>`;
+        
+        const pre = document.createElement('pre');
+        pre.textContent = formula();
+        
+        card.append(title, pre);
+        document.body.appendChild(card);
+    }
+
+    // --- GENERIRANJE 50 UNIKATNIH ASIMETRIČNIH STRUKTUR ---
+
+    for (let i = 1; i <= 50; i++) {
+        createPattern(i, () => {
+            let output = "";
+            
+            for (let y = 0; y < SIZE; y++) {
+                let line = "";
+                
+                // 1. Izračun asimetričnega zamika (Indent)
+                // Uporabljamo različne matematične funkcije za vsak indeks i
+                let indent = 0;
+                if (i % 5 === 0) indent = Math.floor(y * 1.5); // Ostri romboid
+                else if (i % 3 === 0) indent = Math.abs(SIZE/2 - y) + (y % 3); // Lomljen rob
+                else if (i % 2 === 0) indent = Math.sin(y) * 4 + 4; // Valovit asimetrični trapez
+                else indent = (y * (i % 4)) / 2; // Linearni nagnjen trapez
+
+                line += " ".repeat(Math.max(0, Math.floor(indent)));
+
+                // 2. Izračun dolžine vrstice (Width)
+                let width = SIZE;
+                if (i <= 25) { 
+                    // Trapezoidna logika: širina se spreminja asimetrično
+                    width = (i % 2 === 0) ? (SIZE - y) : (5 + y);
+                } else {
+                    // Romboidna logika: fiksna širina z nestandardnimi robovi
+                    width = SIZE - (i % 5);
+                }
+
+                // 3. Izris vsebine (Polno vs Votlo vs Črtano)
+                for (let x = 0; x < width; x++) {
+                    // Algoritem za notranjo teksturo
+                    if (i % 7 === 0) {
+                        line += (x === 0 || x === Math.floor(width-1) || y === 0) ? "* " : ". ";
+                    } else if (i % 4 === 0) {
+                        line += (x + y) % 3 === 0 ? "* " : "  ";
+                    } else if (i % 11 === 0) {
+                        line += x === Math.floor(y/2) ? "X " : "* ";
+                    } else {
+                        line += "* ";
+                    }
+                }
+                
+                output += line + "\n";
+            }
+            return output;
+        });
+    }
+</script>
+
+</body>
+</html>

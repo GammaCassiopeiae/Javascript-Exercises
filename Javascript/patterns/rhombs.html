@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>20 JavaScript Star Patterns</title>
+    <style>
+        body { font-family: monospace; background: #1a1a1a; color: #00ff00; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; padding: 20px; }
+        .pattern-card { border: 1px solid #333; padding: 15px; background: #000; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        h3 { color: #ff00ff; font-size: 14px; margin-top: 0; border-bottom: 1px solid #333; padding-bottom: 5px; }
+        pre { line-height: 1.2; font-size: 14px; letter-spacing: 2px; margin: 0; }
+    </style>
+</head>
+<body>
+
+<script>
+    const size = 7; // Osnovna velikost za vzorce
+
+    function createPattern(title, logicFn) {
+        const container = document.createElement('div');
+        container.className = 'pattern-card';
+        
+        const h3 = document.createElement('h3');
+        h3.textContent = title;
+        container.appendChild(h3);
+
+        const pre = document.createElement('pre');
+        pre.textContent = logicFn();
+        container.appendChild(pre);
+
+        document.body.appendChild(container);
+    }
+
+    // --- GENERIRANJE 20 VZORCEV ---
+
+    // 1. Klasični diamant
+    createPattern("1. Polni diamant", () => {
+        let res = "";
+        for (let i = 1; i <= size; i++) {
+            res += " ".repeat(size - i) + "* ".repeat(i) + "\n";
+        }
+        for (let i = size - 1; i >= 1; i--) {
+            res += " ".repeat(size - i) + "* ".repeat(i) + "\n";
+        }
+        return res;
+    });
+
+    // 2. Votli diamant
+    createPattern("2. Votli diamant", () => {
+        let res = "";
+        for (let i = 1; i <= size; i++) {
+            let line = " ".repeat(size - i);
+            for (let j = 1; j <= i; j++) line += (j === 1 || j === i) ? "* " : "  ";
+            res += line + "\n";
+        }
+        for (let i = size - 1; i >= 1; i--) {
+            let line = " ".repeat(size - i);
+            for (let j = 1; j <= i; j++) line += (j === 1 || j === i) ? "* " : "  ";
+            res += line + "\n";
+        }
+        return res;
+    });
+
+    // 3. Desni romb
+    createPattern("3. Desni romb", () => {
+        let res = "";
+        for (let i = 0; i < size; i++) {
+            res += " ".repeat(i) + "*".repeat(size) + "\n";
+        }
+        return res;
+    });
+
+    // 4. Levi romb
+    createPattern("4. Levi romb", () => {
+        let res = "";
+        for (let i = 0; i < size; i++) {
+            res += " ".repeat(size - i) + "*".repeat(size) + "\n";
+        }
+        return res;
+    });
+
+    // 5. Peščena ura (Obrnjen diamant)
+    createPattern("5. Peščena ura", () => {
+        let res = "";
+        for (let i = size; i >= 1; i--) res += " ".repeat(size - i) + "* ".repeat(i) + "\n";
+        for (let i = 2; i <= size; i++) res += " ".repeat(size - i) + "* ".repeat(i) + "\n";
+        return res;
+    });
+
+    // 6. Diamantni okvir
+    createPattern("6. Diamantni okvir", () => {
+        let res = "";
+        for (let i = 1; i <= size; i++) res += "*".repeat(i) + " ".repeat(2*(size-i)) + "*".repeat(i) + "\n";
+        for (let i = size; i >= 1; i--) res += "*".repeat(i) + " ".repeat(2*(size-i)) + "*".repeat(i) + "\n";
+        return res;
+    });
+
+    // 7. Križni diamant
+    createPattern("7. Križni diamant", () => {
+        let res = "";
+        for (let i = 0; i < size; i++) {
+            let row = "";
+            for (let j = 0; j < size; j++) row += (i === Math.floor(size/2) || j === Math.floor(size/2)) ? "*" : " ";
+            res += row + "\n";
+        }
+        return res;
+    });
+
+    // Dodajanje preostalih 13 variacij z zankami...
+    for(let k = 8; k <= 20; k++) {
+        createPattern(`${k}. Variacija romba ${k}`, () => {
+            let res = "";
+            let localSize = 5 + (k % 3);
+            for (let i = 0; i < localSize; i++) {
+                let shift = (k % 2 === 0) ? i : localSize - i;
+                res += " ".repeat(shift) + "*".repeat(localSize) + (k % 4 === 0 ? " *" : "") + "\n";
+            }
+            return res;
+        });
+    }
+</script>
+
+</body>
+</html>

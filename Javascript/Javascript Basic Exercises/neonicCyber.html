@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="sl" data-js-theme="cyber-dark">
+<head>
+    <!-- [INDEX 38] META TAGS -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="NEON_ARCH v4.0 - Industrial Cyberpunk Analytics Interface">
+    <meta property="og:title" content="NEON_ARCH Dashboard">
+    <title>NEON_ARCH // SYSTEM_CORE</title>
+
+    <style>
+        /* 
+        ========================================================================
+        [INDEX 20] CSS SECTION: ROOT & VARIABLES (Rule 6, 10, 91)
+        ========================================================================
+        */
+        :root {
+            /* Neon Palette */
+            --clr-bg: #050507;
+            --clr-surface-100: #0d0d12;
+            --clr-surface-200: #16161f;
+            --clr-surface-300: #1e1e29;
+            
+            --clr-primary: #00f3ff;
+            --clr-primary-rgb: 0, 243, 255;
+            --clr-secondary: #ff0055;
+            --clr-accent: #7000ff;
+            
+            --clr-success: #00ff85;
+            --clr-warning: #ffae00;
+            --clr-error: #ff3e3e;
+            
+            --clr-text-main: #e2e2e9;
+            --clr-text-muted: #8b8b99;
+            --clr-border: #22222b;
+
+            /* [INDEX 9] FLUID SCALING */
+            --fs-300: clamp(0.7rem, 0.66rem + 0.2vw, 0.8rem);
+            --fs-400: clamp(0.88rem, 0.83rem + 0.24vw, 1rem);
+            --fs-600: clamp(1.3rem, 1.1rem + 1vw, 2rem);
+            --fs-h1: clamp(1.8rem, 1.5rem + 2vw, 3.5rem);
+
+            /* [INDEX 10] Z-INDEX SCALE */
+            --z-base: 1;
+            --z-dock: 10;
+            --z-sticky: 100;
+            --z-overlay: 500;
+            --z-modal: 1000;
+
+            /* Spacing */
+            --space-m: clamp(1rem, 3vw, 2.5rem);
+            --radius-m: 8px;
+            --transition-speed: 0.3s;
+            --neon-glow: 0 0 15px var(--clr-primary-glow);
+            --clr-primary-glow: rgba(0, 243, 255, 0.2);
+        }
+
+        /* 
+        ========================================================================
+        [INDEX 5] GLOBAL RESET & BOX MODEL (Rule 5, 92, 93)
+        ========================================================================
+        */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            -webkit-text-size-adjust: 100%;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--clr-bg);
+            color: var(--clr-text-main);
+            font-family: 'JetBrains Mono', 'Inter', monospace;
+            line-height: 1.5;
+            overflow-x: hidden;
+            scrollbar-gutter: stable;
+        }
+
+        /* [INDEX 41] LIST RESET */
+        ul, ol { list-style: none; }
+        img { display: block; max-width: 100%; }
+        button { cursor: pointer; border: none; background: none; font: inherit; color: inherit; }
+        a { text-decoration: none; color: inherit; }
+
+        /* 
+        ========================================================================
+        [INDEX 8] LAYOUT: THE HOLY TRINITY (Rule 51, 52, 65)
+        ========================================================================
+        */
+        .l-app-shell {
+            display: grid;
+            min-height: 100svh;
+            /* Mobile Layout First [Rule 1] */
+            grid-template-areas: 
+                "header"
+                "main"
+                "footer";
+            grid-template-columns: 1fr;
+            grid-template-rows: auto 1fr auto;
+        }
+
+        @media (min-width: 1024px) {
+            .l-app-shell {
+                grid-template-areas: 
+                    "aside header"
+                    "aside main"
+                    "aside footer";
+                grid-template-columns: 280px 1fr;
+                grid-template-rows: 80px 1fr auto;
+            }
+        }
+
+        /* 
+        ========================================================================
+        [INDEX 21] LAYOUT COMPONENTS (Rule 21, 22)
+        ========================================================================
+        */
+        .l-header {
+            grid-area: header;
+            position: sticky;
+            top: 0;
+            z-index: var(--z-sticky);
+            background: rgba(5, 5, 7, 0.85);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--clr-border);
+            padding-inline: var(--space-m);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .l-aside {
+            grid-area: aside;
+            background-color: var(--clr-surface-100);
+            border-right: 1px solid var(--clr-border);
+            display: none; /* Hidden on mobile */
+            flex-direction: column;
+            padding: var(--space-m);
+        }
+
+        @media (min-width: 1024px) {
+            .l-aside { display: flex; }
+        }
+
+        .l-main {
+            grid-area: main;
+            padding: var(--space-m);
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: var(--space-m);
+            align-content: start;
+        }
+
+        .l-footer {
+            grid-area: footer;
+            padding: 1.5rem var(--space-m);
+            border-top: 1px solid var(--clr-border);
+            background: var(--clr-surface-100);
+        }
+
+        /* 
+        ========================================================================
+        [INDEX 3] BEM COMPONENTS: NAVIGATION & BUTTONS (Rule 3, 26)
+        ========================================================================
+        */
+        .c-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 3rem;
+        }
+
+        .c-brand__logo {
+            width: 32px;
+            height: 32px;
+            background: var(--clr-primary);
+            clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);
+        }
+
+        .c-brand__text {
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: var(--clr-primary);
+        }
+
+        .c-nav__list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .c-nav__link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-m);
+            color: var(--clr-text-muted);
+            transition: var(--transition-speed);
+        }
+
+        .c-nav__link:hover {
+            background: var(--clr-surface-200);
+            color: white;
+        }
+
+        .c-nav__link.is-active {
+            background: rgba(var(--clr-primary-rgb), 0.1);
+            color: var(--clr-primary);
+            box-shadow: inset 4px 0 0 var(--clr-primary);
+        }
+
+        /* 
+        ========================================================================
+        [INDEX 22] C-CARD: THE MODULAR WIDGET (Rule 22, 57, 70)
+        ========================================================================
+        */
+        .c-card {
+            grid-column: span 12;
+            background: var(--clr-surface-100);
+            border: 1px solid var(--clr-border);
+            border-radius: var(--radius-m);
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition-speed);
+        }
+
+        @media (min-width: 768px) {
+            .c-card--span-3 { grid-column: span 3; }
+            .c-card--span-4 { grid-column: span 4; }
+            .c-card--span-6 { grid-column: span 6; }
+            .c-card--span-8 { grid-column: span 8; }
+        }
+
+        .c-card:hover {
+            border-color: var(--clr-primary);
+            box-shadow: var(--neon-glow);
+        }
+
+        .c-card__header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .c-card__title {
+            font-size: var(--fs-300);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--clr-text-muted);
+        }
+
+        .c-card__value {
+            font-size: var(--fs-600);
+            font-weight: 700;
+        }
+
+        .c-card__chart {
+            height: 120px;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        /* 
+        ========================================================================
+        [INDEX 42] DATA TABLE (Rule 42)
+        ========================================================================
+        */
+        .c-table-container {
+            grid-column: 1 / -1;
+            overflow-x: auto;
+            border-radius: var(--radius-m);
+            border: 1px solid var(--clr-border);
+        }
+
+        .c-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--clr-surface-100);
+        }
+
+        .c-table__th {
+            background: var(--clr-surface-200);
+            padding: 1rem;
+            text-align: left;
+            font-size: var(--fs-300);
+            text-transform: uppercase;
+            color: var(--clr-text-muted);
+            border-bottom: 2px solid var(--clr-border);
+        }
+
+        .c-table__td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--clr-border);
+            font-size: var(--fs-400);
+        }
+
+        .c-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .c-status--success { background: rgba(0, 255, 133, 0.1); color: var(--clr-success); }
+        .c-status--warning { background: rgba(255, 174, 0, 0.1); color: var(--clr-warning); }
+
+        /* 
+        ========================================================================
+        [INDEX 24] UTILITIES (Rule 24, 89, 90)
+        ========================================================================
+        */
+        .u-neon-text { color: var(--clr-primary); text-shadow: 0 0 10px var(--clr-primary-glow); }
+        .u-mb-m { margin-bottom: 1.5rem; }
+        .u-flex-center { display: flex; align-items: center; justify-content: center; }
+        .u-visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+
+        /* [INDEX 85] SCANLINE EFFECT */
+        .c-scanline::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 3px, 3px 100%;
+            pointer-events: none;
+            z-index: var(--z-base);
+        }
+
+        /* 
+        ========================================================================
+        JS STATE HOOKS (Rule 32)
+        ========================================================================
+        */
+        [data-js-loading="true"] .c-card { opacity: 0.5; pointer-events: none; }
+
+    </style>
+</head>
+
+<body class="c-scanline">
+
+    <div class="l-app-shell">
+
+        <!-- [INDEX 2] SEMANTIC HEADER -->
+        <header class="l-header">
+            <div class="c-header-left">
+                <h1 class="u-visually-hidden">NEON_ARCH Main Dashboard</h1>
+                <div class="u-neon-text" style="font-weight: 800; letter-spacing: 2px;">NEON_ARCH // V4.0</div>
+            </div>
+
+            <nav class="c-header-nav" aria-label="Quick Actions">
+                <ul style="display: flex; gap: 1.5rem;">
+                    <li><button type="button" aria-label="System Notifications">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+                    </button></li>
+                    <li><button type="button" id="js-theme-toggle" aria-label="Switch User">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </button></li>
+                </ul>
+            </nav>
+        </header>
+
+        <!-- [INDEX 29] SEMANTIC ASIDE -->
+        <aside class="l-aside">
+            <div class="c-brand">
+                <div class="c-brand__logo"></div>
+                <span class="c-brand__text">SYSTEMS</span>
+            </div>
+
+            <nav class="c-nav" aria-label="Main Navigation">
+                <ul class="c-nav__list">
+                    <li><a href="#" class="c-nav__link is-active">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                        Nadzorna plošča
+                    </a></li>
+                    <li><a href="#" class="c-nav__link">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h7"/><path d="M16 19l2 2 4-4"/></svg>
+                        Varnost vozlišč
+                    </a></li>
+                    <li><a href="#" class="c-nav__link">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v10l4.5 4.5"/><circle cx="12" cy="12" r="10"/></svg>
+                        Dnevniki (Logs)
+                    </a></li>
+                </ul>
+            </nav>
+
+            <div style="margin-top: auto; padding: 1rem; background: var(--clr-surface-200); border-radius: 8px;">
+                <p style="font-size: 10px; color: var(--clr-text-muted);">SISTEMSKI STATUS</p>
+                <p class="u-neon-text" style="font-size: 14px;">OPTIMALNO</p>
+            </div>
+        </aside>
+
+        <!-- [INDEX 2] SEMANTIC MAIN -->
+        <main class="l-main">
+            
+            <header style="grid-column: 1 / -1;" class="u-mb-m">
+                <h2 style="font-size: var(--fs-600);">Operativno poročilo</h2>
+                <p style="color: var(--clr-text-muted);">Zadnja sinhronizacija: <time datetime="2024-05-20T14:30" id="js-sync-time">14:30:02</time></p>
+            </header>
+
+            <!-- STAT CARDS [INDEX 22] -->
+            <article class="c-card c-card--span-3">
+                <div class="c-card__header">
+                    <h3 class="c-card__title">Procesorska moč</h3>
+                    <span style="color: var(--clr-success);">+2.4%</span>
+                </div>
+                <div class="c-card__value">42.8%</div>
+                <div class="c-card__chart"><canvas id="js-chart-cpu"></canvas></div>
+            </article>
+
+            <article class="c-card c-card--span-3">
+                <div class="c-card__header">
+                    <h3 class="c-card__title">Mrežni pretok</h3>
+                    <span style="color: var(--clr-primary);">STABILNO</span>
+                </div>
+                <div class="c-card__value">892 Mb/s</div>
+                <div class="c-card__chart"><canvas id="js-chart-net"></canvas></div>
+            </article>
+
+            <article class="c-card c-card--span-3">
+                <div class="c-card__header">
+                    <h3 class="c-card__title">Aktivni uporabniki</h3>
+                    <span>1,204</span>
+                </div>
+                <div class="c-card__value">8.4k</div>
+                <div class="c-card__chart"><canvas id="js-chart-user"></canvas></div>
+            </article>
+
+            <article class="c-card c-card--span-3">
+                <div class="c-card__header">
+                    <h3 class="c-card__title">Sistemski lag</h3>
+                    <span style="color: var(--clr-error);">↑ 12ms</span>
+                </div>
+                <div class="c-card__value">14ms</div>
+                <div class="c-card__chart"><canvas id="js-chart-lag"></canvas></div>
+            </article>
+
+            <!-- HERO VISUALIZATION [INDEX 71] -->
+            <section class="c-card c-card--span-8" style="min-height: 400px;">
+                <header class="u-flex-between">
+                    <h3 class="c-card__title">Globalna nevronska mreža</h3>
+                    <div style="display: flex; gap: 1rem;">
+                        <button type="button" class="c-status c-status--success">LIVE_FEED</button>
+                    </div>
+                </header>
+                <div class="c-card__chart" style="height: 300px;"><canvas id="js-chart-main"></canvas></div>
+            </section>
+
+            <!-- SIDE INFO [INDEX 29] -->
+            <section class="c-card c-card--span-4">
+                <h3 class="c-card__title u-mb-m">Zadnji dogodki</h3>
+                <ul style="display: flex; flex-direction: column; gap: 1rem;">
+                    <li style="border-left: 2px solid var(--clr-primary); padding-left: 1rem;">
+                        <p style="font-size: 12px; color: var(--clr-text-muted);">14:28:01</p>
+                        <p>Dostop odobren: Node_Alpha</p>
+                    </li>
+                    <li style="border-left: 2px solid var(--clr-warning); padding-left: 1rem;">
+                        <p style="font-size: 12px; color: var(--clr-text-muted);">14:25:55</p>
+                        <p>Opozorilo: Poraba pomnilnika > 90%</p>
+                    </li>
+                    <li style="border-left: 2px solid var(--clr-primary); padding-left: 1rem;">
+                        <p style="font-size: 12px; color: var(--clr-text-muted);">14:20:12</p>
+                        <p>Varnostno kopiranje končano</p>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- DATA TABLE [INDEX 42] -->
+            <section class="c-table-container">
+                <table class="c-table">
+                    <thead class="c-table__head">
+                        <tr>
+                            <th class="c-table__th">ID Vozlišča</th>
+                            <th class="c-table__th">Lokacija</th>
+                            <th class="c-table__th">Latenca</th>
+                            <th class="c-table__th">Obremenitev</th>
+                            <th class="c-table__th">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="c-table__body">
+                        <tr>
+                            <td class="c-table__td"><code>#NX-7700</code></td>
+                            <td class="c-table__td">Ljubljana_Central</td>
+                            <td class="c-table__td">4ms</td>
+                            <td class="c-table__td">12%</td>
+                            <td class="c-table__td"><span class="c-status c-status--success">Aktiven</span></td>
+                        </tr>
+                        <tr>
+                            <td class="c-table__td"><code>#NX-8200</code></td>
+                            <td class="c-table__td">Maribor_Industrial</td>
+                            <td class="c-table__td">18ms</td>
+                            <td class="c-table__td">92%</td>
+                            <td class="c-table__td"><span class="c-status c-status--warning">Preobremenitev</span></td>
+                        </tr>
+                        <tr>
+                            <td class="c-table__td"><code>#NX-1042</code></td>
+                            <td class="c-table__td">Koper_Gateway</td>
+                            <td class="c-table__td">2ms</td>
+                            <td class="c-table__td">5%</td>
+                            <td class="c-table__td"><span class="c-status c-status--success">Aktiven</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+        </main>
+
+        <!-- [INDEX 30] SEMANTIC FOOTER -->
+        <footer class="l-footer">
+            <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+                <address style="font-style: normal; font-size: 12px; color: var(--clr-text-muted);">
+                    NEON_ARCH OS v4.0.2-STABLE // <a href="mailto:admin@neon.arch" class="u-neon-text">KONTAKTIRAJ ADMINA</a>
+                </address>
+                <div style="font-size: 12px; color: var(--clr-text-muted);">
+                    &copy; 2024 NEON INDUSTRIAL SYSTEMS. VSE PRAVICE PRIDRŽANE.
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- [INDEX 32] JS CORE ENGINE -->
+    <script>
+        /**
+         * NEON_ARCH CORE ENGINE
+         * Upravljanje s podatki in vizualizacijo
+         */
+        const NeonEngine = (() => {
+            
+            const state = {
+                isLoading: false,
+                lastSync: new Date()
+            };
+
+            const DOM = {
+                syncTime: document.getElementById('js-sync-time'),
+                charts: {
+                    cpu: 'js-chart-cpu',
+                    net: 'js-chart-net',
+                    main: 'js-chart-main'
+                }
+            };
+
+            const initCharts = () => {
+                // Preprosto risanje na Canvas [Rule 35 preneseno na Canvas]
+                const drawMiniChart = (id, color) => {
+                    const canvas = document.getElementById(id);
+                    if(!canvas) return;
+                    const ctx = canvas.getContext('2d');
+                    const dpr = window.devicePixelRatio || 1;
+                    canvas.width = canvas.offsetWidth * dpr;
+                    canvas.height = canvas.offsetHeight * dpr;
+                    ctx.scale(dpr, dpr);
+
+                    ctx.strokeStyle = color;
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(0, canvas.offsetHeight * 0.8);
+                    
+                    for(let i = 0; i < 10; i++) {
+                        ctx.lineTo((canvas.offsetWidth/10) * i, canvas.offsetHeight * (0.2 + Math.random() * 0.6));
+                    }
+                    ctx.stroke();
+                };
+
+                drawMiniChart('js-chart-cpu', '#00f3ff');
+                drawMiniChart('js-chart-net', '#ff0055');
+                drawMiniChart('js-chart-user', '#7000ff');
+                drawMiniChart('js-chart-lag', '#ffae00');
+            };
+
+            const updateClock = () => {
+                const now = new Date();
+                DOM.syncTime.textContent = now.toLocaleTimeString('sl-SI');
+            };
+
+            return {
+                start: () => {
+                    console.log("NEON_ARCH // SISTEM INITIALIZED");
+                    initCharts();
+                    setInterval(updateClock, 1000);
+                    
+                    // Re-render on resize
+                    window.addEventListener('resize', initCharts);
+                }
+            };
+        })();
+
+        // Start Application
+        document.addEventListener('DOMContentLoaded', NeonEngine.start);
+
+    </script>
+</body>
+</html>

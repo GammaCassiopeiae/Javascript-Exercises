@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="sl" data-js-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="NEON_ARCH Executive Dashboard - Ultra Wide View">
+    <title>NEON_ARCH // Wide Console</title>
+
+    <style>
+        /* CORE VARIABLES (Rule 6, 9) */
+        :root {
+            --clr-bg: #070709;
+            --clr-surface: #111114;
+            --clr-primary: #00f3ff;
+            --clr-primary-glow: rgba(0, 243, 255, 0.15);
+            --clr-border: #222228;
+            --clr-text: #e2e2e9;
+            --clr-muted: #8b8b99;
+            
+            --space-fluid: clamp(1rem, 3vw, 2.5rem);
+            --radius-main: 12px;
+            --z-sticky: 100;
+        }
+
+        /* RESET & BASE (Rule 5, 92) */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            background-color: var(--clr-bg);
+            color: var(--clr-text);
+            font-family: 'Inter', system-ui, sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* HOLY TRINITY LAYOUT - NO ASIDE PANEL (Rule 8, 52) */
+        .l-app-shell {
+            display: grid;
+            min-height: 100svh;
+            grid-template-areas: 
+                "sidebar header"
+                "sidebar main"
+                "sidebar footer";
+            grid-template-columns: 260px 1fr;
+            grid-template-rows: 80px 1fr auto;
+        }
+
+        @media (max-width: 1023px) {
+            .l-app-shell {
+                grid-template-areas: "header" "main" "footer";
+                grid-template-columns: 1fr;
+            }
+            .c-sidebar { display: none; } /* Mobile optimization */
+        }
+
+        /* COMPONENTS (Rule 22, 55) */
+        .c-header {
+            grid-area: header;
+            background: rgba(7, 7, 9, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--clr-border);
+            padding: 0 var(--space-fluid);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: var(--z-sticky);
+        }
+
+        .c-sidebar {
+            grid-area: sidebar;
+            background: var(--clr-surface);
+            border-right: 1px solid var(--clr-border);
+            padding: var(--space-fluid);
+        }
+
+        .c-main {
+            grid-area: main;
+            padding: var(--space-fluid);
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: var(--space-fluid);
+            max-width: 1600px;
+            margin-inline: auto;
+            width: 100%;
+        }
+
+        /* WIDE CARDS (Rule 72) */
+        .c-card {
+            background: var(--clr-surface);
+            border: 1px solid var(--clr-border);
+            border-radius: var(--radius-main);
+            padding: 1.5rem;
+            transition: 0.3s ease;
+        }
+
+        .c-card--hero { 
+            grid-column: 1 / -1; 
+            min-height: 400px;
+            background: linear-gradient(180deg, #16161b 0%, #111114 100%);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .c-card--stat { grid-column: span 3; }
+        @media (max-width: 768px) { .c-card--stat { grid-column: span 12; } }
+
+        /* DATA VIZ PLACEHOLDER */
+        .c-viz {
+            flex-grow: 1;
+            margin-top: 1rem;
+            border-radius: 8px;
+            background: 
+                linear-gradient(90deg, var(--clr-border) 1px, transparent 1px) 0 0 / 40px 100%,
+                linear-gradient(var(--clr-border) 1px, transparent 1px) 0 0 / 100% 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .c-viz::after {
+            content: "";
+            position: absolute;
+            top: 50%; left: 0; width: 100%; height: 2px;
+            background: var(--clr-primary);
+            box-shadow: 0 0 20px var(--clr-primary);
+            animation: scan 4s infinite linear;
+        }
+
+        @keyframes scan {
+            0% { transform: translateY(100px); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-100px); opacity: 0; }
+        }
+
+        /* TABLE STYLING (Rule 42) */
+        .c-table-container {
+            grid-column: 1 / -1;
+            background: var(--clr-surface);
+            border-radius: var(--radius-main);
+            overflow: hidden;
+        }
+
+        .c-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .c-table__th {
+            text-align: left;
+            padding: 1rem;
+            background: #1a1a1f;
+            color: var(--clr-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+
+        .c-table__td {
+            padding: 1.2rem 1rem;
+            border-bottom: 1px solid var(--clr-border);
+        }
+
+        /* UTILITIES */
+        .u-neon-text { color: var(--clr-primary); text-shadow: 0 0 10px var(--clr-primary-glow); }
+    </style>
+</head>
+
+<body>
+    <div class="l-app-shell">
+        
+        <aside class="c-sidebar">
+            <div class="c-brand u-mb-m">
+                <h2 class="u-neon-text">NEON_ARCH</h2>
+            </div>
+            <nav class="c-nav">
+                <ul class="c-nav__list">
+                    <li><a href="#" class="c-nav__link">Terminal</a></li>
+                    <li><a href="#" class="c-nav__link">Network</a></li>
+                    <li><a href="#" class="c-nav__link">Security</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <header class="c-header">
+            <div class="c-header__title">
+                <h1 style="font-size: 1.2rem;">SISTEMSKI NADZOR <span style="color: var(--clr-muted);">// 01</span></h1>
+            </div>
+            <div class="c-header__status">
+                <span class="u-neon-text">● POVEZANO</span>
+            </div>
+        </header>
+
+        <main class="c-main">
+            <!-- Široka vizualizacija -->
+            <section class="c-card c-card--hero">
+                <header style="display: flex; justify-content: space-between;">
+                    <h3>Pretok podatkov v realnem času</h3>
+                    <div style="display: flex; gap: 1rem;">
+                        <code>LATENCY: 12ms</code>
+                        <code>UPTIME: 99.9%</code>
+                    </div>
+                </header>
+                <div class="c-viz"></div>
+            </section>
+
+            <!-- Statistične kartice -->
+            <article class="c-card c-card--stat">
+                <p style="color: var(--clr-muted); font-size: 0.8rem;">CPU OBREMENITEV</p>
+                <h4 style="font-size: 2rem;">24.5%</h4>
+            </article>
+            <article class="c-card c-card--stat">
+                <p style="color: var(--clr-muted); font-size: 0.8rem;">MEM_POOL</p>
+                <h4 style="font-size: 2rem;">12.8 GB</h4>
+            </article>
+            <article class="c-card c-card--stat">
+                <p style="color: var(--clr-muted); font-size: 0.8rem;">AKTIVNI VOZLI</p>
+                <h4 style="font-size: 2rem;">1,042</h4>
+            </article>
+            <article class="c-card c-card--stat">
+                <p style="color: var(--clr-muted); font-size: 0.8rem;">VARNOSTNI STATUS</p>
+                <h4 class="u-neon-text" style="font-size: 2rem;">OPTIMALNO</h4>
+            </article>
+
+            <!-- Široka tabela -->
+            <div class="c-table-container">
+                <table class="c-table">
+                    <thead>
+                        <tr>
+                            <th class="c-table__th">ID Procesora</th>
+                            <th class="c-table__th">Lokacija</th>
+                            <th class="c-table__th">Obremenitev</th>
+                            <th class="c-table__th">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="c-table__td"><code>PX-7700</code></td>
+                            <td class="c-table__td">EU-Central-1</td>
+                            <td class="c-table__td">12%</td>
+                            <td class="c-table__td" style="color: var(--clr-primary);">V teku</td>
+                        </tr>
+                        <tr>
+                            <td class="c-table__td"><code>PX-8200</code></td>
+                            <td class="c-table__td">US-West-2</td>
+                            <td class="c-table__td">88%</td>
+                            <td class="c-table__td" style="color: orange;">Visoka poraba</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+        <footer style="grid-area: footer; padding: 1.5rem; border-top: 1px solid var(--clr-border); text-align: center; font-size: 0.8rem; color: var(--clr-muted);">
+            NEON_ARCH OS © 2024 | Industrial Grade Analytics Interface
+        </footer>
+    </div>
+
+    <script>
+        // Simulacija dinamičnih podatkov
+        setInterval(() => {
+            const stats = document.querySelectorAll('.c-card--stat h4');
+            stats.forEach(stat => {
+                if(!stat.classList.contains('u-neon-text')) {
+                    const current = parseFloat(stat.innerText);
+                    const change = (Math.random() - 0.5) * 2;
+                    stat.innerText = (current + change).toFixed(1) + (stat.innerText.includes('%') ? '%' : '');
+                }
+            });
+        }, 3000);
+    </script>
+</body>
+</html>

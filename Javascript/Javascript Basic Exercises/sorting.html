@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <title>Sorting Algorithms</title>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; line-height: 1.6; }
+    .result-card { 
+      margin-bottom: 20px; 
+      background-color: #f9f9f9; 
+      padding: 15px; 
+      border-radius: 8px; 
+      border-left: 5px solid #333;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .algo-title { font-weight: bold; color: #2c3e50; text-transform: uppercase; margin-bottom: 10px; display: block; }
+    code { background-color: #e8e8e8; padding: 2px 6px; border-radius: 4px; color: #d63384; font-family: monospace; }
+    .line { margin: 4px 0; }
+  </style>
+</head>
+<body>
+
+  <h1>Prikaz algoritmov razvrščanja</h1>
+  <div id="algorithms"></div>
+
+  <script>
+    // --- ALGORITMI ---
+
+    function bogoSort(arr) {
+      const isSorted = a => a.every((v, i) => i === 0 || v >= a[i - 1]);
+      let copy = [...arr];
+      while (!isSorted(copy)) {
+        for (let i = copy.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+      }
+      return copy;
+    }
+
+    function bubbleSort(arr) {
+      let a = [...arr];
+      for (let i = 0; i < a.length; i++) {
+        for (let j = 0; j < a.length - i - 1; j++) {
+          if (a[j] > a[j + 1]) [a[j], a[j + 1]] = [a[j + 1], a[j]];
+        }
+      }
+      return a;
+    }
+
+    function insertSort(arr) {
+      let a = [...arr];
+      for (let i = 1; i < a.length; i++) {
+        let key = a[i], j = i - 1;
+        while (j >= 0 && a[j] > key) { a[j + 1] = a[j]; j--; }
+        a[j + 1] = key;
+      }
+      return a;
+    }
+
+    function mergeSort(arr) {
+      if (arr.length <= 1) return arr;
+      const mid = Math.floor(arr.length / 2);
+      const left = mergeSort(arr.slice(0, mid));
+      const right = mergeSort(arr.slice(mid));
+      return (function merge(l, r) {
+        let res = [];
+        let leftCopy = [...l], rightCopy = [...r];
+        while (leftCopy.length && rightCopy.length) {
+          res.push(leftCopy[0] <= rightCopy[0] ? leftCopy.shift() : rightCopy.shift());
+        }
+        return [...res, ...leftCopy, ...rightCopy];
+      })(left, right);
+    }
+
+    function quickSort(arr) {
+      if (arr.length <= 1) return arr;
+      const pivot = arr[0];
+      const left = arr.slice(1).filter(x => x < pivot);
+      const right = arr.slice(1).filter(x => x >= pivot);
+      return [...quickSort(left), pivot, ...quickSort(right)];
+    }
+
+    function bucketSort(arr, bucketCount = 5) {
+      if (arr.length === 0) return [];
+      const min = Math.min(...arr), max = Math.max(...arr);
+      if (min === max) return arr;
+      const buckets = Array.from({ length: bucketCount }, () => []);
+      arr.forEach(val => {
+        let idx = Math.floor(((val - min) / (max - min)) * (bucketCount - 1));
+        buckets[idx].push(val);
+      });
+      return buckets.reduce((acc, b) => [...acc, ...b.sort((a, b) => a - b)], []);
+    }
+
+    // --- FUNKCIJA ZA PRIKAZ ---
+
+    function runAndDisplay(name, algoFn, data) {
+      const container = document.getElementById('algorithms');
+      const sortedData = algoFn(data);
+      
+      const div = document.createElement('div');
+      div.className = 'result-card';
+      div.innerHTML = `
+        <span class="algo-title">${name}</span>
+        <div class="line">Original: <code>${JSON.stringify(data)}</code></div>
+        <div class="line">Sorted: <code>${JSON.stringify(sortedData)}</code></div>
+      `;
+      container.appendChild(div);
+    }
+
+    // --- IZVEDBA ---
+
+    const testArray = [5, 3, 8, 4, 30, 44, 66, 0, 2];
+
+    runAndDisplay("Bogo Sort", bogoSort, testArray);
+    runAndDisplay("Bubble Sort", bubbleSort, testArray);
+    runAndDisplay("Insertion Sort", insertSort, testArray);
+    runAndDisplay("Merge Sort", mergeSort, testArray);
+    runAndDisplay("Quick Sort", quickSort, testArray);
+    runAndDisplay("Bucket Sort", bucketSort, testArray);
+
+  </script>
+</body>
+</html>

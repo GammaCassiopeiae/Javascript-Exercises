@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Neon-Grid Manifesto</title>
+  <style>
+    /* CSS Variables for theming */
+    :root {
+      --primary-color: #007bff;
+      --secondary-color: #6c757d;
+      --background: #f8f9fa;
+      --text-color: #333;
+      --border-color: #dee2e6;
+      --shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background-color: var(--background);
+      color: var(--text-color);
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Mobile-first styles */
+    .container {
+      max-width: 100%;
+      padding: 1rem;
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+
+    header, footer {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    main {
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
+    }
+
+    .card {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    /* BEM Structure */
+    .card__title {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: var(--secondary-color);
+    }
+
+    .card__content {
+      margin-bottom: 1rem;
+    }
+
+    /* Responsive layout */
+    @media (min-width: 768px) {
+      main {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    /* IntersectionObserver for lazy loading */
+    .lazy-load {
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .lazy-load:after {
+      content: '';
+      display: block;
+      width: 100%;
+      height: 0;
+      background: rgba(255,255,255,0.4);
+      position: absolute;
+      top: 0; left: 0;
+      height: 100%;
+    }
+    .lazy-load.loading {
+      opacity: 1;
+    }
+
+    /* Event Delegation */
+    .container .neon-element {
+      cursor: pointer;
+    }
+
+    .neon-element {
+      position: relative;
+      padding: 0.5rem;
+      border-radius: 4px;
+      transition: transform 0.2s ease;
+    }
+
+    .neon-element:hover {
+      transform: scale(1.05);
+    }
+
+    /* Custom Events */
+    window.addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
+
+    /* MutationObserver for dynamic content */
+    const observer = new MutationObserver(() => {
+      console.log('DOM changes detected:', observer.details);
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    /* RequestAnimationFrame for animations */
+    function animateNeon() {
+      requestAnimationFrame(animateNeon);
+    }
+    animateNeon();
+
+   
+    let debounceTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        // Handle resize logic
+      }, 200);
+    });
+
+   
+    const pointEl = document.querySelector('.neon-point');
+    if (pointEl) {
+      pointEl.addEventListener('mousemove', (e) => {
+        const rect = pointEl.getBoundingClientRect();
+        console.log(`Mouse at: ${rect.left}, ${rect.top}`);
+      });
+    }
+
+    
+    function cleanup() {
+      document.removeEventListener('resize', debounceTimer);
+      document.removeEventListener('click', e => e.stopPropagation());
+    }
+    window.addEventListener('beforeunload', cleanup);
+
+  
+    const neonData = document.querySelectorAll('.neon-element');
+    neonData.forEach(el => {
+      el.dataset.active = true;
+    });
+
+  
+    const template = document.createElement('template');
+    template.innerHTML = `
+      <div class="card">
+        <div class="card__title">Card Title</div>
+        <div class="card__content">Content goes here.</div>
+      </div>
+    `;
+    document.body.appendChild(template.content);
+
+    
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('loaded');
+          }
+        });
+      });
+      document.querySelectorAll('.lazy-load').forEach(el => observer.observe(el));
+    }
+
+    // Custom Event Dispatching
+    const customEvent = new CustomEvent('neon-activated', { detail: { id: '1' }});
+    document.dispatchEvent(customEvent);
+
+   
+    document.querySelector('form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      document.resetForm();
+    });
+
+    
+    const styles = document.styleSheets[0].content || '';
+    styles.replace(/<style>.*?<\/style>/, '');
+    document.styleSheets[0].insertAdjacentHTML('beforeend', styles);
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Neon-Grid Manifesto</h1>
+  </header>
+  <main class="container">
+    <section class="card">
+      <div class="card__title">Sample Title</div>
+      <div class="card__content" data-loading="true">Loading content...</div>
+    </section>
+    <section class="card">
+      <div class="neon-element" data-active="true"></div>
+      <div class="neon-element" data-active="false"></div>
+    </section>
+    <section class="card">
+      <p>This is a test paragraph with dynamic content.</p>
+    </section>
+  </main>
+  <footer>
+    <p>&copy; 2025 Neon-Grid Project</p>
+  </footer>
+</body>
+</html>

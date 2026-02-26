@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dijkstra Visualizer</title>
+    <style>
+        :root { --bg: #2c3e50; --grid: #34495e; --wall: #000; --path: #f1c40f; --visit: #3498db; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; display: flex; flex-direction: column; align-items: center; }
+        #controls { margin: 20px; display: flex; gap: 10px; }
+        .grid { display: grid; grid-template-columns: repeat(20, 25px); gap: 1px; background: #7f8c8d; border: 2px solid #7f8c8d; }
+        .cell { width: 25px; height: 25px; background: var(--grid); transition: background 0.3s; }
+        .cell.wall { background: var(--wall); }
+        .cell.start { background: #2ecc71; position: relative; }
+        .cell.end { background: #e74c3c; }
+        .cell.visited { background: var(--visit); animation: pulse 0.5s; }
+        .cell.path { background: var(--path); }
+        button { padding: 8px 16px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; }
+        @keyframes pulse { 0% { transform: scale(0.3); background: #9b59b6; } 100% { transform: scale(1); } }
+    </style>
+</head>
+<body>
+
+    <h2>Dijkstra's Shortest Path</h2>
+    <div id="controls">
+        <button onclick="runDijkstra()" style="background: #2ecc71;">Find Path</button>
+        <button onclick="resetGrid()" style="background: #e74c3c;">Reset</button>
+        <span>Drag to draw walls!</span>
+    </div>
+    <div id="grid" class="grid"></div>
+
+    <script>
+        const ROWS = 20, COLS = 20;
+        const gridElement = document.getElementById('grid');
+        let startNode = [2, 2], endNode = [17, 17];
+        let walls = new Set();
+        let isMouseDown = false;
+
+        // 1. Build Grid UI
+        function createGrid() {
+            gridElement.innerHTML = '';
+            for (let r = 0; r < ROWS; r++) {
+                for (let c = 0; c < COLS; c++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.id = `c-${r}-${c}`;
+                    if (r === startNode[0] && c === startNode[1]) cell.classList.add('start');
+                    if (r === endNode[0] && c === endNode[1]) cell.classList.add('end');
+                    
+                    cell.onmousedown = () => { isMouseDown = true; toggleWall(r, c); };
+                    cell.onmouseenter = () => { if (isMouseDown) toggleWall(r, c); };
+                    gridElement.appendChild(cell);
+                }
+            }
+        }
+        window.onmouseup = () => isMouseDown = false;
+
+        function toggleWall(r, c) {
+            if ((r === startNode[0] && c === startNode[1]) || (r === endNode[0] && c === endNode[1])) return;
+            const id = `${r}-${c}`;
+            const el = document.getElementById(`c-${r}-${c}`);
+            if (walls.has(id)) { walls.delete(id); el.classList.remove('wall'); }
+            else { walls.add(id); el.classList.add('wall'); }
+        }
+
+        // 2. Dijkstra Logic
+        async function runDijkstra() {
+            const dist = {}, prev = {}, visited = new Set(), queue = [];
+            
+            for (let r = 0; r < ROWS; r++) {
+                for (let c = 0; c < COLS; c++) {
+                    const id = `${r},${c}`;
+                    dist[id] = Infinity;
+                    queue.push([r, c]);
+                }
+            }
+            dist[`${startNode[0]},${startNode[1]}`] = 0;
+
+            while (queue.length > 0) {
+                // Sort by distance (acting as a basic Priority Queue)
+                queue.sort((a, b) => dist[`${a[0]},${a[1]}`] - dist[`${b[0]},${b[1]}`]);
+                const [r, c] = queue.shift();
+                const currentId = `${r},${c}`;
+
+                if (dist[currentId] === Infinity) break;
+                if (r === endNode[0] && c === endNode[1]) return drawPath(prev);
+
+                visited.add(currentId);
+                if (currentId !== `${startNode[0]},${startNode[1]}`) {
+                    document.getElementById(`c-${r}-${c}`).classList.add('visited');
+                    await new Promise(r => setTimeout(r, 5));
+                }
+
+                // Check Neighbors
+                const neighbors = [[r-1, c], [r+1, c], [r, c-1], [r, c+1]];
+                for (const [nr, nc] of neighbors) {
+                    if (nr < 0 || nr >= ROWS || nc < 0 || nc >= COLS || walls.has(`${nr}-${nc}`)) continue;
+                    
+                    const alt = dist[currentId] + 1;
+                    if (alt < dist[`${nr},${nc}`]) {
+                        dist[`${nr},${nc}`] = alt;
+                        prev[`${nr},${nc}`] = [r, c];
+                    }
+                }
+            }
+        }
+
+        async function drawPath(prev) {
+            let curr = endNode;
+            while (curr) {
+                const id = `${curr[0]},${curr[1]}`;
+                if (id === `${startNode[0]},${startNode[1]}`) break;
+                document.getElementById(`c-${curr[0]}-${curr[1]}`).classList.add('path');
+                curr = prev[id];
+                await new Promise(r => setTimeout(r, 30));
+            }
+        }
+
+        function resetGrid() { walls.clear(); createGrid(); }
+        createGrid();
+    </script>
+</body>
+</html>

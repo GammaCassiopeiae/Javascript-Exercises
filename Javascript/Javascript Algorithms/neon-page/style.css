@@ -1,0 +1,377 @@
+/* 
+  NEON-GRID ARCHITECT MANIFESTO COMPLIANT STYLESHEET
+  Follows all 300 Directives.
+*/
+
+/* I. Core Variables & Reset */
+:root {
+    /* Colors (Directive 101-103) */
+    --color-bg: #050505;
+    --color-bg-alt: #0a0b10;
+    --color-neon-cyan: #00f3ff;
+    --color-neon-magenta: #ff00ff;
+    --color-neon-yellow: #f0ff00;
+    --color-neon-green: #39ff14;
+    --color-text: #e0e0e0;
+    --color-text-dim: #a0a0a0;
+    --color-glass: rgba(255, 255, 255, 0.05);
+    --color-border: rgba(0, 243, 255, 0.3);
+
+    /* Spacing & Sizing */
+    --space-xs: 0.5rem;
+    --space-sm: 1rem;
+    --space-md: 2rem;
+    --space-lg: 4rem;
+    --radius-standard: 12px; /* Directive: aesthetics */
+    
+    /* Typography */
+    --font-header: 'Orbitron', sans-serif;
+    --font-body: 'Rajdhani', sans-serif;
+    --font-code: 'Fira Code', monospace;
+
+    /* Layers */
+    --z-base: 1;
+    --z-sidebar: 100;
+    --z-header: 200;
+    --z-overlay: 1000;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box; /* Directive 5 */
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+    background-color: var(--color-bg);
+}
+
+body {
+    font-family: var(--font-body);
+    color: var(--color-text);
+    line-height: 1.6;
+    overflow-x: hidden; /* Directive 92 */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* II. Layout Structure (Directive 51-100) */
+.l-body {
+    display: grid;
+    grid-template-areas: 
+        "header"
+        "main"
+        "sidebar"
+        "footer";
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto auto;
+}
+
+@media (min-width: 64rem) {
+    .l-body {
+        grid-template-areas: 
+            "sidebar header"
+            "sidebar main"
+            "sidebar footer";
+        grid-template-columns: 280px 1fr;
+        grid-template-rows: auto 1fr auto;
+    }
+}
+
+.l-main {
+    grid-area: main;
+    padding: var(--space-md);
+    max-width: 1400px;
+    width: 100%;
+    margin-inline: auto; /* Directive 89 */
+}
+
+.l-grid-container {
+    display: grid;
+    gap: var(--space-md);
+}
+
+/* III. Components (BEM Strictness) */
+
+/* Header */
+.c-header {
+    grid-area: header;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-inline: var(--space-md);
+    background: var(--color-bg-alt);
+    border-bottom: 1px solid var(--color-border);
+    position: sticky; /* Directive 65 */
+    top: 0;
+    z-index: var(--z-header);
+    backdrop-filter: blur(10px); /* Directive 106 */
+}
+
+.c-header__title {
+    font-family: var(--font-header);
+    font-size: clamp(1.2rem, 5vw, 1.8rem);
+    color: var(--color-neon-cyan);
+    text-shadow: 0 0 10px var(--color-neon-cyan);
+}
+
+.c-header__list {
+    display: none;
+    list-style: none;
+    gap: var(--space-sm);
+}
+
+@media (min-width: 48rem) {
+    .c-header__list { display: flex; }
+}
+
+.c-header__link {
+    text-decoration: none;
+    color: var(--color-text-dim);
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+}
+
+.c-header__link:hover, .c-header__link.is-active {
+    color: var(--color-neon-cyan);
+    text-shadow: 0 0 5px var(--color-neon-cyan);
+}
+
+/* Sidebar */
+.c-sidebar {
+    grid-area: sidebar;
+    background: var(--color-bg-alt);
+    border-right: 1px solid var(--color-border);
+    padding: var(--space-md);
+}
+
+@media (min-width: 64rem) {
+    .c-sidebar {
+        height: 100vh;
+        position: sticky;
+        top: 0;
+    }
+}
+
+.c-sidebar__inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: var(--space-md);
+}
+
+.c-sidebar__label {
+    font-size: 0.8rem;
+    color: var(--color-text-dim);
+    margin-bottom: var(--space-sm);
+    letter-spacing: 2px;
+}
+
+/* Cards (Neon Aesthetics) */
+.c-card {
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-standard);
+    padding: var(--space-sm);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.c-card:hover {
+    transform: translateY(-5px); /* Directive 116 */
+}
+
+.c-card--glass {
+    background: var(--color-glass);
+    backdrop-filter: blur(10px);
+}
+
+.c-card--neon-cyan { border-color: var(--color-neon-cyan); box-shadow: 0 0 15px rgba(0, 243, 255, 0.1); }
+.c-card--neon-magenta { border-color: var(--color-neon-magenta); box-shadow: 0 0 15px rgba(255, 0, 255, 0.1); }
+.c-card--neon-yellow { border-color: var(--color-neon-yellow); box-shadow: 0 0 15px rgba(240, 255, 0, 0.1); }
+
+.c-card__title {
+    font-family: var(--font-header);
+    font-size: 0.9rem;
+    color: var(--color-text);
+    margin-bottom: var(--space-sm);
+}
+
+/* Gauges & Progress */
+.c-gauge {
+    display: flex;
+    align-items: baseline;
+    gap: 0.2rem;
+    margin-bottom: var(--space-xs);
+}
+
+.c-gauge__value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    font-family: var(--font-code);
+}
+
+.c-progress-bar {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.c-progress-bar__fill {
+    height: 100%;
+    transition: width 0.5s ease-out;
+    background: currentColor;
+}
+
+.c-card--neon-cyan .c-gauge__value { color: var(--color-neon-cyan); }
+.c-card--neon-cyan .c-progress-bar__fill { background: var(--color-neon-cyan); box-shadow: 0 0 10px var(--color-neon-cyan); }
+
+/* Card Grid Layout */
+.c-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-md);
+}
+
+/* Terminal Component */
+.c-card--terminal {
+    background: #000;
+    border-color: var(--color-neon-green);
+    min-height: 300px;
+}
+
+.c-card__body--terminal {
+    font-family: var(--font-code);
+    color: var(--color-neon-green);
+    font-size: 0.9rem;
+    padding: var(--space-sm);
+    height: 250px;
+    overflow-y: auto;
+}
+
+/* Form Styling */
+.c-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.c-form__label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--color-neon-cyan);
+    margin-bottom: 0.3rem;
+}
+
+.c-form__input {
+    width: 100%;
+    background: rgba(0,0,0,0.3); /* Directive 167 */
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    padding: 0.8rem 1.2rem;
+    color: #fff;
+    font-family: var(--font-body);
+}
+
+.c-form__input:focus {
+    outline: none;
+    border-color: var(--color-neon-cyan);
+    box-shadow: 0 0 10px var(--color-neon-cyan);
+}
+
+/* Buttons */
+.c-btn {
+    padding: 0.8rem 1.5rem;
+    border-radius: 4px;
+    font-family: var(--font-header);
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+}
+
+.c-btn--primary {
+    background: var(--color-neon-cyan);
+    color: #000;
+    border: none;
+    box-shadow: 0 0 15px var(--color-neon-cyan);
+}
+
+.c-btn--primary:hover {
+    transform: scale(1.05); /* Directive 133 */
+    filter: brightness(1.2);
+}
+
+.c-btn--sidebar {
+    width: 100%;
+    background: transparent;
+    color: var(--color-text-dim);
+    border: 1px solid transparent;
+    text-align: left;
+    margin-bottom: var(--space-xs);
+}
+
+.c-btn--sidebar.is-active {
+    color: var(--color-neon-cyan);
+    border-color: var(--color-border);
+    background: rgba(0, 243, 255, 0.05);
+}
+
+/* Utilities */
+.u-scanlines {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%, 
+        rgba(0, 0, 0, 0.1) 50%
+    );
+    background-size: 100% 4px;
+    z-index: var(--z-overlay);
+    pointer-events: none;
+    opacity: 0.15;
+}
+
+.u-mt-large { margin-top: var(--space-lg); }
+.u-mt-auto { margin-top: auto; }
+.u-text-code { font-family: var(--font-code); color: var(--color-neon-yellow); }
+
+/* Grid Layouts (Row/Col) */
+.l-grid-two-col {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: var(--space-md);
+}
+
+.c-footer {
+    grid-area: footer;
+    padding: var(--space-md);
+    border-top: 1px solid var(--color-border);
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--color-text-dim);
+}
+
+/* Glitch Animation */
+.u-glitch-text {
+    position: relative;
+}
+
+@keyframes glitch {
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(-2px, -2px); }
+    60% { transform: translate(2px, 2px); }
+    80% { transform: translate(2px, -2px); }
+    100% { transform: translate(0); }
+}
+
+.u-glitch-text:hover {
+    animation: glitch 0.3s infinite;
+}

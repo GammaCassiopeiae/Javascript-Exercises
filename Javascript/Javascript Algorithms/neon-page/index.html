@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="NEON-GRID Architect Dashboard - Cyberpunk Interface">
+    <title>NEON-GRID // SYSTEM_DASHBOARD</title>
+    <!-- Fonts: Orbitron for headers, Rajdhani for body, Fira Code for data -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500&family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="l-body">
+    <!-- Directive 114: Scanline Overlay -->
+    <div class="u-scanlines" aria-hidden="true"></div>
+
+    <header class="c-header" id="js-header">
+        <div class="c-header__brand">
+            <h1 class="c-header__title u-glitch-text" data-text="NEON-GRID">NEON-GRID</h1>
+            <span class="c-header__status-dot"></span>
+        </div>
+        <nav class="c-header__nav">
+            <ul class="c-header__list">
+                <li class="c-header__item"><a href="#" class="c-header__link is-active">CORE_LOAD</a></li>
+                <li class="c-header__item"><a href="#" class="c-header__link">NET_TRAFFIC</a></li>
+                <li class="c-header__item"><a href="#" class="c-header__link">SECURITY_LOG</a></li>
+            </ul>
+        </nav>
+        <div class="c-header__user">
+            <span class="c-header__user-id" id="js-user-id">USER_ID: ARCHITECT_01</span>
+        </div>
+    </header>
+
+    <aside class="c-sidebar" id="js-sidebar">
+        <div class="c-sidebar__inner">
+            <section class="c-sidebar__group">
+                <h2 class="c-sidebar__label">SYSTEM_NAVIGATION</h2>
+                <button class="c-btn c-btn--sidebar is-active" type="button" id="js-nav-dash">
+                    <span class="c-btn__icon"></span> OVERVIEW
+                </button>
+                <button class="c-btn c-btn--sidebar" type="button" id="js-nav-nodes">
+                    <span class="c-btn__icon"></span> NODE_MAP
+                </button>
+                <button class="c-btn c-btn--sidebar" type="button" id="js-nav-terminal">
+                    <span class="c-btn__icon"></span> TERMINAL
+                </button>
+            </section>
+            
+            <section class="c-sidebar__group u-mt-auto">
+                <div class="c-stat-mini">
+                    <span class="c-stat-mini__label">UPTIME</span>
+                    <span class="c-stat-mini__value" id="js-uptime">00:00:00:00</span>
+                </div>
+            </section>
+        </div>
+    </aside>
+
+    <main class="l-main" id="js-main-content">
+        <div class="l-grid-container">
+            <!-- Stats Row -->
+            <section class="c-card-grid">
+                <article class="c-card c-card--neon-cyan">
+                    <header class="c-card__header">
+                        <h3 class="c-card__title">CPU_CORE_PRECENTAGE</h3>
+                    </header>
+                    <div class="c-card__body">
+                        <div class="c-gauge">
+                            <span class="c-gauge__value" id="js-cpu-val">00</span>
+                            <span class="c-gauge__unit">%</span>
+                        </div>
+                        <div class="c-progress-bar">
+                            <div class="c-progress-bar__fill" id="js-cpu-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="c-card c-card--neon-magenta">
+                    <header class="c-card__header">
+                        <h3 class="c-card__title">MEMORY_ALLOCATION</h3>
+                    </header>
+                    <div class="c-card__body">
+                        <div class="c-gauge">
+                            <span class="c-gauge__value" id="js-mem-val">00</span>
+                            <span class="c-gauge__unit">GB</span>
+                        </div>
+                        <div class="c-progress-bar">
+                            <div class="c-progress-bar__fill" id="js-mem-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="c-card c-card--neon-yellow">
+                    <header class="c-card__header">
+                        <h3 class="c-card__title">NETWORK_LATENCY</h3>
+                    </header>
+                    <div class="c-card__body">
+                        <div class="c-gauge">
+                            <span class="c-gauge__value" id="js-ping-val">00</span>
+                            <span class="c-gauge__unit">MS</span>
+                        </div>
+                        <div class="c-progress-bar">
+                            <div class="c-progress-bar__fill" id="js-ping-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </article>
+            </section>
+
+            <!-- Data Viz Section -->
+            <section class="l-row u-mt-large">
+                <article class="c-card c-card--full-width c-card--glass">
+                    <header class="c-card__header c-card__header--flex">
+                        <h3 class="c-card__title">ACTIVE_SIGNAL_FLOW</h3>
+                        <div class="c-card__actions">
+                            <span class="u-text-code">STREAM: LIVE</span>
+                        </div>
+                    </header>
+                    <div class="c-card__body c-card__body--visual">
+                        <div class="c-visualizer" id="js-visualizer">
+                            <!-- JS will inject nodes here -->
+                        </div>
+                    </div>
+                </article>
+            </section>
+
+            <!-- Bottom Row: Terminal and Form -->
+            <section class="l-grid-two-col u-mt-large">
+                <article class="c-card c-card--terminal">
+                    <header class="c-card__header">
+                        <h3 class="c-card__title">SYSTEM_LOGS</h3>
+                    </header>
+                    <div class="c-card__body c-card__body--terminal" id="js-terminal">
+                        <div class="c-terminal__line">> INITIALIZING NEON_GRID...</div>
+                        <div class="c-terminal__line">> KERNEL: ACTIVE</div>
+                    </div>
+                </article>
+
+                <article class="c-card c-card--glass">
+                    <header class="c-card__header">
+                        <h3 class="c-card__title">NODE_CONFIGURATION</h3>
+                    </header>
+                    <form class="c-form" id="js-config-form">
+                        <div class="c-form__group">
+                            <label for="node-name" class="c-form__label">NODE_IDENTIFIER</label>
+                            <input type="text" id="node-name" class="c-form__input" placeholder="e.g. SECTOR_7G" required>
+                        </div>
+                        <div class="c-form__group">
+                            <label for="power-level" class="c-form__label">POWER_OUTPUT_THRUST</label>
+                            <input type="range" id="power-level" class="c-form__range" min="0" max="100" value="50">
+                        </div>
+                        <div class="c-form__group u-flex-row">
+                            <button type="submit" class="c-btn c-btn--primary">SYNC_NODE</button>
+                            <button type="reset" class="c-btn c-btn--outline">RESET</button>
+                        </div>
+                    </form>
+                </article>
+            </section>
+        </div>
+    </main>
+
+    <footer class="c-footer">
+        <div class="c-footer__content">
+            <p class="c-footer__text">© 2026 NEON-GRID ARCHITECTS // ENCRYPTED_CONNECTION</p>
+            <address class="c-footer__address">SECTOR_01 // GRID_COORDS: 40.7128° N, 74.0060° W</address>
+        </div>
+    </footer>
+
+    <!-- Template for JS Injection -->
+    <template id="js-log-template">
+        <div class="c-terminal__line"></div>
+    </template>
+
+    <script src="main.js" defer></script>
+</body>
+</html>

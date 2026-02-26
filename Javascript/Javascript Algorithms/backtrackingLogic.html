@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Backtracking - N-Queens</title>
+    <style>
+        body { font-family: Arial; display: flex; flex-direction: column; align-items: center; background: #2c3e50; color: white; }
+        #board { display: grid; grid-template-columns: repeat(8, 50px); gap: 0; border: 2px solid #333; }
+        .square { width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; position: relative; }
+        .white { background-color: #f0d9b5; }
+        .black { background-color: #b58863; }
+        /* Fixed: Changed absolute to relative-friendly sizing */
+        .queen::after { content: '♛'; font-size: 35px; color: #2c3e50; }
+        .queen { background: #f1c40f !important; transition: background 0.3s; }
+    </style>
+</head>
+<body>
+    <h2>N-Queens Backtracking Visualizer</h2>
+    <div id="board"></div>
+    <p id="status">Finding solution...</p>
+
+    <script>
+        const N = 8;
+        let board = Array.from({length: N}, () => Array(N).fill(false));
+
+        // Create the UI first
+        function createBoardUI() {
+            const boardDiv = document.getElementById('board');
+            for (let row = 0; row < N; row++) {
+                for (let col = 0; col < N; col++) {
+                    const square = document.createElement('div');
+                    square.classList.add('square');
+                    square.id = `s-${row}-${col}`;
+                    square.classList.add((row + col) % 2 === 0 ? 'white' : 'black');
+                    boardDiv.appendChild(square);
+                }
+            }
+        }
+
+        // Logic to update the UI
+        function toggleQueenUI(row, col, isPlacing) {
+            const square = document.getElementById(`s-${row}-${col}`);
+            if (isPlacing) square.classList.add('queen');
+            else square.classList.remove('queen');
+        }
+
+        // Delay function to make backtracking visible
+        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+        async function solve(row) {
+            if (row >= N) return true;
+
+            for (let col = 0; col < N; col++) {
+                if (isValid(row, col)) {
+                    // Place queen
+                    board[row][col] = true;
+                    toggleQueenUI(row, col, true);
+                    
+                    await sleep(50); // Logic: Added delay to see the process
+
+                    if (await solve(row + 1)) return true;
+
+                    // Backtrack
+                    board[row][col] = false;
+                    toggleQueenUI(row, col, false);
+                }
+            }
+            return false;
+        }
+
+        function isValid(row, col) {
+            for (let i = 0; i < row; i++) if (board[i][col]) return false;
+            for (let i=row-1, j=col-1; i>=0 && j>=0; i--, j--) if (board[i][j]) return false;
+            for (let i=row-1, j=col+1; i>=0 && j<N; i--, j++) if (board[i][j]) return false;
+            return true;
+        }
+
+        // Execution
+        createBoardUI();
+        solve(0).then(found => {
+            document.getElementById('status').innerText = found ? "Solution Found!" : "No Solution.";
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Simple Todo App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f2f2f2;
+    }
+
+    .app {
+      max-width: 600px;
+      margin: auto;
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .todo-list {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .todo-item {
+      background-color: #e0e0e0;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>Simple Todo App</h1>
+    <input type="text" id="new-task-input" placeholder="Enter a new task...">
+    <button onclick="addTodo()">Add Task</button>
+
+    <ul class="todo-list" id="todo-list"></ul>
+  </div>
+
+  <script>
+    function addTodo() {
+      var input = document.getElementById('new-task-input');
+      var value = input.value.trim();
+
+      if (!value) return;
+
+      // Create a new li element
+      var todoItem = document.createElement('li');
+      todoItem.className = 'todo-item';
+
+      // Add a text node with the task content
+      var textNode = document.createTextNode(value);
+      todoItem.appendChild(textNode);
+
+      // Add a button to delete the task
+      var deleteButton = document.createElement('button');
+      deleteButton.textContent = 'Delete';
+      deleteButton.style.marginTop = '10px';
+
+      deleteButton.onclick = function() {
+        var parent = this.parentNode;
+        parent.removeChild(parent.firstChild); // Remove text node
+        parent.removeChild(this); // Remove delete button
+      };
+
+      // Append the delete button to the todo item
+      todoItem.appendChild(deleteButton);
+
+      // Append the todo item to the todo list
+      document.getElementById('todo-list').appendChild(todoItem);
+
+      // Reset the input field
+      input.value = '';
+    }
+  </script>
+</body>
+</html>

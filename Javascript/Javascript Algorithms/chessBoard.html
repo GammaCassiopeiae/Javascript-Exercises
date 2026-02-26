@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Backtracking - N-Queens</title>
+    <style>
+        body { font-family: Arial; }
+        #board { display: grid; grid-template-columns: repeat(8, 50px); gap: 2px; margin: 20px auto; width: 400px; }
+        .square { width: 50px; height: 50px; }
+        .white { background-color: #f0d9b5; }
+        .black { background-color: #b58863; }
+        .queen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: gold; border-radius: 50%;}
+    </style>
+</head>
+<body>
+    <h2 style="text-align:center;">N-Queens Backtracking Solution</h2>
+    <div id="board"></div>
+    
+    <script>
+        const N = 8;
+        let board = Array.from({length: N}, () => Array(N).fill(false));
+        
+        function solve() {
+            if (placeQueen(0)) {
+                displayBoard();
+                return true;
+            }
+            return false;
+        }
+        
+        function placeQueen(row) {
+            if (row >= N) return true;
+            
+            for (let col = 0; col < N; col++) {
+                if (isValid(row, col)) {
+                    board[row][col] = true;
+                    document.querySelector(`#board .square:nth-child(${col + 1 + row*N})`).classList.add('queen');
+                    
+                    if (placeQueen(row + 1)) return true;
+                    
+                    board[row][col] = false;
+                    document.querySelector(`#board .square:nth-child(${col + 1 + row*N})`).classList.remove('queen');
+                }
+            }
+            return false;
+        }
+        
+        function isValid(row, col) {
+            // Check column
+            for (let i = 0; i < row; i++) {
+                if (board[i][col]) return false;
+            }
+            
+            // Check upper left diagonal
+            let i = row - 1, j = col - 1;
+            while (i >= 0 && j >= 0) {
+                if (board[i][j]) return false;
+                i--; j--;
+            }
+            
+            // Check upper right diagonal
+            i = row - 1, j = col + 1;
+            while (i >= 0 && j < N) {
+                if (board[i][j]) return false;
+                i--; j++;
+            }
+            
+            return true;
+        }
+        
+        function displayBoard() {
+            const boardDiv = document.getElementById('board');
+            boardDiv.innerHTML = '';
+            
+            for (let row = 0; row < N; row++) {
+                for (let col = 0; col < N; col++) {
+                    const square = document.createElement('div');
+                    square.classList.add('square');
+                    
+                    if ((row + col) % 2 === 0) {
+                        square.classList.add('white');
+                    } else {
+                        square.classList.add('black');
+                    }
+                    
+                    boardDiv.appendChild(square);
+                }
+            }
+        }
+        
+        // Initialize board
+        displayBoard();
+        solve();
+    </script>
+</body>
+</html>

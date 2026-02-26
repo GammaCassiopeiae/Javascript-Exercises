@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorting Algorithms</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            margin: 2rem;
+        }
+        .container {
+            width: 80%;
+            max-width: 1600px;
+            padding: 2rem;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        h2{
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .algorithm-card {
+            background-color: #222;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+        }
+        .algorithm-card:hover {
+            transform: scale(1.05);
+        }
+        .code-block {
+            background-color: #333;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+        .explanation {
+            margin-top: 1rem;
+            color: #eee;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sorting Algorithms</h1>
+    <h2>Algorithms for sorting array data from left to the right</h2>
+    <div class="container">
+        <!-- Bubble Sort -->
+        <div class="algorithm-card">
+            <h2>Bubble Sort</h2>
+            <div class="code-block">
+                <pre>
+function bubbleSort(arr) {
+    let n = arr.length;
+    for (let i = 0; i < n - 1; i++) {
+        for (let j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                // Swap elements
+                let temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+        }
+    }
+}
+</pre>
+                <div class="explanation">
+                    Bubble Sort repeatedly compares adjacent elements and swaps them if they are in the wrong order. This process is repeated until the list is sorted.
+                </div>
+            </div>
+        </div>
+
+        <!-- Selection Sort -->
+        <div class="algorithm-card">
+            <h2>Selection Sort</h2>
+            <div class="code-block">
+                <pre>
+function selectionSort(arr) {
+    let n = arr.length;
+    for (let i = 0; i < n - 1; i++) {
+        let minIndex = i;
+        for (let j = i + 1; j < n; j++) {
+            if (arr[j] < arr[minIndex]) minIndex = j;
+        }
+        // Swap the found minimum element with the first element
+        let temp = arr[i];
+        arr[i] = arr[minIndex];
+        arr[minIndex] = temp;
+    }
+}
+</pre>
+                <div class="explanation">
+                    Selection Sort divides the array into a sorted and unsorted region. It repeatedly finds the minimum element from the unsorted region and moves it to the beginning.
+                </div>
+            </div>
+        </div>
+
+        <!-- Insertion Sort -->
+        <div class="algorithm-card">
+            <h2>Insertion Sort</h2>
+            <div class="code-block">
+                <pre>
+function insertionSort(arr) {
+    let n = arr.length;
+    for (let i = 1; i < n; i++) {
+        let key = arr[i];
+        let j = i - 1;
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+}
+</pre>
+                <div class="explanation">
+                    Insertion Sort builds the sorted array one element at a time by inserting each new element into its correct position in the already sorted part.
+                </div>
+
+        <!-- Merge Sort -->
+        <div class="algorithm-card">
+            <h2>Merge Sort</h2>
+            <div class="code-block">
+                <pre>
+function mergeSort(arr) {
+    if (arr.length <= 1) return arr;
+    const mid = Math.floor(arr.length / 2);
+    const left = arr.slice(0, mid);
+    const right = arr.slice(mid);
+
+    const sortedLeft = mergeSort(left);
+    const sortedRight = mergeSort(right);
+
+    return merge(sortedLeft, sortedRight);
+}
+
+function merge(left, right) {
+    let result = [];
+    let i = 0;
+    let j = 0;
+
+    while (i < left.length && j < right.length) {
+        if (left[i] <= right[j]) result.push(left[i]);
+        else result.push(right[j]);
+        i++;
+        j++;
+    }
+
+    return result.concat(left.slice(i)).concat(right.slice(j));
+}
+}
+</div>
+
+        <!-- Final Explanation -->
+        <div class="algorithm-card">
+            <h2>Final Notes</h2>
+            <div class="explanation">
+                This page displays four classic sorting algorithms with detailed explanations with the step-by-step logic.
+            </div>
+        </div>
+    </div>
+</body>
+</html>

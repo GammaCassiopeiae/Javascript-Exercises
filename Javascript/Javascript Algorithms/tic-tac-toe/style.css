@@ -1,0 +1,32 @@
+/* styles.css */
+body {
+    font-family: Arial, sans-serif;
+    background-color: black;
+}
+
+p {
+    color: #fff;
+    text-align: center;
+}
+
+#game-board {
+    display: grid;
+    grid-template-columns: repeat(3, 100px); /* Set fixed width */
+    grid-template-rows: repeat(3, 100px);    /* Set fixed height */
+    gap: 5px;
+    margin: 50px auto;
+    width: max-content;
+    background: limegreen;
+}
+
+.cell {
+    border: 2px solid #000;
+    text-align: center;
+    padding: 20px;
+    font-size: 48px;
+    cursor: pointer;
+}
+
+.cell:hover {
+    background-color: #f0f0f0;
+}

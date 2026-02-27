@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Ultimate Sorting Encyclopedia</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #000; color: #fff; margin: 0; padding: 2rem; }
+        .container { width: 90%; max-width: 1400px; margin: auto; }
+        h1 { text-align: center; color: #00d4ff; text-transform: uppercase; letter-spacing: 2px; }
+        h2 { text-align: center; color: #aaa; margin-bottom: 2rem; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 20px; }
+        .algorithm-card { background-color: #111; border: 1px solid #333; padding: 1.5rem; border-radius: 12px; transition: all 0.3s ease; display: flex; flex-direction: column; }
+        .algorithm-card:hover { transform: translateY(-5px); border-color: #00d4ff; box-shadow: 0 5px 15px rgba(0,212,255,0.2); }
+        .algorithm-card h3 { margin-top: 0; color: #00d4ff; border-bottom: 1px solid #222; padding-bottom: 10px; }
+        .code-block { background-color: #080808; padding: 1rem; border-radius: 6px; margin: 10px 0; overflow-x: auto; border-left: 4px solid #00d4ff; font-family: 'Courier New', Courier, monospace; font-size: 0.85rem; flex-grow: 1; }
+        .explanation { font-size: 0.9rem; color: #ccc; line-height: 1.4; margin-top: 10px; }
+        .complexity { margin-top: 15px; font-size: 0.8rem; font-weight: bold; color: #00ff88; }
+    </style>
+</head>
+<body>
+    <h1>The Sorting Encyclopedia</h1>
+    <h2>Algorithms: From Classic to Chaos</h2>
+    <div class="container">
+        <div class="grid">
+            <!-- 1. BUBBLE SORT (Fixed) -->
+            <div class="algorithm-card">
+                <h3>1. Bubble Sort</h3>
+                <div class="code-block"><pre>
+function bubbleSort(arr) {
+    let n = arr.length;
+    for (let i = 0; i < n; i++) {
+        for (let j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                [arr[j], arr[j+1]] = [arr[j+1], arr[j]];
+            }
+        }
+    }
+}</pre></div>
+                <p class="explanation">Repeatedly swaps adjacent elements if they are in the wrong order. Smallest values "bubble" to the top.</p>
+                <div class="complexity">Complexity: O(n²)</div>
+            </div>
+
+            <!-- 2. SELECTION SORT (Fixed) -->
+            <div class="algorithm-card">
+                <h3>2. Selection Sort</h3>
+                <div class="code-block"><pre>
+function selectionSort(arr) {
+    for (let i = 0; i < arr.length; i++) {
+        let min = i;
+        for (let j = i + 1; j < arr.length; j++) {
+            if (arr[j] < arr[min]) min = j;
+        }
+        if (min !== i) [arr[i], arr[min]] = [arr[min], arr[i]];
+    }
+}</pre></div>
+                <p class="explanation">Finds the minimum element from the unsorted part and puts it at the beginning.</p>
+                <div class="complexity">Complexity: O(n²)</div>
+            </div>
+
+            <!-- 3. INSERTION SORT (Fixed Div) -->
+            <div class="algorithm-card">
+                <h3>3. Insertion Sort</h3>
+                <div class="code-block"><pre>
+function insertionSort(arr) {
+    for (let i = 1; i < arr.length; i++) {
+        let key = arr[i], j = i - 1;
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+}</pre></div>
+                <p class="explanation">Builds the sorted array one item at a time, similar to how you sort playing cards.</p>
+                <div class="complexity">Complexity: O(n²)</div>
+            </div>
+
+            <!-- 4. MERGE SORT (Fixed Logic & Indices) -->
+            <div class="algorithm-card">
+                <h3>4. Merge Sort</h3>
+                <div class="code-block"><pre>
+function mergeSort(arr) {
+    if (arr.length <= 1) return arr;
+    const mid = Math.floor(arr.length / 2);
+    const left = mergeSort(arr.slice(0, mid));
+    const right = mergeSort(arr.slice(mid));
+    return merge(left, right);
+}
+function merge(L, R) {
+    let res = [], i = 0, j = 0;
+    while(i < L.length && j < R.length) {
+        res.push(L[i] < R[j] ? L[i++] : R[j++]);
+    }
+    return [...res, ...L.slice(i), ...R.slice(j)];
+}</pre></div>
+                <p class="explanation">A divide-and-conquer algorithm that splits the array in half, sorts them, and merges them.</p>
+                <div class="complexity">Complexity: O(n log n)</div>
+            </div>
+
+            <!-- 5. QUICK SORT -->
+            <div class="algorithm-card">
+                <h3>5. Quick Sort (Lomuto)</h3>
+                <div class="code-block"><pre>
+function quickSort(arr, low = 0, high = arr.length - 1) {
+    if (low < high) {
+        let pivot = partition(arr, low, high);
+        quickSort(arr, low, pivot - 1);
+        quickSort(arr, pivot + 1, high);
+    }
+}
+function partition(arr, low, high) {
+    let p = arr[high], i = low;
+    for (let j = low; j < high; j++) {
+        if (arr[j] < p) [arr[i], arr[j]] = [arr[j], arr[i++]];
+    }
+    [arr[i], arr[high]] = [arr[high], arr[i]];
+    return i;
+}</pre></div>
+                <p class="explanation">Picks a 'pivot' and partitions the array into elements less than and greater than the pivot.</p>
+                <div class="complexity">Complexity: O(n log n) Avg</div>
+            </div>
+
+            <!-- 6. HEAP SORT -->
+            <div class="algorithm-card">
+                <h3>6. Heap Sort</h3>
+                <div class="code-block"><pre>
+function heapSort(arr) {
+    let n = arr.length;
+    for (let i = Math.floor(n/2)-1; i >= 0; i--) heapify(arr, n, i);
+    for (let i = n - 1; i > 0; i--) {
+        [arr[0], arr[i]] = [arr[i], arr[0]];
+        heapify(arr, i, 0);
+    }
+}
+function heapify(arr, n, i) {
+    let largest = i, l = 2*i+1, r = 2*i+2;
+    if (l < n && arr[l] > arr[largest]) largest = l;
+    if (r < n && arr[r] > arr[largest]) largest = r;
+    if (largest != i) {
+        [arr[i], arr[largest]] = [arr[largest], arr[i]];
+        heapify(arr, n, largest);
+    }
+}</pre></div>
+                <p class="explanation">Uses a binary heap data structure to find the max element and move it to the end.</p>
+                <div class="complexity">Complexity: O(n log n)</div>
+            </div>
+
+            <!-- 7. SHELL SORT -->
+            <div class="algorithm-card">
+                <h3>7. Shell Sort</h3>
+                <div class="code-block"><pre>
+function shellSort(arr) {
+    let n = arr.length;
+    for (let gap = Math.floor(n/2); gap > 0; gap = Math.floor(gap/2)) {
+        for (let i = gap; i < n; i++) {
+            let temp = arr[i], j;
+            for (j = i; j >= gap && arr[j-gap] > temp; j -= gap) {
+                arr[j] = arr[j-gap];
+            }
+            arr[j] = temp;
+        }
+    }
+}</pre></div>
+                <p class="explanation">An optimization of Insertion Sort that allows the exchange of far-apart elements.</p>
+                <div class="complexity">Complexity: O(n log² n)</div>
+            </div>
+
+            <!-- 8. COCKTAIL SHAKER SORT -->
+            <div class="algorithm-card">
+                <h3>8. Cocktail Shaker Sort</h3>
+                <div class="code-block"><pre>
+function cocktailSort(arr) {
+    let start = 0, end = arr.length - 1, swapped = true;
+    while (swapped) {
+        swapped = false;
+        for (let i = start; i < end; i++) {
+            if (arr[i] > arr[i+1]) {
+                [arr[i], arr[i+1]] = [arr[i+1], arr[i]];
+                swapped = true;
+            }
+        }
+        if (!swapped) break;
+        end--;
+        for (let i = end - 1; i >= start; i--) {
+            if (arr[i] > arr[i+1]) {
+                [arr[i], arr[i+1]] = [arr[i+1], arr[i]];
+                swapped = true;
+            }
+        }
+        start++;
+    }
+}</pre></div>
+                <p class="explanation">A bi-directional variation of Bubble Sort that sorts in both directions each pass.</p>
+                <div class="complexity">Complexity: O(n²)</div>
+            </div>
+
+            <!-- 9. COMB SORT -->
+            <div class="algorithm-card">
+                <h3>9. Comb Sort</h3>
+                <div class="code-block"><pre>
+function combSort(arr) {
+    let gap = arr.length, shrink = 1.3, sorted = false;
+    while (!sorted) {
+        gap = Math.floor(gap / shrink);
+        if (gap <= 1) { gap = 1; sorted = true; }
+        for (let i = 0; i + gap < arr.length; i++) {
+            if (arr[i] > arr[i+gap]) {
+                [arr[i], arr[i+gap]] = [arr[i+gap], arr[i]];
+                sorted = false;
+            }
+        }
+    }
+}</pre></div>
+                <p class="explanation">Improves Bubble Sort by using a gap to eliminate "turtles" (small values at the end).</p>
+                <div class="complexity">Complexity: O(n log n)</div>
+            </div>
+
+            <!-- 10. GNOME SORT -->
+            <div class="algorithm-card">
+                <h3>10. Gnome Sort</h3>
+                <div class="code-block"><pre>
+function gnomeSort(arr) {
+    let i = 0;
+    while (i < arr.length) {
+        if (i == 0 || arr[i] >= arr[i-1]) i++;
+        else {
+            [arr[i], arr[i-1]] = [arr[i-1], arr[i]];
+            i--;
+        }
+    }
+}</pre></div>
+                <p class="explanation">Similar to Insertion Sort, but moves elements to their place by a series of swaps like a garden gnome.</p>
+                <div class="complexity">Complexity: O(n²)</div>
+            </div>
+
+            <!-- 11. COUNTING SORT -->
+            <div class="algorithm-card">
+                <h3>11. Counting Sort (Integers)</h3>
+                <div class="code-block"><pre>
+function countingSort(arr) {
+    let max = Math.max(...arr), min = Math.min(...arr);
+    let count = new Array(max - min + 1).fill(0);
+    arr.forEach(x => count[x - min]++);
+    let idx = 0;
+    count.forEach((val, i) => {
+        while (val--) arr[idx++] = i + min;
+    });
+}</pre></div>
+                <p class="explanation">Non-comparison sort that counts occurrences of each unique value.</p>
+                <div class="complexity">Complexity: O(n + k)</div>
+            </div>
+
+            <!-- 12. RADIX SORT -->
+            <div class="algorithm-card">
+                <h3>12. Radix Sort (LSD)</h3>
+                <div class="code-block"><pre>
+function radixSort(arr) {
+    const max = Math.max(...arr);
+    for (let exp = 1; Math.floor(max/exp) > 0; exp *= 10) {
+        countSortForRadix(arr, exp);
+    }
+}
+// Helper: Counting sort by digit
+</pre></div>
+                <p class="explanation">Sorts numbers digit by digit starting from the least significant digit.</p>
+                <div class="complexity">Complexity: O(nk)</div>
+            </div>
+
+            <!-- 13. BUCKET SORT -->
+            <div class="algorithm-card">
+                <h3>13. Bucket Sort</h3>
+                <div class="code-block"><pre>
+function bucketSort(arr, size = 5) {
+    let buckets = Array.from({length: size}, () => []);
+    let max = Math.max(...arr);
+    arr.forEach(val => {
+        let i = Math.floor((val/max) * (size-1));
+        buckets[i].push(val);
+    });
+    return buckets.flatMap(b => b.sort((a,b)=>a-b));
+}</pre></div>
+                <p class="explanation">Distributes elements into buckets, then sorts each bucket individually.</p>
+                <div class="complexity">Complexity: O(n + k) Avg</div>
+            </div>
+
+            <!-- 14. TIM SORT (Conceptual) -->
+            <div class="algorithm-card">
+                <h3>14. Tim Sort</h3>
+                <div class="code-block"><pre>
+// Used by V8 (Chrome/Node.js)
+// Hybrid of Merge and Insertion Sort.
+// It finds "runs" (already sorted segments)
+// and merges them efficiently.
+</pre></div>
+                <p class="explanation">Real-world hybrid algorithm used in Python and Java. High performance on real data.</p>
+                <div class="complexity">Complexity: O(n log n)</div>
+            </div>
+
+            <!-- 15. CYCLE SORT -->
+            <div class="algorithm-card">
+                <h3>15. Cycle Sort</h3>
+                <div class="code-block"><pre>
+function cycleSort(arr) {
+    for (let start = 0; start < arr.length - 1; start++) {
+        let item = arr[start], pos = start;
+        for (let i = start + 1; i < arr.length; i++) {
+            if (arr[i] < item) pos++;
+        }
+        if (pos == start) continue;
+        while (item == arr[pos]) pos++;
+        [arr[pos], item] = [item, arr[pos]];
+        // Continue rotating cycle...
+    }
+}</pre></div>
+                <p class="explanation">Minimizes memory writes. Useful when writing to memory is expensive (like Flash).</p>
+                <div class="complexity">Complexity: O(n²)</div>
+            </div>
+
+            <!-- 16. PIGEONHOLE SORT -->
+            <div class="algorithm-card">
+                <h3>16. Pigeonhole Sort</h3>
+                <div class="code-block"><pre>
+function pigeonholeSort(arr) {
+    let min = Math.min(...arr), max = Math.max(...arr);
+    let size = max - min + 1;
+    let holes = Array.from({length: size}, () => []);
+    arr.forEach(x => holes[x-min].push(x));
+    return holes.flat();
+}</pre></div>
+                <p class="explanation">Similar to Counting Sort but moves elements to "pigeonholes" (lists).</p>
+                <div class="complexity">Complexity: O(n + Range)</div>
+            </div>
+
+            <!-- 17. ODD-EVEN SORT -->
+            <div class="algorithm-card">
+                <h3>17. Odd-Even (Brick) Sort</h3>
+                <div class="code-block"><pre>
+function brickSort(arr) {
+    let sorted = false;
+    while (!sorted) {
+        sorted = true;
+        for (let i = 1; i < arr.length - 1; i += 2) {
+            if (arr[i] > arr[i+1]) {
+                [arr[i], arr[i+1]] = [arr[i+1], arr[i]];
+                sorted = false;
+            }
+        }
+        for (let i = 0; i < arr.length - 1; i += 2) {
+            if (arr[i] > arr[i+1]) {
+                [arr[i], arr[i+1]] = [arr[i+1], arr[i]];
+                sorted = false;
+            }
+        }
+    }
+}</pre></div>
+                <p class="explanation">Parallel sorting algorithm developed for use on multiprocessors with local interconnections.</p>
+                <div class="complexity">Complexity: O(n²)</div>
+            </div>
+
+            
+
+            <!-- 19. STOOGE SORT -->
+            <div class="algorithm-card">
+                <h3>19. Stooge Sort</h3>
+                <div class="code-block"><pre>
+function stoogeSort(arr, l=0, h=arr.length-1) {
+    if (arr[l] > arr[h]) [arr[l], arr[h]] = [arr[h], arr[l]];
+    if (h - l + 1 > 2) {
+        let t = Math.floor((h - l + 1) / 3);
+        stoogeSort(arr, l, h-t);
+        stoogeSort(arr, l+t, h);
+        stoogeSort(arr, l, h-t);
+    }
+}</pre></div>
+                <p class="explanation">A recursive sorting algorithm with a terrible time complexity. Mostly academic.</p>
+                <div class="complexity">Complexity: O(n^2.7095)</div>
+            </div>
+
+            <!-- 20. BOGO SORT (The Joke) -->
+            <div class="algorithm-card">
+                <h3>20. Bogo Sort</h3>
+                <div class="code-block"><pre>
+function bogoSort(arr) {
+    while (!isSorted(arr)) {
+        shuffle(arr);
+    }
+}
+function isSorted(arr) {
+    for(let i=1; i<arr.length; i++) 
+        if(arr[i-1] > arr[i]) return false;
+    return true;
+}</pre></div>
+                <p class="explanation">Randomly shuffles the array until it happens to be sorted. Extremely inefficient.</p>
+                <div class="complexity">Complexity: O((n+1)!)</div>
+            </div>
+
+            <!-- 21. PANKAKE SORT -->
+            <div class="algorithm-card">
+                <h3>21. Pancake Sort</h3>
+                <div class="code-block"><pre>
+function pancakeSort(arr) {
+    for (let curr = arr.length; curr > 1; curr--) {
+        let mi = findMax(arr, curr);
+        if (mi != curr - 1) {
+            flip(arr, mi);
+            flip(arr, curr - 1);
+        }
+    }
+}</pre></div>
+                <p class="explanation">Sorts an array by flipping the prefix (reversing a portion). Like flipping pancakes.</p>
+                <div class="complexity">Complexity: O(n²)</div>
+            </div>
+
+             
+            </div>
+        </div>
+    </div>
+</body>
+</html>

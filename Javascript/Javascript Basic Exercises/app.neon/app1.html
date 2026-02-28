@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon-Noir DOM API Dashboard</title>
+</head>
+<body>
+    <script>
+        /**
+         * NEON-GRID ARCHITECT ENGINE v2.0
+         * Generirano izključno prek DOM API po 200 direktivah.
+         */
+
+        // 1. INJECT CSS VARIABLES & GLOBAL STYLES (Directives 6, 26, 27, 51)
+        const css = `
+            :root {
+                --bg-dark: #050505;
+                --neon-primary: #00f3ff;
+                --neon-secondary: #ff00ff;
+                --neon-error: #ff0033;
+                --glass-bg: rgba(255, 255, 255, 0.05);
+                --radius-lg: 12px;
+                --transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+
+            * { box-sizing: border-box; margin: 0; padding: 0; }
+            
+            body { 
+                background-color: var(--bg-dark); 
+                color: #fff; 
+                font-family: 'Inter', sans-serif; 
+                line-height: 1.6; 
+                overflow-x: hidden;
+            }
+
+            /* Layout Engine */
+            .l-body { display: flex; flex-direction: column; min-height: 100vh; }
+            .l-main-wrapper { 
+                display: grid; 
+                grid-template-columns: 1fr clamp(250px, 20vw, 400px); 
+                gap: 2rem; padding: 2rem; flex: 1; 
+            }
+            .l-grid-12 { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.5rem; }
+
+            /* Components */
+            .c-header { 
+                display: flex; justify-content: space-between; align-items: center; 
+                padding: 1rem 2rem; background: var(--glass-bg); backdrop-filter: blur(10px);
+                border-bottom: 1px solid rgba(0, 243, 255, 0.2); position: sticky; top: 0; z-index: 1000;
+            }
+            .c-header__logo { font-weight: 800; letter-spacing: 2px; color: var(--neon-primary); text-shadow: 0 0 10px var(--neon-primary); }
+            .c-header__logo span { color: #fff; }
+
+            .c-card { 
+                background: var(--glass-bg); backdrop-filter: blur(15px); 
+                border: 1px solid rgba(255, 255, 255, 0.1); border-left: 2px solid var(--neon-primary);
+                padding: 1.5rem; border-radius: var(--radius-lg); transition: var(--transition);
+            }
+            .c-card:hover { transform: translateY(-5px); border-color: var(--neon-primary); box-shadow: 0 0 20px rgba(0, 243, 255, 0.2); }
+
+            .c-form__group { margin-bottom: 1.5rem; }
+            .c-form__label { display: block; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 0.5rem; color: var(--neon-primary); }
+            .c-form__input { 
+                width: 100%; background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.1); 
+                padding: 0.8rem; color: #fff; border-radius: 4px; caret-color: var(--neon-primary); transition: var(--transition);
+            }
+            .c-form__input:focus { outline: none; border-color: var(--neon-primary); box-shadow: 0 0 10px var(--neon-primary); }
+
+            .c-button--primary { 
+                background: transparent; border: 1px solid var(--neon-primary); color: var(--neon-primary);
+                padding: 0.8rem 1.5rem; text-transform: uppercase; font-weight: bold; cursor: pointer; transition: var(--transition);
+            }
+            .c-button--primary:hover { background: var(--neon-primary); color: #000; box-shadow: 0 0 20px var(--neon-primary); }
+
+            .c-status-indicator { font-weight: bold; color: var(--neon-primary); }
+            .c-status-indicator.is-active { text-shadow: 0 0 10px var(--neon-primary); }
+
+            .c-footer { padding: 2rem; background: #000; border-top: 1px solid rgba(255, 0, 255, 0.2); text-align: center; margin-top: auto; }
+
+            /* Utilities */
+            .u-text-gradient { 
+                background: linear-gradient(to right, var(--neon-primary), var(--neon-secondary)); 
+                -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+                font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: 2rem; 
+            }
+            .u-list-reset { list-style: none; }
+            .u-flex-center { display: flex; gap: 20px; }
+            .u-col-span-8 { grid-column: span 8; }
+            .u-col-span-4 { grid-column: span 4; }
+            .u-neon-text-red { color: var(--neon-error); text-shadow: 0 0 5px var(--neon-error); }
+            .u-neon-text-cyan { color: var(--neon-primary); }
+
+            @media (max-width: 992px) {
+                .l-main-wrapper { grid-template-columns: 1fr; }
+                .u-col-span-8, .u-col-span-4 { grid-column: span 12; }
+            }
+        `;
+
+        const styleSheet = document.createElement("style");
+        styleSheet.innerText = css;
+        document.head.appendChild(styleSheet);
+
+        // 2. DOM ELEMENT GENERATION (Directives 11-50)
+        const body = document.body;
+        body.className = "l-body";
+
+        // --- Header ---
+        const header = document.createElement("header");
+        header.className = "c-header";
+        
+        const logo = document.createElement("div");
+        logo.className = "c-header__logo";
+        logo.innerHTML = 'NEON<span>CORE</span>';
+        
+        const nav = document.createElement("nav");
+        nav.className = "c-header__nav";
+        const navList = document.createElement("ul");
+        navList.className = "u-list-reset u-flex-center";
+        
+        ["Nadzor", "Sistem", "Terminal"].forEach((text, i) => {
+            const li = document.createElement("li");
+            const a = document.createElement("a");
+            a.href = "#";
+            a.textContent = text;
+            a.style.textDecoration = "none";
+            a.style.color = i === 0 ? "var(--neon-primary)" : "#fff";
+            a.style.fontSize = "0.9rem";
+            li.appendChild(a);
+            navList.appendChild(li);
+        });
+
+        nav.appendChild(navList);
+        header.appendChild(logo);
+        header.appendChild(nav);
+        body.appendChild(header);
+
+        // --- Main Layout Wrapper ---
+        const mainWrapper = document.createElement("div");
+        mainWrapper.className = "l-main-wrapper";
+
+        const mainContent = document.createElement("main");
+        mainContent.className = "l-main-content";
+        
+        const section = document.createElement("section");
+        section.className = "c-section";
+
+        const h1 = document.createElement("h1");
+        h1.className = "u-text-gradient";
+        h1.textContent = "Sistemski Terminal";
+        section.appendChild(h1);
+
+        const grid12 = document.createElement("div");
+        grid12.className = "l-grid-12";
+
+        // Card 1: Configuration (Col 8)
+        const cardConfig = document.createElement("div");
+        cardConfig.className = "c-card u-col-span-8";
+        cardConfig.innerHTML = `<h2 style="margin-bottom:1.5rem">Konfiguracija Vozlišča</h2>`;
+        
+        const form = document.createElement("form");
+        form.className = "c-form";
+
+        const createInputGroup = (labelTxt, inputId, placeholder) => {
+            const group = document.createElement("div");
+            group.className = "c-form__group";
+            group.innerHTML = `<label class="c-form__label" for="${inputId}">${labelTxt}</label>`;
+            const input = document.createElement("input");
+            input.type = "text";
+            input.id = inputId;
+            input.placeholder = placeholder;
+            input.className = "c-form__input";
+            group.appendChild(input);
+            return group;
+        };
+
+        form.appendChild(createInputGroup("ID Vozlišča", "node-id", "PX-9900"));
+        
+        const submitBtn = document.createElement("button");
+        submitBtn.type = "submit";
+        submitBtn.className = "c-button--primary";
+        submitBtn.textContent = "Posodobi Protokol";
+        form.appendChild(submitBtn);
+        
+        cardConfig.appendChild(form);
+
+        // Card 2: Status (Col 4)
+        const cardStatus = document.createElement("div");
+        cardStatus.className = "c-card u-col-span-4";
+        cardStatus.innerHTML = `
+            <h2 style="margin-bottom:1rem">Status Energije</h2>
+            <div class="c-status-indicator is-active">MREŽA AKTIVNA</div>
+            <p style="margin-top:2rem; font-size:0.8rem; opacity:0.7">Obremenitev: 42%</p>
+        `;
+
+        grid12.appendChild(cardConfig);
+        grid12.appendChild(cardStatus);
+        section.appendChild(grid12);
+        mainContent.appendChild(section);
+
+        // --- Aside ---
+        const aside = document.createElement("aside");
+        aside.className = "l-aside";
+        const asideCard = document.createElement("div");
+        asideCard.className = "c-card";
+        asideCard.innerHTML = `
+            <h3 style="font-size:0.9rem; margin-bottom:1rem">Aktivna Opozorila</h3>
+            <ul class="u-list-reset">
+                <li class="u-neon-text-red">! Anomalija v sektorju 7</li>
+                <li class="u-neon-text-cyan">✓ Posodobitev končana</li>
+            </ul>
+        `;
+        aside.appendChild(asideCard);
+
+        mainWrapper.appendChild(mainContent);
+        mainWrapper.appendChild(aside);
+        body.appendChild(mainWrapper);
+
+        // --- Footer ---
+        const footer = document.createElement("footer");
+        footer.className = "c-footer";
+        footer.innerHTML = `
+            <p>&copy; 2024 NEON-NOIR SYSTEM. Vse pravice pridržane.</p>
+            <address style="font-style:normal; font-size:0.7rem; margin-top:0.5rem; opacity:0.5">Lokacija: SECTOR_01 // GRID_B</address>
+        `;
+        body.appendChild(footer);
+
+        // 3. LOGIC & INTERACTIVITY (Directives 117, 159)
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            submitBtn.textContent = "PROCESIRANJE...";
+            submitBtn.style.borderColor = "var(--neon-secondary)";
+            setTimeout(() => {
+                submitBtn.textContent = "POSODOBLJENO";
+                submitBtn.style.borderColor = "var(--neon-primary)";
+            }, 1000);
+        });
+
+    </script>
+</body>
+</html>

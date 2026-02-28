@@ -1,0 +1,167 @@
+/* 1. RESET & VARIABLE MASTER (Directives 6, 26, 27) */
+:root {
+    --bg-dark: #050505;
+    --neon-primary: #00f3ff;
+    --neon-secondary: #ff00ff;
+    --neon-error: #ff0033;
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --radius-lg: 12px;
+    --shadow-glow: 0 0 15px var(--neon-primary);
+    --transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* 2. LAYOUT ENGINE (Directives 11, 12, 66) */
+.l-body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.l-main-wrapper {
+    display: grid;
+    grid-template-columns: 1fr clamp(250px, 20vw, 400px); /* Directive 17 */
+    gap: 2rem;
+    padding: 2rem;
+    flex: 1;
+}
+
+@media (max-width: 992px) {
+    .l-main-wrapper { grid-template-columns: 1fr; }
+}
+
+/* 3. HEADER & NAV (Directives 16, 31) */
+.c-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.c-header__logo {
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: var(--neon-primary);
+    text-shadow: 0 0 10px var(--neon-primary);
+}
+
+/* 4. CARDS & GLASSMORPHISM (Directives 1, 105, 106) */
+.c-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: 2px solid var(--neon-primary); /* Directive 123 */
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+    transition: var(--transition);
+}
+
+.c-card:hover {
+    transform: translateY(-5px); /* Directive 116 */
+    border-color: var(--neon-primary);
+    box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+}
+
+/* 5. NEON FORMS (Directives 21, 119, 141) */
+.c-form__group {
+    margin-bottom: 1.5rem;
+}
+
+.c-form__label {
+    display: block;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    color: var(--neon-primary);
+}
+
+.c-form__input {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.8rem;
+    color: #fff;
+    border-radius: 4px;
+    caret-color: var(--neon-primary);
+    transition: var(--transition);
+}
+
+.c-form__input:focus {
+    outline: none;
+    border-color: var(--neon-primary);
+    box-shadow: 0 0 10px var(--neon-primary);
+}
+
+/* 6. BUTTONS (Directives 22, 164) */
+.c-button--primary {
+    background: transparent;
+    border: 1px solid var(--neon-primary);
+    color: var(--neon-primary);
+    padding: 0.8rem 1.5rem;
+    text-transform: uppercase;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 5px var(--neon-primary);
+    transition: var(--transition);
+}
+
+.c-button--primary:hover {
+    background: var(--neon-primary);
+    color: #000;
+    box-shadow: 0 0 20px var(--neon-primary);
+}
+
+/* 7. UTILITIES & GRID (Directives 55, 137) */
+.u-text-gradient {
+    background: linear-gradient(to right, var(--neon-primary), var(--neon-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    margin-bottom: 2rem;
+}
+
+.l-grid-12 {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 1.5rem;
+}
+
+.u-col-span-8 { grid-column: span 8; }
+.u-col-span-4 { grid-column: span 4; }
+
+@media (max-width: 768px) {
+    .u-col-span-8, .u-col-span-4 { grid-column: span 12; }
+}
+
+.c-footer {
+    padding: 2rem;
+    background: #000;
+    border-top: 1px solid rgba(255, 0, 255, 0.2);
+    text-align: center;
+    margin-top: auto;
+}
+
+.u-list-reset { list-style: none; }
+.u-flex-center { display: flex; gap: 20px; }
+.u-neon-text-red { color: var(--neon-error); text-shadow: 0 0 5px var(--neon-error); }
+.u-neon-text-cyan { color: var(--neon-primary); }

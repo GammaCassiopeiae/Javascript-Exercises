@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Vizualizacija: Segmentno drevo</title>
+    <style>
+        :root { --node-bg: #1dd1a1; --range-color: #54a0ff; --line: #c8d6e5; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f5f6fa; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 95%; max-width: 900px; text-align: center; }
+        
+        /* Osnovno polje */
+        .array-view { display: flex; justify-content: center; gap: 8px; margin-bottom: 30px; }
+        .cell { border: 2px solid #2f3542; padding: 10px; min-width: 40px; border-radius: 4px; background: #fff; position: relative; }
+        .cell-idx { position: absolute; top: -18px; left: 0; width: 100%; font-size: 0.7rem; color: #888; }
+        .cell.highlight { background: var(--range-color); color: white; border-color: #2e86de; }
+
+        #treeCanvas { position: relative; width: 100%; height: 350px; margin-top: 40px; }
+        .node {
+            padding: 5px 10px; background: var(--node-bg); color: white; border-radius: 8px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-weight: bold; position: absolute; z-index: 2; transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-size: 0.9rem; border: 1px solid #10ac84;
+        }
+        .node-range { font-size: 0.6rem; opacity: 0.9; font-weight: normal; }
+        .line { position: absolute; background: var(--line); height: 2px; transform-origin: 0 0; z-index: 1; }
+
+        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; }
+        input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 60px; margin: 0 5px; }
+        button { padding: 10px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; color: white; background: #2f3542; }
+        .btn-query { background: var(--range-color); }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Segmentno drevo (Segment Tree)</h2>
+        <p>Učinkovito računanje vsot v intervalih in posodabljanje vrednosti.</p>
+
+        <div class="array-view" id="arrayDisplay"></div>
+        <div id="treeCanvas"></div>
+
+        <div class="controls">
+            <div>
+                Posodobi: Indeks <input type="number" id="updIdx" min="0" max="7" value="0"> 
+                na <input type="number" id="updVal" value="10">
+                <button onclick="updateValue()">Shrani</button>
+            </div>
+            <div>
+                Vsota od <input type="number" id="qStart" min="0" max="7" value="0"> 
+                do <input type="number" id="qEnd" min="0" max="7" value="3">
+                <button class="btn-query" onclick="queryRange()">Izračunaj</button>
+            </div>
+        </div>
+        <p id="status" style="margin-top:15px; font-weight: bold; color: #2f3542;">Rezultat poizvedbe: -</p>
+    </div>
+
+    <script>
+        let data = [1, 3, 5, 7, 9, 11, 13, 15];
+        let n = data.length;
+        let tree = new Array(2 * n);
+
+        // Zgradimo drevo (Iterativna verzija)
+        function build() {
+            for (let i = 0; i < n; i++) tree[n + i] = data[i];
+            for (let i = n - 1; i > 0; --i) tree[i] = tree[i << 1] + tree[i << 1 | 1];
+        }
+
+        function update(p, value) {
+            data[p] = value;
+            for (tree[p += n] = value; p > 1; p >>= 1) {
+                tree[p >> 1] = tree[p] + tree[p ^ 1];
+            }
+        }
+
+        function query(l, r) {
+            let res = 0;
+            for (l += n, r += n; l < r; l >>= 1, r >>= 1) {
+                if (l & 1) res += tree[l++];
+                if (r & 1) res += tree[--r];
+            }
+            return res;
+        }
+
+        const canvas = document.getElementById('treeCanvas');
+        const arrayDisplay = document.getElementById('arrayDisplay');
+
+        function render() {
+            canvas.innerHTML = '';
+            arrayDisplay.innerHTML = '';
+
+            // Izris polja
+            data.forEach((v, i) => {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.id = `cell-${i}`;
+                cell.innerHTML = `<span class="cell-idx">${i}</span>${v}`;
+                arrayDisplay.appendChild(cell);
+            });
+
+            // Vizualizacija drevesa (Rekurzivno za lepšo postavitev)
+            drawNode(1, 0, n - 1, canvas.offsetWidth / 2, 20, canvas.offsetWidth / 4);
+        }
+
+        function drawNode(v, tl, tr, x, y, step) {
+            const div = document.createElement('div');
+            div.className = 'node';
+            div.innerHTML = `<div>${tree[v]}</div><div class="node-range">[${tl}-${tr}]</div>`;
+            div.style.left = `${x - 25}px`;
+            div.style.top = `${y}px`;
+            canvas.appendChild(div);
+
+            if (tl !== tr) {
+                let tm = Math.floor((tl + tr) / 2);
+                let leftX = x - step;
+                let rightX = x + step;
+                let nextY = y + 75;
+
+                drawLine(x, y + 40, leftX, nextY);
+                drawLine(x, y + 40, rightX, nextY);
+
+                drawNode(2 * v, tl, tm, leftX, nextY, step / 2);
+                drawNode(2 * v + 1, tm + 1, tr, rightX, nextY, step / 2);
+            }
+        }
+
+        function drawLine(x1, y1, x2, y2) {
+            const len = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
+            const ang = Math.atan2(y2-y1, x2-x1) * 180 / Math.PI;
+            const line = document.createElement('div');
+            line.className = 'line';
+            line.style.width = `${len}px`;
+            line.style.left = `${x1}px`;
+            line.style.top = `${y1}px`;
+            line.style.transform = `rotate(${ang}deg)`;
+            canvas.appendChild(line);
+        }
+
+        function updateValue() {
+            const idx = parseInt(document.getElementById('updIdx').value);
+            const val = parseInt(document.getElementById('updVal').value);
+            update(idx, val);
+            render();
+        }
+
+        function queryRange() {
+            const l = parseInt(document.getElementById('qStart').value);
+            const r = parseInt(document.getElementById('qEnd').value);
+            
+            document.querySelectorAll('.cell').forEach(c => c.classList.remove('highlight'));
+            for(let i=l; i<=r; i++) document.getElementById(`cell-${i}`).classList.add('highlight');
+
+            const res = query(l, r + 1);
+            document.getElementById('status').innerText = `Vsota intervala [${l}, ${r}] je: ${res}`;
+        }
+
+        window.onresize = render;
+        build();
+        render();
+    </script>
+</body>
+</html>

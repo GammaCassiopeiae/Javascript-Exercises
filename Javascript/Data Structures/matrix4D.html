@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>4D Matrika (Tenzor) v DOM</title>
+    <style>
+        :root { --p4d: #d63031; --p3d: #6c5ce7; --bg: #f1f2f6; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 98%; text-align: center; }
+        
+        /* 4D Mreža (Sklad 3D objektov) */
+        .grid-4d { 
+            display: flex; gap: 40px; justify-content: center; flex-wrap: wrap; 
+            perspective: 1200px; margin: 30px 0; padding: 20px; background: #fafafa; border: 2px dashed #ccc;
+        }
+
+        .cube-3d { 
+            display: flex; gap: 10px; border: 2px solid var(--p4d); padding: 10px; border-radius: 8px; 
+            background: rgba(214, 48, 49, 0.05); position: relative;
+        }
+        .cube-label { position: absolute; top: -25px; left: 0; font-weight: bold; color: var(--p4d); font-size: 0.8rem; }
+
+        .layer { 
+            display: grid; gap: 2px; background: #636e72; padding: 4px; border-radius: 4px; 
+            transform: rotateX(15deg) rotateY(-10deg); box-shadow: 5px 5px 10px rgba(0,0,0,0.2);
+        }
+
+        .cell {
+            width: 20px; height: 20px; background: white; display: flex; align-items: center; 
+            justify-content: center; font-size: 0.6rem; font-weight: bold; border-radius: 2px;
+        }
+        .highlight { background: #ff7675 !important; color: white; transform: scale(1.4); z-index: 10; box-shadow: 0 0 10px red; }
+        
+        .controls { background: #f8f9fa; padding: 20px; border-radius: 10px; display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
+        .control-group { display: flex; flex-direction: column; align-items: center; }
+        input { width: 50px; padding: 8px; text-align: center; border: 1px solid #ddd; border-radius: 4px; margin-top: 5px; }
+        button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 6px; background: var(--p4d); color: white; font-weight: bold; align-self: flex-end; }
+        
+        #log { margin-top: 20px; font-family: monospace; font-size: 1.1rem; color: #2d3436; border-top: 2px solid #eee; padding-top: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>4D Matrika (4D Tensor)</h2>
+        <p>Struktura: <b>[Kocka][Plast][Vrstica][Stolpec]</b>. Skupaj 2 × 2 × 3 × 3 = 36 elementov.</p>
+
+        <div id="grid4d" class="grid-4d">
+            <!-- 4D struktura se generira tukaj -->
+        </div>
+
+        <div class="controls">
+            <div class="control-group">Kocka (x):<input type="number" id="x4" value="0" min="0" max="1"></div>
+            <div class="control-group">Plast (p):<input type="number" id="p4" value="0" min="0" max="1"></div>
+            <div class="control-group">Vrstica (r):<input type="number" id="r4" value="1" min="0" max="2"></div>
+            <div class="control-group">Stolpec (s):<input type="number" id="s4" value="1" min="0" max="2"></div>
+            <button onclick="access4D()">Dostopaj do elementa</button>
+        </div>
+
+        <div id="log">Izberite koordinate za dostop do podatka v 4D prostoru.</div>
+    </div>
+
+    <script>
+        // Generiranje 4D matrike [2][2][3][3] s poljubnimi vrednostmi
+        const mat4D = Array.from({ length: 2 }, (_, x) => 
+            Array.from({ length: 2 }, (_, p) => 
+                Array.from({ length: 3 }, (_, r) => 
+                    Array.from({ length: 3 }, (_, s) => Math.floor(Math.random() * 90 + 10))
+                )
+            )
+        );
+
+        function render() {
+            const g4 = document.getElementById('grid4d');
+            g4.innerHTML = '';
+
+            mat4D.forEach((cube, x) => {
+                const cubeDiv = document.createElement('div');
+                cubeDiv.className = 'cube-3d';
+                cubeDiv.innerHTML = `<div class="cube-label">Kocka ${x}</div>`;
+
+                cube.forEach((layer, p) => {
+                    const layerDiv = document.createElement('div');
+                    layerDiv.className = 'layer';
+                    layerDiv.style.gridTemplateColumns = `repeat(3, 1fr)`;
+
+                    layer.forEach((row, r) => {
+                        row.forEach((val, s) => {
+                            const cell = document.createElement('div');
+                            cell.className = 'cell';
+                            cell.id = `c4-${x}-${p}-${r}-${s}`;
+                            cell.innerText = val;
+                            layerDiv.appendChild(cell);
+                        });
+                    });
+                    cubeDiv.appendChild(layerDiv);
+                });
+                g4.appendChild(cubeDiv);
+            });
+        }
+
+        function access4D() {
+            const x = document.getElementById('x4').value;
+            const p = document.getElementById('p4').value;
+            const r = document.getElementById('r4').value;
+            const s = document.getElementById('s4').value;
+
+            document.querySelectorAll('.cell').forEach(c => c.classList.remove('highlight'));
+            
+            const targetId = `c4-${x}-${p}-${r}-${s}`;
+            const el = document.getElementById(targetId);
+            
+            if (el) {
+                el.classList.add('highlight');
+                const val = mat4D[x][p][r][s];
+                document.getElementById('log').innerHTML = 
+                    `Dostop: <b>matrika[${x}][${p}][${r}][${s}]</b> = <span style="color:red">${val}</span>`;
+            } else {
+                document.getElementById('log').innerText = "Napaka: Koordinate izven obsega!";
+            }
+        }
+
+        render();
+    </script>
+</body>
+</html>

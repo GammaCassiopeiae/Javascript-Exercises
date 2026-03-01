@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Vizualizacija: Matrika (2D Array)</title>
+    <style>
+        :root { --primary: #0984e3; --secondary: #6c5ce7; --bg: #f9f9fb; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
+        
+        /* Mreža matrike */
+        .matrix-grid { 
+            display: inline-grid; gap: 8px; padding: 20px; 
+            background: #2d3436; border-radius: 8px; border: 4px solid #636e72;
+            margin: 20px 0;
+        }
+        
+        .cell {
+            width: 50px; height: 50px; background: white; border-radius: 4px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-weight: bold; position: relative; transition: 0.3s;
+        }
+        .cell-idx { font-size: 0.6rem; color: #b2bec3; margin-top: 2px; }
+        .highlight { background: var(--secondary); color: white; transform: scale(1.1); }
+
+        .controls { display: flex; gap: 10px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+        input { padding: 8px; border: 1px solid #ddd; border-radius: 4px; width: 50px; text-align: center; }
+        button { padding: 10px 15px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; color: white; background: var(--primary); }
+        
+        #status { margin-top: 15px; font-family: monospace; color: #2d3436; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Matrika (Matrix / 2D Array)</h2>
+        <p>Podatki v vrsticah in stolpcih. Dostop: <code>matrika[r][c]</code>.</p>
+
+        <div id="matrixDisplay" class="matrix-grid">
+            <!-- Celice se generirajo tukaj -->
+        </div>
+
+        <div class="controls">
+            Vrstica (r): <input type="number" id="rowIn" value="1" min="0" max="2">
+            Stolpec (c): <input type="number" id="colIn" value="2" min="0" max="3">
+            <button onclick="accessCell()">Dostopaj</button>
+            <button onclick="transpose()" style="background:#00b894">Transponiraj</button>
+        </div>
+
+        <div id="status">Kliknite "Dostopaj", da vidite indeksni dostop.</div>
+    </div>
+
+    <script>
+        // Inicializacija 3x4 matrike (3 vrstice, 4 stolpci)
+        let matrix = [
+            [10, 20, 30, 40],
+            [50, 60, 70, 80],
+            [90, 11, 22, 33]
+        ];
+
+        function render() {
+            const display = document.getElementById('matrixDisplay');
+            const rows = matrix.length;
+            const cols = matrix[0].length;
+            
+            display.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+            display.innerHTML = '';
+
+            matrix.forEach((row, r) => {
+                row.forEach((val, c) => {
+                    const div = document.createElement('div');
+                    div.className = 'cell';
+                    div.id = `cell-${r}-${c}`;
+                    div.innerHTML = `
+                        <span>${val}</span>
+                        <span class="cell-idx">[${r}][${c}]</span>
+                    `;
+                    display.appendChild(div);
+                });
+            });
+        }
+
+        function accessCell() {
+            const r = parseInt(document.getElementById('rowIn').value);
+            const c = parseInt(document.getElementById('colIn').value);
+            const status = document.getElementById('status');
+
+            document.querySelectorAll('.cell').forEach(el => el.classList.remove('highlight'));
+
+            if (matrix[r] && matrix[r][c] !== undefined) {
+                const target = document.getElementById(`cell-${r}-${c}`);
+                target.classList.add('highlight');
+                status.innerText = `matrix[${r}][${c}] vrne vrednost ${matrix[r][c]}.`;
+            } else {
+                status.innerText = "Indeks izven obsega!";
+            }
+        }
+
+        // Operacija transponiranja (vrstice postanejo stolpci)
+        function transpose() {
+            const newMatrix = matrix[0].map((_, c) => matrix.map(row => row[c]));
+            matrix = newMatrix;
+            
+            // Posodobi omejitve za inpute
+            document.getElementById('rowIn').max = matrix.length - 1;
+            document.getElementById('colIn').max = matrix[0].length - 1;
+            
+            render();
+            document.getElementById('status').innerText = "Matrika je bila transponirana.";
+        }
+
+        render();
+    </script>
+</body>
+</html>

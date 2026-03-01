@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Vizualizacija: Matrika sosednosti</title>
+    <style>
+        :root { --primary: #0984e3; --bg: #f1f2f6; --active: #55efc4; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 95%; max-width: 800px; text-align: center; }
+        
+        /* Tabela matrike */
+        table { margin: 25px auto; border-collapse: collapse; background: white; }
+        th, td { width: 50px; height: 50px; border: 1px solid #dfe6e9; text-align: center; transition: 0.3s; }
+        th { background: #f8f9fa; color: #636e72; font-weight: bold; }
+        .node-label { background: var(--primary); color: white; }
+        
+        .cell-active { background: var(--active); color: #006266; font-weight: bold; }
+        .cell-zero { color: #ced4da; }
+        
+        .controls { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
+        select, button { padding: 10px; border-radius: 6px; border: 1px solid #ddd; font-weight: bold; }
+        button { cursor: pointer; background: var(--primary); color: white; border: none; }
+        
+        .info { font-size: 0.9rem; color: #636e72; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Matrika sosednosti (Adjacency Matrix)</h2>
+        <p>2D reprezentacija povezav v grafu.</p>
+
+        <div class="controls">
+            Vozlišče 1: 
+            <select id="nodeA">
+                <option value="0">A</option><option value="1">B</option>
+                <option value="2">C</option><option value="3">D</option>
+                <option value="4">E</option>
+            </select>
+            Vozlišče 2: 
+            <select id="nodeB">
+                <option value="0">A</option><option value="1">B</option>
+                <option value="2">C</option><option value="3">D</option>
+                <option value="4">E</option>
+            </select>
+            <button onclick="toggleEdge()">Preklopi povezavo</button>
+        </div>
+
+        <div id="matrixContainer">
+            <!-- Tabela se generira tukaj -->
+        </div>
+
+        <div class="info" id="status">
+            Matrika je simetrična, ker je graf neusmerjen. Diagonala (A-A, B-B...) je običajno 0.
+        </div>
+    </div>
+
+    <script>
+        const nodes = ['A', 'B', 'C', 'D', 'E'];
+        const size = nodes.length;
+        // Inicializacija 2D polja z ničlami
+        let matrix = Array.from({ length: size }, () => Array(size).fill(0));
+
+        function toggleEdge() {
+            const a = parseInt(document.getElementById('nodeA').value);
+            const b = parseInt(document.getElementById('nodeB').value);
+
+            if (a === b) {
+                alert("Povezava vozlišča s samim seboj (zanka) v tem primeru ni dovoljena.");
+                return;
+            }
+
+            // Preklopi vrednost (0 -> 1 ali 1 -> 0)
+            const newValue = matrix[a][b] === 0 ? 1 : 0;
+            matrix[a][b] = newValue;
+            matrix[b][a] = newValue; // Simetrija za neusmerjen graf
+
+            render();
+        }
+
+        function render() {
+            const container = document.getElementById('matrixContainer');
+            let html = '<table>';
+            
+            // Glava tabele
+            html += '<tr><th></th>';
+            nodes.forEach(n => html += `<th class="node-label">${n}</th>`);
+            html += '</tr>';
+
+            // Vrstice matrike
+            for (let i = 0; i < size; i++) {
+                html += `<tr><th class="node-label">${nodes[i]}</th>`;
+                for (let j = 0; j < size; j++) {
+                    const val = matrix[i][j];
+                    const className = val === 1 ? 'cell-active' : 'cell-zero';
+                    html += `<td class="${className}">${val}</td>`;
+                }
+                html += '</tr>';
+            }
+            html += '</table>';
+            
+            container.innerHTML = html;
+        }
+
+        // Začetni izris
+        render();
+    </script>
+</body>
+</html>

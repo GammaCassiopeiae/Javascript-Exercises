@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Vizualizacija: Union-Find (DSU)</title>
+    <style>
+        :root { --primary: #00cec9; --accent: #6c5ce7; --bg: #f0f2f5; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 95%; max-width: 800px; text-align: center; }
+        
+        /* Prikaz vozlišč */
+        .nodes-grid { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin: 30px 0; }
+        .node {
+            width: 60px; height: 80px; border: 2px solid #dfe6e9; border-radius: 8px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: white; transition: all 0.3s; position: relative;
+        }
+        .node-id { font-weight: bold; font-size: 1.2rem; color: #2d3436; }
+        .node-parent { font-size: 0.7rem; color: #b2bec3; margin-top: 5px; }
+        
+        .active { border-color: var(--accent); background: #f3f0ff; transform: translateY(-5px); }
+        .representative { border-color: var(--primary); background: #e0faf9; border-width: 3px; }
+
+        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: #f8f9fa; padding: 20px; border-radius: 8px; }
+        .control-group { display: flex; flex-direction: column; gap: 8px; }
+        input { padding: 10px; border: 1px solid #ddd; border-radius: 5px; text-align: center; }
+        button { padding: 10px; cursor: pointer; border: none; border-radius: 5px; font-weight: bold; color: white; transition: 0.2s; }
+        .btn-union { background: var(--accent); }
+        .btn-find { background: var(--primary); }
+
+        #log { margin-top: 20px; padding: 15px; background: #2d3436; color: #dfe6e9; border-radius: 6px; font-family: monospace; font-size: 0.85rem; text-align: left; min-height: 50px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Union-Find (Disjoint Set)</h2>
+        <p>Sledenje povezanim komponentam. Vozlišča z istim <b>predstavnikom</b> so v isti množici.</p>
+
+        <div class="nodes-grid" id="nodesGrid">
+            <!-- Vozlišča se generirajo tukaj -->
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Združi (Union)</label>
+                <div style="display:flex; gap:5px;">
+                    <input type="number" id="u1" placeholder="A" min="0" max="7" value="0">
+                    <input type="number" id="u2" placeholder="B" min="0" max="7" value="1">
+                </div>
+                <button class="btn-union" onclick="doUnion()">Izvedi Union</button>
+            </div>
+            <div class="control-group">
+                <label>Najdi predstavnika (Find)</label>
+                <input type="number" id="f1" placeholder="Vozlišče" min="0" max="7" value="0">
+                <button class="btn-find" onclick="doFind()">Izvedi Find</button>
+            </div>
+        </div>
+
+        <div id="log">Pripravljen. Vsako vozlišče je na začetku svoj starš (parent).</div>
+    </div>
+
+    <script>
+        const N = 8;
+        let parent = Array.from({length: N}, (_, i) => i);
+        let rank = Array.from({length: N}, () => 0);
+
+        function find(i) {
+            if (parent[i] === i) return i;
+            // Path Compression
+            parent[i] = find(parent[i]);
+            return parent[i];
+        }
+
+        function unite(i, j) {
+            let root_i = find(i);
+            let root_j = find(j);
+            if (root_i !== root_j) {
+                // Union by Rank
+                if (rank[root_i] < rank[root_j]) {
+                    parent[root_i] = root_j;
+                } else if (rank[root_i] > rank[root_j]) {
+                    parent[root_j] = root_i;
+                } else {
+                    parent[root_i] = root_j;
+                    rank[root_j]++;
+                }
+                return true;
+            }
+            return false;
+        }
+
+        function render() {
+            const grid = document.getElementById('nodesGrid');
+            grid.innerHTML = '';
+            for (let i = 0; i < N; i++) {
+                const isRep = parent[i] === i;
+                const div = document.createElement('div');
+                div.className = `node ${isRep ? 'representative' : ''}`;
+                div.id = `node-${i}`;
+                div.innerHTML = `
+                    <div class="node-id">${i}</div>
+                    <div class="node-parent">Starš: ${parent[i]}</div>
+                    <div style="font-size:0.5rem; color:#ccc">Rank: ${rank[i]}</div>
+                `;
+                grid.appendChild(div);
+            }
+        }
+
+        function doUnion() {
+            const a = parseInt(document.getElementById('u1').value);
+            const b = parseInt(document.getElementById('u2').value);
+            if (a < 0 || a >= N || b < 0 || b >= N) return;
+
+            const success = unite(a, b);
+            const log = document.getElementById('log');
+            if (success) {
+                log.innerText = `UNION(${a}, ${b}): Množici sta bili združeni.`;
+            } else {
+                log.innerText = `UNION(${a}, ${b}): Vozlišči sta že v isti množici!`;
+            }
+            render();
+        }
+
+        async function doFind() {
+            const a = parseInt(document.getElementById('f1').value);
+            if (a < 0 || a >= N) return;
+
+            document.querySelectorAll('.node').forEach(n => n.classList.remove('active'));
+            const log = document.getElementById('log');
+            
+            let curr = a;
+            let path = [];
+            while(true) {
+                path.push(curr);
+                document.getElementById(`node-${curr}`).classList.add('active');
+                if (parent[curr] === curr) break;
+                curr = parent[curr];
+                await new Promise(r => setTimeout(r, 400));
+            }
+            
+            // Sprožimo dejanski find s path compression za naslednji render
+            const root = find(a);
+            log.innerText = `FIND(${a}): Pot = ${path.join(' -> ')}. Predstavnik je ${root}.`;
+            render();
+        }
+
+        render();
+    </script>
+</body>
+</html>

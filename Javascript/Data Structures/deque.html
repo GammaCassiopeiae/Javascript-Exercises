@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Vizualizacija: Deque</title>
+    <style>
+        :root { --primary: #fdb827; --secondary: #212121; --bg: #fdfdfd; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { background: white; padding: 2rem; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); width: 100%; max-width: 700px; text-align: center; border: 1px solid #eee; }
+        
+        .deque-area { 
+            display: flex; align-items: center; justify-content: center;
+            min-height: 120px; border: 3px solid var(--secondary); border-radius: 15px;
+            margin: 40px 0; padding: 15px; gap: 10px; overflow-x: auto; background: #fafafa;
+        }
+        
+        .element {
+            min-width: 70px; height: 70px; background: var(--primary); color: var(--secondary);
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 10px; font-weight: 800; border: 2px solid var(--secondary);
+            animation: zoomIn 0.3s ease; position: relative;
+        }
+
+        .label { position: absolute; top: -25px; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; color: #888; width: 100%; }
+
+        @keyframes zoomIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .controls-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .group { display: flex; flex-direction: column; gap: 8px; padding: 10px; background: #f1f1f1; border-radius: 10px; }
+        h4 { margin: 0 0 5px 0; font-size: 0.9rem; color: #555; }
+        
+        input { padding: 12px; border: 2px solid #ddd; border-radius: 8px; text-align: center; font-size: 1rem; margin-bottom: 10px; }
+        button { padding: 10px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; transition: 0.2s; }
+        
+        .btn-add { background: var(--secondary); color: white; }
+        .btn-rem { background: #ff7675; color: white; }
+        button:hover { opacity: 0.9; transform: translateY(-2px); }
+        button:active { transform: translateY(0); }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Dvonizna vrsta (Deque)</h2>
+        <p>Vstavljanje in brisanje na <b>obeh koncih</b>.</p>
+
+        <div class="deque-area" id="dequeDisplay"></div>
+
+        <input type="text" id="dequeInput" placeholder="Vrednost" maxlength="5" style="width: 200px;">
+
+        <div class="controls-grid">
+            <div class="group">
+                <h4>FRONT (Začetek)</h4>
+                <button class="btn-add" onclick="addFront()">Unshift (Dodaj)</button>
+                <button class="btn-rem" onclick="remFront()">Shift (Odvzemi)</button>
+            </div>
+            <div class="group">
+                <h4>REAR (Konec)</h4>
+                <button class="btn-add" onclick="addRear()">Push (Dodaj)</button>
+                <button class="btn-rem" onclick="remRear()">Pop (Odvzemi)</button>
+            </div>
+        </div>
+        <p id="msg" style="margin-top: 20px; font-weight: 500; color: #444;"></p>
+    </div>
+
+    <script>
+        let deque = [];
+        const display = document.getElementById('dequeDisplay');
+        const input = document.getElementById('dequeInput');
+        const msg = document.getElementById('msg');
+
+        function update() {
+            display.innerHTML = '';
+            deque.forEach((val, idx) => {
+                const el = document.createElement('div');
+                el.className = 'element';
+                el.innerText = val;
+                
+                if (idx === 0) el.innerHTML += '<span class="label">Front</span>';
+                if (idx === deque.length - 1 && deque.length > 1) el.innerHTML += '<span class="label">Rear</span>';
+                
+                display.appendChild(el);
+            });
+        }
+
+        // Operacije na REAR (Konec)
+        function addRear() {
+            if (!input.value) return;
+            deque.push(input.value); // [Array.push](https://developer.mozilla.org)
+            msg.innerText = `Dodano "${input.value}" na konec (REAR).`;
+            input.value = ''; update();
+        }
+
+        function remRear() {
+            if (deque.length === 0) return msg.innerText = "Deque je prazen!";
+            const val = deque.pop(); // [Array.pop](https://developer.mozilla.org)
+            msg.innerText = `Odstranjeno "${val}" s konca (REAR).`;
+            update();
+        }
+
+        // Operacije na FRONT (Začetek)
+        function addFront() {
+            if (!input.value) return;
+            deque.unshift(input.value); // [Array.unshift](https://developer.mozilla.org)
+            msg.innerText = `Dodano "${input.value}" na začetek (FRONT).`;
+            input.value = ''; update();
+        }
+
+        function remFront() {
+            if (deque.length === 0) return msg.innerText = "Deque je prazen!";
+            const val = deque.shift(); // [Array.shift](https://developer.mozilla.org)
+            msg.innerText = `Odstranjeno "${val}" z začetka (FRONT).`;
+            update();
+        }
+    </script>
+</body>
+</html>

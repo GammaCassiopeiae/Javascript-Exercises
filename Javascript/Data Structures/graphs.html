@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Vizualizacija: Graf (Graph)</title>
+    <style>
+        :root { --node-color: #0984e3; --node-text: white; --edge-color: #b2bec3; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f5f6fa; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
+        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 95%; max-width: 900px; text-align: center; }
+        
+        #graphCanvas { 
+            position: relative; width: 100%; height: 500px; background: #fff; 
+            border: 2px solid #dfe6e9; border-radius: 8px; margin-top: 20px; 
+            overflow: hidden; cursor: crosshair;
+        }
+        
+        .node {
+            width: 40px; height: 40px; background: var(--node-color); color: var(--node-text);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; position: absolute; z-index: 10; user-select: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.2s;
+        }
+        .node:hover { transform: scale(1.1); }
+        .node.selected { background: #e17055; border: 3px solid #d63031; }
+
+        svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        line { stroke: var(--edge-color); stroke-width: 2; transition: stroke 0.3s; }
+
+        .controls { margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        button { padding: 10px 15px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; color: white; background: #2d3436; }
+        .btn-clear { background: #d63031; }
+        
+        .instructions { font-size: 0.85rem; color: #636e72; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Graf (Graph)</h2>
+        <p>Struktura vozlišč in povezav. Idealno za modeliranje omrežij.</p>
+
+        <div id="graphCanvas">
+            <svg id="svgEdges"></svg>
+        </div>
+
+        <div class="instructions">
+            <b>Navodila:</b> Klikni na prazno polje za <b>dodajanje vozlišča</b>. <br>
+            Klikni na dve različni vozlišči zaporedoma, da ju <b>povežeš</b>.
+        </div>
+
+        <div class="controls">
+            <button class="btn-clear" onclick="resetGraph()">Počisti vse</button>
+        </div>
+        <p id="status" style="margin-top:10px; font-weight: 500;"></p>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('graphCanvas');
+        const svg = document.getElementById('svgEdges');
+        const status = document.getElementById('status');
+        
+        let nodes = []; // { id, x, y, element }
+        let edges = []; // { from, to }
+        let selectedNode = null;
+        let nodeIdCounter = 0;
+
+        // Dodajanje vozlišča na klik
+        canvas.addEventListener('mousedown', (e) => {
+            if (e.target === canvas || e.target === svg) {
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                createNode(x, y);
+            }
+        });
+
+        function createNode(x, y) {
+            const id = String.fromCharCode(65 + (nodeIdCounter % 26)) + (nodeIdCounter >= 26 ? Math.floor(nodeIdCounter/26) : "");
+            nodeIdCounter++;
+
+            const el = document.createElement('div');
+            el.className = 'node';
+            el.innerText = id;
+            el.style.left = `${x - 20}px`;
+            el.style.top = `${y - 20}px`;
+            
+            const nodeObj = { id, x, y, el };
+            
+            el.onclick = (e) => {
+                e.stopPropagation();
+                handleNodeClick(nodeObj);
+            };
+
+            nodes.push(nodeObj);
+            canvas.appendChild(el);
+            status.innerText = `Dodano vozlišče ${id}.`;
+        }
+
+        function handleNodeClick(node) {
+            if (!selectedNode) {
+                selectedNode = node;
+                node.el.classList.add('selected');
+                status.innerText = `Izbrano vozlišče ${node.id}. Izberi drugo za povezavo.`;
+            } else if (selectedNode === node) {
+                selectedNode.el.classList.remove('selected');
+                selectedNode = null;
+                status.innerText = "Izbira preklicana.";
+            } else {
+                createEdge(selectedNode, node);
+                selectedNode.el.classList.remove('selected');
+                selectedNode = null;
+            }
+        }
+
+        function createEdge(n1, n2) {
+            // Preveri, če povezava že obstaja
+            const exists = edges.some(e => (e.from === n1 && e.to === n2) || (e.from === n2 && e.to === n1));
+            if (exists) {
+                status.innerText = "Povezava že obstaja!";
+                return;
+            }
+
+            const line = document.createElementNS("http://www.w3.org", "line");
+            line.setAttribute("x1", n1.x);
+            line.setAttribute("y1", n1.y);
+            line.setAttribute("x2", n2.x);
+            line.setAttribute("y2", n2.y);
+            
+            svg.appendChild(line);
+            edges.push({ from: n1, to: n2, line: line });
+            status.innerText = `Povezana vozlišča ${n1.id} in ${n2.id}.`;
+        }
+
+        function resetGraph() {
+            nodes.forEach(n => n.el.remove());
+            edges.forEach(e => e.line.remove());
+            nodes = [];
+            edges = [];
+            nodeIdCounter = 0;
+            selectedNode = null;
+            status.innerText = "Graf počiščen.";
+        }
+    </script>
+</body>
+</html>

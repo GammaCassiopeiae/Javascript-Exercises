@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Vizualizacija: Intervalno drevo</title>
+    <style>
+        :root { --primary: #0984e3; --accent: #d63031; --node-bg: #ffffff; --line: #b2bec3; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f5f6fa; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 95%; max-width: 900px; text-align: center; }
+        
+        #treeCanvas { position: relative; width: 100%; height: 400px; margin-top: 40px; border-bottom: 1px solid #eee; }
+        
+        .node {
+            width: 80px; height: 50px; background: var(--node-bg); border: 2px solid var(--primary);
+            border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-weight: bold; position: absolute; z-index: 2; transition: all 0.4s ease; font-size: 0.8rem;
+        }
+        .max-val { font-size: 0.65rem; color: var(--accent); font-weight: normal; margin-top: 2px; }
+        .line { position: absolute; background: var(--line); height: 2px; transform-origin: 0 0; z-index: 1; }
+
+        .controls { margin-top: 25px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; background: #f8f9fa; padding: 15px; border-radius: 8px; }
+        input { padding: 10px; border: 1px solid #ddd; border-radius: 6px; width: 60px; text-align: center; }
+        button { padding: 10px 18px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; color: white; background: var(--primary); }
+        .btn-query { background: #6c5ce7; }
+        
+        .overlap { background: #ffeaa7 !important; border-color: #fdcb6e !important; transform: scale(1.1); box-shadow: 0 0 15px #fdcb6e; }
+        #status { margin-top: 15px; font-weight: 500; color: #636e72; min-height: 1.5em; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Intervalno drevo (Interval Tree)</h2>
+        <p>Iskanje prekrivajočih se časovnih oken ali območij v <b>O(log n)</b> času.</p>
+
+        <div id="treeCanvas"></div>
+
+        <div class="controls">
+            Vstavi: [<input type="number" id="lowIn" value="15">, <input type="number" id="highIn" value="20">]
+            <button onclick="add()">Vstavi</button>
+
+            | Poizvedba: [<input type="number" id="qLow" value="10">, <input type="number" id="qHigh" value="16">]
+            <button class="btn-query" onclick="query()">Išči prekrivanje</button>
+            <button onclick="resetTree()" style="background:#b2bec3">Reset</button>
+        </div>
+        <p id="status">Vstavite intervale, da zgradite drevo. Rdeča vrednost (M) je največja meja v poddrevesu.</p>
+    </div>
+
+    <script>
+        class IntervalNode {
+            constructor(low, high) {
+                this.low = low;
+                this.high = high;
+                this.max = high;
+                this.left = null;
+                this.right = null;
+            }
+        }
+
+        let root = null;
+        const canvas = document.getElementById('treeCanvas');
+        const status = document.getElementById('status');
+
+        function insert(node, low, high) {
+            if (!node) return new IntervalNode(low, high);
+            
+            // BST logika po 'low' vrednosti
+            if (low < node.low) node.left = insert(node.left, low, high);
+            else node.right = insert(node.right, low, high);
+
+            // Posodobi 'max' vrednost med vračanjem iz rekurzije
+            if (node.max < high) node.max = high;
+            return node;
+        }
+
+        function doOverlap(l1, h1, l2, h2) {
+            return l1 <= h2 && l2 <= h1;
+        }
+
+        function findOverlaps(node, qLow, qHigh, results) {
+            if (!node) return;
+
+            if (doOverlap(node.low, node.high, qLow, qHigh)) {
+                results.push(node);
+            }
+
+            // Če obstaja levi otrok in je njegov 'max' >= qLow, pojdi levo
+            if (node.left && node.left.max >= qLow) {
+                findOverlaps(node.left, qLow, qHigh, results);
+            }
+            // Vedno preveri desno, saj se lahko intervali prekrivajo tudi tam
+            findOverlaps(node.right, qLow, qHigh, results);
+        }
+
+        function draw(node, x, y, step) {
+            if (!node) return;
+
+            if (node.left) {
+                drawLine(x, y, x - step, y + 80);
+                draw(node.left, x - step, y + 80, step / 2);
+            }
+            if (node.right) {
+                drawLine(x, y, x + step, y + 80);
+                draw(node.right, x + step, y + 80, step / 2);
+            }
+
+            const div = document.createElement('div');
+            div.className = 'node';
+            div.id = `node-${node.low}-${node.high}`;
+            div.innerHTML = `[${node.low}, ${node.high}] <div class="max-val">M: ${node.max}</div>`;
+            div.style.left = `${x - 40}px`;
+            div.style.top = `${y - 25}px`;
+            canvas.appendChild(div);
+        }
+
+        function drawLine(x1, y1, x2, y2) {
+            const len = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
+            const ang = Math.atan2(y2-y1, x2-x1) * 180 / Math.PI;
+            const line = document.createElement('div');
+            line.className = 'line';
+            line.style.width = `${len}px`;
+            line.style.left = `${x1}px`;
+            line.style.top = `${y1}px`;
+            line.style.transform = `rotate(${ang}deg)`;
+            canvas.appendChild(line);
+        }
+
+        function add() {
+            const low = parseInt(document.getElementById('lowIn').value);
+            const high = parseInt(document.getElementById('highIn').value);
+            if (isNaN(low) || isNaN(high) || low > high) return alert("Neveljaven interval!");
+            root = insert(root, low, high);
+            render();
+            status.innerText = `Vstavljen interval [${low}, ${high}].`;
+        }
+
+        function query() {
+            const qL = parseInt(document.getElementById('qLow').value);
+            const qH = parseInt(document.getElementById('qHigh').value);
+            document.querySelectorAll('.node').forEach(n => n.classList.remove('overlap'));
+            
+            let results = [];
+            findOverlaps(root, qL, qH, results);
+            
+            if (results.length > 0) {
+                results.forEach(n => {
+                    const el = document.getElementById(`node-${n.low}-${n.high}`);
+                    if (el) el.classList.add('overlap');
+                });
+                status.innerText = `Najdenih ${results.length} prekrivanj za [${qL}, ${qH}].`;
+            } else {
+                status.innerText = "Ni najdenih prekrivanj.";
+            }
+        }
+
+        function render() {
+            canvas.innerHTML = '';
+            if (root) draw(root, canvas.offsetWidth/2, 40, canvas.offsetWidth/4);
+        }
+
+        function resetTree() { root = null; render(); status.innerText = "Drevo ponastavljeno."; }
+        window.onresize = render;
+        render();
+    </script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Vizualizacija: Suffix Array</title>
+    <style>
+        :root { --primary: #6c5ce7; --highlight: #fd79a8; --bg: #f9f9fb; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 95%; max-width: 700px; text-align: center; }
+        
+        table { width: 100%; border-collapse: collapse; margin: 25px 0; background: white; font-size: 0.9rem; }
+        th, td { padding: 12px; border: 1px solid #dfe6e9; text-align: left; }
+        th { background: #f1f2f6; color: #2d3436; }
+        
+        .suffix-text { font-family: monospace; font-size: 1.1rem; }
+        .match { background: var(--highlight); color: white; border-radius: 2px; }
+        .index-col { width: 60px; font-weight: bold; color: var(--primary); text-align: center; }
+
+        .controls { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
+        input { padding: 10px; border: 2px solid #ddd; border-radius: 6px; flex-grow: 1; min-width: 150px; }
+        button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; color: white; background: var(--primary); }
+        
+        .search-box { background: #f1f2f6; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Pripone polje (Suffix Array)</h2>
+        <p>Urejeno polje vseh pripon niza. Omogoča bliskovito iskanje vzorcev.</p>
+
+        <div class="search-box">
+            <div class="controls">
+                <input type="text" id="mainText" placeholder="Vnesi glavni niz (npr. BANANA)" value="BANANA">
+                <button onclick="buildArray()">Zgradi polje</button>
+            </div>
+            <div class="controls">
+                <input type="text" id="patternInput" placeholder="Išči vzorec (npr. ANA)" oninput="searchPattern()">
+                <button style="background: var(--highlight)">Išči</button>
+            </div>
+        </div>
+
+        <div id="tableContainer">
+            <!-- Tabela se generira tukaj -->
+        </div>
+
+        <p id="status" style="font-weight: 500; color: #636e72;"></p>
+    </div>
+
+    <script>
+        let suffixArray = [];
+        let originalText = "";
+
+        function buildArray() {
+            originalText = document.getElementById('mainText').value.toUpperCase();
+            if (!originalText) return;
+
+            suffixArray = [];
+            for (let i = 0; i < originalText.length; i++) {
+                suffixArray.push({
+                    index: i,
+                    suffix: originalText.substring(i)
+                });
+            }
+
+            // Ključni korak: Sortiranje pripon po abecedi (Leksikografsko)
+            suffixArray.sort((a, b) => a.suffix.localeCompare(b.suffix));
+            
+            render();
+            searchPattern();
+        }
+
+        function render() {
+            const container = document.getElementById('tableContainer');
+            let html = `<table>
+                <thead>
+                    <tr>
+                        <th class="index-col">i</th>
+                        <th class="index-col">SA[i]</th>
+                        <th>Pripona (Suffix)</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+
+            suffixArray.forEach((item, i) => {
+                html += `
+                    <tr id="row-${i}">
+                        <td class="index-col" style="color:#b2bec3">${i}</td>
+                        <td class="index-col">${item.index}</td>
+                        <td class="suffix-text" id="text-${i}">${item.suffix}</td>
+                    </tr>`;
+            });
+
+            html += `</tbody></table>`;
+            container.innerHTML = html;
+        }
+
+        function searchPattern() {
+            const pattern = document.getElementById('patternInput').value.toUpperCase();
+            const status = document.getElementById('status');
+            
+            // Ponastavi barve
+            document.querySelectorAll('.suffix-text').forEach((td, i) => {
+                td.innerHTML = suffixArray[i].suffix;
+                td.parentElement.style.background = "white";
+            });
+
+            if (!pattern) {
+                status.innerText = "Vpišite vzorec za iskanje.";
+                return;
+            }
+
+            let foundCount = 0;
+            suffixArray.forEach((item, i) => {
+                if (item.suffix.startsWith(pattern)) {
+                    const td = document.getElementById(`text-${i}`);
+                    const matchedPart = item.suffix.substring(0, pattern.length);
+                    const restPart = item.suffix.substring(pattern.length);
+                    td.innerHTML = `<span class="match">${matchedPart}</span>${restPart}`;
+                    td.parentElement.style.background = "#fff0f6";
+                    foundCount++;
+                }
+            });
+
+            status.innerText = foundCount > 0 
+                ? `Najdenih ${foundCount} pojavitev vzorca.` 
+                : "Vzorec ni bil najden.";
+        }
+
+        // Začetni izris
+        buildArray();
+    </script>
+</body>
+</html>

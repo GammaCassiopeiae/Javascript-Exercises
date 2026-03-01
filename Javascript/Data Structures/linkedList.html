@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Vizualizacija: Povezani Seznam</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; align-items: center; background: #eef2f3; color: #333; }
+        .container { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin-top: 40px; width: 80%; max-width: 800px; text-align: center; }
+        .list-container { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0; margin: 40px 0; min-height: 100px; }
+        .node {
+            border: 2px solid #2c3e50; border-radius: 8px; display: flex; overflow: hidden; background: #fff;
+            animation: fadeIn 0.5s ease;
+        }
+        .node-data { padding: 15px 20px; background: #3498db; color: white; font-weight: bold; min-width: 40px; }
+        .node-next { padding: 15px 10px; background: #ecf0f1; color: #7f8c8d; font-family: monospace; border-left: 2px solid #2c3e50; }
+        .arrow { font-size: 24px; margin: 0 10px; color: #2c3e50; font-weight: bold; }
+        .null-pointer { font-weight: bold; color: #e74c3c; margin-left: 10px; }
+        .controls { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
+        input { padding: 10px; border: 2px solid #ddd; border-radius: 5px; outline: none; width: 120px; }
+        button { padding: 10px 20px; cursor: pointer; background: #2ecc71; color: white; border: none; border-radius: 5px; font-weight: bold; transition: 0.2s; }
+        button:hover { background: #27ae60; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Povezani Seznam (Linked List)</h2>
+        <p>Vozlišča so povezana s kazalci. Dostop je <b>sekvenčen</b> (O(n)).</p>
+
+        <div class="list-container" id="listVisual">
+            <!-- Vozlišča se generirajo tukaj -->
+        </div>
+
+        <div class="controls">
+            <input type="text" id="nodeValue" placeholder="Vrednost">
+            <button onclick="addNode()">Dodaj na konec</button>
+            <button onclick="clearList()" style="background:#e74c3c">Izprazni</button>
+        </div>
+        <p id="info">Vsako vozlišče pozna le svoj podatek in lokacijo naslednjega.</p>
+    </div>
+
+    <script>
+        // Logična struktura vozlišča
+        class Node {
+            constructor(data) {
+                this.data = data;
+                this.next = null;
+            }
+        }
+
+        // Logični razred seznama
+        class LinkedList {
+            constructor() { this.head = null; }
+            
+            append(data) {
+                const newNode = new Node(data);
+                if (!this.head) { this.head = newNode; } 
+                else {
+                    let current = this.head;
+                    while (current.next) { current = current.next; }
+                    current.next = newNode;
+                }
+                render();
+            }
+        }
+
+        const myLL = new LinkedList();
+        const visual = document.getElementById('listVisual');
+
+        // DOM API izris
+        function render() {
+            visual.innerHTML = '';
+            let current = myLL.head;
+
+            if (!current) {
+                visual.innerHTML = '<span class="null-pointer">Seznam je prazen (HEAD -> NULL)</span>';
+                return;
+            }
+
+            while (current) {
+                // Ustvari vozlišče
+                const nodeDiv = document.createElement('div');
+                nodeDiv.className = 'node';
+                nodeDiv.innerHTML = `
+                    <div class="node-data">${current.data}</div>
+                    <div class="node-next">${current.next ? 'ptr' : 'null'}</div>
+                `;
+                visual.appendChild(nodeDiv);
+
+                // Dodaj puščico, če obstaja naslednji
+                if (current.next) {
+                    const arrow = document.createElement('div');
+                    arrow.className = 'arrow';
+                    arrow.innerHTML = '→';
+                    visual.appendChild(arrow);
+                } else {
+                    const nullLabel = document.createElement('span');
+                    nullLabel.className = 'null-pointer';
+                    nullLabel.innerText = ' Ø';
+                    visual.appendChild(nullLabel);
+                }
+                current = current.next;
+            }
+        }
+
+        function addNode() {
+            const val = document.getElementById('nodeValue').value;
+            if (val) {
+                myLL.append(val);
+                document.getElementById('nodeValue').value = '';
+            }
+        }
+
+        function clearList() {
+            myLL.head = null;
+            render();
+        }
+
+        // Začetni izris
+        render();
+    </script>
+</body>
+</html>

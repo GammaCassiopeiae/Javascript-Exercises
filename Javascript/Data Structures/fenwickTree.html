@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Vizualizacija: Fenwick Tree (BIT)</title>
+    <style>
+        :root { --bit-bg: #6c5ce7; --array-bg: #fab1a0; --highlight: #00b894; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 95%; max-width: 850px; text-align: center; }
+        
+        .row { display: flex; justify-content: center; gap: 5px; margin: 20px 0; flex-wrap: wrap; }
+        .cell { 
+            width: 50px; height: 60px; border: 2px solid #2d3436; border-radius: 4px; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: white; transition: 0.3s; position: relative;
+        }
+        .cell b { font-size: 1.1rem; }
+        .cell span { font-size: 0.7rem; color: #636e72; position: absolute; bottom: 2px; }
+        .label { font-weight: bold; margin-bottom: 5px; color: #2d3436; }
+
+        .bit-cell { background: var(--bit-bg); color: white; border-color: #4834d4; }
+        .val-cell { background: var(--array-bg); }
+        .active { background: var(--highlight) !important; color: white; transform: scale(1.1); z-index: 10; }
+
+        .controls { display: flex; gap: 15px; justify-content: center; background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 20px; }
+        input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 60px; }
+        button { padding: 10px 15px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; color: white; background: #2d3436; }
+        .btn-query { background: var(--highlight); }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Fenwick Tree (BIT)</h2>
+        <p>Učinkovito posodabljanje in predponske vsote z uporabo bitne logike.</p>
+
+        <div class="label">Originalno Polje (A)</div>
+        <div class="row" id="arrayRow"></div>
+
+        <div class="label">Fenwick Tree Struktura (BIT)</div>
+        <div class="row" id="bitRow"></div>
+
+        <div class="controls">
+            <div>
+                Indeks <input type="number" id="updIdx" min="1" max="8" value="3"> 
+                dodaj <input type="number" id="updVal" value="5">
+                <button onclick="updateValue()">Update</button>
+            </div>
+            <div>
+                Vsota do indeksa <input type="number" id="qIdx" min="1" max="8" value="5">
+                <button class="btn-query" onclick="querySum()">Get Prefix Sum</button>
+            </div>
+        </div>
+        <p id="status" style="margin-top: 20px; font-weight: bold;">Rezultat: -</p>
+    </div>
+
+    <script>
+        // Fenwickovo drevo uporablja 1-bazirano indeksiranje za lažjo bitno logiko
+        let n = 8;
+        let A = [0, 3, 2, -1, 6, 5, 4, -3, 3]; // Indeks 0 ignoriramo
+        let BIT = new Array(n + 1).fill(0);
+
+        function updateBIT(idx, val) {
+            for (; idx <= n; idx += idx & -idx) {
+                BIT[idx] += val;
+            }
+        }
+
+        function getSum(idx) {
+            let s = 0;
+            for (; idx > 0; idx -= idx & -idx) {
+                s += BIT[idx];
+            }
+            return s;
+        }
+
+        // Inicializacija BIT-a
+        for (let i = 1; i <= n; i++) {
+            updateBIT(i, A[i]);
+        }
+
+        function render() {
+            const arrayRow = document.getElementById('arrayRow');
+            const bitRow = document.getElementById('bitRow');
+            arrayRow.innerHTML = '';
+            bitRow.innerHTML = '';
+
+            for (let i = 1; i <= n; i++) {
+                arrayRow.innerHTML += `<div class="cell val-cell" id="a-${i}"><b>${A[i]}</b><span>idx ${i}</span></div>`;
+                bitRow.innerHTML += `<div class="cell bit-cell" id="b-${i}"><b>${BIT[i]}</b><span>idx ${i}</span></div>`;
+            }
+        }
+
+        async function updateValue() {
+            const idx = parseInt(document.getElementById('updIdx').value);
+            const val = parseInt(document.getElementById('updVal').value);
+            if (idx < 1 || idx > n) return;
+
+            A[idx] += val;
+            
+            // Vizualizacija poti posodabljanja
+            let curr = idx;
+            while(curr <= n) {
+                const el = document.getElementById(`b-${curr}`);
+                el.classList.add('active');
+                BIT[curr] += val;
+                await new Promise(r => setTimeout(r, 400));
+                el.classList.remove('active');
+                curr += curr & -curr;
+            }
+            render();
+            document.getElementById('status').innerText = `Vrednost na A[${idx}] povečana za ${val}.`;
+        }
+
+        async function querySum() {
+            const idx = parseInt(document.getElementById('qIdx').value);
+            if (idx < 1 || idx > n) return;
+
+            let s = 0;
+            let curr = idx;
+            document.querySelectorAll('.cell').forEach(c => c.classList.remove('active'));
+
+            while(curr > 0) {
+                const el = document.getElementById(`b-${curr}`);
+                el.classList.add('active');
+                s += BIT[curr];
+                await new Promise(r => setTimeout(r, 500));
+                curr -= curr & -curr;
+            }
+            document.getElementById('status').innerText = `Prefix Sum (1 do ${idx}) = ${s}`;
+        }
+
+        render();
+    </script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Vizualizacija: Sklad (Stack)</title>
+    <style>
+        :root { --primary: #6c5ce7; --accent: #a29bfe; --bg: #dfe6e9; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        
+        /* Vizualni prikaz sklada */
+        .stack-area { 
+            display: flex; flex-direction: column-reverse; align-items: center; 
+            min-height: 300px; border-bottom: 5px solid #2d3436; border-left: 2px solid #b2bec3; border-right: 2px solid #b2bec3;
+            margin: 20px auto; width: 200px; padding: 10px; gap: 5px; background: #f9f9f9;
+        }
+        
+        .element {
+            width: 100%; height: 40px; background: var(--primary); color: white;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 4px; font-weight: bold; font-size: 1.1rem;
+            animation: pushAnim 0.3s ease-out; position: relative;
+        }
+        
+        .top-label { position: absolute; right: -60px; color: var(--primary); font-size: 0.8rem; font-weight: bold; }
+
+        @keyframes pushAnim { from { transform: translateY(-100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .pop-out { animation: popAnim 0.3s forwards; }
+        @keyframes popAnim { to { transform: translateX(100px); opacity: 0; } }
+
+        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        input { padding: 10px; border: 2px solid #ddd; border-radius: 5px; grid-column: span 2; text-align: center; font-size: 1rem; }
+        button { padding: 10px; cursor: pointer; border: none; border-radius: 5px; font-weight: bold; color: white; transition: 0.2s; }
+        .btn-push { background: #00b894; }
+        .btn-pop { background: #d63031; }
+        button:disabled { background: #b2bec3; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Sklad (Stack)</h2>
+        <p>Vzorec <b>LIFO</b>: Zadnji noter, prvi ven.</p>
+
+        <div class="stack-area" id="stackDisplay">
+            <!-- Elementi se skladajo tukaj -->
+        </div>
+
+        <div class="controls">
+            <input type="text" id="stackInput" placeholder="Vnesi podatek" maxlength="10">
+            <button class="btn-push" onclick="push()">Push (Dodaj)</button>
+            <button class="btn-pop" onclick="pop()">Pop (Odstrani)</button>
+        </div>
+        <p id="message" style="margin-top: 15px; font-size: 0.9rem; color: #636e72;"></p>
+    </div>
+
+    <script>
+        // Logična struktura v JS (Array deluje kot sklad z metodama push in pop)
+        let stack = [];
+        const display = document.getElementById('stackDisplay');
+        const input = document.getElementById('stackInput');
+        const message = document.getElementById('message');
+
+        function render() {
+            display.innerHTML = '';
+            stack.forEach((val, idx) => {
+                const el = document.createElement('div');
+                el.className = 'element';
+                el.innerText = val;
+                
+                // Označimo vrh sklada (TOP)
+                if (idx === stack.length - 1) {
+                    const label = document.createElement('span');
+                    label.className = 'top-label';
+                    label.innerText = "← TOP";
+                    el.appendChild(label);
+                }
+                
+                display.appendChild(el);
+            });
+        }
+
+        function push() {
+            const val = input.value.trim();
+            if (!val) return;
+            
+            stack.push(val); // Standardna JS metoda za sklad
+            input.value = '';
+            message.innerText = `Dodan element "${val}" na vrh.`;
+            render();
+        }
+
+        function pop() {
+            if (stack.length === 0) {
+                message.innerText = "Sklad je prazen! (Underflow)";
+                return;
+            }
+            
+            const lastNode = display.lastElementChild;
+            lastNode.classList.add('pop-out'); // Animacija
+            
+            setTimeout(() => {
+                const removed = stack.pop(); // Standardna JS metoda za sklad
+                message.innerText = `Odstranjen element "${removed}" z vrha.`;
+                render();
+            }, 300);
+        }
+
+        // Enter tipka za hiter push
+        input.addEventListener("keypress", (e) => { if (e.key === "Enter") push(); });
+    </script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Vizualizacija: Vrsta (Queue)</title>
+    <style>
+        :root { --primary: #0984e3; --accent: #74b9ff; --bg: #f5f6fa; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 600px; text-align: center; }
+        
+        /* Vizualni prikaz vrste */
+        .queue-area { 
+            display: flex; align-items: center; justify-content: flex-start;
+            min-height: 100px; border-top: 2px dashed #b2bec3; border-bottom: 2px dashed #b2bec3;
+            margin: 40px 0; padding: 10px; gap: 10px; overflow-x: auto; background: #fff;
+        }
+        
+        .element {
+            min-width: 60px; height: 60px; background: var(--primary); color: white;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border-radius: 8px; font-weight: bold; position: relative;
+            animation: enqueueAnim 0.4s ease-out;
+        }
+
+        .label { position: absolute; bottom: -25px; font-size: 0.7rem; color: #636e72; font-weight: normal; }
+
+        @keyframes enqueueAnim { from { transform: translateX(50px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .dequeue-anim { animation: dequeueAnim 0.4s forwards; }
+        @keyframes dequeueAnim { to { transform: translateX(-100px); opacity: 0; } }
+
+        .controls { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
+        input { padding: 10px; border: 2px solid #ddd; border-radius: 5px; width: 150px; }
+        button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 5px; font-weight: bold; color: white; }
+        .btn-enqueue { background: #00b894; }
+        .btn-dequeue { background: #e17055; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Vrsta (Queue)</h2>
+        <p>Vzorec <b>FIFO</b>: Prvi noter, prvi ven.</p>
+
+        <div class="queue-area" id="queueDisplay">
+            <!-- Elementi vrste -->
+        </div>
+
+        <div class="controls">
+            <input type="text" id="queueInput" placeholder="Ime/Podatek" maxlength="8">
+            <button class="btn-enqueue" onclick="enqueue()">Enqueue (Dodaj)</button>
+            <button class="btn-dequeue" onclick="dequeue()">Dequeue (Odvzemi)</button>
+        </div>
+        <p id="message" style="margin-top: 20px; color: #636e72; min-height: 1.2em;"></p>
+    </div>
+
+    <script>
+        // Logična struktura
+        let queue = [];
+        const display = document.getElementById('queueDisplay');
+        const input = document.getElementById('queueInput');
+        const message = document.getElementById('message');
+
+        function render() {
+            display.innerHTML = '';
+            queue.forEach((val, idx) => {
+                const el = document.createElement('div');
+                el.className = 'element';
+                el.innerText = val;
+                
+                // Oznake za glavo (FRONT) in rep (REAR)
+                if (idx === 0) {
+                    const l = document.createElement('span');
+                    l.className = 'label';
+                    l.innerText = "FRONT (Izhod)";
+                    el.appendChild(l);
+                    el.style.background = "#d63031"; // Glava vrste je druge barve
+                }
+                if (idx === queue.length - 1 && queue.length > 1) {
+                    const l = document.createElement('span');
+                    l.className = 'label';
+                    l.innerText = "REAR (Vhod)";
+                    el.appendChild(l);
+                }
+                
+                display.appendChild(el);
+            });
+        }
+
+        function enqueue() {
+            const val = input.value.trim();
+            if (!val) return;
+            
+            queue.push(val); // Dodajanje na konec [Array.push](https://developer.mozilla.org)
+            input.value = '';
+            message.innerText = `Element "${val}" je stopil v vrsto.`;
+            render();
+        }
+
+        function dequeue() {
+            if (queue.length === 0) {
+                message.innerText = "Vrsta je prazna!";
+                return;
+            }
+            
+            const firstEl = display.firstElementChild;
+            firstEl.classList.add('dequeue-anim');
+            
+            setTimeout(() => {
+                const removed = queue.shift(); // Odstranjevanje z začetka [Array.shift](https://developer.mozilla.org)
+                message.innerText = `Element "${removed}" je zapustil vrsto (bil postrežen).`;
+                render();
+            }, 400);
+        }
+
+        input.addEventListener("keypress", (e) => { if (e.key === "Enter") enqueue(); });
+    </script>
+</body>
+</html>

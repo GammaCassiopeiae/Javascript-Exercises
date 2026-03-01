@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Vizualizacija: Max-Heap</title>
+    <style>
+        :root { --node-bg: #f1c40f; --node-text: #2c3e50; --line: #95a5a6; }
+        body { font-family: 'Segoe UI', sans-serif; background: #ecf0f1; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 95%; max-width: 800px; text-align: center; }
+        
+        /* Prikaz polja (kako je heap shranjen v RAM-u) */
+        .array-view { display: flex; justify-content: center; gap: 5px; margin: 20px 0; flex-wrap: wrap; }
+        .array-slot { width: 40px; height: 40px; border: 2px solid var(--node-text); display: flex; align-items: center; justify-content: center; font-weight: bold; background: #fff; }
+        .array-idx { font-size: 0.7rem; color: #7f8c8d; }
+
+        /* Grafični prikaz drevesa */
+        #treeCanvas { position: relative; width: 100%; height: 350px; margin-top: 30px; }
+        .node {
+            width: 40px; height: 40px; background: var(--node-bg); color: var(--node-text);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; position: absolute; z-index: 2; transition: all 0.4s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: 2px solid var(--node-text);
+        }
+        .line { position: absolute; background: var(--line); height: 2px; transform-origin: 0 0; z-index: 1; }
+
+        .controls { margin-top: 20px; display: flex; gap: 10px; justify-content: center; }
+        input { padding: 10px; border: 2px solid #ddd; border-radius: 6px; width: 80px; }
+        button { padding: 10px 15px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; color: white; background: #2980b9; }
+        .btn-pop { background: #e67e22; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Max-Heap (Kopica)</h2>
+        <p>Starš je vedno večji od otrok. Shranjeno kot <b>Polje (Array)</b>.</p>
+
+        <div class="array-view" id="arrayDisplay"></div>
+        <div id="treeCanvas"></div>
+
+        <div class="controls">
+            <input type="number" id="valInput" placeholder="Število">
+            <button onclick="push()">Vstavi (Push)</button>
+            <button class="btn-pop" onclick="pop()">Odstrani Max (Pop)</button>
+        </div>
+        <p id="status" style="margin-top:15px; color:#7f8c8d;">Vstavite število, da vidite proces "Heapify Up".</p>
+    </div>
+
+    <script>
+        let heap = [];
+        const canvas = document.getElementById('treeCanvas');
+        const arrayDisplay = document.getElementById('arrayDisplay');
+
+        function push() {
+            const val = parseInt(document.getElementById('valInput').value);
+            if (isNaN(val)) return;
+            heap.push(val);
+            heapifyUp(heap.length - 1);
+            render();
+            document.getElementById('valInput').value = '';
+        }
+
+        function heapifyUp(index) {
+            while (index > 0) {
+                let parent = Math.floor((index - 1) / 2);
+                if (heap[parent] < heap[index]) {
+                    [heap[parent], heap[index]] = [heap[index], heap[parent]];
+                    index = parent;
+                } else break;
+            }
+        }
+
+        function pop() {
+            if (heap.length === 0) return;
+            if (heap.length === 1) heap.pop();
+            else {
+                heap[0] = heap.pop();
+                heapifyDown(0);
+            }
+            render();
+        }
+
+        function heapifyDown(index) {
+            while (true) {
+                let left = 2 * index + 1;
+                let right = 2 * index + 2;
+                let largest = index;
+
+                if (left < heap.length && heap[left] > heap[largest]) largest = left;
+                if (right < heap.length && heap[right] > heap[largest]) largest = right;
+
+                if (largest !== index) {
+                    [heap[index], heap[largest]] = [heap[largest], heap[index]];
+                    index = largest;
+                } else break;
+            }
+        }
+
+        function draw(index, x, y, step) {
+            if (index >= heap.length) return;
+
+            const div = document.createElement('div');
+            div.className = 'node';
+            div.innerText = heap[index];
+            div.style.left = `${x - 20}px`;
+            div.style.top = `${y - 20}px`;
+            canvas.appendChild(div);
+
+            const left = 2 * index + 1;
+            const right = 2 * index + 2;
+
+            if (left < heap.length) {
+                drawLine(x, y, x - step, y + 60);
+                draw(left, x - step, y + 60, step / 2);
+            }
+            if (right < heap.length) {
+                drawLine(x, y, x + step, y + 60);
+                draw(right, x + step, y + 60, step / 2);
+            }
+        }
+
+        function drawLine(x1, y1, x2, y2) {
+            const len = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
+            const ang = Math.atan2(y2-y1, x2-x1) * 180 / Math.PI;
+            const line = document.createElement('div');
+            line.className = 'line';
+            line.style.width = `${len}px`;
+            line.style.left = `${x1}px`;
+            line.style.top = `${y1}px`;
+            line.style.transform = `rotate(${ang}deg)`;
+            canvas.appendChild(line);
+        }
+
+        function render() {
+            canvas.innerHTML = '';
+            arrayDisplay.innerHTML = '';
+            
+            // Render polja
+            heap.forEach((v, i) => {
+                const slot = document.createElement('div');
+                slot.className = 'array-slot';
+                slot.innerHTML = `<div>${v}<div class="array-idx">${i}</div></div>`;
+                arrayDisplay.appendChild(slot);
+            });
+
+            // Render drevesa
+            if (heap.length > 0) draw(0, canvas.offsetWidth / 2, 30, canvas.offsetWidth / 4);
+        }
+
+        window.onresize = render;
+        render();
+    </script>
+</body>
+</html>

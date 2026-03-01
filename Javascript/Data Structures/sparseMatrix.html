@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Vizualizacija: Redka matrika (Sparse Matrix)</title>
+    <style>
+        :root { --primary: #0984e3; --zero: #dfe6e9; --value: #e17055; --bg: #f5f6fa; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 95%; max-width: 900px; text-align: center; }
+        
+        .layout { display: flex; gap: 40px; justify-content: center; align-items: flex-start; margin-top: 30px; flex-wrap: wrap; }
+        
+        /* Standardni prikaz matrike */
+        .matrix-view { display: grid; grid-template-columns: repeat(5, 40px); gap: 5px; padding: 10px; background: #2d3436; border-radius: 4px; }
+        .cell { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; border-radius: 2px; transition: 0.3s; }
+        .cell-zero { background: var(--zero); color: #b2bec3; }
+        .cell-val { background: var(--value); color: white; font-weight: bold; transform: scale(1.05); }
+
+        /* Stisnjena tabela (Sparse Representation) */
+        .sparse-table { border-collapse: collapse; font-size: 0.9rem; min-width: 200px; }
+        .sparse-table th, .sparse-table td { border: 1px solid #ddd; padding: 8px 12px; text-align: center; }
+        .sparse-table th { background: var(--primary); color: white; }
+        .sparse-table tr:nth-child(even) { background: #f8f9fa; }
+
+        .controls { margin-top: 30px; background: #f1f2f6; padding: 15px; border-radius: 8px; display: flex; gap: 10px; }
+        input { padding: 8px; border: 1px solid #ddd; border-radius: 4px; width: 60px; text-align: center; }
+        button { padding: 10px 15px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; color: white; background: var(--primary); }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Redka matrika (Sparse Matrix)</h2>
+        <p>Shranjevanje le tistih elementov, ki <b>niso ničla</b>.</p>
+
+        <div class="layout">
+            <div>
+                <h4>Standardna matrika (5x5)</h4>
+                <div id="fullMatrix" class="matrix-view"></div>
+            </div>
+
+            <div>
+                <h4>Stisnjena oblika (Triplets)</h4>
+                <table class="sparse-table" id="sparseTable">
+                    <thead>
+                        <tr><th>Vrstica</th><th>Stolpec</th><th>Vrednost</th></tr>
+                    </thead>
+                    <tbody id="sparseBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="controls">
+            R: <input type="number" id="rowIn" value="1" min="0" max="4">
+            C: <input type="number" id="colIn" value="3" min="0" max="4">
+            V: <input type="number" id="valIn" value="99">
+            <button onclick="addElement()">Dodaj vrednost</button>
+            <button onclick="clearAll()" style="background:#d63031">Počisti</button>
+        </div>
+        <p id="status" style="margin-top: 15px; color: #636e72; font-size: 0.9rem;"></p>
+    </div>
+
+    <script>
+        const SIZE = 5;
+        let sparseData = []; // Shranjujemo le {r, c, v}
+
+        function addElement() {
+            const r = parseInt(document.getElementById('rowIn').value);
+            const c = parseInt(document.getElementById('colIn').value);
+            const v = parseInt(document.getElementById('valIn').value);
+
+            if (v === 0) {
+                sparseData = sparseData.filter(item => !(item.r === r && item.c === c));
+            } else {
+                const existing = sparseData.find(item => item.r === r && item.c === c);
+                if (existing) existing.v = v;
+                else sparseData.push({ r, c, v });
+            }
+            
+            sparseData.sort((a, b) => a.r - b.r || a.c - b.c);
+            render();
+        }
+
+        function render() {
+            // Render polne matrike
+            const matrixDiv = document.getElementById('fullMatrix');
+            matrixDiv.innerHTML = '';
+            for (let r = 0; r < SIZE; r++) {
+                for (let c = 0; c < SIZE; c++) {
+                    const data = sparseData.find(item => item.r === r && item.c === c);
+                    const cell = document.createElement('div');
+                    cell.className = `cell ${data ? 'cell-val' : 'cell-zero'}`;
+                    cell.innerText = data ? data.v : '0';
+                    matrixDiv.appendChild(cell);
+                }
+            }
+
+            // Render stisnjene tabele
+            const tableBody = document.getElementById('sparseBody');
+            tableBody.innerHTML = '';
+            sparseData.forEach(item => {
+                const row = `<tr><td>${item.r}</td><td>${item.c}</td><td>${item.v}</td></tr>`;
+                tableBody.innerHTML += row;
+            });
+
+            const saved = (SIZE * SIZE) - sparseData.length;
+            document.getElementById('status').innerText = `Prihranek: Ne shranjujemo ${saved} ničel.`;
+        }
+
+        function clearAll() { sparseData = []; render(); }
+        render();
+    </script>
+</body>
+</html>

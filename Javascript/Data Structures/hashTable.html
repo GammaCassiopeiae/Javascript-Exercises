@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Vizualizacija: Hash Table</title>
+    <style>
+        :root { --primary: #6c5ce7; --accent: #fd79a8; --bg: #f9f9fb; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 95%; max-width: 800px; text-align: center; }
+        
+        .hash-table { display: flex; flex-direction: column; gap: 10px; margin: 30px 0; align-items: flex-start; width: 100%; }
+        .bucket { display: flex; align-items: center; gap: 10px; width: 100%; border-bottom: 1px solid #eee; padding: 10px 0; }
+        .bucket-idx { width: 40px; font-weight: bold; color: #636e72; border-right: 2px solid var(--primary); margin-right: 10px; }
+        
+        .node-list { display: flex; gap: 8px; flex-wrap: wrap; }
+        .node { 
+            background: var(--primary); color: white; padding: 6px 12px; border-radius: 4px; 
+            font-size: 0.9rem; animation: popIn 0.3s ease; position: relative; 
+        }
+        .node::after { content: " →"; color: #ccc; margin-left: 5px; }
+        .node:last-child::after { content: " ∅"; }
+
+        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+
+        .controls { background: #f1f2f6; padding: 20px; border-radius: 8px; display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: center; }
+        input { padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; color: white; background: var(--primary); }
+        .btn-find { background: var(--accent); }
+
+        #log { margin-top: 15px; font-family: monospace; font-size: 0.85rem; color: #2d3436; background: #dfe6e9; padding: 10px; border-radius: 4px; min-height: 1.2em; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Zgoščevalna tabela (Hash Table)</h2>
+        <p>Ključi se preko <i>Hash</i> funkcije preslikajo v indekse. Trki so rešeni z veriženjem.</p>
+
+        <div class="controls">
+            <input type="text" id="keyInput" placeholder="Ključ (npr. ime)">
+            <input type="text" id="valInput" placeholder="Vrednost">
+            <button onclick="insert()">Vstavi (Set)</button>
+        </div>
+
+        <div id="log">Vnesite par ključ-vrednost za začetek.</div>
+
+        <div class="hash-table" id="tableDisplay">
+            <!-- Vedra (Buckets) se generirajo tukaj -->
+        </div>
+    </div>
+
+    <script>
+        const TABLE_SIZE = 8;
+        let table = Array.from({ length: TABLE_SIZE }, () => []);
+
+        // Preprosta zgoščevalna funkcija (Sum of char codes % size)
+        function hashFunction(key) {
+            let hash = 0;
+            for (let i = 0; i < key.length; i++) {
+                hash += key.charCodeAt(i);
+            }
+            return hash % TABLE_SIZE;
+        }
+
+        function insert() {
+            const key = document.getElementById('keyInput').value.trim();
+            const val = document.getElementById('valInput').value.trim();
+            const log = document.getElementById('log');
+
+            if (!key || !val) return;
+
+            const idx = hashFunction(key);
+            
+            // Preveri, če ključ že obstaja (Update)
+            const existing = table[idx].find(node => node.key === key);
+            if (existing) {
+                existing.val = val;
+                log.innerText = `Posodobljeno: ključ "${key}" na indeksu ${idx}.`;
+            } else {
+                table[idx].push({ key, val });
+                log.innerText = `Zgoščeno: "${key}" -> indeks ${idx}. Vstavljeno v vedro.`;
+            }
+
+            render();
+            document.getElementById('keyInput').value = '';
+            document.getElementById('valInput').value = '';
+        }
+
+        function render() {
+            const display = document.getElementById('tableDisplay');
+            display.innerHTML = '';
+
+            table.forEach((bucket, i) => {
+                const bucketDiv = document.createElement('div');
+                bucketDiv.className = 'bucket';
+                
+                const idxDiv = document.createElement('div');
+                idxDiv.className = 'bucket-idx';
+                idxDiv.innerText = i;
+
+                const nodeList = document.createElement('div');
+                nodeList.className = 'node-list';
+
+                bucket.forEach(node => {
+                    const nodeDiv = document.createElement('div');
+                    nodeDiv.className = 'node';
+                    nodeDiv.innerHTML = `<b>${node.key}</b>: ${node.val}`;
+                    nodeList.appendChild(nodeDiv);
+                });
+
+                if (bucket.length === 0) {
+                    nodeList.innerHTML = '<span style="color:#ccc; font-size:0.8rem;">prazno</span>';
+                }
+
+                bucketDiv.appendChild(idxDiv);
+                bucketDiv.appendChild(nodeList);
+                display.appendChild(bucketDiv);
+            });
+        }
+
+        render();
+    </script>
+</body>
+</html>

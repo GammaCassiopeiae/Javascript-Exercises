@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Vizualizacija: Skip List</title>
+    <style>
+        :root { --node-bg: #ffffff; --node-border: #0984e3; --accent: #e17055; --bg: #f5f6fa; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 98%; max-width: 1000px; text-align: center; overflow-x: auto; }
+        
+        .skiplist-viz { display: flex; flex-direction: column-reverse; gap: 20px; margin: 40px 0; min-height: 200px; align-items: flex-start; padding-left: 50px; }
+        .level { display: flex; align-items: center; position: relative; height: 40px; width: 100%; border-bottom: 1px dashed #dfe6e9; }
+        .level-label { position: absolute; left: -50px; font-weight: bold; color: #b2bec3; font-size: 0.8rem; }
+        
+        .node-container { display: flex; align-items: center; position: absolute; transition: all 0.5s ease; }
+        .node { 
+            width: 35px; height: 35px; border: 2px solid var(--node-border); border-radius: 4px; 
+            background: var(--node-bg); display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 0.8rem; z-index: 2;
+        }
+        .connector { height: 2px; background: var(--node-border); flex-grow: 1; min-width: 20px; z-index: 1; }
+        
+        .highlight { background: var(--accent) !important; color: white; border-color: #d63031; transform: scale(1.2); }
+
+        .controls { display: flex; gap: 10px; justify-content: center; background: #f1f2f6; padding: 15px; border-radius: 8px; }
+        input { padding: 10px; border: 1px solid #ddd; border-radius: 6px; width: 80px; }
+        button { padding: 10px 15px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; color: white; background: #2d3436; }
+        .btn-add { background: #00b894; }
+        
+        #status { margin-top: 15px; font-weight: 500; color: #636e72; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Preskočni seznam (Skip List)</h2>
+        <p>Verjetnostna struktura. Višina vozlišča se določi z <b>metom kovanca</b>.</p>
+
+        <div class="skiplist-viz" id="listViz">
+            <!-- Nivoji se generirajo tukaj -->
+        </div>
+
+        <div class="controls">
+            <input type="number" id="valInput" placeholder="Število" min="1" max="99">
+            <button class="btn-add" onclick="add()">Vstavi (Insert)</button>
+            <button onclick="resetList()" style="background:#d63031">Ponastavi</button>
+        </div>
+        <p id="status">Vsak element je vedno v nivoju 0, nato pa z 50% verjetnostjo "zraste" višje.</p>
+    </div>
+
+    <script>
+        const MAX_LEVEL = 4;
+        let skipList = []; // Array objektov { val, levels }
+
+        function add() {
+            const val = parseInt(document.getElementById('valInput').value);
+            if (isNaN(val)) return;
+            if (skipList.some(n => n.val === val)) return alert("Vrednost že obstaja!");
+
+            // Met kovanca za višino (geometric distribution)
+            let levels = 1;
+            while (Math.random() < 0.5 && levels < MAX_LEVEL) {
+                levels++;
+            }
+
+            skipList.push({ val, levels });
+            skipList.sort((a, b) => a.val - b.val);
+            
+            render();
+            document.getElementById('valInput').value = '';
+        }
+
+        function render() {
+            const container = document.getElementById('listViz');
+            container.innerHTML = '';
+
+            for (let l = 0; l < MAX_LEVEL; l++) {
+                const levelDiv = document.createElement('div');
+                levelDiv.className = 'level';
+                levelDiv.innerHTML = `<div class="level-label">L${l}</div>`;
+
+                // Filtriraj vozlišča, ki obstajajo na tem nivoju
+                const nodesOnLevel = skipList.filter(n => n.levels > l);
+                
+                nodesOnLevel.forEach((node, idx) => {
+                    const nodeCont = document.createElement('div');
+                    nodeCont.className = 'node-container';
+                    
+                    // Izračun horizontalne pozicije glede na vrednost za vizualno poravnavo
+                    const xPos = node.val * 10; 
+                    nodeCont.style.left = `${xPos}px`;
+
+                    const nodeDiv = document.createElement('div');
+                    nodeDiv.className = 'node';
+                    nodeDiv.innerText = node.val;
+                    
+                    nodeCont.appendChild(nodeDiv);
+                    levelDiv.appendChild(nodeCont);
+                });
+
+                container.appendChild(levelDiv);
+            }
+        }
+
+        function resetList() { skipList = []; render(); }
+        render();
+    </script>
+</body>
+</html>

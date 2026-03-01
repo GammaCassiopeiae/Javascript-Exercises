@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Vizualizacija: Niz (String)</title>
+    <style>
+        :root { --char-bg: #6c5ce7; --index-color: #a29bfe; --bg: #f9f9fb; }
+        body { font-family: 'Courier New', Courier, monospace; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 40px; }
+        .container { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 600px; text-align: center; border: 1px solid #ddd; }
+        
+        /* Prikaz niza kot zaporedje celic */
+        .string-display { 
+            display: flex; justify-content: center; margin: 30px 0; gap: 4px; overflow-x: auto; padding: 10px;
+        }
+        
+        .char-box {
+            width: 45px; height: 55px; background: var(--char-bg); color: white;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border-radius: 4px; position: relative; transition: 0.3s;
+        }
+        
+        .char-value { font-size: 1.5rem; font-weight: bold; }
+        .char-index { position: absolute; bottom: -22px; color: #636e72; font-size: 0.75rem; font-family: sans-serif; }
+
+        .controls { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
+        .input-group { display: flex; gap: 10px; justify-content: center; }
+        
+        input { padding: 12px; border: 2px solid #dfe6e9; border-radius: 4px; font-size: 1rem; width: 250px; }
+        button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; color: white; background: #2d3436; }
+        
+        .highlight { background: #e17055 !important; transform: scale(1.1); }
+        .info-panel { margin-top: 25px; padding: 15px; background: #f1f2f6; border-radius: 4px; font-family: sans-serif; font-size: 0.9rem; text-align: left; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Niz (String)</h2>
+        <p>Zaporedje znakov z dostopom preko indeksa.</p>
+
+        <div class="string-display" id="stringVisual">
+            <!-- Znaki se generirajo tukaj -->
+        </div>
+
+        <div class="controls">
+            <div class="input-group">
+                <input type="text" id="strInput" placeholder="Vpiši besedo..." value="HELLO" maxlength="15">
+                <button onclick="updateString()">Posodobi</button>
+            </div>
+            <div class="input-group">
+                <input type="number" id="indexSearch" placeholder="Indeks (npr. 1)" min="0" style="width: 100px;">
+                <button onclick="highlightChar()" style="background: #0984e3;">Pokaži znak</button>
+            </div>
+        </div>
+
+        <div class="info-panel" id="infoPanel">
+            Vpišite besedilo, da vidite njegovo strukturo v pomnilniku.
+        </div>
+    </div>
+
+    <script>
+        const visual = document.getElementById('stringVisual');
+        const input = document.getElementById('strInput');
+        const info = document.getElementById('infoPanel');
+
+        function updateString() {
+            const text = input.value;
+            visual.innerHTML = '';
+            
+            // Niz (String) v JS je iterable - čez njega lahko gremo z zanko
+            [...text].forEach((char, idx) => {
+                const box = document.createElement('div');
+                box.className = 'char-box';
+                box.id = `char-${idx}`;
+                
+                // Prazen prostor (space) vizualiziramo posebej
+                const displayChar = char === ' ' ? '␣' : char;
+                
+                box.innerHTML = `
+                    <span class="char-value">${displayChar}</span>
+                    <span class="char-index">${idx}</span>
+                `;
+                visual.appendChild(box);
+            });
+
+            info.innerHTML = `
+                <b>Lastnosti niza:</b><br>
+                - Dolžina (length): <code>${text.length}</code><br>
+                - Tip: <code>typeof string</code><br>
+                - Pomnilnik: UTF-16 kodiranje (običajno 2 bajta na znak).
+            `;
+        }
+
+        function highlightChar() {
+            const idx = document.getElementById('indexSearch').value;
+            const text = input.value;
+            
+            // Ponastavi vse
+            document.querySelectorAll('.char-box').forEach(b => b.classList.remove('highlight'));
+            
+            if (idx >= 0 && idx < text.length && idx !== "") {
+                const target = document.getElementById(`char-${idx}`);
+                target.classList.add('highlight');
+                
+                // Dostop do znaka: string[index] ali charAt(index)
+                const char = text[idx]; // [MDN String Property Access](https://developer.mozilla.org)
+                info.innerHTML += `<br><br><span style="color:#d63031"><b>Dostop:</b> str[${idx}] vrne '${char}'</span>`;
+            } else {
+                alert("Indeks izven obsega!");
+            }
+        }
+
+        // Začetni izris
+        updateString();
+    </script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Vizualizacija: Problem nahrbtnika (DP)</title>
+    <style>
+        :root { --primary: #6c5ce7; --accent: #00b894; --bg: #f9f9fb; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 95%; max-width: 900px; text-align: center; }
+        
+        /* Predmeti */
+        .items-shop { display: flex; gap: 15px; justify-content: center; margin: 20px 0; flex-wrap: wrap; }
+        .item-card { 
+            border: 2px solid #dfe6e9; padding: 10px; border-radius: 8px; width: 100px;
+            transition: 0.3s; cursor: pointer; background: #fff;
+        }
+        .item-card.selected { border-color: var(--accent); background: #e8f8f5; transform: scale(1.05); }
+        .item-icon { font-size: 2rem; }
+        .item-info { font-size: 0.8rem; color: #636e72; margin-top: 5px; }
+
+        /* Nahrbtnik */
+        .backpack-zone {
+            background: #f1f2f6; padding: 20px; border-radius: 15px; margin: 30px 0;
+            border: 3px dashed #b2bec3; min-height: 100px;
+        }
+        .capacity-bar { height: 10px; background: #dfe6e9; border-radius: 5px; margin-top: 10px; overflow: hidden; }
+        .fill-level { height: 100%; background: var(--primary); width: 0%; transition: 0.5s; }
+
+        /* DP Tabela */
+        .matrix-container { overflow-x: auto; margin-top: 20px; }
+        table { border-collapse: collapse; margin: 0 auto; font-size: 0.75rem; }
+        td, th { border: 1px solid #ddd; padding: 5px 8px; text-align: center; }
+        .highlight-cell { background: var(--accent); color: white; font-weight: bold; }
+
+        .controls { margin-top: 20px; display: flex; gap: 10px; justify-content: center; }
+        button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; color: white; background: var(--primary); }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Problem nahrbtnika (Knapsack)</h2>
+        <p>Izberi predmete za <b>največjo vrednost</b> pri omejeni teži <b>(Max: 7 kg)</b>.</p>
+
+        <div class="items-shop" id="shop">
+            <!-- Predmeti se generirajo tukaj -->
+        </div>
+
+        <div class="backpack-zone">
+            <div id="backpackItems" style="font-size: 1.5rem;">🎒 Prazen nahrbtnik</div>
+            <div class="capacity-bar"><div class="fill-level" id="fillBar"></div></div>
+            <p id="stats">Teža: 0/7 kg | Vrednost: 0 €</p>
+        </div>
+
+        <button onclick="solveDP()">Reši z Dinamičnim Programiranjem</button>
+
+        <div class="matrix-container" id="dpContainer">
+            <!-- DP Tabela se generira tukaj -->
+        </div>
+    </div>
+
+    <script>
+        const MAX_W = 7;
+        const items = [
+            { id: 1, name: "Zlato", val: 10, weight: 2, icon: "🥇" },
+            { id: 2, name: "Knjiga", val: 5, weight: 3, icon: "📚" },
+            { id: 3, name: "Telefon", val: 15, weight: 1, icon: "📱" },
+            { id: 4, name: "Prenosnik", val: 20, weight: 4, icon: "💻" },
+            { id: 5, name: "Kamera", val: 12, weight: 2, icon: "📷" }
+        ];
+
+        let selectedIds = new Set();
+
+        function renderShop() {
+            const shop = document.getElementById('shop');
+            shop.innerHTML = '';
+            items.forEach(item => {
+                const card = document.createElement('div');
+                card.className = `item-card ${selectedIds.has(item.id) ? 'selected' : ''}`;
+                card.onclick = () => toggleItem(item.id);
+                card.innerHTML = `
+                    <div class="item-icon">${item.icon}</div>
+                    <b>${item.name}</b>
+                    <div class="item-info">${item.val} € | ${item.weight} kg</div>
+                `;
+                shop.appendChild(card);
+            });
+            updateBackpack();
+        }
+
+        function toggleItem(id) {
+            if (selectedIds.has(id)) selectedIds.delete(id);
+            else selectedIds.add(id);
+            renderShop();
+        }
+
+        function updateBackpack() {
+            let totalW = 0;
+            let totalV = 0;
+            let icons = [];
+
+            items.forEach(item => {
+                if (selectedIds.has(item.id)) {
+                    totalW += item.weight;
+                    totalV += item.val;
+                    icons.push(item.icon);
+                }
+            });
+
+            document.getElementById('backpackItems').innerText = icons.length > 0 ? "🎒 " + icons.join(" ") : "🎒 Prazen nahrbtnik";
+            document.getElementById('stats').innerText = `Teža: ${totalW}/${MAX_W} kg | Vrednost: ${totalV} €`;
+            
+            const bar = document.getElementById('fillBar');
+            bar.style.width = (totalW / MAX_W * 100) + "%";
+            bar.style.background = totalW > MAX_W ? "#ff7675" : "#6c5ce7";
+        }
+
+        function solveDP() {
+            const n = items.length;
+            const W = MAX_W;
+            // Ustvari DP tabelo (n+1) x (W+1)
+            let dp = Array.from({ length: n + 1 }, () => Array(W + 1).fill(0));
+
+            for (let i = 1; i <= n; i++) {
+                for (let w = 0; w <= W; w++) {
+                    if (items[i-1].weight <= w) {
+                        dp[i][w] = Math.max(items[i-1].val + dp[i-1][w - items[i-1].weight], dp[i-1][w]);
+                    } else {
+                        dp[i][w] = dp[i-1][w];
+                    }
+                }
+            }
+
+            renderDPTable(dp);
+            
+            // Rekonstrukcija optimalne izbire
+            let res = dp[n][W];
+            let w = W;
+            selectedIds.clear();
+            for (let i = n; i > 0 && res > 0; i--) {
+                if (res !== dp[i - 1][w]) {
+                    selectedIds.add(items[i - 1].id);
+                    res -= items[i - 1].val;
+                    w -= items[i - 1].weight;
+                }
+            }
+            renderShop();
+        }
+
+        function renderDPTable(dp) {
+            const container = document.getElementById('dpContainer');
+            let html = "<h4>DP Tabela (Vrednosti)</h4><table><tr><th>Item \\ Kg</th>";
+            for(let j=0; j<=MAX_W; j++) html += `<th>${j}</th>`;
+            html += "</tr>";
+
+            dp.forEach((row, i) => {
+                html += `<tr><td>${i === 0 ? 'Start' : items[i-1].name}</td>`;
+                row.forEach((val, j) => {
+                    const isOptimal = (i === items.length && j === MAX_W);
+                    html += `<td class="${isOptimal ? 'highlight-cell' : ''}">${val}</td>`;
+                });
+                html += "</tr>";
+            });
+            html += "</table>";
+            container.innerHTML = html;
+        }
+
+        renderShop();
+    </script>
+</body>
+</html>

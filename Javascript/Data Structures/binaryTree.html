@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Vizualizacija: Dvojiško drevo</title>
+    <style>
+        :root { --node-bg: #00cec9; --line-color: #636e72; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 95%; max-width: 800px; text-align: center; }
+        
+        /* Grafični prikaz drevesa */
+        .tree-container { 
+            position: relative; width: 100%; min-height: 400px; margin-top: 50px;
+            display: flex; justify-content: center;
+        }
+        
+        .node {
+            width: 40px; height: 40px; background: var(--node-bg); color: white;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; position: absolute; z-index: 2; transition: all 0.5s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .line {
+            position: absolute; background: var(--line-color); height: 2px;
+            transform-origin: 0 0; z-index: 1; transition: all 0.5s ease;
+        }
+
+        .controls { margin-top: 30px; display: flex; gap: 10px; justify-content: center; }
+        input { padding: 10px; border: 2px solid #ddd; border-radius: 5px; width: 80px; }
+        button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 5px; font-weight: bold; color: white; background: #0984e3; }
+        button:hover { background: #074b83; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Dvojiško drevo (Binary Tree)</h2>
+        <p>Vsako vozlišče ima največ <b>dva otroka</b> (Levo in Desno).</p>
+
+        <div class="tree-container" id="treeCanvas">
+            <!-- Drevo se izriše tukaj -->
+        </div>
+
+        <div class="controls">
+            <input type="number" id="nodeVal" placeholder="Število">
+            <button onclick="addNode()">Vstavi vozlišče</button>
+            <button onclick="resetTree()" style="background:#d63031">Ponastavi</button>
+        </div>
+        <p id="msg" style="margin-top: 20px; color: #636e72;">Vnesite število, da zgradite drevo (vstavljanje po nivojih).</p>
+    </div>
+
+    <script>
+        class Node {
+            constructor(val) {
+                this.val = val;
+                this.left = null;
+                this.right = null;
+            }
+        }
+
+        let root = null;
+        const canvas = document.getElementById('treeCanvas');
+
+        // Logika za vstavljanje (Level-order insertion za preprosto dvojiško drevo)
+        function insert(root, val) {
+            if (!root) return new Node(val);
+            
+            let queue = [root];
+            while (queue.length > 0) {
+                let node = queue.shift();
+                if (!node.left) { node.left = new Node(val); break; }
+                else queue.push(node.left);
+                
+                if (!node.right) { node.right = new Node(val); break; }
+                else queue.push(node.right);
+            }
+            return root;
+        }
+
+        function drawTree(node, x, y, level) {
+            if (!node) return;
+
+            // Izris vozlišča
+            const div = document.createElement('div');
+            div.className = 'node';
+            div.innerText = node.val;
+            div.style.left = `${x}px`;
+            div.style.top = `${y}px`;
+            canvas.appendChild(div);
+
+            const horizontalSpacing = 200 / (level + 1);
+            const verticalSpacing = 70;
+
+            // Izris črt do otrok
+            if (node.left) {
+                drawLine(x + 20, y + 20, x - horizontalSpacing + 20, y + verticalSpacing + 20);
+                drawTree(node.left, x - horizontalSpacing, y + verticalSpacing, level + 1);
+            }
+            if (node.right) {
+                drawLine(x + 20, y + 20, x + horizontalSpacing + 20, y + verticalSpacing + 20);
+                drawTree(node.right, x + horizontalSpacing, y + verticalSpacing, level + 1);
+            }
+        }
+
+        function drawLine(x1, y1, x2, y2) {
+            const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+            const angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
+            const line = document.createElement('div');
+            line.className = 'line';
+            line.style.width = `${length}px`;
+            line.style.left = `${x1}px`;
+            line.style.top = `${y1}px`;
+            line.style.transform = `rotate(${angle}deg)`;
+            canvas.appendChild(line);
+        }
+
+        function addNode() {
+            const val = document.getElementById('nodeVal').value;
+            if (val === "") return;
+            root = insert(root, parseInt(val));
+            document.getElementById('nodeVal').value = '';
+            render();
+        }
+
+        function render() {
+            canvas.innerHTML = '';
+            if (root) drawTree(root, canvas.offsetWidth / 2 - 20, 20, 0);
+        }
+
+        function resetTree() { root = null; render(); }
+
+        window.onresize = render;
+    </script>
+</body>
+</html>

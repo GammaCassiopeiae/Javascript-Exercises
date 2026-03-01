@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Vizualizacija: Rdeče-črno drevo</title>
+    <style>
+        :root { --red: #ff4757; --black: #2f3542; --line: #ced4da; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f1f2f6; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 95%; max-width: 900px; text-align: center; }
+        
+        #treeCanvas { position: relative; width: 100%; height: 400px; margin-top: 40px; overflow: hidden; }
+        
+        .node {
+            width: 36px; height: 36px; color: white; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; position: absolute; z-index: 2;
+            transition: all 0.5s ease; border: 2px solid #fff;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-size: 0.9rem;
+        }
+        .node.RED { background: var(--red); }
+        .node.BLACK { background: var(--black); }
+
+        .line { position: absolute; background: var(--line); height: 2px; transform-origin: 0 0; z-index: 1; transition: all 0.5s ease; }
+
+        .controls { margin-top: 20px; display: flex; gap: 10px; justify-content: center; }
+        input { padding: 10px; border: 2px solid #eee; border-radius: 6px; width: 80px; }
+        button { padding: 10px 15px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; color: white; background: #2f3542; }
+        #status { margin-top: 15px; font-size: 0.9rem; color: #57606f; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Rdeče-črno drevo (Red-Black Tree)</h2>
+        <p>BST s pravili barvanja za zagotavljanje <b>O(log n)</b> zahtevnosti.</p>
+
+        <div id="treeCanvas"></div>
+
+        <div class="controls">
+            <input type="number" id="valInput" placeholder="Število">
+            <button onclick="add()">Vstavi</button>
+            <button onclick="reset()" style="background:#ff4757">Ponastavi</button>
+        </div>
+        <p id="status">Vstavite števila, da vidite proces uravnoteženja in barvanja.</p>
+    </div>
+
+    <script>
+        const RED = 0; const BLACK = 1;
+
+        class Node {
+            constructor(val, color = RED) {
+                this.val = val; this.color = color;
+                this.left = null; this.right = null; this.parent = null;
+            }
+        }
+
+        let root = null;
+        const canvas = document.getElementById('treeCanvas');
+
+        // Pomožne funkcije za rotacije (podobno kot AVL, a s popravljanjem barv)
+        function rotateLeft(x) {
+            let y = x.right;
+            x.right = y.left;
+            if (y.left) y.left.parent = x;
+            y.parent = x.parent;
+            if (!x.parent) root = y;
+            else if (x === x.parent.left) x.parent.left = y;
+            else x.parent.right = y;
+            y.left = x;
+            x.parent = y;
+        }
+
+        function rotateRight(x) {
+            let y = x.left;
+            x.left = y.right;
+            if (y.right) y.right.parent = x;
+            y.parent = x.parent;
+            if (!x.parent) root = y;
+            else if (x === x.parent.right) x.parent.right = y;
+            else x.parent.left = y;
+            y.right = x;
+            x.parent = y;
+        }
+
+        function fixInsert(k) {
+            while (k !== root && k.parent.color === RED) {
+                if (k.parent === k.parent.parent.left) {
+                    let u = k.parent.parent.right; // stric
+                    if (u && u.color === RED) {
+                        u.color = BLACK; k.parent.color = BLACK;
+                        k.parent.parent.color = RED; k = k.parent.parent;
+                    } else {
+                        if (k === k.parent.right) { k = k.parent; rotateLeft(k); }
+                        k.parent.color = BLACK; k.parent.parent.color = RED;
+                        rotateRight(k.parent.parent);
+                    }
+                } else {
+                    let u = k.parent.parent.left; // stric
+                    if (u && u.color === RED) {
+                        u.color = BLACK; k.parent.color = BLACK;
+                        k.parent.parent.color = RED; k = k.parent.parent;
+                    } else {
+                        if (k === k.parent.left) { k = k.parent; rotateRight(k); }
+                        k.parent.color = BLACK; k.parent.parent.color = RED;
+                        rotateLeft(k.parent.parent);
+                    }
+                }
+            }
+            root.color = BLACK;
+        }
+
+        function insert(val) {
+            let node = new Node(val);
+            let y = null; let x = root;
+            while (x) { y = x; if (node.val < x.val) x = x.left; else x = x.right; }
+            node.parent = y;
+            if (!y) root = node;
+            else if (node.val < y.val) y.left = node;
+            else y.right = node;
+            fixInsert(node);
+        }
+
+        function draw(node, x, y, step) {
+            if (!node) return;
+            if (node.left) { drawLine(x, y, x - step, y + 60); draw(node.left, x - step, y + 60, step / 2); }
+            if (node.right) { drawLine(x, y, x + step, y + 60); draw(node.right, x + step, y + 60, step / 2); }
+            const div = document.createElement('div');
+            div.className = `node ${node.color === RED ? 'RED' : 'BLACK'}`;
+            div.innerText = node.val;
+            div.style.left = `${x - 18}px`; div.style.top = `${y - 18}px`;
+            canvas.appendChild(div);
+        }
+
+        function drawLine(x1, y1, x2, y2) {
+            const len = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
+            const ang = Math.atan2(y2-y1, x2-x1) * 180 / Math.PI;
+            const line = document.createElement('div');
+            line.className = 'line'; line.style.width = `${len}px`;
+            line.style.left = `${x1}px`; line.style.top = `${y1}px`;
+            line.style.transform = `rotate(${ang}deg)`;
+            canvas.appendChild(line);
+        }
+
+        function add() {
+            const v = parseInt(document.getElementById('valInput').value);
+            if (isNaN(v)) return;
+            insert(v); render();
+            document.getElementById('valInput').value = '';
+        }
+
+        function render() { canvas.innerHTML = ''; if (root) draw(root, canvas.offsetWidth/2, 30, canvas.offsetWidth/4); }
+        function reset() { root = null; render(); }
+        window.onresize = render;
+    </script>
+</body>
+</html>

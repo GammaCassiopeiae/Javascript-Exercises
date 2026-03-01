@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>2D in 3D Matrika v DOM</title>
+    <style>
+        :root { --p2d: #0984e3; --p3d: #6c5ce7; --bg: #f1f2f6; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 95%; max-width: 900px; text-align: center; }
+        
+        .matrix-section { margin-bottom: 40px; padding: 20px; border: 1px solid #dfe6e9; border-radius: 8px; position: relative; }
+        
+        /* 2D Mreža */
+        .grid-2d { display: inline-grid; gap: 5px; background: #2d3436; padding: 10px; border-radius: 4px; }
+        
+        /* 3D Vizualizacija (Plasti) */
+        .layers-container { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; perspective: 1000px; }
+        .layer { 
+            display: grid; gap: 2px; background: #636e72; padding: 5px; border-radius: 4px; 
+            transform: rotateX(20deg) rotateY(-10deg); transition: 0.3s;
+        }
+        .layer:hover { transform: rotateX(0) rotateY(0) scale(1.05); z-index: 10; }
+
+        .cell {
+            width: 30px; height: 30px; background: white; display: flex; align-items: center; 
+            justify-content: center; font-size: 0.7rem; font-weight: bold; border-radius: 2px;
+        }
+        .c2d { border: 1px solid var(--p2d); color: var(--p2d); }
+        .c3d { border: 1px solid var(--p3d); color: var(--p3d); }
+        
+        .highlight { background: #ffeaa7 !important; transform: scale(1.2); z-index: 5; }
+        
+        .controls { margin-top: 15px; background: #f8f9fa; padding: 10px; border-radius: 6px; }
+        input { width: 40px; padding: 5px; text-align: center; }
+        button { padding: 6px 12px; cursor: pointer; border: none; border-radius: 4px; background: #2d3436; color: white; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Matrične strukture (2D & 3D)</h2>
+
+        <!-- 2D MATRIKA -->
+        <div class="matrix-section">
+            <h3 style="color: var(--p2d)">2D Matrika [V][S]</h3>
+            <p style="font-size: 0.8rem;">Standardna tabela (npr. slike, tabele).</p>
+            <div id="grid2d" class="grid-2d"></div>
+            <div class="controls">
+                Vrstica: <input type="number" id="r2" value="1" min="0" max="2">
+                Stolpec: <input type="number" id="s2" value="2" min="0" max="3">
+                <button onclick="access2D()">Najdi</button>
+            </div>
+        </div>
+
+        <!-- 3D MATRIKA -->
+        <div class="matrix-section">
+            <h3 style="color: var(--p3d)">3D Matrika [P][V][S]</h3>
+            <p style="font-size: 0.8rem;">Sklad plasti (npr. video - 2D slike skozi čas, ali RGB barvni kanali).</p>
+            <div id="grid3d" class="layers-container"></div>
+            <div class="controls">
+                Plast: <input type="number" id="p3" value="0" min="0" max="2">
+                Vrstica: <input type="number" id="r3" value="1" min="0" max="2">
+                Stolpec: <input type="number" id="s3" value="1" min="0" max="2">
+                <button onclick="access3D()">Najdi</button>
+            </div>
+        </div>
+
+        <p id="log" style="font-family: monospace; font-weight: bold; color: #d63031;"></p>
+    </div>
+
+    <script>
+        // Podatki
+        const mat2D = [
+            [1, 2, 3, 4],
+            [5, 6, 7, 8],
+            [9, 10, 11, 12]
+        ];
+
+        // 3D Matrika: 3 plasti, vsaka 3x3
+        const mat3D = [
+            [[11,12,13],[14,15,16],[17,18,19]], // Plast 0
+            [[21,22,23],[24,25,26],[27,28,29]], // Plast 1
+            [[31,32,33],[34,35,36],[37,38,39]]  // Plast 2
+        ];
+
+        function render() {
+            // Render 2D
+            const g2 = document.getElementById('grid2d');
+            g2.style.gridTemplateColumns = `repeat(4, 1fr)`;
+            g2.innerHTML = mat2D.flat().map((v, i) => {
+                const r = Math.floor(i/4), s = i%4;
+                return `<div class="cell c2d" id="c2-${r}-${s}">${v}</div>`;
+            }).join('');
+
+            // Render 3D
+            const g3 = document.getElementById('grid3d');
+            g3.innerHTML = mat3D.map((plast, p) => `
+                <div class="layer">
+                    <div style="font-size:0.6rem; color:white">Plast ${p}</div>
+                    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:2px;">
+                        ${plast.flat().map((v, i) => {
+                            const r = Math.floor(i/3), s = i%3;
+                            return `<div class="cell c3d" id="c3-${p}-${r}-${s}">${v}</div>`;
+                        }).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function access2D() {
+            const r = document.getElementById('r2').value, s = document.getElementById('s2').value;
+            clearHighlights();
+            const el = document.getElementById(`c2-${r}-${s}`);
+            if(el) {
+                el.classList.add('highlight');
+                document.getElementById('log').innerText = `2D: matrika[${r}][${s}] = ${mat2D[r][s]}`;
+            }
+        }
+
+        function access3D() {
+            const p = document.getElementById('p3').value, r = document.getElementById('r3').value, s = document.getElementById('s3').value;
+            clearHighlights();
+            const el = document.getElementById(`c3-${p}-${r}-${s}`);
+            if(el) {
+                el.classList.add('highlight');
+                document.getElementById('log').innerText = `3D: matrika[${p}][${r}][${s}] = ${mat3D[p][r][s]}`;
+            }
+        }
+
+        function clearHighlights() {
+            document.querySelectorAll('.cell').forEach(c => c.classList.remove('highlight'));
+        }
+
+        render();
+    </script>
+</body>
+</html>

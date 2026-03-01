@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Vizualizacija: 2D k-d drevo</title>
+    <style>
+        :root { --x-split: #e74c3c; --y-split: #3498db; --node: #2d3436; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 95%; max-width: 900px; text-align: center; }
+        
+        .main-layout { display: flex; gap: 20px; margin-top: 20px; flex-wrap: wrap; justify-content: center; }
+        
+        /* Prostorska razdelitev (Canvas-like) */
+        #space { 
+            width: 400px; height: 400px; background: #fff; border: 2px solid #2d3436; 
+            position: relative; overflow: hidden; cursor: crosshair;
+        }
+        
+        .point { 
+            width: 8px; height: 8px; background: var(--node); border-radius: 50%; 
+            position: absolute; transform: translate(-50%, -50%); z-index: 10; 
+        }
+        .split-line { position: absolute; z-index: 5; opacity: 0.6; }
+        .x-line { width: 2px; background: var(--x-split); height: 100%; }
+        .y-line { height: 2px; background: var(--y-split); width: 100%; }
+
+        /* Struktura drevesa */
+        #treeCanvas { width: 400px; height: 400px; position: relative; border-left: 1px solid #eee; }
+        .tree-node { 
+            padding: 4px 8px; border-radius: 4px; position: absolute; 
+            font-size: 0.7rem; color: white; font-weight: bold; transform: translateX(-50%);
+        }
+
+        .controls { margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; }
+        .legend { display: flex; gap: 20px; justify-content: center; font-size: 0.8rem; margin-top: 10px; }
+        .legend span b { padding: 2px 6px; border-radius: 3px; color: white; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>k-d drevo (k-Dimensional Tree)</h2>
+        <p>Klikni v kvadrat, da dodaš točko (X, Y). Drevo izmenično deli prostor.</p>
+
+        <div class="main-layout">
+            <div id="space" onclick="addPoint(event)"></div>
+            <div id="treeCanvas"></div>
+        </div>
+
+        <div class="controls">
+            <button onclick="reset()">Počisti vse</button>
+            <div class="legend">
+                <span><b style="background:var(--x-split)">RDEČA</b> = Delitev po X</span>
+                <span><b style="background:var(--y-split)">MODRA</b> = Delitev po Y</span>
+            </div>
+        </div>
+        <p id="status" style="color: #636e72; font-size: 0.9rem;">Točke so razvrščene glede na dimenzijo nivoja.</p>
+    </div>
+
+    <script>
+        let points = [];
+        let root = null;
+        const space = document.getElementById('space');
+        const treeCanvas = document.getElementById('treeCanvas');
+
+        class KDNode {
+            constructor(point, axis, depth) {
+                this.point = point; // [x, y]
+                this.axis = axis;   // 0 za X, 1 za Y
+                this.depth = depth;
+                this.left = null;
+                this.right = null;
+            }
+        }
+
+        function insert(node, point, depth = 0) {
+            const axis = depth % 2;
+            if (!node) return new KDNode(point, axis, depth);
+
+            if (point[axis] < node.point[axis]) {
+                node.left = insert(node.left, point, depth + 1);
+            } else {
+                node.right = insert(node.right, point, depth + 1);
+            }
+            return node;
+        }
+
+        function addPoint(e) {
+            const rect = space.getBoundingClientRect();
+            const x = Math.round(e.clientX - rect.left);
+            const y = Math.round(e.clientY - rect.top);
+            
+            const newPoint = [x, y];
+            points.push(newPoint);
+            root = insert(root, newPoint);
+            
+            render();
+        }
+
+        function render() {
+            space.innerHTML = '';
+            treeCanvas.innerHTML = '';
+            if (root) {
+                drawSpace(root, 0, 400, 0, 400);
+                drawTree(root, 200, 30, 100);
+            }
+        }
+
+        function drawSpace(node, minX, maxX, minY, maxY) {
+            if (!node) return;
+
+            // Nariši točko
+            const dot = document.createElement('div');
+            dot.className = 'point';
+            dot.style.left = `${node.point[0]}px`;
+            dot.style.top = `${node.point[1]}px`;
+            space.appendChild(dot);
+
+            // Nariši delilno črto
+            const line = document.createElement('div');
+            line.className = `split-line ${node.axis === 0 ? 'x-line' : 'y-line'}`;
+            
+            if (node.axis === 0) { // X split
+                line.style.left = `${node.point[0]}px`;
+                line.style.top = `${minY}px`;
+                line.style.height = `${maxY - minY}px`;
+                drawSpace(node.left, minX, node.point[0], minY, maxY);
+                drawSpace(node.right, node.point[0], maxX, minY, maxY);
+            } else { // Y split
+                line.style.top = `${node.point[1]}px`;
+                line.style.left = `${minX}px`;
+                line.style.width = `${maxX - minX}px`;
+                drawSpace(node.left, minX, maxX, minY, node.point[1]);
+                drawSpace(node.right, minX, maxX, node.point[1], maxY);
+            }
+            space.appendChild(line);
+        }
+
+        function drawTree(node, x, y, step) {
+            if (!node) return;
+
+            const div = document.createElement('div');
+            div.className = 'tree-node';
+            div.style.background = node.axis === 0 ? 'var(--x-split)' : 'var(--y-split)';
+            div.style.left = `${x}px`;
+            div.style.top = `${y}px`;
+            div.innerText = `${node.point[0]},${node.point[1]}`;
+            treeCanvas.appendChild(div);
+
+            if (node.left) drawTree(node.left, x - step, y + 60, step / 1.8);
+            if (node.right) drawTree(node.right, x + step, y + 60, step / 1.8);
+        }
+
+        function reset() {
+            points = [];
+            root = null;
+            render();
+        }
+    </script>
+</body>
+</html>
+

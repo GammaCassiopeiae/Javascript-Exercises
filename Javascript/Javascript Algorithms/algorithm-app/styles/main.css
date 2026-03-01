@@ -1,0 +1,202 @@
+
+/* 
+ * THE NEON-GRID ARCHITECT MANIFESTO v2.0
+ * Core Variables & Reset
+ */
+
+:root {
+  /* Neon Palette - Base Neon Lime Variants */
+  --bg-dark: #050505;
+  --bg-panel: rgba(10, 15, 10, 0.7);
+  --neon-lime: #39ff14; /* Default Neon Lime */
+  --neon-glow: 0 0 10px var(--neon-lime), 0 0 20px var(--neon-lime);
+  --text-main: #ffffff;
+  --text-muted: rgba(255, 255, 255, 0.6);
+  --border-glow: rgba(57, 255, 20, 0.2);
+
+  /* Spacing & Layout (Directive 12) */
+  --gap-main: clamp(1rem, 2vw, 2rem);
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  
+  /* Fonts (Directive 111, 112) */
+  --font-display: 'Rajdhani', sans-serif;
+  --font-code: 'Fira Code', monospace;
+  
+  /* Animation */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-speed: 0.3s;
+}
+
+/* Global Reset (Directive 6) */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.5;
+}
+
+/* Layout Architecture (Directive 2, 3) */
+.l-layout {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+}
+
+.l-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--gap-main);
+}
+
+/* Header (Directive 11) */
+.header {
+  background: rgba(5, 5, 5, 0.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-glow);
+  padding: 1rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.header__nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header__logo {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--neon-lime);
+  text-shadow: var(--neon-glow);
+  text-decoration: none;
+}
+
+/* Hero Section */
+.hero {
+  padding: 4rem 0;
+  text-align: center;
+}
+
+.hero__title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 8vw, 4rem);
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+}
+
+/* Component: Cards (Directive 105) */
+.c-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--gap-main);
+  margin-bottom: 4rem;
+}
+
+.c-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-glow);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  text-decoration: none;
+  color: inherit;
+  transition: transform var(--transition-speed) var(--ease-out), 
+              box-shadow var(--transition-speed) var(--ease-out);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.c-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 20px var(--border-glow);
+  border-color: var(--neon-lime);
+}
+
+.c-card__title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: var(--neon-lime);
+  margin: 0 0 1rem 0;
+  text-transform: uppercase;
+}
+
+/* Algorithm Display (Directive 207) */
+.c-algo {
+  margin-bottom: 3rem;
+  border-left: 2px solid var(--border-glow);
+  padding-left: 1.5rem;
+}
+
+.c-algo__title {
+  color: var(--neon-lime);
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.c-code-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (min-width: 992px) {
+  .c-code-container {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+.c-code-block {
+  flex: 1;
+  background: #000;
+  padding: 1.5rem;
+  border-radius: var(--radius-md);
+  font-family: var(--font-code);
+  font-size: 0.9rem;
+  color: #d4d4d4;
+  overflow-x: auto;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.c-explanation {
+  flex: 1;
+  padding: 1rem;
+}
+
+.c-line-info {
+  margin-bottom: 0.8rem;
+  font-size: 0.9rem;
+}
+
+.c-line-info__num {
+  color: var(--neon-lime);
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
+
+/* Utilities (Directive 54) */
+.u-text-glow { text-shadow: var(--neon-glow); }
+.u-bg-gradient { background: linear-gradient(180deg, var(--bg-dark) 0%, #0a0a0a 100%); }
+
+/* Footer */
+.footer {
+  border-top: 1px solid var(--border-glow);
+  padding: 2rem 0;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}

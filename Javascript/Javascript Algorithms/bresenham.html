@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Bresenham's Line Algorithm</title>
+    <style>
+        body { background: #111; color: #eee; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; }
+        canvas { border: 2px solid #444; background: #000; cursor: crosshair; image-rendering: pixelated; }
+        .ui { margin: 20px; text-align: center; }
+        .code-note { color: #888; font-size: 0.9em; max-width: 600px; }
+    </style>
+</head>
+<body>
+    <h1>Bresenhamov algoritem</h1>
+    <div class="ui">
+        <p>Klikni in vleci za risanje črte pikslov.</p>
+        <div class="code-note">Brez <code>Math.round()</code>, brez deljenja, samo cela števila.</div>
+    </div>
+    <canvas id="lineCanvas" width="600" height="400"></canvas>
+
+    <script>
+        const canvas = document.getElementById('lineCanvas');
+        const ctx = canvas.getContext('2d');
+        const pixelSize = 10; // Povečamo piksle za boljšo vidnost
+        let isDrawing = false;
+        let startPos = { x: 0, y: 0 };
+
+        function drawPixel(x, y, color = "#00ffcc") {
+            ctx.fillStyle = color;
+            ctx.fillRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize);
+        }
+
+        // --- BRESENHAMOV ALGORITEM ---
+        function drawBresenhamLine(x0, y0, x1, y1) {
+            let dx = Math.abs(x1 - x0);
+            let dy = Math.abs(y1 - y0);
+            let sx = (x0 < x1) ? 1 : -1;
+            let sy = (y0 < y1) ? 1 : -1;
+            let err = dx - dy;
+
+            while (true) {
+                drawPixel(x0, y0); // Nariši trenutni piksel
+
+                if (x0 === x1 && y0 === y1) break;
+
+                let e2 = 2 * err;
+                if (e2 > -dy) {
+                    err -= dy;
+                    x0 += sx;
+                }
+                if (e2 < dx) {
+                    err += dx;
+                    y0 += sy;
+                }
+            }
+        }
+
+        function getMousePos(e) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: Math.floor((e.clientX - rect.left) / pixelSize),
+                y: Math.floor((e.clientY - rect.top) / pixelSize)
+            };
+        }
+
+        canvas.onmousedown = (e) => {
+            isDrawing = true;
+            startPos = getMousePos(e);
+        };
+
+        window.onmousemove = (e) => {
+            if (!isDrawing) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Narišemo mrežo za referenco
+            ctx.strokeStyle = "#222";
+            for(let i=0; i<canvas.width; i+=pixelSize) {
+                ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i, canvas.height); ctx.stroke();
+            }
+            for(let j=0; j<canvas.height; j+=pixelSize) {
+                ctx.beginPath(); ctx.moveTo(0,j); ctx.lineTo(canvas.width, j); ctx.stroke();
+            }
+            
+            const currentPos = getMousePos(e);
+            drawBresenhamLine(startPos.x, startPos.y, currentPos.x, currentPos.y);
+        };
+
+        window.onmouseup = () => isDrawing = false;
+    </script>
+</body>
+</html>

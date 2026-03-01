@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Conway's Game of Life</title>
+    <style>
+        body { background: #0f172a; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; margin: 0; padding: 20px; }
+        canvas { background: #1e293b; border: 2px solid #334155; cursor: crosshair; image-rendering: pixelated; }
+        .controls { margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+        button { padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; background: #38bdf8; color: #0f172a; transition: 0.2s; }
+        button:hover { background: #7dd3fc; }
+        .stats { margin-top: 10px; font-family: monospace; color: #94a3b8; }
+    </style>
+</head>
+<body>
+
+    <h1>Igra življenja (Game of Life)</h1>
+    
+    <div class="controls">
+        <button onclick="togglePlay()" id="playBtn">Zaženi</button>
+        <button onclick="randomize()">Naključno</button>
+        <button onclick="clearGrid()">Počisti</button>
+        <button onclick="nextStep()">Naslednji korak</button>
+    </div>
+
+    <canvas id="lifeCanvas" width="600" height="400"></canvas>
+    <div class="stats" id="stats">Generacija: 0</div>
+
+    <script>
+        const canvas = document.getElementById('lifeCanvas');
+        const ctx = canvas.getContext('2d');
+        const resolution = 10;
+        const cols = canvas.width / resolution;
+        const rows = canvas.height / resolution;
+
+        let grid = createGrid();
+        let isPlaying = false;
+        let generation = 0;
+
+        function createGrid() {
+            return Array.from({ length: cols }, () => Array(rows).fill(0));
+        }
+
+        function randomize() {
+            grid = grid.map(col => col.map(() => Math.random() > 0.8 ? 1 : 0));
+            generation = 0;
+            draw();
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < cols; i++) {
+                for (let j = 0; j < rows; j++) {
+                    if (grid[i][j]) {
+                        ctx.fillStyle = "#38bdf8";
+                        ctx.fillRect(i * resolution, j * resolution, resolution - 1, resolution - 1);
+                    }
+                }
+            }
+            document.getElementById('stats').innerText = `Generacija: ${generation}`;
+        }
+
+        function nextStep() {
+            let nextGrid = createGrid();
+
+            for (let i = 0; i < cols; i++) {
+                for (let j = 0; j < rows; j++) {
+                    let state = grid[i][j];
+                    let neighbors = countNeighbors(grid, i, j);
+
+                    if (state === 0 && neighbors === 3) {
+                        nextGrid[i][j] = 1; // Rojstvo
+                    } else if (state === 1 && (neighbors < 2 || neighbors > 3)) {
+                        nextGrid[i][j] = 0; // Smrt
+                    } else {
+                        nextGrid[i][j] = state; // Preživetje
+                    }
+                }
+            }
+            grid = nextGrid;
+            generation++;
+            draw();
+        }
+
+        function countNeighbors(grid, x, y) {
+            let sum = 0;
+            for (let i = -1; i < 2; i++) {
+                for (let j = -1; j < 2; j++) {
+                    // Robovi so povezani (toroidna mreža)
+                    let col = (x + i + cols) % cols;
+                    let row = (y + j + rows) % rows;
+                    sum += grid[col][row];
+                }
+            }
+            sum -= grid[x][y]; // Odštejemo trenutno celico
+            return sum;
+        }
+
+        function togglePlay() {
+            isPlaying = !isPlaying;
+            document.getElementById('playBtn').innerText = isPlaying ? "Ustavi" : "Zaženi";
+            if (isPlaying) play();
+        }
+
+        function play() {
+            if (!isPlaying) return;
+            nextStep();
+            requestAnimationFrame(play);
+        }
+
+        // Interakcija: risanje celic z miško
+        canvas.addEventListener('mousedown', e => {
+            const rect = canvas.getBoundingClientRect();
+            const x = Math.floor((e.clientX - rect.left) / resolution);
+            const y = Math.floor((e.clientY - rect.top) / resolution);
+            grid[x][y] = grid[x][y] ? 0 : 1;
+            draw();
+        });
+
+        function clearGrid() {
+            grid = createGrid();
+            generation = 0;
+            draw();
+        }
+
+        randomize();
+    </script>
+</body>
+</html>

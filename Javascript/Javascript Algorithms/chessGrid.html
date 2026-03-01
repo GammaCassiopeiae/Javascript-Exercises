@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Violet Spectrum Grid</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(10, 1fr);
+            gap: 40px;
+            width: 80%;
+            max-width: 800px;
+            height: 80%;
+            max-height: 800px;
+        }
+
+        .grid-item {
+            background: linear-gradient(45deg, #e6e6ff, #9932cc);
+            border-radius: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .grid-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .grid-item:nth-child(1) {
+            background: #e6e6ff;
+        }
+
+        .grid-item:nth-child(2) {
+            background: #d9d9ff;
+        }
+
+        .grid-item:nth-child(3) {
+            background: #cfcfff;
+        }
+
+        .grid-item:nth-child(4) {
+            background: #c3c3ff;
+        }
+
+        .grid-item:nth-child(5) {
+            background: #b8b8ff;
+        }
+
+        .grid-item:nth-child(6) {
+            background: #adadff;
+        }
+
+        .grid-item:nth-child(7) {
+            background: #a2a2ff;
+        }
+
+        .grid-item:nth-child(8) {
+            background: #9797ff;
+        }
+
+        .grid-item:nth-child(9) {
+            background: #8c8cff;
+        }
+
+        .grid-item:nth-child(10) {
+            background: #8181ff;
+        }
+
+        .grid-item:nth-child(11) {
+            background: #7676ff;
+        }
+
+        .grid-item:nth-child(12) {
+            background: #6b6bff;
+        }
+
+        .grid-item:nth-child(13) {
+            background: #6060ff;
+        }
+
+        .grid-item:nth-child(14) {
+            background: #5555ff;
+        }
+
+        .grid-item:nth-child(15) {
+            background: #4a4aff;
+        }
+
+        .grid-item:nth-child(16) {
+            background: #4040ff;
+        }
+
+        .grid-item:nth-child(17) {
+            background: #3535ff;
+        }
+
+        .grid-item:nth-child(18) {
+            background: #2a2aff;
+        }
+
+        .grid-item:nth-child(19) {
+            background: #2020ff;
+        }
+
+        .grid-item:nth-child(20) {
+            background: #1515ff;
+        }
+
+        .grid-item:nth-child(21) {
+            background: #0a0aff;
+        }
+
+        .grid-item:nth-child(22) {
+            background: #0000ff;
+        }
+
+        .grid-item:nth-child(23) {
+            background: #0000cc;
+        }
+
+        .grid-item:nth-child(24) {
+            background: #000099;
+        }
+
+        .grid-item:nth-child(25) {
+            background: #000066;
+        }
+
+        .grid-item:nth-child(26) {
+            background: #000033;
+        }
+
+        .grid-item:nth-child(27) {
+            background: #000000;
+        }
+
+        .grid-item:nth-child(28) {
+            background: #1a1a1a;
+        }
+
+        .grid-item:nth-child(29) {
+            background: #333333;
+        }
+
+        .grid-item:nth-child(30) {
+            background: #4d4d4d;
+        }
+
+        .grid-item:nth-child(31) {
+            background: #666666;
+        }
+
+        .grid-item:nth-child(32) {
+            background: #808080;
+        }
+
+        .grid-item:nth-child(33) {
+            background: #999999;
+        }
+
+        .grid-item:nth-child(34) {
+            background: #b3b3b3;
+        }
+
+        .grid-item:nth-child(35) {
+            background: #cccccc;
+        }
+
+        .grid-item:nth-child(36) {
+            background: #e6e6e6;
+        }
+
+        .grid-item:nth-child(37) {
+            background: #f2f2f2;
+        }
+
+        .grid-item:nth-child(38) {
+            background: #fdfdfd;
+        }
+
+        .grid-item:nth-child(39) {
+            background: #f0f0f0;
+        }
+
+        .grid-item:nth-child(40) {
+            background: #e6e6e6;
+        }
+
+        .grid-item:nth-child(41) {
+            background: #d9d9ff;
+        }
+
+        .grid-item:nth-child(42) {
+            background: #cfcfff;
+        }
+
+        .grid-item:nth-child(43) {
+            background: #c3c3ff;
+        }
+
+        .grid-item:nth-child(44) {
+            background: #b8b8ff;
+        }
+
+        .grid-item:nth-child(45) {
+            background: #adadff;
+        }
+
+        .grid-item:nth-child(46) {
+            background: #a2a2ff;
+        }
+
+        .grid-item:nth-child(47) {
+            background: #9797ff;
+        }
+
+        .grid-item:nth-child(48) {
+            background: #8c8cff;
+        }
+
+        .grid-item:nth-child(49) {
+            background: #8181ff;
+        }
+
+        .grid-item:nth-child(50) {
+            background: #7676ff;
+        }
+
+        .grid-item:nth-child(51) {
+            background: #6b6bff;
+        }
+
+        .grid-item:nth-child(52) {
+            background: #6060ff;
+        }
+
+        .grid-item:nth-child(53) {
+            background: #5555ff;
+        }
+
+        .grid-item:nth-child(54) {
+            background: #4a4aff;
+        }
+
+        .grid-item:nth-child(55) {
+            background: #4040ff;
+        }
+
+        .grid-item:nth-child(56) {
+            background: #3535ff;
+        }
+
+        .grid-item:nth-child(57) {
+            background: #2a2aff;
+        }
+
+        .grid-item:nth-child(58) {
+            background: #2020ff;
+        }
+
+        .grid-item:nth-child(59) {
+            background: #1515ff;
+        }
+
+        .grid-item:nth-child(60) {
+            background: #0a0aff;
+        }
+
+        @media (max-width: 768px) {
+            .grid-container {
+                grid-template-columns: repeat(5, 1fr);
+                grid-template-rows: repeat(12, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .grid-container {
+                grid-template-columns: repeat(4, 1fr);
+                grid-template-rows: repeat(15, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-container">
+        <!-- 60 grid items -->
+        <div class="grid-item">1</div>
+        <div class="grid-item">2</div>
+        <div class="grid-item">3</div>
+        <div class="grid-item">4</div>
+        <div class="grid-item">5</div>
+        <div class="grid-item">6</div>
+        <div class="grid-item">7</div>
+        <div class="grid-item">8</div>
+        <div class="grid-item">9</div>
+        <div class="grid-item">10</div>
+        <div class="grid-item">11</div>
+        <div class="grid-item">12</div>
+        <div class="grid-item">13</div>
+        <div class="grid-item">14</div>
+        <div class="grid-item">15</div>
+        <div class="grid-item">16</div>
+        <div class="grid-item">17</div>
+        <div class="grid-item">18</div>
+        <div class="grid-item">19</div>
+        <div class="grid-item">20</div>
+        <div class="grid-item">21</div>
+        <div class="grid-item">22</div>
+        <div class="grid-item">23</div>
+        <div class="grid-item">24</div>
+        <div class="grid-item">25</div>
+        <div class="grid-item">26</div>
+        <div class="grid-item">27</div>
+        <div class="grid-item">28</div>
+        <div class="grid-item">29</div>
+        <div class="grid-item">30</div>
+        <div class="grid-item">31</div>
+        <div class="grid-item">32</div>
+        <div class="grid-item">33</div>
+        <div class="grid-item">34</div>
+        <div class="grid-item">35</div>
+        <div class="grid-item">36</div>
+        <div class="grid-item">37</div>
+        <div class="grid-item">38</div>
+        <div class="grid-item">39</div>
+        <div class="grid-item">40</div>
+        <div class="grid-item">41</div>
+        <div class="grid-item">42</div>
+        <div class="grid-item">43</div>
+        <div class="grid-item">44</div>
+        <div class="grid-item">45</div>
+        <div class="grid-item">46</div>
+        <div class="grid-item">47</div>
+        <div class="grid-item">48</div>
+        <div class="grid-item">49</div>
+        <div class="grid-item">50</div>
+        <div class="grid-item">51</div>
+        <div class="grid-item">52</div>
+        <div class="grid-item">53</div>
+        <div class="grid-item">54</div>
+        <div class="grid-item">55</div>
+        <div class="grid-item">56</div>
+        <div class="grid-item">57</div>
+        <div class="grid-item">58</div>
+        <div class="grid-item">59</div>
+        <div class="grid-item">60</div>
+    </div>
+</body>
+</html>

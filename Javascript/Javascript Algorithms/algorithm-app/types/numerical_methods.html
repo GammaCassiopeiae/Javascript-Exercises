@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Numerical Methods // Neon Nexus</title>
+  <link rel="stylesheet" href="../styles/main.css">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;700&family=Fira+Code&display=swap" rel="stylesheet">
+  <style>:root { --neon-lime: #00ff7f; }</style>
+</head>
+<body class="l-layout u-bg-gradient">
+
+  <header class="header">
+    <div class="l-container header__nav">
+      <a href="../index.html" class="header__logo u-text-glow">Neon Nexus // ALGO</a>
+      <nav>
+        <a href="../index.html" class="c-card__title" style="text-decoration: none; font-size: 0.9rem;">BACK ➜</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="l-container">
+    <section class="hero">
+      <h1 class="hero__title u-text-glow">Numerical Methods</h1>
+      <p class="u-text-muted">Approximating continuous solutions in a discrete digital world.</p>
+    </section>
+
+    <div id="algo-container">
+      <!-- Algorithms Injected via DOM API -->
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="l-container">
+      <p>&copy; 2026 NEON-NOIR ARCHITECT MANIFESTO</p>
+    </div>
+  </footer>
+
+  <script src="../scripts/dom-engine.js"></script>
+  <script>
+    window.ALGO_DATA = [
+      {
+        title: "Newton-Raphson Method",
+        code: `function newtonRaphson(f, df, x0, tol = 1e-7) {
+  let x = x0;
+  while (Math.abs(f(x)) > tol) {
+    x = x - f(x) / df(x);
+  }
+  return x;
+}`,
+        explanation: [
+          "Initialize the current guess (x) to the starting value (x0).",
+          "Check if the absolute value of the function (f) at x is above tolerance.",
+          "Update the guess using the Newton-Raphson iterative formula.",
+          "Subtract the function value divided by its derivative.",
+          "Continue the loop until the result converges to the root.",
+          "Return the final approximated root value."
+        ]
+      },
+      {
+        title: "Bisection Method",
+        code: `function bisection(f, a, b, tol = 1e-7) {
+  let mid;
+  while ((b - a) / 2 > tol) {
+    mid = (a + b) / 2;
+    if (f(mid) === 0) break;
+    if (f(a) * f(mid) < 0) b = mid;
+    else a = mid;
+  }
+  return mid;
+}`,
+        explanation: [
+          "Declare the variable to store the midpoint of the current interval.",
+          "Continue looping while the interval width is larger than tolerance.",
+          "Find the midpoint between the current 'a' and 'b'.",
+          "If the function value at the midpoint is exactly zero, the root is found.",
+          "Check if the sign changes in the left half of the interval.",
+          "If sign changes in left half, set the new right boundary (b) as mid.",
+          "If sign changes in right half, set the new left boundary (a) as mid.",
+          "Return the midpoint as the final root approximation."
+        ]
+      },
+      {
+        title: "Gaussian Elimination",
+        code: `function gaussian(A, b) {
+  const n = A.length;
+  for (let i = 0; i < n; i++) {
+    // Pivoting (omitted for brevity)
+    for (let k = i + 1; k < n; k++) {
+      let factor = A[k][i] / A[i][i];
+      b[k] -= factor * b[i];
+      for (let j = i; j < n; j++) A[k][j] -= factor * A[i][j];
+    }
+  }
+  return backSubstitute(A, b);
+}`,
+        explanation: [
+          "Determine the number of equations (n) in the linear system.",
+          "Outer loop iterates through each column for elimination.",
+          "Middle loop targets each row below the current pivot (i).",
+          "Calculate the elimination factor using the pivot element.",
+          "Apply the elimination factor to the result vector (b).",
+          "Inner loop updates all coefficients in the matrix row.",
+          "Reduce the system into an upper triangular form.",
+          "Perform back substitution to find all variable values."
+        ]
+      },
+      {
+        title: "Runge-Kutta Method (ODE)",
+        code: `function rungeKutta(f, x0, y0, h, steps) {
+  let x = x0, y = y0;
+  for (let i = 0; i < steps; i++) {
+    let k1 = h * f(x, y);
+    let k2 = h * f(x + h/2, y + k1/2);
+    let k3 = h * f(x + h/2, y + k2/2);
+    let k4 = h * f(x + h, y + k3);
+    y += (k1 + 2*k2 + 2*k3 + k4) / 6;
+    x += h;
+  }
+  return y;
+}`,
+        explanation: [
+          "Initialize starting points (x, y) for the differential equation.",
+          "Loop for the specified number of integration steps.",
+          "Calculate the first slope approximation (k1) at the start.",
+          "Calculate k2 using the slope at the interval midpoint.",
+          "Calculate k3 using a more refined midpoint slope estimate.",
+          "Calculate k4 at the end of the interval step.",
+          "Weight all four slopes to find the final y-increment.",
+          "Update the current position (x) by adding the step size (h).",
+          "Return the final integrated value after all steps."
+        ]
+      },
+      {
+        title: "Simpson's Rule (Integration)",
+        code: `function simpson(f, a, b, n) {
+  let h = (b - a) / n, sum = f(a) + f(b);
+  for (let i = 1; i < n; i++) {
+    sum += f(a + i * h) * (i % 2 === 0 ? 2 : 4);
+  }
+  return (h / 3) * sum;
+}`,
+        explanation: [
+          "Calculate the interval width (h) and initial sum (boundaries).",
+          "Loop through each subdivision of the integration range.",
+          "Evaluate the function at the current point within the interval.",
+          "Apply alternating weights (2 or 4) based on Simpson's rule formula.",
+          "Even subdivisions get a weight of 2, odd subdivisions get 4.",
+          "Finalize the integration by multiplying the sum by (h/3).",
+          "Return the approximate definite integral result."
+        ]
+      }
+    ];
+    new AlgoEngine("Numerical Methods", "#00ff7f");
+  </script>
+</body>
+</html>

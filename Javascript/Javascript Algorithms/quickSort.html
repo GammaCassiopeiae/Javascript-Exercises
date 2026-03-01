@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>QuickSort Vizualizacija</title>
+    <style>
+        body { background: #0f172a; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding-top: 20px; }
+        .container { display: flex; align-items: flex-end; height: 300px; gap: 4px; margin: 40px; }
+        .bar { background: #38bdf8; width: 20px; transition: height 0.2s, background 0.2s; border-radius: 2px 2px 0 0; }
+        .pivot { background: #f43f5e !important; }
+        .compare { background: #fbbf24 !important; }
+        .sorted { background: #22c55e !important; }
+        button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; background: #38bdf8; color: #0f172a; }
+        .controls { display: flex; gap: 10px; }
+    </style>
+</head>
+<body>
+    <h1>QuickSort Algoritem</h1>
+    <div class="controls">
+        <button onclick="resetArray()">Nova števila</button>
+        <button onclick="startSort()" style="background: #22c55e;">Razvrsti!</button>
+    </div>
+    <div id="container" class="container"></div>
+    <p id="status">Pritisni "Razvrsti!" za začetek.</p>
+
+    <script>
+        let array = [];
+        const count = 30;
+        const container = document.getElementById('container');
+
+        function resetArray() {
+            array = Array.from({length: count}, () => Math.floor(Math.random() * 250) + 10);
+            render();
+            document.getElementById('status').innerText = "Pripravljen.";
+        }
+
+        function render(piv = -1, comp = []) {
+            container.innerHTML = '';
+            array.forEach((val, i) => {
+                const bar = document.createElement('div');
+                bar.className = 'bar';
+                bar.style.height = val + 'px';
+                if (i === piv) bar.classList.add('pivot');
+                if (comp.includes(i)) bar.classList.add('compare');
+                container.appendChild(bar);
+            });
+        }
+
+        async function swap(i, j) {
+            await new Promise(r => setTimeout(r, 50));
+            [array[i], array[j]] = [array[j], array[i]];
+            render();
+        }
+
+        // --- REKURZIVNI QUICKSORT ---
+        async function quickSort(low, high) {
+            if (low < high) {
+                let pi = await partition(low, high);
+                await quickSort(low, pi - 1);
+                await quickSort(pi + 1, high);
+            }
+            if (low === 0 && high === array.length - 1) {
+                document.getElementById('status').innerText = "Končano!";
+                render(); // Končni izris brez barvnih označb
+            }
+        }
+
+        async function partition(low, high) {
+            let pivot = array[high];
+            let i = low - 1;
+            render(high); // Označi pivot rdeče
+
+            for (let j = low; j < high; j++) {
+                render(high, [j, i + 1]); // Označi elemente v primerjavi rumeno
+                await new Promise(r => setTimeout(r, 50));
+
+                if (array[j] < pivot) {
+                    i++;
+                    await swap(i, j);
+                }
+            }
+            await swap(i + 1, high);
+            return i + 1;
+        }
+
+        function startSort() {
+            document.getElementById('status').innerText = "Razvrščam...";
+            quickSort(0, array.length - 1);
+        }
+
+        resetArray();
+    </script>
+</body>
+</html>

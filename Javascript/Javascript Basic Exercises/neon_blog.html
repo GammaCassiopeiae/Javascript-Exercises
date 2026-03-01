@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Neon-Noir Chronicles: A DOM API Generated Blog">
+    <title>Neon-Noir Chronicles // DOM API</title>
+    <!-- Fonts: Directive 111 & 112 -->
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Fira+Code&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 
+        NEON-NOIR ARCHITECT MANIFESTO COMPLIANCE:
+        - Directive 1: Mobile First
+        - Directive 201: All Elements created via document.createElement
+        - Directive 206: Fragment Injection
+        - Directive 226: CSS Injection via JS
+    -->
+    <script>
+        (function() {
+            'use strict';
+
+            // --- 1. CSS SYSTEM (INJECTED) ---
+            const CSS_STYLES = `
+                :root {
+                    --bg-dark: #050505;
+                    --bg-panel: rgba(20, 20, 25, 0.6);
+                    --neon-primary: #00f3ff; /* Cyan */
+                    --neon-secondary: #ff00ff; /* Magenta */
+                    --text-main: #ffffff;
+                    --text-muted: rgba(255, 255, 255, 0.7);
+                    --border-glow: rgba(0, 243, 255, 0.2);
+                    --gap: clamp(1rem, 2vw, 2rem);
+                    --font-display: 'Rajdhani', sans-serif;
+                    --font-code: 'Fira Code', monospace;
+                    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+                }
+
+                * { box-sizing: border-box; }
+
+                body {
+                    margin: 0;
+                    padding: 0;
+                    background-color: var(--bg-dark);
+                    color: var(--text-main);
+                    font-family: var(--font-display);
+                    line-height: 1.6;
+                    min-height: 100vh;
+                    display: flex;
+                    flex-direction: column;
+                }
+
+                /* Layout */
+                .l-container {
+                    width: 100%;
+                    max-width: 1000px;
+                    margin: 0 auto;
+                    padding: 0 var(--gap);
+                }
+
+                /* Header */
+                .header {
+                    position: sticky;
+                    top: 0;
+                    z-index: 1000;
+                    background: rgba(5, 5, 5, 0.85);
+                    backdrop-filter: blur(12px);
+                    border-bottom: 1px solid var(--border-glow);
+                    padding: 1rem 0;
+                }
+
+                .header__content {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+
+                .c-logo {
+                    font-size: 1.5rem;
+                    font-weight: 700;
+                    color: var(--neon-primary);
+                    text-transform: uppercase;
+                    letter-spacing: 0.1em;
+                    text-shadow: 0 0 10px var(--border-glow);
+                    text-decoration: none;
+                }
+
+                /* Hero */
+                .c-hero {
+                    padding: 4rem 0;
+                    text-align: center;
+                    border-bottom: 1px solid rgba(255,255,255,0.05);
+                }
+
+                .c-hero__title {
+                    font-size: clamp(2.5rem, 6vw, 4rem);
+                    margin: 0 0 1rem 0;
+                    line-height: 1.1;
+                    text-transform: uppercase;
+                }
+                
+                .u-text-gradient {
+                    background: linear-gradient(90deg, var(--neon-primary), var(--neon-secondary));
+                    -webkit-background-clip: text;
+                    background-clip: text;
+                    color: transparent;
+                }
+
+                /* Blog Grid */
+                .l-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                    gap: 2rem;
+                    padding: 3rem 0;
+                }
+
+                /* Card Component */
+                .c-card {
+                    background: var(--bg-panel);
+                    border: 1px solid var(--border-glow);
+                    border-radius: 12px;
+                    padding: 1.5rem;
+                    display: flex;
+                    flex-direction: column;
+                    transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+                    position: relative;
+                    overflow: hidden;
+                }
+
+                .c-card:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 10px 30px rgba(0, 243, 255, 0.15);
+                    border-color: var(--neon-primary);
+                }
+
+                .c-card::before {
+                    content: '';
+                    position: absolute;
+                    top: 0; left: 0; width: 4px; height: 100%;
+                    background: var(--neon-primary);
+                    opacity: 0.5;
+                }
+
+                .c-card__date {
+                    font-family: var(--font-code);
+                    font-size: 0.8rem;
+                    color: var(--neon-secondary);
+                    margin-bottom: 0.5rem;
+                }
+
+                .c-card__title {
+                    font-size: 1.5rem;
+                    margin: 0 0 1rem 0;
+                    line-height: 1.2;
+                    color: var(--text-main);
+                }
+
+                .c-card__excerpt {
+                    color: var(--text-muted);
+                    font-size: 1rem;
+                    margin-bottom: 1.5rem;
+                    flex-grow: 1;
+                }
+
+                .c-btn {
+                    display: inline-flex;
+                    align-items: center;
+                    font-family: var(--font-code);
+                    font-size: 0.9rem;
+                    color: var(--neon-primary);
+                    text-decoration: none;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    font-weight: 700;
+                    transition: letter-spacing 0.3s var(--ease);
+                }
+
+                .c-btn:hover {
+                    letter-spacing: 2px;
+                    text-shadow: 0 0 8px var(--neon-primary);
+                }
+
+                /* Footer */
+                .footer {
+                    margin-top: auto;
+                    border-top: 1px solid rgba(255,255,255,0.1);
+                    padding: 2rem 0;
+                    text-align: center;
+                    font-family: var(--font-code);
+                    font-size: 0.8rem;
+                    color: rgba(255,255,255,0.4);
+                }
+            `;
+
+            // --- 2. DATA SOURCE ---
+            const BLOG_POSTS = [
+                {
+                    id: 1,
+                    title: "The Rise of Synthetic DOM",
+                    date: "2026-03-01",
+                    excerpt: "Why modern applications are shifting towards pure JavaScript DOM manipulation for rendering high-performance interfaces.",
+                    link: "#"
+                },
+                {
+                    id: 2,
+                    title: "Neon Aesthetics in UI",
+                    date: "2026-02-28",
+                    excerpt: "Exploring the visual psychology behind high-contrast dark modes and neon accent colors in developer tools.",
+                    link: "#"
+                },
+                {
+                    id: 3,
+                    title: "Optimizing the Critical Path",
+                    date: "2026-02-25",
+                    excerpt: "Techniques for reducing First Contentful Paint by inlining critical CSS and deferring non-essential scripts.",
+                    link: "#"
+                },
+                {
+                    id: 4,
+                    title: "Cyber-Security in Frontend",
+                    date: "2026-02-20",
+                    excerpt: "Implementing strict Content Security Policies (CSP) and avoiding innerHTML to prevent XSS attacks.",
+                    link: "#"
+                },
+                {
+                    id: 5,
+                    title: "Web Components: A Retrospective",
+                    date: "2026-02-15",
+                    excerpt: "Analyzing the long-term impact of Shadow DOM and Custom Elements on the framework ecosystem.",
+                    link: "#"
+                },
+                 {
+                    id: 6,
+                    title: "The Future of CSS Grid",
+                    date: "2026-02-10",
+                    excerpt: "How subgrid and container queries are reshaping the way we think about responsive layout design.",
+                    link: "#"
+                }
+            ];
+
+            // --- 3. DOM ENGINE ---
+            
+            // Helper: Inject CSS
+            function injectStyles() {
+                const styleEl = document.createElement('style');
+                styleEl.textContent = CSS_STYLES;
+                document.head.appendChild(styleEl);
+            }
+
+            // Helper: Create Element with Class & Content
+            function el(tag, className, text) {
+                const element = document.createElement(tag);
+                if (className) element.className = className;
+                if (text) element.textContent = text;
+                return element;
+            }
+
+            // Component: Header
+            function createHeader() {
+                const header = el('header', 'header');
+                const container = el('div', 'l-container header__content');
+                
+                const logo = el('a', 'c-logo', 'Neon // Chronicles');
+                logo.href = '#';
+                
+                const nav = el('nav');
+                const btn = el('a', 'c-btn', 'Archive');
+                btn.href = '#';
+                
+                nav.appendChild(btn);
+                container.appendChild(logo);
+                container.appendChild(nav);
+                header.appendChild(container);
+                
+                return header;
+            }
+
+            // Component: Hero
+            function createHero() {
+                const section = el('section', 'l-container c-hero');
+                
+                const title = el('h1', 'c-hero__title');
+                const gradientText = el('span', 'u-text-gradient', 'Digital Perspectives');
+                title.appendChild(document.createTextNode('Future '));
+                title.appendChild(gradientText);
+                
+                const sub = el('p', '', 'Curated thoughts on code, design, and the digital frontier.');
+                sub.style.color = 'var(--text-muted)';
+                sub.style.maxWidth = '600px';
+                sub.style.margin = '0 auto';
+                
+                section.appendChild(title);
+                section.appendChild(sub);
+                
+                return section;
+            }
+
+            // Component: Blog Card
+            function createCard(post) {
+                const article = el('article', 'c-card');
+                
+                const date = el('time', 'c-card__date', post.date);
+                date.setAttribute('datetime', post.date);
+                
+                const title = el('h2', 'c-card__title', post.title);
+                const excerpt = el('p', 'c-card__excerpt', post.excerpt);
+                
+                const link = el('a', 'c-btn', 'Read Entry ➜');
+                link.href = post.link;
+                
+                article.appendChild(date);
+                article.appendChild(title);
+                article.appendChild(excerpt);
+                article.appendChild(link);
+                
+                return article;
+            }
+
+            // Component: Footer
+            function createFooter() {
+                const footer = el('footer', 'footer');
+                const container = el('div', 'l-container');
+                container.textContent = `© ${new Date().getFullYear()} NEON-NOIR CHRONICLES. GENERATED VIA DOM API.`;
+                footer.appendChild(container);
+                return footer;
+            }
+
+            // Main Render Function
+            function init() {
+                // 1. Inject CSS
+                injectStyles();
+
+                // 2. Build Document Fragment (Directive 206)
+                const docFrag = document.createDocumentFragment();
+
+                // 3. Assemble Layout
+                docFrag.appendChild(createHeader());
+                
+                const main = el('main');
+                main.appendChild(createHero());
+                
+                const grid = el('div', 'l-container l-grid');
+                BLOG_POSTS.forEach(post => {
+                    grid.appendChild(createCard(post));
+                });
+                main.appendChild(grid);
+                
+                docFrag.appendChild(main);
+                docFrag.appendChild(createFooter());
+
+                // 4. Mount to Body
+                document.body.appendChild(docFrag);
+            }
+
+            // Initialize on Load (Directive 241)
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+
+        })();
+    </script>
+</body>
+</html>

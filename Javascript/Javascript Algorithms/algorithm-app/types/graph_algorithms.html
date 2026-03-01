@@ -1,0 +1,173 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Graph Algorithms // Neon Nexus</title>
+  <link rel="stylesheet" href="../styles/main.css">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;700&family=Fira+Code&display=swap" rel="stylesheet">
+  <style>:root { --neon-lime: #adff2f; }</style>
+</head>
+<body class="l-layout u-bg-gradient">
+
+  <header class="header">
+    <div class="l-container header__nav">
+      <a href="../index.html" class="header__logo u-text-glow">Neon Nexus // ALGO</a>
+      <nav>
+        <a href="../index.html" class="c-card__title" style="text-decoration: none; font-size: 0.9rem;">BACK ➜</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="l-container">
+    <section class="hero">
+      <h1 class="hero__title u-text-glow">Graph Algorithms</h1>
+      <p class="u-text-muted">Navigating the digital network of nodes and connections.</p>
+    </section>
+
+    <div id="algo-container">
+      <!-- Algorithms Injected via DOM API -->
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="l-container">
+      <p>&copy; 2026 NEON-NOIR ARCHITECT MANIFESTO</p>
+    </div>
+  </footer>
+
+  <script src="../scripts/dom-engine.js"></script>
+  <script>
+    window.ALGO_DATA = [
+      {
+        title: "Dijkstra's Shortest Path",
+        code: `function dijkstra(graph, start) {
+  const dist = new Array(graph.length).fill(Infinity);
+  dist[start] = 0;
+  const pq = new PriorityQueue();
+  pq.enqueue(start, 0);
+  while (!pq.isEmpty()) {
+    const { node, d } = pq.dequeue();
+    if (d > dist[node]) continue;
+    for (const [neighbor, weight] of graph[node]) {
+      if (dist[node] + weight < dist[neighbor]) {
+        dist[neighbor] = dist[node] + weight;
+        pq.enqueue(neighbor, dist[neighbor]);
+      }
+    }
+  }
+  return dist;
+}`,
+        explanation: [
+          "Initialize an array with infinity for all node distances.",
+          "Set the distance to the starting node as zero.",
+          "Create a priority queue and add the starting node.",
+          "Process nodes until the priority queue is empty.",
+          "Extract the node with the current shortest distance.",
+          "If the distance is longer than what we already found, skip it.",
+          "Check each neighbor of the current node.",
+          "Calculate new potential distance through this node.",
+          "If the new distance is shorter, update it and add the neighbor to the queue.",
+          "Return the array of shortest distances to all nodes."
+        ]
+      },
+      {
+        title: "Bellman-Ford Algorithm",
+        code: `function bellmanFord(edges, nodes, start) {
+  const dist = new Array(nodes).fill(Infinity);
+  dist[start] = 0;
+  for (let i = 0; i < nodes - 1; i++) {
+    for (const [u, v, w] of edges) {
+      if (dist[u] + w < dist[v]) dist[v] = dist[u] + w;
+    }
+  }
+  return dist;
+}`,
+        explanation: [
+          "Initialize the distances to infinity, start node to zero.",
+          "Loop 'nodes - 1' times to relax every possible path edge.",
+          "Iterate over all edges in the graph.",
+          "Check if a shorter path exists to the destination node.",
+          "Update the distance if the current path is more efficient.",
+          "Handle edges with potentially negative weights efficiently.",
+          "Return the array of shortest distances from the start node."
+        ]
+      },
+      {
+        title: "Floyd-Warshall Algorithm",
+        code: `function floydWarshall(matrix) {
+  const n = matrix.length;
+  const dist = matrix.map(row => [...row]);
+  for (let k = 0; k < n; k++) {
+    for (let i = 0; i < n; i++) {
+      for (let j = 0; j < n; j++) {
+        if (dist[i][k] + dist[k][j] < dist[i][j]) {
+          dist[i][j] = dist[i][k] + dist[k][j];
+        }
+      }
+    }
+  }
+  return dist;
+}`,
+        explanation: [
+          "Find the total number of nodes in the graph matrix.",
+          "Create a copy of the initial adjacency matrix.",
+          "Outer loop picks an intermediate node 'k'.",
+          "Middle loop picks the source node 'i'.",
+          "Inner loop picks the destination node 'j'.",
+          "Check if the path from i to j through k is shorter.",
+          "Update the shortest distance between i and j.",
+          "Return the final all-pairs shortest path matrix."
+        ]
+      },
+      {
+        title: "Kruskal's MST",
+        code: `function kruskal(edges, nodes) {
+  edges.sort((a, b) => a[2] - b[2]);
+  const dsu = new DSU(nodes);
+  const mst = [];
+  for (const [u, v, w] of edges) {
+    if (dsu.union(u, v)) mst.push([u, v, w]);
+  }
+  return mst;
+}`,
+        explanation: [
+          "Sort all edges by their weights in ascending order.",
+          "Initialize a Disjoint Set Union (DSU) for cycle detection.",
+          "Iterate through sorted edges from cheapest to most expensive.",
+          "Check if the endpoints of the edge belong to different sets.",
+          "If they are separate, add the edge to the spanning tree.",
+          "Return the collection of edges forming the Minimum Spanning Tree."
+        ]
+      },
+      {
+        title: "Prim's Algorithm",
+        code: `function prims(adj, nodes) {
+  const visited = new Array(nodes).fill(false);
+  const pq = new PriorityQueue();
+  pq.enqueue(0, 0);
+  while (!pq.isEmpty()) {
+    const { node, w } = pq.dequeue();
+    if (visited[node]) continue;
+    visited[node] = true;
+    for (const [v, weight] of adj[node]) {
+      if (!visited[v]) pq.enqueue(v, weight);
+    }
+  }
+}`,
+        explanation: [
+          "Initialize an array to track visited nodes in the MST.",
+          "Add the starting node to a priority queue.",
+          "Continue while edges remain to be explored.",
+          "Get the cheapest edge connecting a new node to the current MST.",
+          "Mark the current node as visited.",
+          "Explore all neighbors and add those not yet in the MST.",
+          "Repeat until all nodes are connected in the tree."
+        ]
+      }
+    ];
+    new AlgoEngine("Graph Algorithms", "#adff2f");
+  </script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Fibonacci Rekurzija & Optimizacija</title>
+    <style>
+        body { background: #0f172a; color: white; font-family: 'Fira Code', monospace; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .card { background: #1e293b; padding: 25px; border-radius: 12px; border: 1px solid #334155; width: 450px; text-align: center; }
+        input { background: #0f172a; border: 1px solid #334155; color: #fbbf24; padding: 10px; border-radius: 4px; width: 60px; font-size: 1.2rem; margin-bottom: 20px; }
+        button { background: #38bdf8; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; margin: 5px; transition: 0.2s; }
+        button:hover { opacity: 0.8; }
+        .res-box { margin-top: 20px; padding: 15px; border-radius: 8px; font-size: 1.1rem; min-height: 50px; }
+        .fast { background: #064e3b; color: #34d399; }
+        .slow { background: #7f1d1d; color: #fca5a5; }
+        .stats { font-size: 0.8rem; color: #94a3b8; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Fibonacci Rekurzija</h2>
+        <p>Vnesi <i>n</i>-to število zaporedja:</p>
+        <input type="number" id="fibInput" value="35" min="0" max="45">
+        
+        <div>
+            <button onclick="runFib(false)">Čista rekurzija (Počasi)</button>
+            <button onclick="runFib(true)" style="background: #22c55e;">Z memorizacijo (Hitro)</button>
+        </div>
+
+        <div id="result" class="res-box">Vnesi število in izberi metodo.</div>
+        <div id="stats" class="stats"></div>
+    </div>
+
+    <script>
+        // 1. ČISTA REKURZIJA (Eksponentna: O(2^n))
+        function fibSimple(n) {
+            if (n <= 1) return n;
+            return fibSimple(n - 1) + fibSimple(n - 2);
+        }
+
+        // 2. REKURZIJA Z MEMORIZACIJO (Linearna: O(n))
+        let memo = {};
+        function fibMemo(n) {
+            if (n in memo) return memo[n];
+            if (n <= 1) return n;
+            memo[n] = fibMemo(n - 1) + fibMemo(n - 2);
+            return memo[n];
+        }
+
+        function runFib(useMemo) {
+            const n = parseInt(document.getElementById('fibInput').value);
+            const resBox = document.getElementById('result');
+            const statsBox = document.getElementById('stats');
+            
+            memo = {}; // Ponastavi spomin za vsak tek
+            resBox.innerText = "Računam...";
+            resBox.className = "res-box " + (useMemo ? "fast" : "slow");
+
+            // Uporabimo setTimeout, da se UI ne "zamrzne" pri počasni rekurziji
+            setTimeout(() => {
+                const start = performance.now();
+                const result = useMemo ? fibMemo(n) : fibSimple(n);
+                const end = performance.now();
+                const duration = (end - start).toFixed(2);
+
+                resBox.innerHTML = `F(${n}) = <strong>${result}</strong>`;
+                statsBox.innerText = `Čas izvajanja: ${duration} ms`;
+                
+                if (!useMemo && n > 35) {
+                    statsBox.innerText += " (Opozorilo: Čista rekurzija nad n=40 lahko sesuje brskalnik!)";
+                }
+            }, 50);
+        }
+    </script>
+</body>
+</html>

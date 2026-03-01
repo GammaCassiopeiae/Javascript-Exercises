@@ -1,0 +1,150 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Probability & Statistics // Neon Nexus</title>
+  <link rel="stylesheet" href="../styles/main.css">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;700&family=Fira+Code&display=swap" rel="stylesheet">
+  <style>:root { --neon-lime: #98fb98; }</style>
+</head>
+<body class="l-layout u-bg-gradient">
+
+  <header class="header">
+    <div class="l-container header__nav">
+      <a href="../index.html" class="header__logo u-text-glow">Neon Nexus // ALGO</a>
+      <nav>
+        <a href="../index.html" class="c-card__title" style="text-decoration: none; font-size: 0.9rem;">BACK ➜</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="l-container">
+    <section class="hero">
+      <h1 class="hero__title u-text-glow">Probability & Statistics</h1>
+      <p class="u-text-muted">Analyzing random variables, distributions, and data clusters.</p>
+    </section>
+
+    <div id="algo-container">
+      <!-- Algorithms Injected via DOM API -->
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="l-container">
+      <p>&copy; 2026 NEON-NOIR ARCHITECT MANIFESTO</p>
+    </div>
+  </footer>
+
+  <script src="../scripts/dom-engine.js"></script>
+  <script>
+    window.ALGO_DATA = [
+      {
+        title: "Monte Carlo Simulation",
+        code: `function monteCarloPi(trials) {
+  let inside = 0;
+  for (let i = 0; i < trials; i++) {
+    const x = Math.random(), y = Math.random();
+    if (x*x + y*y <= 1) inside++;
+  }
+  return 4 * inside / trials;
+}`,
+        explanation: [
+          "Initialize the count of random points that fall inside the unit circle.",
+          "Loop through the specified number of random trials.",
+          "Generate two independent random coordinates (x, y) between 0 and 1.",
+          "Check if the point lies within the circle (radius squared is 1).",
+          "If the point is inside, increment the 'inside' counter.",
+          "Calculate Pi by taking the ratio of inside points to total trials.",
+          "Multiply by 4 to adjust for the area of a full circle.",
+          "Return the approximated value of Pi."
+        ]
+      },
+      {
+        title: "Bayes' Theorem",
+        code: `function bayes(pA, pBA, pBnotA) {
+  const pB = pBA * pA + pBnotA * (1 - pA);
+  return (pBA * pA) / pB;
+}`,
+        explanation: [
+          "Input: P(A) is the prior probability of hypothesis A.",
+          "Input: P(B|A) is the likelihood of data B given hypothesis A.",
+          "Input: P(B|not A) is the likelihood of B given A is false.",
+          "Calculate the total probability P(B) using the law of total probability.",
+          "Multiply P(B|A) by P(A) to get the numerator (joint probability).",
+          "Divide by the total probability P(B) to get the posterior P(A|B).",
+          "Return the final updated probability after observing data B."
+        ]
+      },
+      {
+        title: "LCG Random Generator",
+        code: `function lcg(seed, m = 2**32, a = 1664525, c = 1013904223) {
+  let x = seed;
+  return function next() {
+    x = (a * x + c) % m;
+    return x / m;
+  };
+}`,
+        explanation: [
+          "Define the Linear Congruential Generator (LCG) parameters (m, a, c).",
+          "Initialize the state (x) with the provided seed value.",
+          "Return a closure (next) to maintain the generator's state.",
+          "Update the state x using the LCG formula: (a*x + c) mod m.",
+          "Divide the new state by the modulus to get a value between 0 and 1.",
+          "This generates a pseudorandom sequence of uniform distribution.",
+          "Return the newly calculated random number to the caller."
+        ]
+      },
+      {
+        title: "K-Means Clustering",
+        code: `function kMeans(data, k) {
+  let centroids = data.slice(0, k);
+  while (!converged) {
+    const clusters = Array(k).fill().map(() => []);
+    for (let p of data) {
+      const cIdx = closestCentroid(p, centroids);
+      clusters[cIdx].push(p);
+    }
+    centroids = clusters.map(c => mean(c));
+  }
+}`,
+        explanation: [
+          "Initialize the k cluster centroids (starting with the first k points).",
+          "Loop iteratively until centroids no longer move (converge).",
+          "Initialize empty clusters for each centroid at each step.",
+          "Loop through every data point in the input set.",
+          "Assign each point to the cluster with the nearest centroid.",
+          "Recalculate the position of each centroid as the mean of its cluster.",
+          "Continue refining the clusters until stabilization occurs.",
+          "The algorithm groups points based on spatial similarity (distance)."
+        ]
+      },
+      {
+        title: "Markov Chain",
+        code: `function markov(matrix, start, steps) {
+  let current = start;
+  const states = [current];
+  for (let i = 0; i < steps; i++) {
+    const prob = matrix[current];
+    current = selectNext(prob);
+    states.push(current);
+  }
+  return states;
+}`,
+        explanation: [
+          "Matrix defines transition probabilities between discrete states.",
+          "Initialize with a starting state 'current'.",
+          "Record the initial state in the states history array.",
+          "Loop for the specified number of steps in the simulation.",
+          "Get the probability distribution for the current state.",
+          "Choose the next state randomly based on the distribution (selectNext).",
+          "Record the new state in the sequence of states.",
+          "Return the complete history of state transitions (the Markov Chain)."
+        ]
+      }
+    ];
+    new AlgoEngine("Probability & Statistics", "#98fb98");
+  </script>
+</body>
+</html>

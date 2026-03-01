@@ -1,0 +1,144 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sorting & Searching // Neon Nexus</title>
+  <link rel="stylesheet" href="../styles/main.css">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;700&family=Fira+Code&display=swap" rel="stylesheet">
+  <style>:root { --neon-lime: #39ff14; }</style>
+</head>
+<body class="l-layout u-bg-gradient">
+
+  <header class="header">
+    <div class="l-container header__nav">
+      <a href="../index.html" class="header__logo u-text-glow">Neon Nexus // ALGO</a>
+      <nav>
+        <a href="../index.html" class="c-card__title" style="text-decoration: none; font-size: 0.9rem;">BACK ➜</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="l-container">
+    <section class="hero">
+      <h1 class="hero__title u-text-glow">Sorting & Searching</h1>
+      <p class="u-text-muted">The core mechanics of data organization and retrieval.</p>
+    </section>
+
+    <div id="algo-container">
+      <!-- Algorithms Injected via DOM API -->
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="l-container">
+      <p>&copy; 2026 NEON-NOIR ARCHITECT MANIFESTO</p>
+    </div>
+  </footer>
+
+  <script src="../scripts/dom-engine.js"></script>
+  <script>
+    window.ALGO_DATA = [
+      {
+        title: "Bubble Sort",
+        code: `function bubbleSort(arr) {
+  let n = arr.length;
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < n - i - 1; j++) {
+      if (arr[j] > arr[j + 1]) {
+        [arr[j], arr[j+1]] = [arr[j+1], arr[j]];
+      }
+    }
+  }
+  return arr;
+}`,
+        explanation: [
+          "Initialize n as the length of the input array.",
+          "Start the outer loop to iterate through the entire array.",
+          "Inner loop handles comparisons, shrinking the unsorted portion each time.",
+          "Compare adjacent elements: if the left is larger, swap them.",
+          "Using destructuring to swap elements in-place efficiently.",
+          "Continue until the largest elements 'bubble up' to the end.",
+          "Return the sorted array."
+        ]
+      },
+      {
+        title: "Merge Sort",
+        code: `function mergeSort(arr) {
+  if (arr.length <= 1) return arr;
+  const mid = Math.floor(arr.length / 2);
+  const left = mergeSort(arr.slice(0, mid));
+  const right = mergeSort(arr.slice(mid));
+  return merge(left, right);
+}`,
+        explanation: [
+          "Base case: if the array has 0 or 1 elements, it is already sorted.",
+          "Find the midpoint of the current array segment.",
+          "Recursively call mergeSort on the left half.",
+          "Recursively call mergeSort on the right half.",
+          "Merge the two sorted halves back together into a single sorted array."
+        ]
+      },
+      {
+        title: "Quick Sort",
+        code: `function quickSort(arr) {
+  if (arr.length <= 1) return arr;
+  const pivot = arr[arr.length - 1];
+  const left = [], right = [];
+  for (let i = 0; i < arr.length - 1; i++) {
+    arr[i] < pivot ? left.push(arr[i]) : right.push(arr[i]);
+  }
+  return [...quickSort(left), pivot, ...quickSort(right)];
+}`,
+        explanation: [
+          "Recursive base case: return array if length is 1 or less.",
+          "Pick the last element as the pivot for partitioning.",
+          "Initialize left and right subarrays for partitioning.",
+          "Iterate through the array (excluding the pivot).",
+          "Push elements smaller than the pivot to 'left', others to 'right'.",
+          "Recursively sort partitions and concatenate with the pivot in the middle."
+        ]
+      },
+      {
+        title: "Binary Search",
+        code: `function binarySearch(arr, target) {
+  let left = 0, right = arr.length - 1;
+  while (left <= right) {
+    let mid = Math.floor((left + right) / 2);
+    if (arr[mid] === target) return mid;
+    if (arr[mid] < target) left = mid + 1;
+    else right = mid - 1;
+  }
+  return -1;
+}`,
+        explanation: [
+          "Initialize pointers for the start and end of the search range.",
+          "Continue searching as long as the range is valid.",
+          "Calculate the midpoint to divide the search space.",
+          "Target found: return the index immediately.",
+          "If target is larger, search the right half by moving 'left' pointer.",
+          "If target is smaller, search the left half by moving 'right' pointer.",
+          "Return -1 if target is not found in the array."
+        ]
+      },
+      {
+        title: "Linear Search",
+        code: `function linearSearch(arr, target) {
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] === target) return i;
+  }
+  return -1;
+}`,
+        explanation: [
+          "Iterate through every single element in the array.",
+          "Check if the current element matches the target value.",
+          "If a match is found, return the current index.",
+          "If the loop finishes without a match, return -1."
+        ]
+      }
+    ];
+    new AlgoEngine("Sorting & Searching", "#39ff14");
+  </script>
+</body>
+</html>

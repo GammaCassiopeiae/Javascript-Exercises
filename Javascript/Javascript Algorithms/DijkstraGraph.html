@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Dijkstra na Grafu</title>
+    <style>
+        body { background: #0f172a; color: white; font-family: system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .canvas-container { position: relative; background: #1e293b; border-radius: 12px; border: 2px solid #334155; }
+        canvas { cursor: crosshair; }
+        .controls { margin-top: 20px; background: #1e293b; padding: 15px; border-radius: 8px; display: flex; gap: 10px; }
+        button { background: #38bdf8; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .info { margin-top: 10px; color: #94a3b8; font-size: 0.9rem; }
+        .path-res { color: #22c55e; font-weight: bold; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Dijkstrov Algoritem (Graf)</h1>
+    <div class="canvas-container">
+        <canvas id="graphCanvas" width="600" height="400"></canvas>
+    </div>
+    
+    <div class="controls">
+        <button onclick="clearGraph()">Počisti</button>
+        <button onclick="runDijkstra()" style="background: #22c55e;">Najdi pot (A → E)</button>
+    </div>
+
+    <div class="info">Vozlišča (A-E) so fiksna, algoritem išče pot z najmanjšo vsoto uteži.</div>
+    <div id="result" class="path-res"></div>
+
+    <script>
+        const canvas = document.getElementById('graphCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Definicija grafa (Vozlišča in povezave z utežmi)
+        const nodes = {
+            'A': { x: 50, y: 200 },
+            'B': { x: 200, y: 100 },
+            'C': { x: 200, y: 300 },
+            'D': { x: 400, y: 100 },
+            'E': { x: 550, y: 200 }
+        };
+
+        const edges = [
+            { from: 'A', to: 'B', weight: 4 },
+            { from: 'A', to: 'C', weight: 2 },
+            { from: 'B', to: 'C', weight: 5 },
+            { from: 'B', to: 'D', weight: 10 },
+            { from: 'C', to: 'D', weight: 3 },
+            { from: 'D', to: 'E', weight: 4 },
+            { from: 'C', to: 'E', weight: 8 }
+        ];
+
+        function drawGraph(highlightPath = []) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Risanje povezav
+            edges.forEach(edge => {
+                const start = nodes[edge.from];
+                const end = nodes[edge.to];
+                const isHighlighted = highlightPath.includes(edge.from) && highlightPath.includes(edge.to) && 
+                                     Math.abs(highlightPath.indexOf(edge.from) - highlightPath.indexOf(edge.to)) === 1;
+
+                ctx.beginPath();
+                ctx.moveTo(start.x, start.y);
+                ctx.lineTo(end.x, end.y);
+                ctx.strokeStyle = isHighlighted ? '#22c55e' : '#475569';
+                ctx.lineWidth = isHighlighted ? 4 : 2;
+                ctx.stroke();
+
+                // Izpis uteži
+                ctx.fillStyle = "#fbbf24";
+                ctx.fillText(edge.weight, (start.x + end.x) / 2, (start.y + end.y) / 2 - 10);
+            });
+
+            // Risanje vozlišč
+            for (let id in nodes) {
+                const node = nodes[id];
+                ctx.beginPath();
+                ctx.arc(node.x, node.y, 20, 0, Math.PI * 2);
+                ctx.fillStyle = highlightPath.includes(id) ? '#22c55e' : '#38bdf8';
+                ctx.fill();
+                ctx.fillStyle = "#0f172a";
+                ctx.textAlign = "center";
+                ctx.fillText(id, node.x, node.y + 5);
+            }
+        }
+
+        function runDijkstra() {
+            const startNode = 'A';
+            const endNode = 'E';
+            
+            let distances = {};
+            let prev = {};
+            let pq = new Set(Object.keys(nodes));
+
+            Object.keys(nodes).forEach(node => {
+                distances[node] = Infinity;
+                prev[node] = null;
+            });
+            distances[startNode] = 0;
+
+            while (pq.size > 0) {
+                // Najdi vozlišče z najmanjšo razdaljo (Prioritetna vrsta)
+                let curr = [...pq].reduce((minNode, node) => 
+                    distances[node] < distances[minNode] ? node : minNode
+                );
+
+                if (curr === endNode || distances[curr] === Infinity) break;
+                pq.delete(curr);
+
+                // Preveri sosede
+                edges.filter(e => e.from === curr || e.to === curr).forEach(edge => {
+                    let neighbor = edge.from === curr ? edge.to : edge.from;
+                    let alt = distances[curr] + edge.weight;
+                    if (alt < distances[neighbor]) {
+                        distances[neighbor] = alt;
+                        prev[neighbor] = curr;
+                    }
+                });
+            }
+
+            // Rekonstrukcija poti
+            let path = [];
+            let u = endNode;
+            while (u) {
+                path.unshift(u);
+                u = prev[u];
+            }
+
+            drawGraph(path);
+            document.getElementById('result').innerText = `Najkrajša pot: ${path.join(' → ')} (Vsota: ${distances[endNode]})`;
+        }
+
+        function clearGraph() {
+            drawGraph();
+            document.getElementById('result').innerText = '';
+        }
+
+        drawGraph();
+    </script>
+</body>
+</html>

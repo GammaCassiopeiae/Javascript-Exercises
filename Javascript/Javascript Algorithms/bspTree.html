@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>BSP Tree Visualizer</title>
+    <style>
+        body { background: #111; color: #00ffcc; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; }
+        canvas { background: #000; border: 2px solid #333; cursor: crosshair; }
+        .info { margin: 20px; max-width: 600px; line-height: 1.5; color: #888; }
+        strong { color: #00ffcc; }
+    </style>
+</head>
+<body>
+    <h1>BSP Tree (Binarna delitev prostora)</h1>
+    <div class="info">
+        Klikni in povleci, da postaviš <strong>delilno steno</strong>. <br>
+        Algoritem razvrsti stene v drevesno strukturo za hitro renderiranje.
+    </div>
+    <canvas id="bspCanvas" width="800" height="500"></canvas>
+
+    <script>
+        const canvas = document.getElementById('bspCanvas');
+        const ctx = canvas.getContext('2d');
+        let lines = [];
+        let startPos = null;
+
+        class BSPNode {
+            constructor(divider) {
+                this.divider = divider; // Črta, ki deli prostor
+                this.front = null;      // Prednja stran drevesa
+                this.back = null;       // Zadnja stran drevesa
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Izris obstoječih črt
+            lines.forEach(l => {
+                ctx.strokeStyle = '#00ffcc';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(l.x1, l.y1);
+                ctx.lineTo(l.x2, l.y2);
+                ctx.stroke();
+                
+                // Označba smeri "naprej" (normala)
+                const midX = (l.x1 + l.x2) / 2;
+                const midY = (l.y1 + l.y2) / 2;
+                const dx = l.x2 - l.x1;
+                const dy = l.y2 - l.y1;
+                ctx.strokeStyle = '#ff0055';
+                ctx.beginPath();
+                ctx.moveTo(midX, midY);
+                ctx.lineTo(midX - dy * 0.1, midY + dx * 0.1);
+                ctx.stroke();
+            });
+
+            if (startPos) {
+                ctx.strokeStyle = 'rgba(0, 255, 204, 0.3)';
+                ctx.beginPath();
+                ctx.moveTo(startPos.x, startPos.y);
+                ctx.lineTo(currentMouse.x, currentMouse.y);
+                ctx.stroke();
+            }
+        }
+
+        let currentMouse = { x: 0, y: 0 };
+        canvas.onmousedown = (e) => {
+            const rect = canvas.getBoundingClientRect();
+            startPos = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+        };
+
+        canvas.onmousemove = (e) => {
+            const rect = canvas.getBoundingClientRect();
+            currentMouse = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+            draw();
+        };
+
+        canvas.onmouseup = (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const endPos = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+            if (Math.hypot(endPos.x - startPos.x, endPos.y - startPos.y) > 10) {
+                lines.push({ x1: startPos.x, y1: startPos.y, x2: endPos.x, y2: endPos.y });
+            }
+            startPos = null;
+            draw();
+            console.log("BSP Drevo posodobljeno s številom sten:", lines.length);
+        };
+
+        // Funkcija bi v realnem okolju rekurzivno delila stene:
+        // buildBSP(walls) { ... }
+    </script>
+</body>
+</html>

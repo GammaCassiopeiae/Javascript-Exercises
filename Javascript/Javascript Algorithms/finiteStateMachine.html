@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>FSM AI Demo</title>
+    <style>
+        body { background: #1a1a1a; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        canvas { background: #222; border: 2px solid #444; border-radius: 8px; cursor: none; }
+        .status-box { position: absolute; top: 20px; padding: 15px; background: rgba(0,0,0,0.8); border: 1px solid #555; }
+        .state-text { font-weight: bold; color: #ffcc00; font-size: 1.2em; }
+    </style>
+</head>
+<body>
+    <div class="status-box">
+        Trenutno stanje AI: <span id="stateDisplay" class="state-text">IDLE</span><br>
+        <small>Miška = Igralec | Rdeč krog = Stražar</small>
+    </div>
+    <canvas id="fsmCanvas" width="800" height="500"></canvas>
+
+    <script>
+        const canvas = document.getElementById('fsmCanvas');
+        const ctx = canvas.getContext('2d');
+        const stateDisplay = document.getElementById('stateDisplay');
+
+        const mouse = { x: 0, y: 0 };
+        const guard = {
+            x: 400, y: 250,
+            targetX: 400, targetY: 250,
+            speed: 2,
+            state: 'PATROL', // Začetno stanje
+            color: '#ff4444'
+        };
+
+        // --- FSM LOGIKA ---
+        const states = {
+            IDLE: {
+                update: () => {
+                    if (getDistance() < 150) guard.state = 'CHASE';
+                    else if (Math.random() < 0.01) guard.state = 'PATROL';
+                }
+            },
+            PATROL: {
+                update: () => {
+                    // Premik proti naključni točki
+                    const dx = guard.targetX - guard.x;
+                    const dy = guard.targetY - guard.y;
+                    const dist = Math.hypot(dx, dy);
+
+                    if (dist < 5) {
+                        guard.targetX = Math.random() * canvas.width;
+                        guard.targetY = Math.random() * canvas.height;
+                        if (Math.random() < 0.3) guard.state = 'IDLE';
+                    } else {
+                        guard.x += (dx / dist) * guard.speed;
+                        guard.y += (dy / dist) * guard.speed;
+                    }
+
+                    if (getDistance() < 150) guard.state = 'CHASE';
+                }
+            },
+            CHASE: {
+                update: () => {
+                    const dx = mouse.x - guard.x;
+                    const dy = mouse.y - guard.y;
+                    const dist = Math.hypot(dx, dy);
+
+                    if (dist > 250) guard.state = 'PATROL';
+                    else if (dist < 30) guard.state = 'ATTACK';
+                    else {
+                        guard.x += (dx / dist) * (guard.speed * 1.5);
+                        guard.y += (dy / dist) * (guard.speed * 1.5);
+                    }
+                }
+            },
+            ATTACK: {
+                update: () => {
+                    if (getDistance() > 40) guard.state = 'CHASE';
+                    // Tukaj bi dodali logiko za zmanjševanje zdravja
+                }
+            }
+        };
+
+        function getDistance() {
+            return Math.hypot(mouse.x - guard.x, mouse.y - guard.y);
+        }
+
+        function update() {
+            states[guard.state].update();
+            stateDisplay.innerText = guard.state;
+            stateDisplay.style.color = (guard.state === 'CHASE' || guard.state === 'ATTACK') ? '#ff4444' : '#ffcc00';
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Območje zaznavanja
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.beginPath();
+            ctx.arc(guard.x, guard.y, 150, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Igralec
+            ctx.fillStyle = '#44ff44';
+            ctx.beginPath();
+            ctx.arc(mouse.x, mouse.y, 10, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Stražar
+            ctx.fillStyle = guard.color;
+            if (guard.state === 'ATTACK') ctx.shadowBlur = 20, ctx.shadowColor = 'red';
+            else ctx.shadowBlur = 0;
+            
+            ctx.beginPath();
+            ctx.arc(guard.x, guard.y, 15, 0, Math.PI * 2);
+            ctx.fill();
+
+            update();
+            requestAnimationFrame(draw);
+        }
+
+        window.onmousemove = (e) => {
+            const rect = canvas.getBoundingClientRect();
+            mouse.x = e.clientX - rect.left;
+            mouse.y = e.clientY - rect.top;
+        };
+
+        draw();
+    </script>
+</body>
+</html>

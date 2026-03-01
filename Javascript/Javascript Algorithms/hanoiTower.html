@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Hanojski Stolpi: Rekurzija</title>
+    <style>
+        body { background: #0f172a; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; }
+        .tower-container { display: flex; gap: 50px; margin-top: 30px; height: 150px; align-items: flex-end; }
+        .tower { width: 10px; height: 120px; background: #475569; position: relative; border-radius: 5px; }
+        .tower::after { content: attr(data-label); position: absolute; bottom: -25px; left: -5px; color: #94a3b8; }
+        .disk { height: 15px; position: absolute; left: 50%; transform: translateX(-50%); border-radius: 10px; transition: all 0.5s; }
+        .log { margin-top: 40px; background: #1e293b; padding: 15px; border-radius: 8px; width: 300px; max-height: 200px; overflow-y: auto; font-size: 0.8rem; }
+        button { margin-top: 20px; padding: 10px 20px; background: #38bdf8; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h2>Hanojski Stolpi</h2>
+    
+    <div class="tower-container">
+        <div id="towerA" class="tower" data-label="A"></div>
+        <div id="towerB" class="tower" data-label="B"></div>
+        <div id="towerC" class="tower" data-label="C"></div>
+    </div>
+
+    <button onclick="startHanoi()">Zaženi rekurzijo</button>
+
+    <div class="log" id="log">Koraki bodo izpisani tukaj...</div>
+
+    <script>
+        const logEl = document.getElementById('log');
+        const towers = { 
+            A: document.getElementById('towerA'), 
+            B: document.getElementById('towerB'), 
+            C: document.getElementById('towerC') 
+        };
+
+        // Inicializacija 3 diskov na stolpu A
+        function initDisks() {
+            towers.A.innerHTML = ''; towers.B.innerHTML = ''; towers.C.innerHTML = '';
+            for (let i = 3; i > 0; i--) {
+                const disk = document.createElement('div');
+                disk.className = 'disk';
+                disk.style.width = (i * 25) + 'px';
+                disk.style.bottom = ((3 - i) * 18) + 'px';
+                disk.style.backgroundColor = `hsl(${i * 60}, 70%, 50%)`;
+                disk.id = 'disk' + i;
+                towers.A.appendChild(disk);
+            }
+        }
+
+        // 1. ENOSTAVNA VERZIJA (Logika v konzoli)
+        function simpleMove(n, from, to, aux) {
+            if (n === 1) {
+                console.log(`Premakni disk 1 z ${from} na ${to}`);
+                return;
+            }
+            simpleMove(n - 1, from, aux, to);
+            console.log(`Premakni disk ${n} z ${from} na ${to}`);
+            simpleMove(n - 1, aux, to, from);
+        }
+
+        // 2. REKURZIVNA VERZIJA (Z vizualizacijo in zamikom)
+        let moveQueue = [];
+        function solveHanoi(n, from, to, aux) {
+            if (n === 0) return;
+            solveHanoi(n - 1, from, aux, to);
+            moveQueue.push({ disk: n, from, to });
+            solveHanoi(n - 1, aux, to, from);
+        }
+
+        async function startHanoi() {
+            initDisks();
+            logEl.innerHTML = '';
+            moveQueue = [];
+            solveHanoi(3, 'A', 'C', 'B');
+
+            for (let move of moveQueue) {
+                await new Promise(r => setTimeout(r, 800));
+                executeMove(move);
+            }
+        }
+
+        function executeMove({ disk, from, to }) {
+            const diskEl = document.getElementById('disk' + disk);
+            const targetTower = towers[to];
+            
+            // Osvežimo višino na ciljnem stolpu
+            const currentDisks = targetTower.querySelectorAll('.disk').length;
+            diskEl.style.bottom = (currentDisks * 18) + 'px';
+            targetTower.appendChild(diskEl);
+            
+            logEl.innerHTML += `Premik: Disk ${disk} -> Stolp ${to}<br>`;
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        initDisks();
+    </script>
+</body>
+</html>

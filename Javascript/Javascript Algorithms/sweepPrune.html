@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Sweep and Prune Algoritem</title>
+    <style>
+        body { background: #0f172a; color: #f8fafc; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; margin: 0; }
+        canvas { background: #1e293b; border-bottom: 4px solid #334155; cursor: crosshair; }
+        .ui { padding: 20px; text-align: center; }
+        .stats { font-family: monospace; color: #38bdf8; background: #000; padding: 10px; border-radius: 5px; }
+        b { color: #f43f5e; }
+    </div>
+    </style>
+</head>
+<body>
+    <div class="ui">
+        <h2>AABB Sweep and Prune</h2>
+        <p>Algoritem sortira objekte po X-osi in preverja trke le med sosedi.</p>
+        <div class="stats" id="perf">Preverjanj: 0 / 1225</div>
+    </div>
+    <canvas id="sapCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('sapCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = 400;
+
+        const count = 50;
+        let objects = Array.from({ length: count }, (_, i) => ({
+            id: i,
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            w: 20 + Math.random() * 30,
+            h: 20 + Math.random() * 30,
+            vx: (Math.random() - 0.5) * 2,
+            vy: (Math.random() - 0.5) * 2,
+            colliding: false
+        }));
+
+        function update() {
+            objects.forEach(obj => {
+                obj.x += obj.vx; obj.y += obj.vy;
+                if (obj.x < 0 || obj.x + obj.w > canvas.width) obj.vx *= -1;
+                if (obj.y < 0 || obj.y + obj.h > canvas.height) obj.vy *= -1;
+                obj.colliding = false;
+            });
+
+            // --- SWEEP AND PRUNE LOGIKA ---
+            
+            // 1. Sortiranje po levi stranici (X os)
+            objects.sort((a, b) => a.x - b.x);
+
+            let checks = 0;
+            for (let i = 0; i < objects.length; i++) {
+                let a = objects[i];
+                for (let j = i + 1; j < objects.length; j++) {
+                    let b = objects[j];
+                    checks++;
+
+                    // Če je leva stranica B-ja desno od desne stranice A-ja, 
+                    // vemo, da se nič desno od B-ja ne more več dotikati A-ja.
+                    // TU SE ZGODI "PRUNE" (ODREZ).
+                    if (b.x > a.x + a.w) break;
+
+                    // Dejansko preverjanje AABB trka (samo za tiste, ki so blizu na X osi)
+                    if (a.y < b.y + b.h && a.y + a.h > b.y) {
+                        a.colliding = b.colliding = true;
+                    }
+                }
+            }
+            document.getElementById('perf').innerText = `Preverjanj: ${checks} / ${Math.round(count*(count-1)/2)} (N^2)`;
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Vizualizacija projekcije na X os
+            ctx.fillStyle = "rgba(56, 189, 248, 0.1)";
+            ctx.fillRect(0, canvas.height - 20, canvas.width, 20);
+
+            objects.forEach(obj => {
+                ctx.fillStyle = obj.colliding ? "#f43f5e" : "#38bdf8";
+                ctx.fillRect(obj.x, obj.y, obj.w, obj.h);
+                
+                // Izris intervala na X osi
+                ctx.globalAlpha = 0.5;
+                ctx.fillRect(obj.x, canvas.height - 15, obj.w, 10);
+                ctx.globalAlpha = 1.0;
+            });
+
+            update();
+            requestAnimationFrame(draw);
+        }
+
+        draw();
+    </script>
+</body>
+</html>

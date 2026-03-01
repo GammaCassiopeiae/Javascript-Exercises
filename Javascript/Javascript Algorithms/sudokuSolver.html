@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Hitri Sudoku Solver</title>
+    <style>
+        body { background: #0f172a; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding-top: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(9, 40px); grid-template-rows: repeat(9, 40px); gap: 1px; background: #334155; border: 3px solid #334155; }
+        input { width: 40px; height: 40px; text-align: center; font-size: 1.2rem; border: none; background: #1e293b; color: white; outline: none; }
+        input:nth-child(3n) { border-right: 2px solid #64748b; }
+        input:nth-child(n+19):nth-child(-n+27), input:nth-child(n+46):nth-child(-n+54) { border-bottom: 2px solid #64748b; }
+        input.solved { color: #38bdf8; font-weight: bold; }
+        .controls { margin-top: 20px; display: flex; gap: 10px; }
+        button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .solve-btn { background: #22c55e; color: white; }
+        .clear-btn { background: #ef4444; color: white; }
+    </style>
+</head>
+<body>
+    <h1>Sudoku Solver (Backtracking)</h1>
+    <div class="grid" id="grid"></div>
+    <div class="controls">
+        <button class="solve-btn" onclick="solve()">Reši uganko</button>
+        <button class="clear-btn" onclick="clearGrid()">Počisti</button>
+    </div>
+
+    <script>
+        const gridEl = document.getElementById('grid');
+        for (let i = 0; i < 81; i++) {
+            const input = document.createElement('input');
+            input.type = 'number'; input.min = 1; input.max = 9;
+            gridEl.appendChild(input);
+        }
+
+        function getBoard() {
+            const inputs = document.querySelectorAll('input');
+            let board = [];
+            for (let i = 0; i < 9; i++) {
+                board.push(Array.from(inputs).slice(i*9, i*9+9).map(el => parseInt(el.value) || 0));
+            }
+            return board;
+        }
+
+        function isValid(board, r, c, k) {
+            for (let i = 0; i < 9; i++) {
+                const m = 3 * Math.floor(r / 3) + Math.floor(i / 3);
+                const n = 3 * Math.floor(c / 3) + i % 3;
+                if (board[r][i] === k || board[i][c] === k || board[m][n] === k) return false;
+            }
+            return true;
+        }
+
+        function solver(board) {
+            for (let r = 0; r < 9; r++) {
+                for (let c = 0; c < 9; c++) {
+                    if (board[r][c] === 0) {
+                        for (let k = 1; k <= 9; k++) {
+                            if (isValid(board, r, c, k)) {
+                                board[r][c] = k;
+                                if (solver(board)) return true;
+                                board[r][c] = 0;
+                            }
+                        }
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        function solve() {
+            let board = getBoard();
+            if (solver(board)) {
+                const inputs = document.querySelectorAll('input');
+                board.flat().forEach((val, i) => {
+                    if (!inputs[i].value) {
+                        inputs[i].value = val;
+                        inputs[i].classList.add('solved');
+                    }
+                });
+            } else alert("Uganka nima rešitve!");
+        }
+
+        function clearGrid() {
+            document.querySelectorAll('input').forEach(i => { i.value = ''; i.classList.remove('solved'); });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Collision Detection: AABB, Circle, SAT</title>
+    <style>
+        body { background: #0f172a; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; margin: 0; overflow: hidden; }
+        canvas { background: #1e293b; cursor: none; }
+        .ui { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.8); padding: 15px; border-radius: 8px; border: 1px solid #334155; pointer-events: none; }
+        .hit { color: #f43f5e; font-weight: bold; }
+        .safe { color: #10b981; }
+    </style>
+</head>
+<body>
+    <div class="ui">
+        <h3>Zaznavanje trkov</h3>
+        <p id="aabb-status">AABB: <span class="safe">Ni trka</span></p>
+        <p id="circle-status">Krog: <span class="safe">Ni trka</span></p>
+        <p id="sat-status">SAT (Polygon): <span class="safe">Ni trka</span></p>
+        <hr>
+        <small>Premikaj miško. Objkti se ob trku obarvajo rdeče.</small>
+    </div>
+    <canvas id="collisionCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('collisionCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let mouse = { x: 0, y: 0 };
+
+        // 1. AABB (Pravokotnik)
+        const box = { x: 100, y: 100, w: 100, h: 100 };
+        
+        // 2. Krog
+        const circle = { x: 150, y: 350, r: 60 };
+
+        // 3. SAT (Mnogokotnik - trikotnik)
+        const triangle = [
+            { x: 400, y: 200 },
+            { x: 500, y: 350 },
+            { x: 300, y: 350 }
+        ];
+
+        // --- ALGORITMI ---
+
+        function checkAABB(m, b) {
+            return m.x > b.x && m.x < b.x + b.w && m.y > b.y && m.y < b.y + b.h;
+        }
+
+        function checkCircle(m, c) {
+            const dist = Math.hypot(m.x - c.x, m.y - c.y);
+            return dist < c.r;
+        }
+
+        // SAT preprosta implementacija za točko v trikotniku
+        function checkSAT(px, py, vertices) {
+            let collision = false;
+            let next = 0;
+            for (let current = 0; current < vertices.length; current++) {
+                next = current + 1;
+                if (next === vertices.length) next = 0;
+                let vc = vertices[current];
+                let vn = vertices[next];
+                if (((vc.y >= py && vn.y < py) || (vc.y < py && vn.y >= py)) &&
+                    (px < (vn.x - vc.x) * (py - vc.y) / (vn.y - vc.y) + vc.x)) {
+                    collision = !collision;
+                }
+            }
+            return collision;
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Risanje AABB
+            const isAABB = checkAABB(mouse, box);
+            ctx.fillStyle = isAABB ? '#f43f5e' : '#38bdf8';
+            ctx.fillRect(box.x, box.y, box.w, box.h);
+            document.getElementById('aabb-status').innerHTML = `AABB: <span class="${isAABB ? 'hit' : 'safe'}">${isAABB ? 'TRK!' : 'Varno'}</span>`;
+
+            // Risanje Kroga
+            const isCircle = checkCircle(mouse, circle);
+            ctx.fillStyle = isCircle ? '#f43f5e' : '#fbbf24';
+            ctx.beginPath();
+            ctx.arc(circle.x, circle.y, circle.r, 0, Math.PI * 2);
+            ctx.fill();
+            document.getElementById('circle-status').innerHTML = `Krog: <span class="${isCircle ? 'hit' : 'safe'}">${isCircle ? 'TRK!' : 'Varno'}</span>`;
+
+            // Risanje SAT Trikotnika
+            const isSAT = checkSAT(mouse.x, mouse.y, triangle);
+            ctx.fillStyle = isSAT ? '#f43f5e' : '#a855f7';
+            ctx.beginPath();
+            ctx.moveTo(triangle[0].x, triangle[0].y);
+            ctx.lineTo(triangle[1].x, triangle[1].y);
+            ctx.lineTo(triangle[2].x, triangle[2].y);
+            ctx.closePath();
+            ctx.fill();
+            document.getElementById('sat-status').innerHTML = `SAT: <span class="${isSAT ? 'hit' : 'safe'}">${isSAT ? 'TRK!' : 'Varno'}</span>`;
+
+            // Kazalec miške
+            ctx.strokeStyle = 'white';
+            ctx.beginPath();
+            ctx.arc(mouse.x, mouse.y, 5, 0, Math.PI * 2);
+            ctx.stroke();
+
+            requestAnimationFrame(draw);
+        }
+
+        window.onmousemove = (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        };
+
+        draw();
+    </script>
+</body>
+</html>

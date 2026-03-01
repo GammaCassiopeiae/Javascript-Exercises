@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Boids Flocking</title>
+    <style>
+        body { margin: 0; background: #111; overflow: hidden; color: white; font-family: sans-serif; }
+        canvas { display: block; }
+        .ui { position: absolute; top: 10px; left: 10px; pointer-events: none; }
+    </style>
+</head>
+<body>
+    <div class="ui"><b>Boids Algorithm:</b> Emergent Group Behavior</div>
+    <canvas id="boidCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('boidCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        class Boid {
+            constructor() {
+                this.pos = { x: Math.random() * canvas.width, y: Math.random() * canvas.height };
+                this.vel = { x: (Math.random() - 0.5) * 4, y: (Math.random() - 0.5) * 4 };
+            }
+            update() {
+                this.pos.x += this.vel.x; this.pos.y += this.vel.y;
+                if (this.pos.x > canvas.width) this.pos.x = 0; if (this.pos.x < 0) this.pos.x = canvas.width;
+                if (this.pos.y > canvas.height) this.pos.y = 0; if (this.pos.y < 0) this.pos.y = canvas.height;
+            }
+            draw() {
+                ctx.fillStyle = "#00d4ff";
+                ctx.beginPath();
+                ctx.arc(this.pos.x, this.pos.y, 3, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        const boids = Array.from({ length: 100 }, () => new Boid());
+
+        function flock() {
+            boids.forEach(b => {
+                let avgV = { x: 0, y: 0 }, avgP = { x: 0, y: 0 }, separation = { x: 0, y: 0 }, total = 0;
+                boids.forEach(other => {
+                    let d = Math.hypot(b.pos.x - other.pos.x, b.pos.y - other.pos.y);
+                    if (other !== b && d < 50) {
+                        avgV.x += other.vel.x; avgV.y += other.vel.y;
+                        avgP.x += other.pos.x; avgP.y += other.pos.y;
+                        separation.x += (b.pos.x - other.pos.x) / d;
+                        separation.y += (b.pos.y - other.pos.y) / d;
+                        total++;
+                    }
+                });
+                if (total > 0) {
+                    b.vel.x += (avgV.x/total - b.vel.x) * 0.05 + (avgP.x/total - b.pos.x) * 0.0005 + separation.x * 0.05;
+                    b.vel.y += (avgV.y/total - b.vel.y) * 0.05 + (avgP.y/total - b.pos.y) * 0.0005 + separation.y * 0.05;
+                }
+                const speed = Math.hypot(b.vel.x, b.vel.y);
+                if (speed > 4) { b.vel.x = (b.vel.x/speed)*4; b.vel.y = (b.vel.y/speed)*4; }
+            });
+        }
+
+        function animate() {
+            ctx.fillStyle = 'rgba(0,0,0,0.1)'; ctx.fillRect(0,0,canvas.width, canvas.height);
+            flock();
+            boids.forEach(b => { b.update(); b.draw(); });
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>

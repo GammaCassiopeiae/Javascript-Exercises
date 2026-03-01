@@ -1,0 +1,154 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cryptography // Neon Nexus</title>
+  <link rel="stylesheet" href="../styles/main.css">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;700&family=Fira+Code&display=swap" rel="stylesheet">
+  <style>:root { --neon-lime: #a2ff00; }</style>
+</head>
+<body class="l-layout u-bg-gradient">
+
+  <header class="header">
+    <div class="l-container header__nav">
+      <a href="../index.html" class="header__logo u-text-glow">Neon Nexus // ALGO</a>
+      <nav>
+        <a href="../index.html" class="c-card__title" style="text-decoration: none; font-size: 0.9rem;">BACK ➜</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="l-container">
+    <section class="hero">
+      <h1 class="hero__title u-text-glow">Cryptography</h1>
+      <p class="u-text-muted">The science of securing communications and digital integrity.</p>
+    </section>
+
+    <div id="algo-container">
+      <!-- Algorithms Injected via DOM API -->
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="l-container">
+      <p>&copy; 2026 NEON-NOIR ARCHITECT MANIFESTO</p>
+    </div>
+  </footer>
+
+  <script src="../scripts/dom-engine.js"></script>
+  <script>
+    window.ALGO_DATA = [
+      {
+        title: "RSA Algorithm",
+        code: `function rsa(p, q, msg) {
+  const n = p * q, phi = (p - 1) * (q - 1);
+  const e = findE(phi);
+  const d = modInverse(e, phi);
+  const ciphertext = modExp(msg, e, n);
+  const plaintext = modExp(ciphertext, d, n);
+  return { ciphertext, plaintext };
+}`,
+        explanation: [
+          "Select two large prime numbers p and q.",
+          "Calculate n as the product of p and q (the modulus).",
+          "Calculate the Euler totient function phi(n) as (p-1)*(q-1).",
+          "Find an exponent 'e' that is coprime to phi(n).",
+          "Calculate the private exponent 'd' (modular inverse of e).",
+          "Encrypt the message by calculating (msg^e) mod n.",
+          "Decrypt the message by calculating (ciphertext^d) mod n.",
+          "Return the encrypted and decrypted results for verification."
+        ]
+      },
+      {
+        title: "Diffie-Hellman Key Exchange",
+        code: `function dh(p, g, a, b) {
+  const A = modExp(g, a, p);
+  const B = modExp(g, b, p);
+  const secretA = modExp(B, a, p);
+  const secretB = modExp(A, b, p);
+  return secretA === secretB ? secretA : null;
+}`,
+        explanation: [
+          "Choose a large prime 'p' and a generator 'g'.",
+          "Alice picks a private key 'a' and calculates A = (g^a) mod p.",
+          "Bob picks a private key 'b' and calculates B = (g^b) mod p.",
+          "Alice computes the shared secret using B^a mod p.",
+          "Bob computes the shared secret using A^b mod p.",
+          "Both sides end up with the exact same shared secret key.",
+          "This key can then be used for symmetric encryption.",
+          "Return the shared secret if both calculations match."
+        ]
+      },
+      {
+        title: "SHA-256 (Simplification)",
+        code: `function sha256(msg) {
+  const h = initialHashes.slice();
+  const chunks = preprocess(msg);
+  for (let chunk of chunks) {
+    const w = schedule(chunk);
+    let [a, b, c, d, e, f, g, i] = h;
+    // 64 rounds of bitwise logic
+    h = h.map((val, idx) => val + update[idx]);
+  }
+  return hex(h);
+}`,
+        explanation: [
+          "Initialize hash values using specific fractional parts of square roots.",
+          "Preprocess the message: pad with bits and append the original length.",
+          "Divide the message into 512-bit chunks for processing.",
+          "Create a message schedule (w) of 64 words from each chunk.",
+          "Initialize working variables with current hash values (a-i).",
+          "Perform 64 rounds of bitwise rotations, choices, and shifts.",
+          "Update the main hash values by adding the round results.",
+          "Convert the final hash values to a 64-character hex string."
+        ]
+      },
+      {
+        title: "Caesar Cipher",
+        code: `function caesar(str, shift) {
+  return str.replace(/[a-z]/gi, char => {
+    const base = char < 'a' ? 65 : 97;
+    return String.fromCharCode((char.charCodeAt(0) - base + shift) % 26 + base);
+  });
+}`,
+        explanation: [
+          "Iterate through each character in the input string.",
+          "Use a regular expression to target only alphabetic letters.",
+          "Determine the ASCII base: 65 for uppercase, 97 for lowercase.",
+          "Get the current character's numerical code from ASCII.",
+          "Subtract the base to get a 0-25 range for the alphabet.",
+          "Add the shift value and take the modulo 26 (circular shift).",
+          "Add the base back and convert to the newly shifted character.",
+          "Return the complete encrypted (or decrypted) string."
+        ]
+      },
+      {
+        title: "AES (Rijndael Algorithm)",
+        code: `function aes(state, keys) {
+  addRoundKey(state, keys[0]);
+  for (let r = 1; r < rounds; r++) {
+    subBytes(state);
+    shiftRows(state);
+    mixColumns(state);
+    addRoundKey(state, keys[r]);
+  }
+  return state;
+}`,
+        explanation: [
+          "Add the initial round key to the state matrix (XOR).",
+          "Perform the main encryption rounds (usually 10, 12, or 14).",
+          "Substitute each byte using the S-box for non-linear mapping.",
+          "Shift rows: cyclically shift the last three rows of the state.",
+          "Mix columns: transform the columns using matrix multiplication.",
+          "Add the current round's key to the state (XOR).",
+          "The last round omits the 'mixColumns' step.",
+          "Return the final 128-bit ciphertext block."
+        ]
+      }
+    ];
+    new AlgoEngine("Cryptography", "#a2ff00");
+  </script>
+</body>
+</html>

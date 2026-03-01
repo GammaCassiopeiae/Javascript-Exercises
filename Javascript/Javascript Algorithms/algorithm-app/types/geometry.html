@@ -1,0 +1,173 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Geometry // Neon Nexus</title>
+  <link rel="stylesheet" href="../styles/main.css">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;700&family=Fira+Code&display=swap" rel="stylesheet">
+  <style>:root { --neon-lime: #7fff00; }</style>
+</head>
+<body class="l-layout u-bg-gradient">
+
+  <header class="header">
+    <div class="l-container header__nav">
+      <a href="../index.html" class="header__logo u-text-glow">Neon Nexus // ALGO</a>
+      <nav>
+        <a href="../index.html" class="c-card__title" style="text-decoration: none; font-size: 0.9rem;">BACK ➜</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="l-container">
+    <section class="hero">
+      <h1 class="hero__title u-text-glow">Geometry</h1>
+      <p class="u-text-muted">Calculating the digital dimensions of space, lines, and shapes.</p>
+    </section>
+
+    <div id="algo-container">
+      <!-- Algorithms Injected via DOM API -->
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="l-container">
+      <p>&copy; 2026 NEON-NOIR ARCHITECT MANIFESTO</p>
+    </div>
+  </footer>
+
+  <script src="../scripts/dom-engine.js"></script>
+  <script>
+    window.ALGO_DATA = [
+      {
+        title: "Convex Hull (Graham Scan)",
+        code: `function convexHull(points) {
+  points.sort((a, b) => a.x - b.x || a.y - b.y);
+  const upper = [], lower = [];
+  for (let p of points) {
+    while (upper.length >= 2 && crossProduct(upper[upper.length-2], upper[upper.length-1], p) <= 0) upper.pop();
+    upper.push(p);
+  }
+  for (let i = points.length - 1; i >= 0; i--) {
+    let p = points[i];
+    while (lower.length >= 2 && crossProduct(lower[lower.length-2], lower[lower.length-1], p) <= 0) lower.pop();
+    lower.push(p);
+  }
+  return [...new Set([...upper, ...lower])];
+}`,
+        explanation: [
+          "Sort the points by x-coordinate, then by y-coordinate.",
+          "Initialize lists for the upper and lower halves of the hull.",
+          "Build the upper hull by checking for non-left turns.",
+          "Use the cross product to determine the orientation of three points.",
+          "Pop points that do not form a counter-clockwise orientation.",
+          "Build the lower hull by iterating through the points in reverse.",
+          "Pop points that create clockwise turns on the lower edge.",
+          "Combine and return the set of points forming the convex hull boundary."
+        ]
+      },
+      {
+        title: "Line Intersection",
+        code: `function intersect(p1, p2, p3, p4) {
+  const x1 = p1.x, y1 = p1.y, x2 = p2.x, y2 = p2.y;
+  const x3 = p3.x, y3 = p3.y, x4 = p4.x, y4 = p4.y;
+  const den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+  if (den === 0) return null;
+  const t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / den;
+  const u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / den;
+  if (t >= 0 && t <= 1 && u >= 0 && u <= 1) {
+    return { x: x1 + t * (x2 - x1), y: y1 + t * (y2 - y1) };
+  }
+  return null;
+}`,
+        explanation: [
+          "Extract x and y coordinates for four segment points.",
+          "Calculate the denominator for the intersection formula.",
+          "Check for zero denominator, which indicates parallel lines.",
+          "Calculate parameter t for the first line segment.",
+          "Calculate parameter u for the second line segment.",
+          "Check if both t and u are between 0 and 1 (inclusive).",
+          "If segments intersect, compute the exact (x, y) coordinates.",
+          "Return the intersection point or null if they don't cross."
+        ]
+      },
+      {
+        title: "Closest Pair of Points",
+        code: `function closestPair(points) {
+  points.sort((a, b) => a.x - b.x);
+  function recurse(P) {
+    if (P.length <= 3) return bruteForce(P);
+    const mid = Math.floor(P.length / 2);
+    const dl = recurse(P.slice(0, mid));
+    const dr = recurse(P.slice(mid));
+    let d = Math.min(dl, dr);
+    // ... more steps to check the strip
+    return d;
+  }
+  return recurse(points);
+}`,
+        explanation: [
+          "Initially sort all points according to their x-coordinate.",
+          "Recursive function to split the problem using divide-and-conquer.",
+          "Handle the base case: if few points, use a direct brute-force check.",
+          "Find the midpoint to split the set into left and right halves.",
+          "Recursively find the minimum distance in the left half (dl).",
+          "Recursively find the minimum distance in the right half (dr).",
+          "Set the current minimum distance as the smaller of dl and dr.",
+          "The final step checks for pairs crossing the split point in a 'strip'."
+        ]
+      },
+      {
+        title: "Bresenham's Line Algorithm",
+        code: `function bresenham(x0, y0, x1, y1) {
+  let dx = Math.abs(x1 - x0), dy = Math.abs(y1 - y0);
+  let sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1;
+  let err = dx - dy;
+  while (true) {
+    drawPixel(x0, y0);
+    if (x0 === x1 && y0 === y1) break;
+    let e2 = 2 * err;
+    if (e2 > -dy) { err -= dy; x0 += sx; }
+    if (e2 < dx) { err += dx; y0 += sy; }
+  }
+}`,
+        explanation: [
+          "Calculate absolute differences (dx, dy) for both axes.",
+          "Determine step direction (sx, sy) based on coordinate signs.",
+          "Initialize the error term for line precision control.",
+          "Start an infinite loop to process pixel by pixel.",
+          "Draw the current pixel on the path.",
+          "Terminate if the end point (x1, y1) is reached.",
+          "Calculate secondary error term e2 for simultaneous axis checks.",
+          "Update x coordinate and error term if necessary.",
+          "Update y coordinate and error term if necessary.",
+          "Return a set of discrete pixels forming a smooth line."
+        ]
+      },
+      {
+        title: "Shoelace Formula",
+        code: `function area(points) {
+  let area = 0, n = points.length;
+  for (let i = 0; i < n; i++) {
+    let j = (i + 1) % n;
+    area += points[i].x * points[j].y;
+    area -= points[j].x * points[i].y;
+  }
+  return Math.abs(area) / 2;
+}`,
+        explanation: [
+          "Initialize the area variable and count the polygon vertices.",
+          "Loop through each edge of the polygon.",
+          "Get the index of the next point using the modulo operator.",
+          "Multiply current X with the next Y (Shoelace step 1).",
+          "Subtract current Y times the next X (Shoelace step 2).",
+          "Calculate the absolute value of the cumulative area sum.",
+          "Divide the result by 2 to get the final polygon area."
+        ]
+      }
+    ];
+    new AlgoEngine("Geometry", "#7fff00");
+  </script>
+</body>
+</html>

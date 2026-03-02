@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Povezani Seznam Vizualizacija</title>
+    <style>
+        :root {
+            --node-bg: #ffffff;
+            --node-border: #4a90e2;
+            --arrow-color: #555;
+            --accent: #e67e22;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        
+        .list-container {
+            display: flex; align-items: center; flex-wrap: wrap; gap: 0;
+            min-height: 150px; margin: 40px 0; padding: 20px;
+        }
+
+        .node-wrapper { display: flex; align-items: center; animation: fadeIn 0.5s ease; }
+
+        .node {
+            width: 80px; height: 50px; background: var(--node-bg);
+            border: 2px solid var(--node-border); border-radius: 8px;
+            display: flex; flex-direction: column; overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .node-data { 
+            flex: 1; display: flex; align-items: center; justify-content: center; 
+            font-weight: bold; border-bottom: 1px solid #eee; 
+        }
+
+        .node-next { height: 15px; background: #f9f9f9; font-size: 10px; text-align: center; color: #999; }
+
+        .arrow {
+            width: 40px; height: 2px; background: var(--arrow-color);
+            position: relative; margin: 0 5px;
+        }
+
+        .arrow::after {
+            content: ''; position: absolute; right: 0; top: -4px;
+            border: 5px solid transparent; border-left-color: var(--arrow-color);
+        }
+
+        .null-label { font-weight: bold; color: #e74c3c; margin-left: 10px; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+
+        .controls { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; gap: 10px; }
+        input { padding: 8px; border: 1px solid #ddd; border-radius: 4px; width: 60px; }
+        button { padding: 8px 15px; cursor: pointer; border: none; border-radius: 4px; color: white; font-weight: bold; transition: 0.2s; }
+        .btn-add { background: #2ecc71; }
+        .btn-remove { background: #e74c3c; }
+        button:hover { opacity: 0.8; }
+    </style>
+</head>
+<body>
+
+    <h1>Povezani seznam (Linked List)</h1>
+    
+    <div class="list-container" id="listDisplay">
+        <!-- Vozlišča bodo generirana tukaj -->
+    </div>
+
+    <div class="controls">
+        <input type="number" id="nodeVal" value="10">
+        <button class="btn-add" onclick="addNode()">Dodaj na konec</button>
+        <button class="btn-remove" onclick="removeHead()">Odstrani glavo (Head)</button>
+        <button onclick="window.location.reload()" style="background:#95a5a6">Ponastavi</button>
+    </div>
+
+    <script>
+        const listDisplay = document.getElementById('listDisplay');
+        let listData = [];
+
+        function renderList() {
+            listDisplay.innerHTML = '';
+            
+            listData.forEach((val, index) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'node-wrapper';
+
+                const node = document.createElement('div');
+                node.className = 'node';
+                node.innerHTML = `
+                    <div class="node-data">${val}</div>
+                    <div class="node-next">next</div>
+                `;
+
+                wrapper.appendChild(node);
+
+                if (index < listData.length - 1) {
+                    const arrow = document.createElement('div');
+                    arrow.className = 'arrow';
+                    wrapper.appendChild(arrow);
+                } else {
+                    const nullLabel = document.createElement('span');
+                    nullLabel.className = 'null-label';
+                    nullLabel.innerText = 'NULL';
+                    wrapper.appendChild(nullLabel);
+                }
+
+                listDisplay.appendChild(wrapper);
+            });
+
+            if (listData.length === 0) {
+                listDisplay.innerHTML = '<em style="color:#999">Seznam je prazen</em>';
+            }
+        }
+
+        function addNode() {
+            const val = document.getElementById('nodeVal').value;
+            listData.push(val);
+            renderList();
+            document.getElementById('nodeVal').value = Math.floor(Math.random() * 99);
+        }
+
+        function removeHead() {
+            listData.shift();
+            renderList();
+        }
+
+        // Inicialni prikaz
+        listData = [10, 20, 30];
+        renderList();
+    </script>
+</body>
+</html>

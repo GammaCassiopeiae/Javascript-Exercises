@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>DFS Vizualizacija</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #1a1a2e; color: white; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .tree-container { position: relative; width: 600px; height: 400px; margin-top: 20px; border: 1px solid #16213e; border-radius: 10px; background: #16213e; }
+        .node { 
+            position: absolute; width: 40px; height: 40px; background: #0f3460; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; font-weight: bold;
+            transition: all 0.4s ease; border: 2px solid #e94560; z-index: 2;
+        }
+        .node.visiting { background: #f1c40f; color: #000; transform: scale(1.2); }
+        .node.visited { background: #e94560; border-color: #fff; }
+        .line { position: absolute; background: #533483; height: 2px; transform-origin: left center; z-index: 1; }
+        .controls { margin-top: 30px; display: flex; gap: 10px; }
+        button { padding: 12px 24px; cursor: pointer; background: #e94560; color: white; border: none; border-radius: 5px; font-weight: bold; }
+        button:disabled { background: #555; }
+        #log { margin-top: 15px; font-style: italic; color: #95a5a6; }
+    </style>
+</head>
+<body>
+
+    <h1>Iskanje v globino (DFS)</h1>
+    <div id="log">Kliknite gumb za začetek prehajanja drevesa</div>
+    
+    <div class="tree-container" id="tree"></div>
+
+    <div class="controls">
+        <button id="startBtn" onclick="startDFS()">Zaženi DFS</button>
+        <button onclick="window.location.reload()">Ponastavi</button>
+    </div>
+
+    <script>
+        const treeContainer = document.getElementById('tree');
+        const log = document.getElementById('log');
+
+        // Struktura drevesa (L=Levo, D=Desno)
+        const nodes = [
+            { id: 1, x: 300, y: 50, children: [2, 3] },
+            { id: 2, x: 150, y: 150, children: [4, 5] },
+            { id: 3, x: 450, y: 150, children: [6, 7] },
+            { id: 4, x: 75,  y: 250, children: [] },
+            { id: 5, x: 225, y: 250, children: [] },
+            { id: 6, x: 375, y: 250, children: [] },
+            { id: 7, x: 525, y: 250, children: [] }
+        ];
+
+        const nodeMap = {};
+
+        function drawTree() {
+            nodes.forEach(node => {
+                // Ustvari vozlišče
+                const div = document.createElement('div');
+                div.className = 'node';
+                div.id = `node-${node.id}`;
+                div.innerText = node.id;
+                div.style.left = `${node.x - 20}px`;
+                div.style.top = `${node.y - 20}px`;
+                treeContainer.appendChild(div);
+                nodeMap[node.id] = node;
+
+                // Nariši povezave do otrok
+                node.children.forEach(childId => {
+                    const child = nodes.find(n => n.id === childId);
+                    drawLine(node.x, node.y, child.x, child.y);
+                });
+            });
+        }
+
+        function drawLine(x1, y1, x2, y2) {
+            const line = document.createElement('div');
+            line.className = 'line';
+            const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+            const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+            line.style.width = `${length}px`;
+            line.style.left = `${x1}px`;
+            line.style.top = `${y1}px`;
+            line.style.transform = `rotate(${angle}deg)`;
+            treeContainer.appendChild(line);
+        }
+
+        const sleep = (ms) => new Promise(res => setTimeout(res, ms));
+
+        async function dfsRecursive(nodeId, visited = new Set()) {
+            if (!nodeId || visited.has(nodeId)) return;
+
+            const nodeDiv = document.getElementById(`node-${nodeId}`);
+            const nodeData = nodeMap[nodeId];
+
+            // Vizualizacija obiska
+            log.innerText = `Obiskujem vozlišče: ${nodeId}`;
+            nodeDiv.classList.add('visiting');
+            await sleep(800);
+            
+            nodeDiv.classList.remove('visiting');
+            nodeDiv.classList.add('visited');
+            visited.add(nodeId);
+
+            for (const childId of nodeData.children) {
+                await dfsRecursive(childId, visited);
+            }
+        }
+
+        async function startDFS() {
+            document.getElementById('startBtn').disabled = true;
+            await dfsRecursive(1);
+            log.innerText = "DFS prehajanje zaključeno.";
+        }
+
+        drawTree();
+    </script>
+</body>
+</html>

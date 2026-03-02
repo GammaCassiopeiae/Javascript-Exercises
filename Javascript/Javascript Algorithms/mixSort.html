@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Mix Sort Vizualizacija</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; background: #1a1c2c; color: #fff; }
+        .container { display: flex; align-items: flex-end; height: 300px; gap: 5px; margin: 30px; padding: 20px; background: #292d3e; border-radius: 10px; border-bottom: 5px solid #ff79c6; }
+        .bar { width: 25px; background-color: #6272a4; transition: height 0.2s, background-color 0.2s; border-radius: 3px 3px 0 0; }
+        .bar.active-right { background-color: #50fa7b; transform: scaleX(1.1); } /* Premik desno */
+        .bar.active-left { background-color: #8be9fd; transform: scaleX(1.1); }  /* Premik levo */
+        .bar.sorted { background-color: #bd93f9; }
+        .controls { display: flex; gap: 10px; }
+        button { padding: 12px 25px; cursor: pointer; background: #ff79c6; color: #fff; border: none; border-radius: 5px; font-weight: bold; }
+        button:disabled { background: #44475a; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+    <h1>Mix (Cocktail Shaker) Sort</h1>
+    <div class="container" id="chart"></div>
+    
+    <div class="controls">
+        <button id="startBtn" onclick="startSort()">Zaženi mešanje</button>
+        <button onclick="window.location.reload()">Ponastavi</button>
+    </div>
+
+    <script>
+        const container = document.getElementById('chart');
+        const data = Array.from({length: 25}, () => Math.floor(Math.random() * 250) + 20);
+        const bars = [];
+
+        function createBars() {
+            data.forEach(value => {
+                const bar = document.createElement('div');
+                bar.classList.add('bar');
+                bar.style.height = `${value}px`;
+                container.appendChild(bar);
+                bars.push(bar);
+            });
+        }
+
+        const sleep = (ms) => new Promise(res => setTimeout(res, ms));
+
+        async function cocktailSort() {
+            let swapped = true;
+            let start = 0;
+            let end = bars.length - 1;
+
+            while (swapped) {
+                swapped = false;
+
+                // Prehod od leve proti desni (kot Bubble Sort)
+                for (let i = start; i < end; i++) {
+                    bars[i].classList.add('active-right');
+                    bars[i+1].classList.add('active-right');
+                    await sleep(50);
+
+                    if (parseInt(bars[i].style.height) > parseInt(bars[i + 1].style.height)) {
+                        let temp = bars[i].style.height;
+                        bars[i].style.height = bars[i + 1].style.height;
+                        bars[i + 1].style.height = temp;
+                        swapped = true;
+                    }
+                    bars[i].classList.remove('active-right');
+                    bars[i+1].classList.remove('active-right');
+                }
+
+                if (!swapped) break;
+                swapped = false;
+                
+                // Zadnji element je zdaj urejen
+                bars[end].classList.add('sorted');
+                end--;
+
+                // Prehod od desne proti levi
+                for (let i = end - 1; i >= start; i--) {
+                    bars[i].classList.add('active-left');
+                    bars[i+1].classList.add('active-left');
+                    await sleep(50);
+
+                    if (parseInt(bars[i].style.height) > parseInt(bars[i + 1].style.height)) {
+                        let temp = bars[i].style.height;
+                        bars[i].style.height = bars[i + 1].style.height;
+                        bars[i + 1].style.height = temp;
+                        swapped = true;
+                    }
+                    bars[i].classList.remove('active-left');
+                    bars[i+1].classList.remove('active-left');
+                }
+                
+                // Prvi element je zdaj urejen
+                bars[start].classList.add('sorted');
+                start++;
+            }
+            
+            // Označi preostale elemente kot urejene
+            bars.forEach(b => b.classList.add('sorted'));
+        }
+
+        function startSort() {
+            document.getElementById('startBtn').disabled = true;
+            cocktailSort();
+        }
+
+        createBars();
+    </script>
+</body>
+</html>

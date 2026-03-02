@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Pascalov Trikotnik - Vizualizacija</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --accent: #f43f5e;
+            --bg: #f8fafc;
+            --cell-size: 50px;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        
+        .controls { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 30px; display: flex; gap: 10px; align-items: center; }
+        input { padding: 10px; border: 1px solid #ddd; border-radius: 6px; width: 60px; text-align: center; font-size: 1rem; }
+        button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; color: white; background: var(--primary); transition: 0.2s; }
+        button:hover { opacity: 0.9; transform: translateY(-2px); }
+        button:disabled { background: #cbd5e1; cursor: not-allowed; }
+
+        .triangle-container { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .row { display: flex; justify-content: center; gap: 5px; animation: slideDown 0.5s ease-out; }
+        
+        .cell {
+            width: var(--cell-size); height: var(--cell-size);
+            background: white; border: 2px solid var(--primary);
+            border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 0.9rem; color: #1e293b;
+            transition: all 0.3s ease; position: relative;
+        }
+        .cell.new { background: var(--accent); color: white; border-color: var(--accent); transform: scale(1.1); }
+        .cell:hover { transform: scale(1.2); z-index: 10; cursor: default; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <h1>Pascalov Trikotnik</h1>
+    
+    <div class="controls">
+        <label for="rowsInput">Število vrstic:</label>
+        <input type="number" id="rowsInput" value="5" min="1" max="12">
+        <button id="drawBtn" onclick="generateTriangle()">Generiraj</button>
+        <button onclick="window.location.reload()" style="background: #64748b;">Reset</button>
+    </div>
+
+    <div class="triangle-container" id="triangle"></div>
+
+    <script>
+        const container = document.getElementById('triangle');
+        const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+        async function generateTriangle() {
+            const numRows = parseInt(document.getElementById('rowsInput').value);
+            const drawBtn = document.getElementById('drawBtn');
+            
+            // Omejitev za vizualno stabilnost
+            if (numRows > 15) return alert("Zaradi preglednosti izberite manj kot 15 vrstic.");
+
+            drawBtn.disabled = true;
+            container.innerHTML = '';
+            
+            let triangleData = [];
+
+            for (let i = 0; i < numRows; i++) {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'row';
+                triangleData[i] = [];
+
+                for (let j = 0; j <= i; j++) {
+                    // Pascalova logika: C(n, k) = n! / (k!(n-k)!)
+                    // Ali preprosteje: vsota dveh nad njim
+                    let val;
+                    if (j === 0 || j === i) {
+                        val = 1;
+                    } else {
+                        val = triangleData[i-1][j-1] + triangleData[i-1][j];
+                    }
+                    
+                    triangleData[i][j] = val;
+
+                    const cell = document.createElement('div');
+                    cell.className = 'cell new';
+                    cell.innerText = val;
+                    rowDiv.appendChild(cell);
+                    
+                    // Odstranimo 'new' efekt po animaciji
+                    setTimeout(() => cell.classList.remove('new'), 600);
+                }
+
+                container.appendChild(rowDiv);
+                await sleep(400); // Zamik za vizualni učinek grajenja
+            }
+            drawBtn.disabled = false;
+        }
+
+        // Začetni prikaz
+        generateTriangle();
+    </script>
+</body>
+</html>

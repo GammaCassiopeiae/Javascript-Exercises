@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Insertion Sort Vizualizacija</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; background: #fafafa; }
+        .container { display: flex; align-items: flex-end; height: 300px; gap: 5px; margin: 30px; padding: 20px; background: #fff; border-bottom: 3px solid #333; }
+        .bar { width: 30px; background-color: #bdc3c7; transition: all 0.3s; border-radius: 4px 4px 0 0; }
+        .bar.key { background-color: #f1c40f; transform: translateY(-20px); } /* Element, ki ga vstavljamo */
+        .bar.comparing { background-color: #e74c3c; } /* Elementi, ki se umikajo */
+        .bar.sorted { background-color: #2ecc71; } /* Že urejen del */
+        button { padding: 10px 25px; cursor: pointer; background: #27ae60; color: white; border: none; border-radius: 5px; font-size: 16px; }
+        button:disabled { background: #95a5a6; }
+    </style>
+</head>
+<body>
+
+    <h1>Insertion Sort Vizualizacija</h1>
+    <div class="container" id="chart"></div>
+    <button id="startBtn" onclick="startSort()">Uredi seznam</button>
+
+    <script>
+        const container = document.getElementById('chart');
+        const data =;
+        const bars = [];
+
+        function createBars() {
+            data.forEach(value => {
+                const bar = document.createElement('div');
+                bar.classList.add('bar');
+                bar.style.height = `${value}px`;
+                container.appendChild(bar);
+                bars.push(bar);
+            });
+        }
+
+        const sleep = (ms) => new Promise(res => setTimeout(res, ms));
+
+        async function insertionSort() {
+            let n = bars.length;
+            bars[0].classList.add('sorted');
+
+            for (let i = 1; i < n; i++) {
+                let keyHeight = bars[i].style.height;
+                let j = i - 1;
+
+                // Označi ključni element, ki ga vstavljamo
+                bars[i].classList.add('key');
+                await sleep(400);
+
+                while (j >= 0 && parseInt(bars[j].style.height) > parseInt(keyHeight)) {
+                    bars[j].classList.add('comparing');
+                    
+                    // Premik višine v desno (simulacija odmika)
+                    bars[j + 1].style.height = bars[j].style.height;
+                    
+                    await sleep(300);
+                    bars[j].classList.remove('comparing');
+                    bars[j + 1].classList.add('sorted');
+                    j--;
+                }
+                
+                // Vstavljanje na pravo mesto
+                bars[j + 1].style.height = keyHeight;
+                bars[i].classList.remove('key');
+                bars[j + 1].classList.add('sorted');
+                await sleep(200);
+            }
+        }
+
+        function startSort() {
+            document.getElementById('startBtn').disabled = true;
+            insertionSort();
+        }
+
+        createBars();
+    </script>
+</body>
+</html>

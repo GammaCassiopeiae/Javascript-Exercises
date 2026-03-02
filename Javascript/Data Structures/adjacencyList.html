@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Vizualizacija: Seznam sosednosti</title>
+    <style>
+        :root { --node-bg: #00b894; --neighbor-bg: #81ecec; --text: #2d3436; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 95%; max-width: 600px; text-align: center; }
+        
+        .adj-list { display: flex; flex-direction: column; gap: 12px; margin-top: 30px; text-align: left; }
+        
+        .row { display: flex; align-items: center; gap: 10px; }
+        
+        .head-node {
+            width: 40px; height: 40px; background: var(--node-bg); color: white;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 6px; font-weight: bold; flex-shrink: 0;
+        }
+        
+        .arrow { font-size: 1.2rem; color: #b2bec3; }
+        
+        .neighbors { display: flex; gap: 8px; flex-wrap: wrap; }
+        
+        .neighbor-node {
+            padding: 5px 12px; background: var(--neighbor-bg); color: var(--text);
+            border-radius: 4px; border: 1px solid #00cec9; font-size: 0.9rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+
+        .controls { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; background: #f8f9fa; padding: 15px; border-radius: 8px; }
+        select, button { padding: 10px; border-radius: 5px; border: 1px solid #ddd; }
+        button { cursor: pointer; background: var(--node-bg); color: white; border: none; font-weight: bold; }
+        
+        .empty-msg { color: #b2bec3; font-style: italic; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Seznam sosednosti (Adjacency List)</h2>
+        <p>Vsako vozlišče hrani seznam svojih <b>dejanskih</b> sosedov.</p>
+
+        <div class="controls">
+            Od: <select id="fromNode">
+                <option value="A">A</option><option value="B">B</option>
+                <option value="C">C</option><option value="D">D</option>
+                <option value="E">E</option>
+            </select>
+            Do: <select id="toNode">
+                <option value="A">A</option><option value="B">B</option>
+                <option value="C">C</option><option value="D">D</option>
+                <option value="E">E</option>
+            </select>
+            <button onclick="addEdge()">Dodaj povezavo</button>
+        </div>
+
+        <div class="adj-list" id="listContainer">
+            <!-- Vrstice seznama se generirajo tukaj -->
+        </div>
+        
+        <p id="status" style="margin-top: 20px; font-size: 0.85rem; color: #636e72;">
+            V pomnilniku: <code>Map&lt;String, List&lt;String&gt;&gt;</code>
+        </p>
+    </div>
+
+    <script>
+        const nodes = ['A', 'B', 'C', 'D', 'E'];
+        // Interna reprezentacija grafa: Objekt, kjer je ključ vozlišče, vrednost pa polje sosedov
+        let adjList = {
+            'A': [], 'B': [], 'C': [], 'D': [], 'E': []
+        };
+
+        function addEdge() {
+            const u = document.getElementById('fromNode').value;
+            const v = document.getElementById('toNode').value;
+
+            if (u === v) return; // Brez zank v tem primeru
+            
+            // Dodaj soseda, če ga še ni (neusmerjen graf)
+            if (!adjList[u].includes(v)) {
+                adjList[u].push(v);
+                adjList[v].push(u);
+                render();
+            }
+        }
+
+        function render() {
+            const container = document.getElementById('listContainer');
+            container.innerHTML = '';
+
+            nodes.forEach(node => {
+                const row = document.createElement('div');
+                row.className = 'row';
+
+                const head = document.createElement('div');
+                head.className = 'head-node';
+                head.innerText = node;
+
+                const arrow = document.createElement('div');
+                arrow.className = 'arrow';
+                arrow.innerText = '→';
+
+                const neighborsDiv = document.createElement('div');
+                neighborsDiv.className = 'neighbors';
+
+                if (adjList[node].length === 0) {
+                    neighborsDiv.innerHTML = '<span class="empty-msg">ni sosedov</span>';
+                } else {
+                    // Sosede sortiramo za lepši prikaz
+                    adjList[node].sort().forEach(neighbor => {
+                        const nBox = document.createElement('div');
+                        nBox.className = 'neighbor-node';
+                        nBox.innerText = neighbor;
+                        neighborsDiv.appendChild(nBox);
+                    });
+                }
+
+                row.appendChild(head);
+                row.appendChild(arrow);
+                row.appendChild(neighborsDiv);
+                container.appendChild(row);
+            });
+        }
+
+        render();
+    </script>
+</body>
+</html>

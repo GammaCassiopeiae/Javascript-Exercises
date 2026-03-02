@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Quick Sort Vizualizacija</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; background: #121212; color: #e0e0e0; }
+        .container { display: flex; align-items: flex-end; height: 320px; gap: 4px; margin: 20px; padding: 20px; background: #1e1e1e; border-radius: 8px; }
+        .bar { width: 22px; background-color: #444; transition: height 0.2s; border-radius: 2px 2px 0 0; }
+        .bar.pivot { background-color: #f1c40f !important; } /* Rumena za pivot */
+        .bar.comparing { background-color: #e74c3c; } /* Rdeča za primerjavo */
+        .bar.sorted { background-color: #2ecc71; } /* Zelena za urejeno */
+        .bar.range { background-color: #3498db; } /* Modra za aktivno območje */
+        .controls { margin-top: 10px; }
+        button { padding: 12px 24px; cursor: pointer; background: #3498db; color: white; border: none; border-radius: 4px; font-weight: bold; }
+        button:disabled { background: #555; }
+    </style>
+</head>
+<body>
+
+    <h1>Quick Sort Vizualizacija</h1>
+    <div class="container" id="chart"></div>
+    <div class="controls">
+        <button id="startBtn" onclick="startSort()">Zaženi Quick Sort</button>
+        <button onclick="window.location.reload()">Ponastavi</button>
+    </div>
+
+    <script>
+        const container = document.getElementById('chart');
+        const data = Array.from({length: 20}, () => Math.floor(Math.random() * 250) + 20);
+        const bars = [];
+
+        function createBars() {
+            data.forEach(value => {
+                const bar = document.createElement('div');
+                bar.classList.add('bar');
+                bar.style.height = `${value}px`;
+                container.appendChild(bar);
+                bars.push(bar);
+            });
+        }
+
+        const sleep = (ms) => new Promise(res => setTimeout(res, ms));
+
+        async function partition(low, high) {
+            // Izberemo zadnji element za pivot
+            let pivotValue = parseInt(bars[high].style.height);
+            bars[high].classList.add('pivot');
+            
+            let i = low - 1;
+
+            for (let j = low; j < high; j++) {
+                bars[j].classList.add('comparing');
+                await sleep(100);
+
+                if (parseInt(bars[j].style.height) < pivotValue) {
+                    i++;
+                    // Zamenjava višin
+                    let temp = bars[i].style.height;
+                    bars[i].style.height = bars[j].style.height;
+                    bars[j].style.height = temp;
+                }
+                bars[j].classList.remove('comparing');
+            }
+
+            // Postavi pivot na pravilno mesto
+            let temp = bars[i + 1].style.height;
+            bars[i + 1].style.height = bars[high].style.height;
+            bars[high].style.height = temp;
+
+            bars[high].classList.remove('pivot');
+            bars[i + 1].classList.add('sorted');
+            
+            return i + 1;
+        }
+
+        async function quickSort(low, high) {
+            if (low <= high) {
+                // Označi aktivno območje rekurzije
+                for(let k = low; k <= high; k++) bars[k].classList.add('range');
+                
+                let pi = await partition(low, high);
+
+                for(let k = low; k <= high; k++) bars[k].classList.remove('range');
+
+                await quickSort(low, pi - 1);
+                await quickSort(pi + 1, high);
+                
+                // Ko se rekurzija vrača, označimo dele kot urejene
+                for(let k = low; k <= high; k++) bars[k].classList.add('sorted');
+            }
+        }
+
+        async function startSort() {
+            document.getElementById('startBtn').disabled = true;
+            await quickSort(0, bars.length - 1);
+        }
+
+        createBars();
+    </script>
+</body>
+</html>

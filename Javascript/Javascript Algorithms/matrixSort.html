@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Matrix Sort Vizualizacija</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #121212; color: white; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(5, 60px); 
+            grid-template-rows: repeat(5, 60px); 
+            gap: 10px; 
+            margin: 20px; 
+            padding: 15px; 
+            background: #1e1e1e; 
+            border-radius: 8px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .cell { 
+            width: 60px; height: 60px; 
+            display: flex; align-items: center; justify-content: center; 
+            background: #333; border-radius: 4px; font-weight: bold; font-size: 1.2rem;
+            transition: all 0.3s ease; border: 2px solid transparent;
+        }
+        .cell.active { background: #e74c3c; border-color: #ff7675; transform: scale(1.1); z-index: 10; }
+        .cell.compare { background: #3498db; border-color: #74b9ff; }
+        .cell.sorted { background: #2ecc71; color: #000; }
+        .controls { margin-top: 20px; display: flex; gap: 10px; }
+        button { padding: 12px 24px; cursor: pointer; background: #00cec9; border: none; border-radius: 5px; font-weight: bold; transition: 0.2s; }
+        button:hover { background: #81ecec; }
+        button:disabled { background: #636e72; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+    <h1>Matrix Sort Vizualizacija</h1>
+    <p>Urejanje 5x5 matrike (od leve proti desni, od zgoraj navzdol)</p>
+    
+    <div class="grid" id="matrixGrid"></div>
+
+    <div class="controls">
+        <button id="startBtn" onclick="startMatrixSort()">Uredi matriko</button>
+        <button onclick="window.location.reload()">Ponastavi</button>
+    </div>
+
+    <script>
+        const grid = document.getElementById('matrixGrid');
+        const rows = 5;
+        const cols = 5;
+        const cells = [];
+
+        // Generiranje naključnih števil v matriki
+        function initMatrix() {
+            for (let i = 0; i < rows * cols; i++) {
+                const val = Math.floor(Math.random() * 99) + 1;
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.innerText = val;
+                grid.appendChild(cell);
+                cells.push(cell);
+            }
+        }
+
+        const sleep = (ms) => new Promise(res => setTimeout(res, ms));
+
+        async function matrixSort() {
+            let n = cells.length;
+            
+            // Uporabimo Bubble Sort logiko na sploščeni matriki
+            for (let i = 0; i < n; i++) {
+                for (let j = 0; j < n - i - 1; j++) {
+                    const cell1 = cells[j];
+                    const cell2 = cells[j + 1];
+
+                    cell1.classList.add('active');
+                    cell2.classList.add('compare');
+
+                    await sleep(50);
+
+                    const val1 = parseInt(cell1.innerText);
+                    const val2 = parseInt(cell2.innerText);
+
+                    if (val1 > val2) {
+                        // Zamenjava vrednosti
+                        cell1.innerText = val2;
+                        cell2.innerText = val1;
+                    }
+
+                    cell1.classList.remove('active');
+                    cell2.classList.remove('compare');
+                }
+                // Označimo zadnji element v prehodu kot urejen
+                cells[n - i - 1].classList.add('sorted');
+            }
+        }
+
+        function startMatrixSort() {
+            document.getElementById('startBtn').disabled = true;
+            matrixSort();
+        }
+
+        initMatrix();
+    </script>
+</body>
+</html>

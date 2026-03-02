@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Selection Sort Vizualizacija</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; background: #f4f7f6; color: #333; }
+        .container { display: flex; align-items: flex-end; height: 300px; gap: 6px; margin: 30px; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .bar { width: 28px; background-color: #95a5a6; transition: height 0.3s, background-color 0.3s; border-radius: 3px 3px 0 0; position: relative; }
+        .bar.current-min { background-color: #e74c3c !important; } /* Trenutni minimum */
+        .bar.checking { background-color: #3498db; } /* Element, ki ga preverjamo */
+        .bar.sorted { background-color: #2ecc71; } /* Urejeni del */
+        .controls { display: flex; gap: 15px; }
+        button { padding: 12px 20px; cursor: pointer; background: #2c3e50; color: white; border: none; border-radius: 5px; font-weight: 600; transition: 0.2s; }
+        button:hover { background: #34495e; }
+        button:disabled { background: #bdc3c7; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+    <h1>Selection Sort Vizualizacija</h1>
+    <div class="container" id="chart"></div>
+    
+    <div class="controls">
+        <button id="startBtn" onclick="startSort()">Poišči najmanjšega</button>
+        <button onclick="window.location.reload()">Ponastavi</button>
+    </div>
+
+    <script>
+        const container = document.getElementById('chart');
+        const data = [120, 40, 180, 70, 250, 100, 30, 210, 150, 90];
+        const bars = [];
+
+        function createBars() {
+            data.forEach(value => {
+                const bar = document.createElement('div');
+                bar.classList.add('bar');
+                bar.style.height = `${value}px`;
+                container.appendChild(bar);
+                bars.push(bar);
+            });
+        }
+
+        const sleep = (ms) => new Promise(res => setTimeout(res, ms));
+
+        async function selectionSort() {
+            let n = bars.length;
+
+            for (let i = 0; i < n - 1; i++) {
+                let minIdx = i;
+                bars[i].classList.add('current-min');
+
+                for (let j = i + 1; j < n; j++) {
+                    bars[j].classList.add('checking');
+                    await sleep(200);
+
+                    const h_j = parseInt(bars[j].style.height);
+                    const h_min = parseInt(bars[minIdx].style.height);
+
+                    if (h_j < h_min) {
+                        // Odstranimo barvo staremu minimumu in jo dodamo novemu
+                        bars[minIdx].classList.remove('current-min');
+                        minIdx = j;
+                        bars[minIdx].classList.add('current-min');
+                    }
+                    
+                    bars[j].classList.remove('checking');
+                }
+
+                // Zamenjava v DOM-u
+                if (minIdx !== i) {
+                    const tempHeight = bars[i].style.height;
+                    bars[i].style.height = bars[minIdx].style.height;
+                    bars[minIdx].style.height = tempHeight;
+                }
+
+                bars[minIdx].classList.remove('current-min');
+                bars[i].classList.add('sorted');
+                await sleep(300);
+            }
+            bars[n-1].classList.add('sorted');
+        }
+
+        function startSort() {
+            document.getElementById('startBtn').disabled = true;
+            selectionSort();
+        }
+
+        createBars();
+    </script>
+</body>
+</html>

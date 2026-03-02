@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Bubble Sort Vizualizacija</title>
+    <style>
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; background: #f0f2f5; }
+        .container { display: flex; align-items: flex-end; height: 300px; gap: 4px; margin: 20px; padding: 10px; border-bottom: 2px solid #333; }
+        .bar { width: 30px; background-color: #3498db; transition: height 0.2s, background-color 0.2s; }
+        .bar.active { background-color: #e74c3c; } /* Trenutna primerjava */
+        .bar.sorted { background-color: #2ecc71; } /* Urejeno */
+        button { padding: 10px 20px; cursor: pointer; background: #2c3e50; color: white; border: none; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+    <h1>Bubble Sort Vizualizacija</h1>
+    <div class="container" id="chart"></div>
+    <button onclick="startSort()">Začni urejanje</button>
+
+    <script>
+        const container = document.getElementById('chart');
+        const data = [80, 45, 120, 30, 150, 60, 90, 20, 110, 75];
+        const bars = [];
+
+        // Inicializacija stolpcev
+        function createBars() {
+            data.forEach(value => {
+                const bar = document.createElement('div');
+                bar.classList.add('bar');
+                bar.style.height = `${value}px`;
+                container.appendChild(bar);
+                bars.push(bar);
+            });
+        }
+
+        // Pomožna funkcija za premor (animacija)
+        const sleep = (ms) => new Promise(res => setTimeout(res, ms));
+
+        async function bubbleSort() {
+            let n = bars.length;
+            for (let i = 0; i < n; i++) {
+                for (let j = 0; j < n - i - 1; j++) {
+                    // Označi aktivna stolpca
+                    bars[j].classList.add('active');
+                    bars[j + 1].classList.add('active');
+
+                    await sleep(300);
+
+                    const val1 = parseInt(bars[j].style.height);
+                    const val2 = parseInt(bars[j + 1].style.height);
+
+                    if (val1 > val2) {
+                        // Zamenjava v DOM-u (višine)
+                        bars[j].style.height = `${val2}px`;
+                        bars[j + 1].style.height = `${val1}px`;
+                    }
+
+                    // Odstrani oznako po primerjavi
+                    bars[j].classList.remove('active');
+                    bars[j + 1].classList.remove('active');
+                }
+                // Zadnji element v prehodu je urejen
+                bars[n - i - 1].classList.add('sorted');
+            }
+        }
+
+        function startSort() {
+            document.querySelector('button').disabled = true;
+            bubbleSort();
+        }
+
+        createBars();
+    </script>
+</body>
+</html>

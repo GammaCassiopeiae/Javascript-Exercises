@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quicksort with DOM</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: lime;
+            margin: 20px;
+            background-color: black;
+            
+        }
+        #output {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Quicksort Algorithm in JavaScript</h1>
+    <a>Array: [3, 6, 8, 10, 1, 2, 1];</a>
+    <br><br>
+    <button onclick="sortArray()">Sort Array</button>
+    <div id="output"></div>
+
+    <script>
+        // Function to perform Quicksort
+        function quicksort(arr) {
+            if (arr.length <= 1) return arr;
+            const pivot = arr[Math.floor(arr.length / 2)];
+            const left = [];
+            const right = [];
+
+            for (let i = 0; i < arr.length; i++) {
+                if (i === Math.floor(arr.length / 2)) continue; // Skip the pivot
+                if (arr[i] < pivot) left.push(arr[i]);
+                else right.push(arr[i]);
+            }
+
+            return [...quicksort(left), pivot, ...quicksort(right)];
+        }
+
+        // Function to display array in DOM
+        function displayArray(array) {
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerHTML = `<p>Sorted Array: ${array.join(', ')}</p>`;
+        }
+
+        // Function to sort the array and display it
+        function sortArray() {
+            const arr = [3, 6, 8, 10, 1, 2, 1];
+            const sortedArray = quicksort(arr);
+            displayArray(sortedArray);
+        }
+    </script>
+</body>
+</html>

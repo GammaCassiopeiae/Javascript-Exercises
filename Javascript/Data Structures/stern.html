@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stern-Brocotovo Zaporedje</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #4338ca;
+            --bg: #fdfdfd;
+            --text: #1e293b;
+            --accent: #f43f5e;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+        }
+
+        h1 { text-align: center; color: var(--primary); margin-bottom: 0.5rem; }
+        .subtitle { text-align: center; color: #64748b; margin-bottom: 2rem; font-size: 0.9rem; }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 2rem;
+            justify-content: center;
+        }
+
+        input {
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            width: 120px;
+            font-size: 1rem;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        button:hover { background: var(--secondary); }
+
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+        }
+
+        /* Prikaz zaporedja števil */
+        .sequence-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 2.5rem;
+        }
+
+        .num-box {
+            background: #f1f5f9;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        /* Prikaz ulomkov (Stern-Brocot Tree) */
+        .fraction-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .fraction {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+            font-weight: bold;
+            color: var(--secondary);
+        }
+
+        .fraction span:first-child { border-bottom: 2px solid var(--text); padding: 0 4px; }
+        
+        .highlight { color: var(--accent); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Stern-Brocotovo Zaporedje</h1>
+    <p class="subtitle">Izračun zaporedja s(n) in pripadajočih racionalnih števil s(n)/s(n+1)</p>
+
+    <div class="controls">
+        <label for="limit">Število členov:</label>
+        <input type="number" id="limit" value="32" min="2" max="500">
+        <button onclick="render()">Generiraj</button>
+    </div>
+
+    <div class="section-title">Celoštevilsko zaporedje s(n):</div>
+    <div id="sequenceOutput" class="sequence-container"></div>
+
+    <div class="section-title">Generirani ulomki (racionalna števila):</div>
+    <div id="fractionOutput" class="fraction-container"></div>
+</div>
+
+<script>
+    /**
+     * Generira Sternovo zaporedje do n-tega člena
+     * Časovna zahtevnost: O(n)
+     */
+    function generateSternSequence(n) {
+        const s = new Array(n + 1);
+        s[0] = 0;
+        s[1] = 1;
+
+        for (let i = 2; i <= n; i++) {
+            if (i % 2 === 0) {
+                // s(2n) = s(n)
+                s[i] = s[Math.floor(i / 2)];
+            } else {
+                // s(2n + 1) = s(n) + s(n + 1)
+                let half = Math.floor(i / 2);
+                s[i] = s[half] + s[half + 1];
+            }
+        }
+        return s;
+    }
+
+    function render() {
+        const n = parseInt(document.getElementById('limit').value);
+        const seqOut = document.getElementById('sequenceOutput');
+        const fracOut = document.getElementById('fractionOutput');
+
+        // Čiščenje prejšnjih rezultatov
+        seqOut.innerHTML = '';
+        fracOut.innerHTML = '';
+
+        const s = generateSternSequence(n);
+
+        // Izris zaporedja števil
+        s.forEach((val, i) => {
+            if (i === 0) return; // Običajno začnemo prikaz z 1
+            const div = document.createElement('div');
+            div.className = 'num-box';
+            div.innerText = val;
+            seqOut.appendChild(div);
+        });
+
+        // Izris racionalnih števil (s(i) / s(i+1))
+        // Ta zaporedna razmerja pokrijejo vsa pozitivna racionalna števila
+        for (let i = 1; i < s.length - 1; i++) {
+            const fracDiv = document.createElement('div');
+            fracDiv.className = 'fraction';
+            fracDiv.innerHTML = `
+                <span>${s[i]}</span>
+                <span>${s[i+1]}</span>
+            `;
+            fracOut.appendChild(fracDiv);
+            
+            // Dodaj vejico med ulomki
+            if (i < s.length - 2) {
+                const separator = document.createElement('span');
+                separator.innerText = ', ';
+                separator.style.alignSelf = 'center';
+                fracOut.appendChild(separator);
+            }
+        }
+    }
+
+    // Začetni izris
+    render();
+</script>
+
+</body>
+</html>

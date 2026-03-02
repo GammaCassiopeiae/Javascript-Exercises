@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recamánovo Zaporedje</title>
+    <style>
+        :root {
+            --primary: #f43f5e;
+            --bg: #0f172a;
+            --panel: #1e293b;
+            --text: #f8fafc;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .controls {
+            background: var(--panel);
+            padding: 1.5rem;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+
+        input {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: white;
+            width: 80px;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        button:hover { opacity: 0.9; }
+
+        canvas {
+            margin-top: 2rem;
+            cursor: crosshair;
+            max-width: 95vw;
+        }
+
+        .stats {
+            margin-top: 1rem;
+            font-family: monospace;
+            color: #94a3b8;
+        }
+
+        #sequenceList {
+            margin-top: 1rem;
+            padding: 1rem;
+            max-width: 800px;
+            word-wrap: break-word;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+
+<div class="controls">
+    <div style="display:flex; align-items:center; gap:8px;">
+        <label>Število korakov:</label>
+        <input type="number" id="stepsInput" value="100" min="1" max="1000">
+    </div>
+    <button onclick="drawRecaman()">Generiraj in nariši</button>
+</div>
+
+<div class="stats" id="statsDisplay"></div>
+<canvas id="recamanCanvas"></canvas>
+<div id="sequenceList"></div>
+
+<script>
+    function drawRecaman() {
+        const n = parseInt(document.getElementById('stepsInput').value);
+        const canvas = document.getElementById('recamanCanvas');
+        const ctx = canvas.getContext('2d');
+        const sequenceList = document.getElementById('sequenceList');
+        const statsDisplay = document.getElementById('statsDisplay');
+
+        // Algoritem za Recamánovo zaporedje
+        const sequence = [0];
+        const visited = new Set([0]);
+        let maxVal = 0;
+
+        for (let i = 1; i < n; i++) {
+            let next = sequence[i - 1] - i;
+            if (next <= 0 || visited.has(next)) {
+                next = sequence[i - 1] + i;
+            }
+            sequence.push(next);
+            visited.add(next);
+            if (next > maxVal) maxVal = next;
+        }
+
+        // DOM posodobitev besedila
+        sequenceList.innerText = "Zaporedje: " + sequence.join(", ");
+        statsDisplay.innerText = `Max vrednost: ${maxVal} | Členov: ${sequence.length}`;
+
+        // Nastavitev Canvasa
+        const width = window.innerWidth * 0.9;
+        const height = 400;
+        canvas.width = width;
+        canvas.height = height;
+        
+        const scale = width / (maxVal + 2);
+        const centerY = height / 2;
+
+        ctx.clearRect(0, 0, width, height);
+        ctx.lineWidth = 1.5;
+
+        // Vizualizacija z loki
+        for (let i = 1; i < sequence.length; i++) {
+            const start = sequence[i - 1];
+            const end = sequence[i];
+            const x = (start + end) / 2 * scale;
+            const radius = Math.abs(start - end) / 2 * scale;
+            
+            ctx.beginPath();
+            ctx.strokeStyle = `hsl(${(i * 5) % 360}, 70%, 60%)`;
+            
+            // Loki se izmenjujejo zgoraj in spodaj
+            const startAngle = 0;
+            const endAngle = Math.PI;
+            const anticlockwise = (i % 2 === 0);
+
+            ctx.arc(x, centerY, radius, startAngle, endAngle, anticlockwise);
+            ctx.stroke();
+        }
+    }
+
+    // Prvi izris
+    window.onload = drawRecaman;
+</script>
+
+</body>
+</html>

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stein's GCD Algoritem</title>
+    <style>
+        :root {
+            --accent: #059669;
+            --bg: #f0fdf4;
+            --panel: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: #1f2937;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: var(--panel);
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: var(--accent);
+            text-align: center;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #ecfdf5;
+            padding-bottom: 1rem;
+        }
+
+        .desc {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+            line-height: 1.4;
+        }
+
+        .input-group {
+            margin-bottom: 1.25rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--accent);
+            ring: 3px solid #d1fae5;
+        }
+
+        button {
+            width: 100%;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.1s, background 0.2s;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .result-box {
+            margin-top: 1.5rem;
+            padding: 1.25rem;
+            background: #f9fafb;
+            border-radius: 0.75rem;
+            border-left: 4px solid var(--accent);
+            display: none;
+        }
+
+        .result-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #6b7280;
+        }
+
+        .result-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--accent);
+            margin: 0.5rem 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Steinov GCD Algoritem</h2>
+    <p class="desc">
+        Binarni GCD algoritem uporablja bitne operacije namesto deljenja, kar je na določenih procesorjih hitrejše.
+    </p>
+    
+    <div class="input-group">
+        <label for="numA">Število A</label>
+        <input type="number" id="numA" placeholder="Vnesi prvo število">
+    </div>
+
+    <div class="input-group">
+        <label for="numB">Število B</label>
+        <input type="number" id="numB" placeholder="Vnesi drugo število">
+    </div>
+
+    <button id="calcBtn">Izračunaj GCD (Binary)</button>
+
+    <div id="resBox" class="result-box">
+        <div class="result-title">Največji skupni delitelj</div>
+        <div id="resVal" class="result-value">0</div>
+        <small id="binaryInfo" style="color: #9ca3af;"></small>
+    </div>
+</div>
+
+<script>
+    /**
+     * Stein's (Binary) GCD Algorithm Implementation
+     */
+    const SteinsAlgorithm = {
+        calculate: function(a, b) {
+            // Osnovni primeri
+            if (a === 0) return b;
+            if (b === 0) return a;
+
+            // Najdemo skupni faktor 2 z bitnim zamikom (shift)
+            // To je ekvivalentno: kolikokrat sta obe števili deljivi z 2
+            let shift = 0;
+            while (((a | b) & 1) === 0) {
+                a >>= 1;
+                b >>= 1;
+                shift++;
+            }
+
+            // Odstranimo vse faktorje 2 iz 'a'
+            while ((a & 1) === 0) a >>= 1;
+
+            do {
+                // Odstranimo vse faktorje 2 iz 'b'
+                while ((b & 1) === 0) b >>= 1;
+
+                // Zdaj sta a in b oba liha. Če je a > b, ju zamenjaj
+                if (a > b) {
+                    let temp = a;
+                    a = b;
+                    b = temp;
+                }
+
+                // Odštejemo manjše od večjega (b = b - a)
+                // Ker sta oba liha, bo razlika vedno soda, zato jo v naslednjem koraku spet zmanjšamo
+                b = b - a;
+                
+            } while (b !== 0);
+
+            // Rezultat pomnožimo nazaj s skupnim faktorjem 2 (2^shift)
+            return a << shift;
+        }
+    };
+
+    /**
+     * DOM Logic
+     */
+    const btn = document.getElementById('calcBtn');
+    const resBox = document.getElementById('resBox');
+    const resVal = document.getElementById('resVal');
+    const info = document.getElementById('binaryInfo');
+
+    btn.addEventListener('click', () => {
+        const valA = parseInt(document.getElementById('numA').value);
+        const valB = parseInt(document.getElementById('numB').value);
+
+        if (isNaN(valA) || isNaN(valB)) {
+            alert("Vnesite veljavni števili.");
+            return;
+        }
+
+        const gcd = SteinsAlgorithm.calculate(Math.abs(valA), Math.abs(valB));
+        
+        // Prikaz rezultata
+        resVal.textContent = gcd;
+        info.textContent = `Uporabljen bitni premik za izračun GCD(${valA}, ${valB})`;
+        resBox.style.display = 'block';
+    });
+</script>
+
+</body>
+</html>

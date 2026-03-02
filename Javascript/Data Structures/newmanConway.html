@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Newman-Conwayevo Zaporedje</title>
+    <style>
+        :root {
+            --primary: #10b981;
+            --secondary: #059669;
+            --bg: #f8fafc;
+            --text: #0f172a;
+            --accent: #f59e0b;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        h1 { text-align: center; color: var(--secondary); margin-bottom: 0.5rem; }
+        
+        .formula {
+            background: #ecfdf5;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            font-family: serif;
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            border: 1px solid #d1fae5;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 2rem;
+            justify-content: center;
+            align-items: center;
+        }
+
+        input {
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            width: 100px;
+            font-size: 1rem;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        button:hover { background: var(--secondary); transform: translateY(-1px); }
+
+        .sequence-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .cell {
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .cell:hover { border-color: var(--primary); background: #f0fdf4; }
+
+        .idx { display: block; font-size: 0.7rem; color: #64748b; margin-bottom: 4px; }
+        .val { font-weight: bold; font-family: monospace; font-size: 1.1rem; }
+
+        .stats-box {
+            background: #f1f5f9;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .highlight { color: var(--secondary); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Newman-Conway Sequence</h1>
+    
+    <div class="formula">
+        P(1) = 1, P(2) = 1 <br>
+        P(n) = P(P(n - 1)) + P(n - P(n - 1))
+    </div>
+
+    <div class="controls">
+        <label for="nValue">Vnesite n:</label>
+        <input type="number" id="nValue" value="20" min="2" max="500">
+        <button onclick="calculateSequence()">Izračunaj</button>
+    </div>
+
+    <div id="output" class="sequence-grid"></div>
+
+    <div id="stats" class="stats-box" style="display: none;">
+        <strong>Analiza zadnjega člena:</strong><br>
+        Zadnji člen P(<span id="statN"></span>) = <span id="statVal"></span> <br>
+        Razmerje P(n)/n = <span id="statRatio" class="highlight"></span> 
+        <small>(teži proti 0.5 pri velikih n)</small>
+    </div>
+</div>
+
+<script>
+    /**
+     * Izračuna Newman-Conwayevo zaporedje do n-tega člena.
+     * Uporablja dinamično programiranje (DP) za shranjevanje vmesnih rezultatov.
+     */
+    function getNewmanConway(n) {
+        // Inicializacija polja (n+1 mest, da se ujemajo indeksi)
+        let p = new Array(n + 1);
+        
+        p[1] = 1;
+        p[2] = 1;
+        
+        for (let i = 3; i <= n; i++) {
+            // Glavna rekurzivna formula implementirana iterativno
+            p[i] = p[p[i - 1]] + p[i - p[i - 1]];
+        }
+        
+        return p;
+    }
+
+    function calculateSequence() {
+        const n = parseInt(document.getElementById('nValue').value);
+        const output = document.getElementById('output');
+        const statsBox = document.getElementById('stats');
+
+        if (isNaN(n) || n < 2) return;
+
+        const sequence = getNewmanConway(n);
+        
+        // DOM manipulacija: Priprava mreže
+        output.innerHTML = '';
+        
+        for (let i = 1; i <= n; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.innerHTML = `
+                <span class="idx">n=${i}</span>
+                <span class="val">${sequence[i]}</span>
+            `;
+            output.appendChild(cell);
+        }
+
+        // Posodobitev statistike
+        const lastVal = sequence[n];
+        document.getElementById('statN').innerText = n;
+        document.getElementById('statVal').innerText = lastVal;
+        document.getElementById('statRatio').innerText = (lastVal / n).toFixed(4);
+        statsBox.style.display = 'block';
+    }
+
+    // Začetni izračun
+    calculateSequence();
+</script>
+
+</body>
+</html>

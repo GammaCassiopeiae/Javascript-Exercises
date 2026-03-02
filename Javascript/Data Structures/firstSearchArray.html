@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCD & LCM Polja</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --bg: #f8fafc;
+            --card: #ffffff;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            background: var(--card);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 450px;
+        }
+
+        h2 { color: var(--primary); margin-top: 0; text-align: center; }
+
+        .input-section { margin-bottom: 1.5rem; }
+
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+
+        small { color: #64748b; display: block; margin-top: 0.5rem; }
+
+        button {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button:hover { opacity: 0.9; }
+
+        .results {
+            margin-top: 1.5rem;
+            border-top: 2px solid #f1f5f9;
+            padding-top: 1rem;
+        }
+
+        .res-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+        }
+
+        .label { font-weight: 500; color: #475569; }
+        .value { font-family: monospace; font-weight: bold; color: var(--primary); font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>GCD & LCM Polja</h2>
+    
+    <div class="input-section">
+        <label>Vnesite števila (ločena z vejico):</label>
+        <input type="text" id="numbersInput" placeholder="npr. 12, 18, 24" value="12, 18, 24">
+        <small>Vnesite cela števila, ločena z vejico ali presledkom.</small>
+    </div>
+
+    <button id="calcBtn">Izračunaj za polje</button>
+
+    <div class="results" id="output" style="display: none;">
+        <div class="res-row">
+            <span class="label">GCD (polje):</span>
+            <span id="gcdVal" class="value">-</span>
+        </div>
+        <div class="res-row">
+            <span class="label">LCM (polje):</span>
+            <span id="lcmVal" class="value">-</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    /**
+     * MATEMATIČNA LOGIKA (Data Structure logic)
+     */
+    const ArrayMath = {
+        // Osnovni GCD za dve števili (Evklidov algoritem)
+        gcdTwo: (a, b) => {
+            a = Math.abs(a);
+            b = Math.abs(b);
+            while (b) {
+                a %= b;
+                [a, b] = [b, a];
+            }
+            return a;
+        },
+
+        // Osnovni LCM za dve števili
+        lcmTwo: (a, b) => {
+            if (a === 0 || b === 0) return 0;
+            return Math.abs(a * b) / ArrayMath.gcdTwo(a, b);
+        },
+
+        // Izračun GCD za celotno polje z uporabo reduce()
+        gcdArray: (arr) => {
+            return arr.reduce((acc, curr) => ArrayMath.gcdTwo(acc, curr));
+        },
+
+        // Izračun LCM za celotno polje z uporabo reduce()
+        lcmArray: (arr) => {
+            return arr.reduce((acc, curr) => ArrayMath.lcmTwo(acc, curr));
+        }
+    };
+
+    /**
+     * DOM API INTERAKCIJA
+     */
+    const inputEl = document.getElementById('numbersInput');
+    const btnEl = document.getElementById('calcBtn');
+    const outputDiv = document.getElementById('output');
+
+    btnEl.addEventListener('click', () => {
+        // 1. Pridobivanje podatkov in čiščenje (parsing)
+        const rawValue = inputEl.value;
+        const nums = rawValue
+            .split(/[\s,]+/) // loči po vejici ali presledku
+            .map(n => parseInt(n.trim()))
+            .filter(n => !isNaN(n));
+
+        if (nums.length < 2) {
+            alert("Prosim vnesite vsaj dve števili.");
+            return;
+        }
+
+        // 2. Izračun s pomočjo ArrayMath objekta
+        const finalGCD = ArrayMath.gcdArray(nums);
+        const finalLCM = ArrayMath.lcmArray(nums);
+
+        // 3. Prikaz rezultatov v DOM
+        document.getElementById('gcdVal').textContent = finalGCD;
+        document.getElementById('lcmVal').textContent = finalLCM;
+        outputDiv.style.display = 'block';
+    });
+</script>
+
+</body>
+</html>

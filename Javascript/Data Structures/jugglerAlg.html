@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juggler Sequence Vizualizator</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --accent: #f43f5e;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .container {
+            background: var(--card);
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 700px;
+        }
+
+        h1 { margin-top: 0; font-size: 1.8rem; color: var(--primary); text-align: center; }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 2rem;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid #334155;
+            background: #0f172a;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        button:hover { background: #4f46e5; transform: translateY(-2px); }
+
+        .sequence-display {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .node {
+            background: #334155;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            animation: fadeIn 0.4s ease-out forwards;
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .node.peak { border-bottom-color: var(--accent); color: var(--accent); font-weight: bold; }
+
+        .stats {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #334155;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Jugglerjevo zaporedje</h1>
+    <div class="input-group">
+        <input type="number" id="startNum" placeholder="Vnesite začetno število (npr. 37)" min="1">
+        <button onclick="generateSequence()">Generiraj</button>
+    </div>
+
+    <div id="stats" class="stats" style="display: none;">
+        <div>Dolžina zaporedja: <span id="lenVal" style="color: white;"></span></div>
+        <div>Najvišja vrednost: <span id="maxVal" style="color: var(--accent);"></span></div>
+    </div>
+
+    <div id="sequenceOutput" class="sequence-display"></div>
+</div>
+
+<script>
+    /**
+     * Izračuna Jugglerjevo zaporedje z uporabo BigInt
+     * zaradi hitre rasti vrednosti pri lihih številih.
+     */
+    function calculateJuggler(n) {
+        let seq = [BigInt(n)];
+        let current = BigInt(n);
+
+        while (current > 1n) {
+            let next;
+            if (current % 2n === 0n) {
+                // Sodo: n^(1/2)
+                next = BigInt(Math.floor(Math.sqrt(Number(current))));
+            } else {
+                // Liho: n^(3/2) = sqrt(n^3)
+                // Za BigInt uporabimo sqrt na n^3
+                let cubed = current * current * current;
+                next = bigIntSqrt(cubed);
+            }
+            seq.push(next);
+            current = next;
+            
+            // Varnostna meja za preprečevanje neskončnih zank/preobremenitve
+            if (seq.length > 1000) break;
+        }
+        return seq;
+    }
+
+    /**
+     * Pomožna funkcija za kvadratni koren BigInt
+     */
+    function bigIntSqrt(value) {
+        if (value < 0n) return null;
+        if (value < 2n) return value;
+        let x = value / 2n + 1n;
+        let y = (x + value / x) / 2n;
+        while (y < x) {
+            x = y;
+            y = (x + value / x) / 2n;
+        }
+        return x;
+    }
+
+    function generateSequence() {
+        const input = document.getElementById('startNum').value;
+        const output = document.getElementById('sequenceOutput');
+        const statsDiv = document.getElementById('stats');
+        
+        if (!input || input < 1) return;
+
+        const sequence = calculateJuggler(input);
+        const maxVal = sequence.reduce((m, e) => e > m ? e : m, 0n);
+
+        // DOM Posodobitev
+        output.innerHTML = '';
+        statsDiv.style.display = 'grid';
+        document.getElementById('lenVal').innerText = sequence.length;
+        document.getElementById('maxVal').innerText = maxVal.toString();
+
+        sequence.forEach((num, index) => {
+            const node = document.createElement('div');
+            node.className = 'node';
+            if (num === maxVal) node.classList.add('peak');
+            node.style.animationDelay = `${index * 0.05}s`;
+            node.innerText = num.toString();
+            output.appendChild(node);
+        });
+    }
+</script>
+
+</body>
+</html>

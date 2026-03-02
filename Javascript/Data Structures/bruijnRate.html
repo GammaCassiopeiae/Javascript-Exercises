@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moser-de Bruijn Zaporedje</title>
+    <style>
+        :root {
+            --primary: #0891b2;
+            --secondary: #334155;
+            --bg: #f8fafc;
+            --accent: #f59e0b;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--secondary);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 700px;
+        }
+
+        h1 { color: var(--primary); margin-top: 0; text-align: center; }
+
+        .description {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            background: #ecfeff;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 2rem;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover { background: #0e7490; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 12px;
+        }
+
+        .item {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .item:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent);
+        }
+
+        .index {
+            display: block;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-bottom: 4px;
+        }
+
+        .val {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--secondary);
+        }
+
+        .binary-info {
+            font-size: 0.7rem;
+            color: var(--accent);
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Moser-de Bruijn Zaporedje</h1>
+    
+    <div class="description">
+        To zaporedje ($S_n$) vključuje števila, ki so vsote različnih potenc števila 4. 
+        Zanimivost: $S_n$ dobimo tako, da vzamemo binarni zapis števila $n$ in ga preberemo, kot da je v osnovi 4.
+    </div>
+
+    <div class="controls">
+        <input type="number" id="countInput" value="12" min="1" max="100">
+        <button onclick="generateSequence()">Generiraj člene</button>
+    </div>
+
+    <div id="resultGrid" class="grid"></div>
+</div>
+
+<script>
+    /**
+     * Izračuna n-ti člen Moser-de Bruijnovega zaporedja.
+     * Metoda: Pretvori n v binarno obliko in interpretira bite kot potence 4.
+     */
+    function getMoserDeBruijn(n) {
+        let binaryStr = n.toString(2); // n v binarnem (baza 2)
+        return parseInt(binaryStr, 4); // rezultat interpretiran v bazi 4
+    }
+
+    function generateSequence() {
+        const count = parseInt(document.getElementById('countInput').value);
+        const grid = document.getElementById('resultGrid');
+        grid.innerHTML = '';
+
+        if (isNaN(count) || count < 1) return;
+
+        for (let i = 0; i < count; i++) {
+            const value = getMoserDeBruijn(i);
+            const binary = i.toString(2);
+            
+            const card = document.createElement('div');
+            card.className = 'item';
+            card.innerHTML = `
+                <span class="index">n = ${i}</span>
+                <span class="val">${value}</span>
+                <div class="binary-info">Bin: ${binary}</div>
+            `;
+            grid.appendChild(card);
+        }
+    }
+
+    // Začetni zagon
+    generateSequence();
+</script>
+
+</body>
+</html>

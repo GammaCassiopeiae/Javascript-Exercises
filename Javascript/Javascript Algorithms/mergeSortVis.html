@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Merge Sort Vizualizacija</title>
+    <style>
+        :root { --bg: #0f172a; --primary: #818cf8; --highlight: #f87171; --accent: #34d399; }
+        body { background: var(--bg); color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        canvas { background: #1e293b; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .controls { margin-top: 20px; display: flex; gap: 10px; }
+        button { background: var(--primary); border: none; padding: 10px 20px; color: white; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        button:hover:not(:disabled) { background: #6366f1; transform: translateY(-2px); }
+        button:disabled { background: #475569; cursor: not-allowed; }
+        .status { margin-bottom: 10px; font-family: monospace; color: var(--accent); }
+    </style>
+</head>
+<body>
+
+    <h1>Merge Sort</h1>
+    <div class="status" id="status">Pripravljen</div>
+    <canvas id="canvas" width="800" height="400"></canvas>
+    
+    <div class="controls">
+        <button id="resetBtn">Novo polje</button>
+        <button id="sortBtn">Uredi (Divide & Conquer)</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const sortBtn = document.getElementById('sortBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const statusEl = document.getElementById('status');
+
+        let array = [];
+        const COUNT = 80;
+        const BAR_WIDTH = canvas.width / COUNT;
+
+        function init() {
+            array = Array.from({ length: COUNT }, () => Math.floor(Math.random() * (canvas.height - 40)) + 20);
+            draw();
+            sortBtn.disabled = false;
+            statusEl.innerText = "Polje pripravljeno";
+        }
+
+        // Risanje na Canvas
+        function draw(activeRange = []) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            array.forEach((val, i) => {
+                // Če je indeks v območju, ki se trenutno zliva, ga obarvamo rdeče
+                ctx.fillStyle = (i >= activeRange[0] && i <= activeRange[1]) ? "#f87171" : "#818cf8";
+                ctx.fillRect(i * BAR_WIDTH, canvas.height - val, BAR_WIDTH - 1, val);
+            });
+        }
+
+        const sleep = (ms) => new Promise(res => setTimeout(res, ms));
+
+        // Rekurzivni Merge Sort z vizualizacijo
+        async function mergeSort(start, end) {
+            if (start >= end) return;
+
+            const mid = Math.floor((start + end) / 2);
+            
+            await mergeSort(start, mid);
+            await mergeSort(mid + 1, end);
+            await merge(start, mid, end);
+        }
+
+        // Funkcija za zlivanje (Merge)
+        async function merge(start, mid, end) {
+            let left = array.slice(start, mid + 1);
+            let right = array.slice(mid + 1, end + 1);
+            
+            let i = 0, j = 0, k = start;
+
+            while (i < left.length && j < right.length) {
+                if (left[i] <= right[j]) {
+                    array[k] = left[i];
+                    i++;
+                } else {
+                    array[k] = right[j];
+                    j++;
+                }
+                draw([start, end]); // Označi območje zlivanja
+                await sleep(20);
+                k++;
+            }
+
+            while (i < left.length) {
+                array[k] = left[i];
+                i++; k++;
+                draw([start, end]);
+                await sleep(20);
+            }
+
+            while (j < right.length) {
+                array[k] = right[j];
+                j++; k++;
+                draw([start, end]);
+                await sleep(20);
+            }
+        }
+
+        sortBtn.addEventListener('click', async () => {
+            sortBtn.disabled = true;
+            resetBtn.disabled = true;
+            statusEl.innerText = "Urejanje...";
+            await mergeSort(0, array.length - 1);
+            draw();
+            statusEl.innerText = "Končano!";
+            resetBtn.disabled = false;
+        });
+
+        resetBtn.addEventListener('click', init);
+
+        init();
+    </script>
+</body>
+</html>

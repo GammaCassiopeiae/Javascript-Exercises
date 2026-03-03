@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bogo Sort Vizualizacija</title>
+    <style>
+        :root { --bg: #0f172a; --primary: #38bdf8; --accent: #f472b6; --success: #4ade80; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        canvas { background: #1e293b; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); margin: 20px 0; max-width: 90vw; }
+        .controls { display: flex; gap: 15px; background: #1e293b; padding: 15px 25px; border-radius: 50px; border: 1px solid #334155; }
+        button { background: var(--primary); border: none; padding: 10px 20px; color: #0f172a; font-weight: bold; border-radius: 25px; cursor: pointer; transition: transform 0.2s, background 0.2s; }
+        button:hover { background: #7dd3fc; transform: translateY(-2px); }
+        button:disabled { background: #475569; cursor: not-allowed; transform: none; }
+        #stats { font-family: monospace; color: var(--accent); margin-bottom: 10px; font-size: 1.2rem; }
+    </style>
+</head>
+<body>
+
+    <h1>Bogo Sort Vizualizacija</h1>
+    <div id="stats">Poskusi: 0</div>
+    <canvas id="sortCanvas" width="600" height="300"></canvas>
+    
+    <div class="controls">
+        <button id="resetBtn">Novo polje</button>
+        <button id="sortBtn">Začni "srečo"</button>
+    </div>
+
+    <script>
+        /**
+         * BOGO SORT VIZUALIZACIJA
+         * Algoritem: Naključno mešanje, dokler ni urejeno.
+         */
+        const canvas = document.getElementById('sortCanvas');
+        const ctx = canvas.getContext('2d');
+        const sortBtn = document.getElementById('sortBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const statsEl = document.getElementById('stats');
+
+        let array = [];
+        let attempts = 0;
+        let isSorting = false;
+        const ARRAY_SIZE = 6; // OPOZORILO: Več kot 8 elementov lahko traja večno!
+
+        // Pobira elemente iz DOM za manipulacijo
+        function init() {
+            array = Array.from({ length: ARRAY_SIZE }, (_, i) => i + 1);
+            shuffle(array);
+            attempts = 0;
+            updateStats();
+            draw();
+            sortBtn.disabled = false;
+        }
+
+        // Fisher-Yates Shuffle algoritem
+        function shuffle(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+        }
+
+        // Preverjanje urejenosti polja
+        function isSorted(arr) {
+            for (let i = 0; i < arr.length - 1; i++) {
+                if (arr[i] > arr[i + 1]) return false;
+            }
+            return true;
+        }
+
+        // Risanje na Canvas
+        function draw(highlight = false) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const barWidth = (canvas.width - 40) / ARRAY_SIZE;
+            const maxVal = Math.max(...array);
+            
+            array.forEach((val, i) => {
+                const barHeight = (val / maxVal) * (canvas.height - 60);
+                const x = 20 + i * barWidth;
+                const y = canvas.height - barHeight - 20;
+
+                ctx.fillStyle = highlight ? '#4ade80' : '#38bdf8';
+                ctx.beginPath();
+                ctx.roundRect(x + 5, y, barWidth - 10, barHeight, 5);
+                ctx.fill();
+                
+                // Izpis vrednosti nad stolpcem
+                ctx.fillStyle = "white";
+                ctx.textAlign = "center";
+                ctx.fillText(val, x + barWidth / 2, y - 10);
+            });
+        }
+
+        function updateStats() {
+            statsEl.innerText = `Poskusi: ${attempts}`;
+        }
+
+        // Glavna async zanka za animacijo
+        async function bogoSort() {
+            isSorting = true;
+            sortBtn.disabled = true;
+            resetBtn.disabled = true;
+
+            while (!isSorted(array)) {
+                shuffle(array);
+                attempts++;
+                updateStats();
+                draw();
+                // Premor za vizualni učinek (nastavite na 0 za max hitrost)
+                await new Promise(resolve => setTimeout(resolve, 50)); 
+            }
+
+            draw(true); // Označi kot končano (zeleno)
+            isSorting = false;
+            resetBtn.disabled = false;
+        }
+
+        // Event Listenerji preko DOM API
+        sortBtn.addEventListener('click', bogoSort);
+        resetBtn.addEventListener('click', init);
+
+        // Prvi zagon
+        init();
+    </script>
+</body>
+</html>

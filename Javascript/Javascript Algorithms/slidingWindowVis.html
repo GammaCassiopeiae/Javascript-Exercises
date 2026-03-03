@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Sliding (Swinging) Window Vizualizacija</title>
+    <style>
+        :root { --bg: #050505; --primary: #00f2ff; --window: rgba(0, 242, 255, 0.2); --text: #e0e0e0; }
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        canvas { background: #111; border: 2px solid #222; border-radius: 8px; box-shadow: 0 0 20px rgba(0, 242, 255, 0.1); }
+        .controls { margin-top: 20px; display: flex; gap: 15px; align-items: center; background: #1a1a1a; padding: 15px 25px; border-radius: 10px; border: 1px solid #333; }
+        input { background: #000; border: 1px solid var(--primary); color: var(--primary); padding: 8px; border-radius: 4px; width: 60px; text-align: center; font-weight: bold; }
+        button { background: var(--primary); border: none; padding: 10px 20px; color: #000; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.3s; }
+        button:hover:not(:disabled) { background: #00b8c4; box-shadow: 0 0 15px var(--primary); }
+        button:disabled { background: #333; color: #666; cursor: not-allowed; }
+        #status { font-family: monospace; font-size: 1.1rem; color: var(--primary); margin-bottom: 10px; height: 1.5em; text-shadow: 0 0 5px var(--primary); }
+    </style>
+</head>
+<body>
+
+    <h1>Sliding Window (Variable Size)</h1>
+    <div id="status">Nastavite ciljno vsoto in začnite</div>
+    
+    <canvas id="windowCanvas" width="800" height="350"></canvas>
+    
+    <div class="controls">
+        <button id="resetBtn">Novo polje</button>
+        <label>Ciljna vsota (S):</label>
+        <input type="number" id="targetSum" value="100">
+        <button id="startBtn">Najdi najmanjše podpolje</button>
+    </div>
+
+    <script>
+        /**
+         * VIZUALIZACIJA DINAMIČNEGA DRSEČEGA OKNA
+         * Problem: Poišči dolžino najmanjšega podpolja, katerega vsota je >= S.
+         */
+        const canvas = document.getElementById('windowCanvas');
+        const ctx = canvas.getContext('2d');
+        const statusEl = document.getElementById('status');
+        const startBtn = document.getElementById('startBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const targetInput = document.getElementById('targetSum');
+
+        const COUNT = 25;
+        const BAR_WIDTH = canvas.width / COUNT;
+        let array = [];
+
+        function init() {
+            array = Array.from({ length: COUNT }, () => Math.floor(Math.random() * 45) + 5);
+            draw();
+            startBtn.disabled = false;
+            statusEl.innerText = "Polje pripravljeno. Cilj: Vsota >= " + targetInput.value;
+        }
+
+        function draw(left = -1, right = -1, currentSum = 0, minLength = Infinity) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            array.forEach((val, i) => {
+                const isInside = i >= left && i <= right && left !== -1;
+                ctx.fillStyle = isInside ? "var(--primary)" : "#333";
+                
+                const barHeight = (val / 60) * (canvas.height - 100);
+                const x = i * BAR_WIDTH;
+                const y = canvas.height - barHeight - 40;
+
+                // Risanje stolpca
+                ctx.globalAlpha = isInside ? 1 : 0.4;
+                ctx.fillRect(x + 4, y, BAR_WIDTH - 8, barHeight);
+                ctx.globalAlpha = 1;
+
+                // Vrednosti
+                ctx.fillStyle = isInside ? "#fff" : "#666";
+                ctx.font = "12px Arial";
+                ctx.textAlign = "center";
+                ctx.fillText(val, x + BAR_WIDTH / 2, y - 10);
+            });
+
+            // Risanje vizualnega "okna" (Canvas API Overlay)
+            if (left !== -1 && right !== -1) {
+                ctx.strokeStyle = "var(--primary)";
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                const winX = left * BAR_WIDTH;
+                const winW = (right - left + 1) * BAR_WIDTH;
+                ctx.strokeRect(winX + 2, 20, winW - 4, canvas.height - 50);
+                ctx.setLineDash([]);
+                
+                ctx.fillStyle = "var(--primary)";
+                ctx.fillText(`Vsota: ${currentSum}`, winX + winW/2, 40);
+                if (minLength !== Infinity) {
+                    ctx.fillStyle = "#22c55e";
+                    ctx.fillText(`Najmanjša dolžina: ${minLength}`, canvas.width / 2, 20);
+                }
+            }
+        }
+
+        const sleep = (ms) => new Promise(res => setTimeout(res, ms));
+
+        async function slidingWindowAlgo() {
+            const S = parseInt(targetInput.value);
+            startBtn.disabled = true;
+            resetBtn.disabled = true;
+
+            let minLength = Infinity;
+            let currentSum = 0;
+            let left = 0;
+
+            for (let right = 0; right < array.length; right++) {
+                currentSum += array[right];
+                statusEl.innerText = `Širjenje desnega roba (R): Vsota = ${currentSum}`;
+                draw(left, right, currentSum, minLength);
+                await sleep(400);
+
+                // Dokler je pogoj izpolnjen, krčimo okno z leve (zanhanje okna)
+                while (currentSum >= S) {
+                    minLength = Math.min(minLength, right - left + 1);
+                    statusEl.innerText = `Pogoj izpolnjen! Krčenje levega roba (L). Min dolžina: ${minLength}`;
+                    
+                    // Poudarek krčenja
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = "var(--primary)";
+                    draw(left, right, currentSum, minLength);
+                    ctx.shadowBlur = 0;
+                    
+                    await sleep(600);
+                    
+                    currentSum -= array[left];
+                    left++;
+                    
+                    if (currentSum >= S) {
+                        draw(left, right, currentSum, minLength);
+                        await sleep(300);
+                    }
+                }
+            }
+
+            statusEl.innerText = minLength === Infinity ? "Ni podpolja s to vsoto." : `Končano. Najmanjša dolžina: ${minLength}`;
+            resetBtn.disabled = false;
+        }
+
+        startBtn.addEventListener('click', slidingWindowAlgo);
+        resetBtn.addEventListener('click', init);
+
+        init();
+    </script>
+</body>
+</html>

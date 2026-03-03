@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Gnome Sort Vizualizacija</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        canvas {
+            background: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 4px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .ui {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        button {
+            background-color: #bb86fc;
+            border: none;
+            color: #000;
+            padding: 10px 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: 0.3s;
+        }
+        button:hover { background-color: #9965f4; }
+        button:disabled { background-color: #444; color: #888; cursor: not-allowed; }
+        .info { font-size: 0.9rem; color: #03dac6; font-family: monospace; }
+    </style>
+</head>
+<body>
+
+    <h1>Gnome Sort</h1>
+    <div class="info" id="status">Pripravljen na delo...</div>
+    <canvas id="canvas" width="800" height="400"></canvas>
+    
+    <div class="ui">
+        <button id="startBtn">Začni urejanje</button>
+        <button id="resetBtn">Novo polje</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const startBtn = document.getElementById('startBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const statusEl = document.getElementById('status');
+
+        let data = [];
+        const count = 40;
+        const barWidth = canvas.width / count;
+
+        function initData() {
+            data = Array.from({ length: count }, () => Math.floor(Math.random() * (canvas.height - 40)) + 20);
+            draw(0);
+            startBtn.disabled = false;
+            statusEl.innerText = "Polje generirano.";
+        }
+
+        function draw(activeIdx, secondaryIdx = -1) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            for (let i = 0; i < data.length; i++) {
+                let color = "#3700b3"; // Osnovna barva
+                if (i === activeIdx) color = "#cf6679"; // Aktivni "škrat"
+                if (i === secondaryIdx) color = "#03dac6"; // Element za primerjavo
+
+                ctx.fillStyle = color;
+                // Risanje stolpca (Canvas DOM API)
+                ctx.fillRect(i * barWidth, canvas.height - data[i], barWidth - 2, data[i]);
+            }
+        }
+
+        async function gnomeSort() {
+            startBtn.disabled = true;
+            resetBtn.disabled = true;
+            let index = 0;
+
+            while (index < data.length) {
+                statusEl.innerText = `Škrat je na indeksu: ${index}`;
+                
+                if (index === 0) {
+                    index++;
+                }
+                
+                // Vizualizacija primerjave
+                draw(index, index - 1);
+                await new Promise(r => setTimeout(r, 30));
+
+                if (data[index] >= data[index - 1]) {
+                    index++;
+                } else {
+                    // Menjava elementov (Gnome Sort Algorithm)
+                    [data[index], data[index - 1]] = [data[index - 1], data[index]];
+                    index--;
+                    
+                    // Vizualizacija po menjavi
+                    draw(index, index + 1);
+                    await new Promise(r => setTimeout(r, 30));
+                }
+            }
+
+            statusEl.innerText = "Urejeno!";
+            draw(-1);
+            resetBtn.disabled = false;
+        }
+
+        // Event listenerji prek DOM API-ja
+        startBtn.addEventListener('click', gnomeSort);
+        resetBtn.addEventListener('click', initData);
+
+        // Začetna inicializacija
+        initData();
+    </script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Vizualizacija Bubble Sort</title>
+    <style>
+        body { background: #1a1a1a; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; }
+        canvas { background: #000; border: 2px solid #444; border-radius: 8px; margin-top: 20px; }
+        .controls { margin-top: 20px; gap: 10px; display: flex; }
+        button { padding: 10px 20px; cursor: pointer; background: #007bff; border: none; color: white; border-radius: 4px; }
+        button:disabled { background: #444; }
+    </style>
+</head>
+<body>
+
+    <h1>Bubble Sort Vizualizacija</h1>
+    <canvas id="sortCanvas" width="800" height="400"></canvas>
+    
+    <div class="controls">
+        <button id="resetBtn">Ponastavi polje</button>
+        <button id="sortBtn">Začni razvrščanje</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('sortCanvas');
+        const ctx = canvas.getContext('2d');
+        const sortBtn = document.getElementById('sortBtn');
+        const resetBtn = document.getElementById('resetBtn');
+
+        let array = [];
+        const ARRAY_SIZE = 50;
+        const BAR_WIDTH = canvas.width / ARRAY_SIZE;
+
+        // Generiranje naključnih števil
+        function initArray() {
+            array = Array.from({ length: ARRAY_SIZE }, () => Math.floor(Math.random() * (canvas.height - 20)) + 10);
+            drawArray();
+            sortBtn.disabled = false;
+        }
+
+        // Risanje na Canvas
+        function drawArray(highlightIndices = []) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            array.forEach((val, i) => {
+                ctx.fillStyle = highlightIndices.includes(i) ? "#ff4757" : "#2ed573";
+                ctx.fillRect(i * BAR_WIDTH, canvas.height - val, BAR_WIDTH - 2, val);
+            });
+        }
+
+        // Premor za vizualizacijo (Promise)
+        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+        // Bubble Sort Algoritem z vizualizacijo
+        async function bubbleSort() {
+            sortBtn.disabled = true;
+            resetBtn.disabled = true;
+
+            let n = array.length;
+            for (let i = 0; i < n; i++) {
+                for (let j = 0; j < n - i - 1; j++) {
+                    // Vizualizacija trenutne primerjave
+                    drawArray([j, j + 1]);
+                    await sleep(10); 
+
+                    if (array[j] > array[j + 1]) {
+                        // Zamenjava elementov
+                        [array[j], array[j + 1]] = [array[j + 1], array[j]];
+                        drawArray([j, j + 1]);
+                    }
+                }
+            }
+            
+            drawArray(); // Končni prikaz
+            resetBtn.disabled = false;
+        }
+
+        // Event listenerji
+        sortBtn.addEventListener('click', bubbleSort);
+        resetBtn.addEventListener('click', initArray);
+
+        // Začetni klic
+        initArray();
+    </script>
+</body>
+</html>

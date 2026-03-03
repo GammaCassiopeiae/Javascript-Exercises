@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Mix Sort Vizualizacija</title>
+    <style>
+        :root { --accent: #f0db4f; --bg: #111; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        canvas { background: #222; border: 3px solid #333; border-radius: 8px; box-shadow: 0 15px 35px rgba(0,0,0,0.8); }
+        .controls { margin-top: 20px; display: flex; gap: 15px; }
+        button { background: var(--accent); border: none; color: #000; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-weight: bold; text-transform: uppercase; transition: 0.2s; }
+        button:hover { background: #ffd700; transform: scale(1.05); }
+        button:disabled { background: #444; color: #888; cursor: not-allowed; transform: none; }
+        .info { margin-bottom: 10px; font-family: monospace; color: var(--accent); }
+    </style>
+</head>
+<body>
+
+    <h1>Mix Sort (Cocktail Shaker)</h1>
+    <div class="info" id="status">Pripravljen</div>
+    <canvas id="canvas" width="800" height="400"></canvas>
+    
+    <div class="controls">
+        <button id="resetBtn">Ponastavi</button>
+        <button id="sortBtn">Zaženi Mix Sort</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const sortBtn = document.getElementById('sortBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const statusEl = document.getElementById('status');
+
+        let array = [];
+        const COUNT = 60;
+        const BAR_WIDTH = canvas.width / COUNT;
+
+        // Ustvari naključno polje prek DOM API
+        function init() {
+            array = Array.from({ length: COUNT }, () => Math.floor(Math.random() * (canvas.height - 50)) + 20);
+            draw();
+            sortBtn.disabled = false;
+            statusEl.innerText = "Status: Čakam na ukaz";
+        }
+
+        // Risanje na Canvas
+        function draw(activeIndices = [], isForward = true) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            array.forEach((val, i) => {
+                ctx.fillStyle = "#444"; // Osnovna barva
+                if (activeIndices.includes(i)) {
+                    ctx.fillStyle = isForward ? "#00ffcc" : "#ff0066"; // Smer gibanja
+                }
+                ctx.fillRect(i * BAR_WIDTH, canvas.height - val, BAR_WIDTH - 2, val);
+            });
+        }
+
+        const sleep = (ms) => new Promise(res => setTimeout(res, ms));
+
+        // Mix Sort Algoritem (Cocktail Shaker Sort)
+        async function mixSort() {
+            sortBtn.disabled = true;
+            resetBtn.disabled = true;
+            let swapped = true;
+            let start = 0;
+            let end = array.length - 1;
+
+            while (swapped) {
+                swapped = false;
+                statusEl.innerText = "Smer: Naprej (največji desno)";
+
+                // Prehod naprej (kot Bubble Sort)
+                for (let i = start; i < end; i++) {
+                    if (array[i] > array[i + 1]) {
+                        [array[i], array[i + 1]] = [array[i + 1], array[i]];
+                        swapped = true;
+                    }
+                    draw([i, i + 1], true);
+                    await sleep(10);
+                }
+
+                if (!swapped) break;
+                swapped = false;
+                end--;
+
+                statusEl.innerText = "Smer: Nazaj (najmanjši levo)";
+                // Prehod nazaj
+                for (let i = end - 1; i >= start; i--) {
+                    if (array[i] > array[i + 1]) {
+                        [array[i], array[i + 1]] = [array[i + 1], array[i]];
+                        swapped = true;
+                    }
+                    draw([i, i + 1], false);
+                    await sleep(10);
+                }
+                start++;
+            }
+
+            statusEl.innerText = "Status: Urejeno!";
+            draw();
+            resetBtn.disabled = false;
+        }
+
+        // Event Listenerji
+        sortBtn.addEventListener('click', mixSort);
+        resetBtn.addEventListener('click', init);
+
+        init();
+    </script>
+</body>
+</html>

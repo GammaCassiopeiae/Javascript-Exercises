@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4D Matrix - Tesseract Visualizer</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #050505;
+            color: #00ff41; /* Matrix zelena */
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        .ui-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border: 1px solid #00ff41;
+            border-radius: 5px;
+            pointer-events: none;
+        }
+
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border: 1px solid #00ff41;
+            display: flex;
+            gap: 20px;
+        }
+
+        .label { font-weight: bold; text-transform: uppercase; letter-spacing: 2px; }
+    </style>
+</head>
+<body>
+
+    <div class="ui-overlay">
+        <div class="label">4D Hiperkocka (Tesseract)</div>
+        <div id="coords">Rotacija: 4D Prodor</div>
+    </div>
+
+    <canvas id="canvas4d"></canvas>
+
+    <div class="controls">
+        <span>Os XY / XW / YW rotacija aktivna</span>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas4d');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+
+        // 16 oglišč tesseracta (vse kombinacije -1 in 1 v 4 dimenzijah)
+        const points = [];
+        for (let i = 0; i < 16; i++) {
+            points.push([
+                (i & 1) ? 1 : -1,
+                (i & 2) ? 1 : -1,
+                (i & 4) ? 1 : -1,
+                (i & 8) ? 1 : -1
+            ]);
+        }
+
+        let angle = 0;
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Funkcija za množenje matrik
+        function matmul(matrix, vec) {
+            let result = [];
+            for (let i = 0; i < matrix.length; i++) {
+                let sum = 0;
+                for (let j = 0; j < vec.length; j++) {
+                    sum += matrix[i][j] * vec[j];
+                }
+                result.push(sum);
+            }
+            return result;
+        }
+
+        function draw() {
+            ctx.fillStyle = "rgba(5, 5, 5, 0.2)"; // Učinek sledi
+            ctx.fillRect(0, 0, width, height);
+
+            const projected2d = [];
+
+            // Definiramo rotacijske matrike za 4D prostora
+            // Rotacija okoli ravnine XW
+            const rotationXW = [
+                [Math.cos(angle), 0, 0, -Math.sin(angle)],
+                [0, 1, 0, 0],
+                [0, 0, 1, 0],
+                [Math.sin(angle), 0, 0, Math.cos(angle)]
+            ];
+
+            // Rotacija okoli ravnine YW
+            const rotationYW = [
+                [1, 0, 0, 0],
+                [0, Math.cos(angle), 0, -Math.sin(angle)],
+                [0, 0, 1, 0],
+                [0, Math.sin(angle), 0, Math.cos(angle)]
+            ];
+
+            points.forEach(p => {
+                // 1. Rotiramo v 4D
+                let rotated = matmul(rotationXW, p);
+                rotated = matmul(rotationYW, rotated);
+
+                // 2. Projekcija iz 4D v 3D
+                // Faktor w (četrta dimenzija) določa globino v 4D
+                let distance4d = 2;
+                let w = 1 / (distance4d - rotated[3]);
+                const projection4to3 = [
+                    [w, 0, 0, 0],
+                    [0, w, 0, 0],
+                    [0, 0, w, 0]
+                ];
+                let projected3d = matmul(projection4to3, rotated);
+
+                // 3. Projekcija iz 3D v 2D (standardna perspektiva)
+                let distance3d = 3;
+                let z = 1 / (distance3d - projected3d[2]);
+                const projection3to2 = [
+                    [z, 0, 0],
+                    [0, z, 0]
+                ];
+                let final2d = matmul(projection3to2, projected3d);
+
+                // Skaliranje na velikost zaslona
+                const scale = Math.min(width, height) * 0.8;
+                const x = final2d[0] * scale + width / 2;
+                const y = final2d[1] * scale + height / 2;
+
+                projected2d.push({x, y});
+
+                // Izris točk
+                ctx.fillStyle = "#00ff41";
+                ctx.beginPath();
+                ctx.arc(x, y, 3, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Povezovanje oglišč (robovi tesseracta)
+            ctx.strokeStyle = "rgba(0, 255, 65, 0.5)";
+            ctx.lineWidth = 1;
+
+            for (let i = 0; i < 16; i++) {
+                for (let j = 0; j < 16; j++) {
+                    // Preverimo, če sta točki povezani (razlikujeta se le v enem bitu)
+                    let diff = i ^ j;
+                    if (diff === 1 || diff === 2 || diff === 4 || diff === 8) {
+                        ctx.beginPath();
+                        ctx.moveTo(projected2d[i].x, projected2d[i].y);
+                        ctx.lineTo(projected2d[j].x, projected2d[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            angle += 0.02;
+            requestAnimationFrame(draw);
+        }
+
+        draw();
+    </script>
+</body>
+</html>

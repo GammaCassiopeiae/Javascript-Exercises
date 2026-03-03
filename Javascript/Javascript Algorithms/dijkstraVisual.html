@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Dijkstra Algoritem - Vizualizacija</title>
+    <style>
+        :root { --bg: #0f172a; --node: #1e293b; --primary: #38bdf8; --path: #22c55e; --text: #f1f5f9; }
+        body { background: var(--bg); color: var(--text); font-family: system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; overflow: hidden; }
+        canvas { background: #020617; border: 2px solid #334155; border-radius: 12px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); cursor: crosshair; }
+        .controls { margin-top: 20px; display: flex; gap: 15px; background: #1e293b; padding: 15px 25px; border-radius: 50px; border: 1px solid #334155; }
+        button { background: var(--primary); border: none; padding: 10px 20px; color: #0f172a; font-weight: bold; border-radius: 25px; cursor: pointer; transition: 0.2s; }
+        button:hover:not(:disabled) { background: #7dd3fc; transform: scale(1.05); }
+        button:disabled { background: #475569; cursor: not-allowed; opacity: 0.6; }
+        #status { font-family: monospace; margin-bottom: 10px; color: var(--primary); font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+
+    <h1>Dijkstra: Najkrajša Pot</h1>
+    <div id="status">Klikni na platno, da dodaš vozlišča (min 3)</div>
+    <canvas id="graphCanvas" width="800" height="500"></canvas>
+    
+    <div class="controls">
+        <button id="resetBtn">Ponastavi</button>
+        <button id="connectBtn">Poveži naključno</button>
+        <button id="startBtn" disabled>Poišči pot (A -> B)</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('graphCanvas');
+        const ctx = canvas.getContext('2d');
+        const statusEl = document.getElementById('status');
+        const startBtn = document.getElementById('startBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const connectBtn = document.getElementById('connectBtn');
+
+        let nodes = [];
+        let edges = [];
+        let isRunning = false;
+
+        // Struktura vozlišča
+        class Node {
+            constructor(x, y, id) {
+                this.x = x;
+                this.y = y;
+                this.id = id;
+                this.dist = Infinity;
+                this.visited = false;
+                this.parent = null;
+            }
+        }
+
+        // Dodajanje vozlišča na klik (DOM API)
+        canvas.addEventListener('mousedown', (e) => {
+            if (isRunning) return;
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            nodes.push(new Node(x, y, nodes.length));
+            if (nodes.length >= 2) connectBtn.disabled = false;
+            draw();
+        });
+
+        function draw(path = [], activeNode = null) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Risanje povezav (Edges)
+            edges.forEach(edge => {
+                ctx.strokeStyle = "#334155";
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(edge.from.x, edge.from.y);
+                ctx.lineTo(edge.to.x, edge.to.y);
+                ctx.stroke();
+                
+                // Izpis teže (razdalje)
+                const midX = (edge.from.x + edge.to.x) / 2;
+                const midY = (edge.from.y + edge.to.y) / 2;
+                ctx.fillStyle = "#64748b";
+                ctx.font = "10px Arial";
+                ctx.fillText(Math.floor(edge.weight), midX, midY);
+            });
+
+            // Risanje najdenih poti (Path)
+            if (path.length > 0) {
+                ctx.strokeStyle = "var(--path)";
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.moveTo(path[0].x, path[0].y);
+                for (let i = 1; i < path.length; i++) ctx.lineTo(path[i].x, path[i].y);
+                ctx.stroke();
+            }
+
+            // Risanje vozlišč (Nodes)
+            nodes.forEach(node => {
+                ctx.beginPath();
+                ctx.arc(node.x, node.y, 15, 0, Math.PI * 2);
+                
+                ctx.fillStyle = "#1e293b";
+                if (node.visited) ctx.fillStyle = "#a855f7"; // Obiskano
+                if (node === activeNode) ctx.fillStyle = "#fbbf24"; // Aktivno
+                if (path.includes(node)) ctx.fillStyle = "var(--path)"; // Pot
+                if (node.id === 0) ctx.fillStyle = "#3b82f6"; // Start
+                if (node.id === nodes.length - 1 && nodes.length > 1) ctx.shadowColor = "#38bdf8";
+                
+                ctx.fill();
+                ctx.strokeStyle = node.id === 0 ? "white" : "var(--primary)";
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                ctx.fillStyle = "white";
+                ctx.textAlign = "center";
+                ctx.font = "bold 12px Arial";
+                ctx.fillText(node.id === 0 ? "S" : (node.id === nodes.length-1 ? "E" : node.id), node.x, node.y + 5);
+            });
+        }
+
+        function createRandomEdges() {
+            edges = [];
+            nodes.forEach(node => node.visited = false);
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    const dist = Math.hypot(nodes[i].x - nodes[j].x, nodes[i].y - nodes[j].y);
+                    if (dist < 250) { // Poveži samo bližnja vozlišča
+                        edges.push({ from: nodes[i], to: nodes[j], weight: dist });
+                    }
+                }
+            }
+            startBtn.disabled = false;
+            statusEl.innerText = "Povezave ustvarjene. Klikni za začetek.";
+            draw();
+        }
+
+        const sleep = (ms) => new Promise(res => setTimeout(res, ms));
+
+        // DIJKSTRA ALGORITEM
+        async function runDijkstra() {
+            if (nodes.length < 2) return;
+            isRunning = true;
+            startBtn.disabled = true;
+            connectBtn.disabled = true;
+
+            const startNode = nodes[0];
+            const endNode = nodes[nodes.length - 1];
+
+            nodes.forEach(n => { n.dist = Infinity; n.visited = false; n.parent = null; });
+            startNode.dist = 0;
+
+            let unvisited = [...nodes];
+
+            while (unvisited.length > 0) {
+                // Najdi neobiskano vozlišče z najmanjšo razdaljo
+                unvisited.sort((a, b) => a.dist - b.dist);
+                let current = unvisited.shift();
+
+                if (current.dist === Infinity) break;
+                current.visited = true;
+                
+                statusEl.innerText = `Raziskujem vozlišče ${current.id}...`;
+                draw([], current);
+                await sleep(400);
+
+                if (current === endNode) break;
+
+                // Preveri sosede
+                const neighbors = edges.filter(e => e.from === current || e.to === current);
+                for (let edge of neighbors) {
+                    let neighbor = edge.from === current ? edge.to : edge.from;
+                    if (neighbor.visited) continue;
+
+                    let newDist = current.dist + edge.weight;
+                    if (newDist < neighbor.dist) {
+                        neighbor.dist = newDist;
+                        neighbor.parent = current;
+                    }
+                }
+            }
+
+            // Rekonstrukcija poti
+            let path = [];
+            let temp = endNode;
+            while (temp) {
+                path.push(temp);
+                temp = temp.parent;
+            }
+
+            if (path[path.length - 1] === startNode) {
+                statusEl.innerText = "Najkrajša pot najdena!";
+                draw(path.reverse());
+            } else {
+                statusEl.innerText = "Pot ne obstaja.";
+                draw();
+            }
+            
+            isRunning = false;
+            resetBtn.disabled = false;
+        }
+
+        resetBtn.addEventListener('click', () => {
+            nodes = []; edges = []; isRunning = false;
+            statusEl.innerText = "Klikni na platno, da dodaš vozlišča";
+            startBtn.disabled = true;
+            connectBtn.disabled = true;
+            draw();
+        });
+
+        connectBtn.addEventListener('click', createRandomEdges);
+        startBtn.addEventListener('click', runDijkstra);
+    </script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fibonacci Vizualizator</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: var(--card);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            text-align: center;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .controls {
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        input[type="number"] {
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            width: 60px;
+            font-size: 1rem;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #4f46e5;
+            transform: translateY(-2px);
+        }
+
+        canvas {
+            width: 100%;
+            height: 400px;
+            background: #111827;
+            border-radius: 0.5rem;
+            border: 1px solid #334155;
+        }
+
+        .stats {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Fibonaccijev Vizualizator</h1>
+        
+        <div class="controls">
+            <label for="count">Število elementov:</label>
+            <input type="number" id="count" value="10" min="2" max="25">
+            <button id="generateBtn">Generiraj Graf</button>
+        </div>
+
+        <canvas id="fibCanvas"></canvas>
+
+        <div class="stats" id="statsArea">
+            Zaporedje: Izberite število in kliknite gumb.
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('fibCanvas');
+        const ctx = canvas.getContext('2d');
+        const countInput = document.getElementById('count');
+        const generateBtn = document.getElementById('generateBtn');
+        const statsArea = document.getElementById('statsArea');
+
+        // Nastavitev ločljivosti canvasa
+        function resizeCanvas() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+        }
+
+        // Fibonaccijeva funkcija (iterativna za boljšo zmogljivost)
+        function getFibonacciSequence(n) {
+            let seq = [0, 1];
+            for (let i = 2; i < n; i++) {
+                seq.push(seq[i - 1] + seq[i - 2]);
+            }
+            return seq.slice(0, n);
+        }
+
+        function drawGraph() {
+            const n = parseInt(countInput.value);
+            const sequence = getFibonacciSequence(n);
+            const maxVal = sequence[sequence.length - 1];
+            
+            // Posodobitev besedila
+            statsArea.innerText = `Zaporedje: ${sequence.join(', ')}`;
+
+            // Čiščenje platna
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const padding = 40;
+            const barGap = 10;
+            const availableWidth = canvas.width - (padding * 2);
+            const barWidth = (availableWidth / n) - barGap;
+            
+            sequence.forEach((val, i) => {
+                // Izračun višine stolpca (normalizirano na višino canvasa)
+                const barHeight = maxVal === 0 ? 0 : (val / maxVal) * (canvas.height - padding * 2);
+                
+                const x = padding + i * (barWidth + barGap);
+                const y = canvas.height - padding - barHeight;
+
+                // Gradient za lepši izgled
+                const gradient = ctx.createLinearGradient(x, y, x, canvas.height - padding);
+                gradient.addColorStop(0, '#818cf8');
+                gradient.addColorStop(1, '#4f46e5');
+
+                // Risanje stolpca
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.roundRect(x, y, barWidth, barHeight, [5, 5, 0, 0]);
+                ctx.fill();
+
+                // Dodajanje vrednosti nad stolpec (samo če je dovolj prostora)
+                if (n <= 15) {
+                    ctx.fillStyle = '#f8fafc';
+                    ctx.font = '12px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(val, x + barWidth / 2, y - 10);
+                }
+
+                // Indeks spodaj
+                ctx.fillStyle = '#64748b';
+                ctx.fillText(`n=${i}`, x + barWidth / 2, canvas.height - 15);
+            });
+        }
+
+        // Event listenerji
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            drawGraph();
+        });
+
+        generateBtn.addEventListener('click', drawGraph);
+
+        // Začetni izris
+        resizeCanvas();
+        drawGraph();
+    </script>
+</body>
+</html>

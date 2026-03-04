@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fenwick Tree // Neon Nexus</title>
+    <style>
+        :root {
+            --bg: #050505;
+            --neon-1: #00f3ff;
+            --neon-2: #ff00ff;
+            --glass: rgba(255, 255, 255, 0.05);
+            --font-main: 'Rajdhani', 'Segoe UI', sans-serif;
+            --font-code: 'Fira Code', monospace;
+        }
+        body {
+            background-color: var(--bg);
+            color: #fff;
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: grid;
+            grid-template-rows: auto 1fr;
+        }
+        header {
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--neon-1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.8);
+            z-index: 10;
+        }
+        h1 {
+            color: var(--neon-1);
+            text-shadow: 0 0 10px var(--neon-1);
+            margin: 0;
+            font-family: var(--font-code);
+            text-transform: uppercase;
+            font-size: 1.5rem;
+        }
+        .back-btn {
+            color: var(--neon-2);
+            text-decoration: none;
+            border: 1px solid var(--neon-2);
+            padding: 0.5rem 1rem;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
+        .back-btn:hover {
+            background: var(--neon-2);
+            color: #000;
+            box-shadow: 0 0 10px var(--neon-2);
+        }
+        .workspace {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            height: 100%;
+            overflow: hidden;
+        }
+        aside {
+            background: var(--glass);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            backdrop-filter: blur(10px);
+            z-index: 5;
+        }
+        .control-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        label { color: var(--neon-1); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; }
+        input {
+            background: rgba(0,0,0,0.3); border: 1px solid #333; color: #fff;
+            padding: 0.8rem; font-family: var(--font-code); font-size: 1rem; outline: none; transition: 0.3s;
+        }
+        input:focus { border-color: var(--neon-1); box-shadow: 0 0 5px rgba(0, 243, 255, 0.2); }
+        button {
+            background: transparent; border: 1px solid var(--neon-1); color: var(--neon-1);
+            padding: 0.8rem; cursor: pointer; text-transform: uppercase; font-weight: bold; transition: 0.3s;
+            font-family: var(--font-main);
+        }
+        button:hover { background: var(--neon-1); color: #000; box-shadow: 0 0 15px var(--neon-1); }
+        button.secondary { border-color: var(--neon-2); color: var(--neon-2); }
+        button.secondary:hover { background: var(--neon-2); box-shadow: 0 0 15px var(--neon-2); }
+        .log-panel {
+            flex-grow: 1; background: #000; border: 1px solid #333; padding: 0.5rem;
+            font-family: var(--font-code); font-size: 0.8rem; color: #aaa; overflow-y: auto; max-height: 300px;
+        }
+        .log-entry { margin-bottom: 0.25rem; border-bottom: 1px solid #111; padding-bottom: 0.25rem; }
+        .log-entry.success { color: #0f0; }
+        .log-entry.info { color: var(--neon-1); }
+        .log-entry.error { color: #f00; }
+        main {
+            position: relative;
+            background-color: #0a0a0f;
+            background-image: 
+                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            overflow: hidden;
+            cursor: grab;
+        }
+        main:active { cursor: grabbing; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Fenwick Tree (BIT)</h1>
+    <a href="index.html" class="back-btn">Back to Nexus</a>
+</header>
+
+<div class="workspace">
+    <aside>
+        <div class="control-group">
+            <label>Init Array (comma sep)</label>
+            <input type="text" id="initArr" value="1, 2, 3, 4, 5, 6, 7, 8">
+            <button onclick="handleBuild()">Build</button>
+        </div>
+        
+        <div class="control-group">
+            <label>Update (Index, Delta)</label>
+            <div style="display:flex; gap:0.5rem;">
+                <input type="number" id="updateIdx" placeholder="Idx (1-based)">
+                <input type="number" id="updateVal" placeholder="Delta">
+            </div>
+            <button onclick="handleUpdate()">Add</button>
+        </div>
+        
+        <div class="control-group">
+            <label>Query Prefix Sum (Index)</label>
+            <div style="display:flex; gap:0.5rem;">
+                <input type="number" id="queryIdx" placeholder="Idx (1-based)">
+                <button class="secondary" onclick="handleQuery()">Query</button>
+            </div>
+        </div>
+
+        <div class="log-panel" id="logPanel">
+            <div class="log-entry info">System ready. 1-based indexing.</div>
+        </div>
+    </aside>
+
+    <main id="canvasContainer">
+        <canvas id="canvas"></canvas>
+    </main>
+</div>
+
+<script>
+    const logPanel = document.getElementById('logPanel');
+    function log(msg, type = 'info') {
+        const div = document.createElement('div');
+        div.className = `log-entry ${type}`;
+        div.innerText = `> ${msg}`;
+        logPanel.prepend(div);
+        if (logPanel.children.length > 50) logPanel.lastChild.remove();
+    }
+
+    class FenwickTree {
+        constructor(size) {
+            this.tree = new Array(size + 1).fill(0);
+            this.size = size;
+        }
+
+        update(index, delta) {
+            while (index <= this.size) {
+                this.tree[index] += delta;
+                index += index & (-index);
+            }
+        }
+
+        query(index) {
+            let sum = 0;
+            while (index > 0) {
+                sum += this.tree[index];
+                index -= index & (-index);
+            }
+            return sum;
+        }
+    }
+
+    // --- Visualization ---
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let bit = null;
+    let originalArr = [];
+    
+    // Viewport
+    let cameraOffset = { x: 50, y: 50 };
+    let isDragging = false;
+    let dragStart = { x: 0, y: 0 };
+    let initialCamera = { x: 0, y: 0 };
+
+    function resizeCanvas() {
+        canvas.width = document.getElementById('canvasContainer').offsetWidth;
+        canvas.height = document.getElementById('canvasContainer').offsetHeight;
+        draw();
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        if (!bit) return;
+        
+        const startX = cameraOffset.x + 50;
+        const startY = cameraOffset.y + 100;
+        const barWidth = 40;
+        const spacing = 20;
+
+        // Draw array visual
+        ctx.save();
+        ctx.translate(startX, startY);
+        
+        // Draw the tree structure conceptually
+        // A common BIT visualization is hierarchical bars or a tree structure
+        // Let's draw the array values and the coverage of each BIT index
+        
+        for (let i = 1; i <= bit.size; i++) {
+            let x = (i - 1) * (barWidth + spacing);
+            
+            // Draw BIT value
+            ctx.fillStyle = '#111';
+            ctx.fillRect(x, 0, barWidth, 40);
+            ctx.strokeStyle = '#00f3ff';
+            ctx.strokeRect(x, 0, barWidth, 40);
+            
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 12px "Fira Code"';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(bit.tree[i], x + barWidth/2, 20);
+            
+            // Label Index
+            ctx.fillStyle = '#aaa';
+            ctx.fillText(i, x + barWidth/2, 60);
+            
+            // Visualize coverage (LSB logic)
+            // The interval [i - (i&-i) + 1, i]
+            let len = i & (-i);
+            let startIdx = i - len + 1;
+            
+            // Draw a bracket or line indicating range
+            let rangeXStart = (startIdx - 1) * (barWidth + spacing);
+            let rangeXEnd = x + barWidth;
+            let rangeY = -20 - (Math.log2(len) * 15); // Stack ranges based on height
+            
+            ctx.strokeStyle = '#ff00ff';
+            ctx.beginPath();
+            ctx.moveTo(rangeXStart, rangeY);
+            ctx.lineTo(rangeXEnd - spacing, rangeY); // slight offset
+            ctx.stroke();
+            
+            // Drop lines
+            ctx.setLineDash([2, 2]);
+            ctx.beginPath();
+            ctx.moveTo(rangeXStart, rangeY);
+            ctx.lineTo(rangeXStart, 0);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(rangeXEnd - spacing, rangeY);
+            ctx.lineTo(rangeXEnd - spacing, 0);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+        
+        ctx.restore();
+    }
+
+    function handleBuild() {
+        const valStr = document.getElementById('initArr').value;
+        const arr = valStr.split(',').map(Number).filter(n => !isNaN(n));
+        if (arr.length === 0) return;
+        
+        originalArr = arr;
+        bit = new FenwickTree(arr.length);
+        for(let i=0; i<arr.length; i++) {
+            bit.update(i + 1, arr[i]);
+        }
+        
+        log(`Built BIT size ${arr.length}`, 'success');
+        draw();
+    }
+
+    function handleUpdate() {
+        if (!bit) return;
+        const idx = parseInt(document.getElementById('updateIdx').value);
+        const val = parseInt(document.getElementById('updateVal').value);
+        if (isNaN(idx) || isNaN(val)) return;
+        
+        bit.update(idx, val);
+        log(`Added ${val} to index ${idx}`, 'info');
+        draw();
+    }
+
+    function handleQuery() {
+        if (!bit) return;
+        const idx = parseInt(document.getElementById('queryIdx').value);
+        if (isNaN(idx)) return;
+        
+        const sum = bit.query(idx);
+        log(`Prefix Sum [1...${idx}] = ${sum}`, 'success');
+    }
+
+    const container = document.getElementById('canvasContainer');
+    container.addEventListener('mousedown', e => {
+        isDragging = true;
+        dragStart = { x: e.clientX, y: e.clientY };
+        initialCamera = { ...cameraOffset };
+        container.style.cursor = 'grabbing';
+    });
+    
+    window.addEventListener('mousemove', e => {
+        if (!isDragging) return;
+        const dx = e.clientX - dragStart.x;
+        const dy = e.clientY - dragStart.y;
+        cameraOffset.x = initialCamera.x + dx;
+        cameraOffset.y = initialCamera.y + dy;
+        draw();
+    });
+
+    window.addEventListener('mouseup', () => {
+        isDragging = false;
+        container.style.cursor = 'grab';
+    });
+
+    handleBuild();
+
+</script>
+</body>
+</html>

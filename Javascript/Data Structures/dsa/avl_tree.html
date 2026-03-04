@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVL Tree // Neon Nexus</title>
+    <style>
+        :root {
+            --bg: #050505;
+            --neon-1: #00f3ff; /* Cyan */
+            --neon-2: #ff00ff; /* Magenta */
+            --glass: rgba(255, 255, 255, 0.05);
+            --font-main: 'Rajdhani', 'Segoe UI', sans-serif;
+            --font-code: 'Fira Code', monospace;
+        }
+        body {
+            background-color: var(--bg);
+            color: #fff;
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: grid;
+            grid-template-rows: auto 1fr;
+        }
+        header {
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--neon-1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.8);
+            z-index: 10;
+        }
+        h1 {
+            color: var(--neon-1);
+            text-shadow: 0 0 10px var(--neon-1);
+            margin: 0;
+            font-family: var(--font-code);
+            text-transform: uppercase;
+            font-size: 1.5rem;
+        }
+        .back-btn {
+            color: var(--neon-2);
+            text-decoration: none;
+            border: 1px solid var(--neon-2);
+            padding: 0.5rem 1rem;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
+        .back-btn:hover {
+            background: var(--neon-2);
+            color: #000;
+            box-shadow: 0 0 10px var(--neon-2);
+        }
+        .workspace {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            height: 100%;
+            overflow: hidden;
+        }
+        aside {
+            background: var(--glass);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            backdrop-filter: blur(10px);
+            z-index: 5;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        label {
+            color: var(--neon-1);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        input {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid #333;
+            color: #fff;
+            padding: 0.8rem;
+            font-family: var(--font-code);
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+        input:focus {
+            border-color: var(--neon-1);
+            box-shadow: 0 0 5px rgba(0, 243, 255, 0.2);
+        }
+        button {
+            background: transparent;
+            border: 1px solid var(--neon-1);
+            color: var(--neon-1);
+            padding: 0.8rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: bold;
+            transition: 0.3s;
+            font-family: var(--font-main);
+        }
+        button:hover {
+            background: var(--neon-1);
+            color: #000;
+            box-shadow: 0 0 15px var(--neon-1);
+        }
+        button.secondary {
+            border-color: var(--neon-2);
+            color: var(--neon-2);
+        }
+        button.secondary:hover {
+            background: var(--neon-2);
+            box-shadow: 0 0 15px var(--neon-2);
+        }
+        .log-panel {
+            flex-grow: 1;
+            background: #000;
+            border: 1px solid #333;
+            padding: 0.5rem;
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            color: #aaa;
+            overflow-y: auto;
+            max-height: 300px;
+        }
+        .log-entry { margin-bottom: 0.25rem; border-bottom: 1px solid #111; padding-bottom: 0.25rem; }
+        .log-entry.success { color: #0f0; }
+        .log-entry.info { color: var(--neon-1); }
+        .log-entry.error { color: #f00; }
+
+        main {
+            position: relative;
+            background-color: #0a0a0f;
+            background-image: 
+                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            overflow: hidden;
+            cursor: grab;
+        }
+        main:active { cursor: grabbing; }
+        canvas { display: block; }
+        
+        .tooltip {
+            position: absolute;
+            background: rgba(0,0,0,0.9);
+            border: 1px solid var(--neon-1);
+            padding: 0.5rem;
+            pointer-events: none;
+            display: none;
+            font-size: 0.8rem;
+            z-index: 100;
+        }
+
+        @media (max-width: 768px) {
+            .workspace { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+            aside { max-height: 250px; overflow-y: auto; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>AVL Tree Visualizer</h1>
+    <a href="index.html" class="back-btn">Back to Nexus</a>
+</header>
+
+<div class="workspace">
+    <aside>
+        <div class="control-group">
+            <label>Insert Value</label>
+            <div style="display:flex; gap:0.5rem;">
+                <input type="number" id="insertVal" placeholder="Integer">
+                <button onclick="handleInsert()">Add</button>
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label>Delete Value</label>
+            <div style="display:flex; gap:0.5rem;">
+                <input type="number" id="deleteVal" placeholder="Integer">
+                <button class="secondary" onclick="handleDelete()">Del</button>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <button onclick="tree.root = null; draw(); log('Tree cleared.', 'info');">Clear Tree</button>
+            <button onclick="generateRandomTree()">Random Tree</button>
+        </div>
+
+        <div class="log-panel" id="logPanel">
+            <div class="log-entry info">System ready. Awaiting input.</div>
+        </div>
+    </aside>
+
+    <main id="canvasContainer">
+        <canvas id="canvas"></canvas>
+        <div id="tooltip" class="tooltip"></div>
+    </main>
+</div>
+
+<script>
+    // --- Logger ---
+    const logPanel = document.getElementById('logPanel');
+    function log(msg, type = 'info') {
+        const div = document.createElement('div');
+        div.className = `log-entry ${type}`;
+        div.innerText = `> ${msg}`;
+        logPanel.prepend(div);
+        if (logPanel.children.length > 50) logPanel.lastChild.remove();
+    }
+
+    // --- AVL Tree Logic ---
+    class Node {
+        constructor(value) {
+            this.value = value;
+            this.left = null;
+            this.right = null;
+            this.height = 1;
+            this.x = 0; // for visualization
+            this.y = 0;
+        }
+    }
+
+    class AVLTree {
+        constructor() {
+            this.root = null;
+        }
+
+        height(node) {
+            return node ? node.height : 0;
+        }
+
+        updateHeight(node) {
+            node.height = 1 + Math.max(this.height(node.left), this.height(node.right));
+        }
+
+        getBalance(node) {
+            return node ? this.height(node.left) - this.height(node.right) : 0;
+        }
+
+        rotateRight(y) {
+            let x = y.left;
+            let T2 = x.right;
+            x.right = y;
+            y.left = T2;
+            this.updateHeight(y);
+            this.updateHeight(x);
+            return x;
+        }
+
+        rotateLeft(x) {
+            let y = x.right;
+            let T2 = y.left;
+            y.left = x;
+            x.right = T2;
+            this.updateHeight(x);
+            this.updateHeight(y);
+            return y;
+        }
+
+        insert(node, value) {
+            if (!node) return new Node(value);
+
+            if (value < node.value) {
+                node.left = this.insert(node.left, value);
+            } else if (value > node.value) {
+                node.right = this.insert(node.right, value);
+            } else {
+                log(`Duplicate value ${value} ignored.`, 'error');
+                return node;
+            }
+
+            this.updateHeight(node);
+            let balance = this.getBalance(node);
+
+            // Left Left
+            if (balance > 1 && value < node.left.value) {
+                log(`Rotating Right at ${node.value}`);
+                return this.rotateRight(node);
+            }
+            // Right Right
+            if (balance < -1 && value > node.right.value) {
+                log(`Rotating Left at ${node.value}`);
+                return this.rotateLeft(node);
+            }
+            // Left Right
+            if (balance > 1 && value > node.left.value) {
+                log(`Rotating Left-Right at ${node.value}`);
+                node.left = this.rotateLeft(node.left);
+                return this.rotateRight(node);
+            }
+            // Right Left
+            if (balance < -1 && value < node.right.value) {
+                log(`Rotating Right-Left at ${node.value}`);
+                node.right = this.rotateRight(node.right);
+                return this.rotateLeft(node);
+            }
+
+            return node;
+        }
+
+        getMinValueNode(node) {
+            let current = node;
+            while (current.left) current = current.left;
+            return current;
+        }
+
+        delete(node, value) {
+            if (!node) {
+                log(`Value ${value} not found.`, 'error');
+                return node;
+            }
+
+            if (value < node.value) {
+                node.left = this.delete(node.left, value);
+            } else if (value > node.value) {
+                node.right = this.delete(node.right, value);
+            } else {
+                if (!node.left || !node.right) {
+                    let temp = node.left ? node.left : node.right;
+                    if (!temp) {
+                        node = null;
+                    } else {
+                        node = temp;
+                    }
+                } else {
+                    let temp = this.getMinValueNode(node.right);
+                    node.value = temp.value;
+                    node.right = this.delete(node.right, temp.value);
+                }
+            }
+
+            if (!node) return node;
+
+            this.updateHeight(node);
+            let balance = this.getBalance(node);
+
+            if (balance > 1 && this.getBalance(node.left) >= 0) {
+                return this.rotateRight(node);
+            }
+            if (balance > 1 && this.getBalance(node.left) < 0) {
+                node.left = this.rotateLeft(node.left);
+                return this.rotateRight(node);
+            }
+            if (balance < -1 && this.getBalance(node.right) <= 0) {
+                return this.rotateLeft(node);
+            }
+            if (balance < -1 && this.getBalance(node.right) > 0) {
+                node.right = this.rotateRight(node.right);
+                return this.rotateLeft(node);
+            }
+
+            return node;
+        }
+    }
+
+    // --- Visualization ---
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const tree = new AVLTree();
+    
+    // Viewport state
+    let cameraOffset = { x: 0, y: 50 };
+    let isDragging = false;
+    let dragStart = { x: 0, y: 0 };
+    let initialCamera = { x: 0, y: 0 };
+
+    function resizeCanvas() {
+        canvas.width = document.getElementById('canvasContainer').offsetWidth;
+        canvas.height = document.getElementById('canvasContainer').offsetHeight;
+        cameraOffset.x = canvas.width / 2;
+        draw();
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    // Calculate node positions
+    function updatePositions(node, x, y, level) {
+        if (!node) return;
+        // Horizontal spacing decreases as we go deeper
+        const levelGap = 60;
+        // Width depends on subtree size, but simple level-based spacing is easier for basic viz
+        // A better approach for layout: Reingold-Tilford, but here we use dynamic width
+        const horizontalGap = Math.max(30, canvas.width / Math.pow(2, level + 2)) * 1.5; 
+        
+        node.x = x;
+        node.y = y;
+        
+        // This simple layout can overlap, so let's use a standard BFS-width approach or fixed exponential
+        // Let's stick to exponential reduction for simplicity in "all-in-one" file
+        const offset = Math.max(40, 300 / Math.pow(2, level));
+
+        updatePositions(node.left, x - offset, y + levelGap, level + 1);
+        updatePositions(node.right, x + offset, y + levelGap, level + 1);
+    }
+
+    // Better layout algorithm (inorder traversal for x-coordinate)
+    // Actually, simple recursive with bounds is robust enough for typical usage.
+    function layoutTree(node, depth = 0, minX = 0, maxX = 100) {
+        if (!node) return;
+        // A very simple layout strategy isn't enough for big trees. 
+        // Let's use the standard "width of subtree" approach.
+    }
+    
+    // Let's use a simpler visualizer: Recursively assign widths
+    function assignCoords(node, x, y, offset) {
+        if (!node) return;
+        node.x = x;
+        node.y = y;
+        assignCoords(node.left, x - offset, y + 60, offset / 2);
+        assignCoords(node.right, x + offset, y + 60, offset / 2);
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Recalculate positions based on root
+        if (tree.root) {
+            // Initial offset covers roughly the spread needed for height 5-6
+            assignCoords(tree.root, cameraOffset.x, cameraOffset.y, 250);
+        }
+
+        ctx.save();
+        // ctx.translate(cameraOffset.x, cameraOffset.y); // Actually we pre-calc coords based on camera center
+        // If we implemented pan/zoom, we'd apply transform here.
+        // For now, let's just draw based on calculated node.x/y
+        
+        if (tree.root) drawNode(tree.root);
+        ctx.restore();
+    }
+
+    function drawNode(node) {
+        if (!node) return;
+
+        // Draw connections first
+        ctx.strokeStyle = '#00f3ff';
+        ctx.lineWidth = 2;
+
+        if (node.left) {
+            ctx.beginPath();
+            ctx.moveTo(node.x, node.y);
+            ctx.lineTo(node.left.x, node.left.y);
+            ctx.stroke();
+            drawNode(node.left);
+        }
+        if (node.right) {
+            ctx.beginPath();
+            ctx.moveTo(node.x, node.y);
+            ctx.lineTo(node.right.x, node.right.y);
+            ctx.stroke();
+            drawNode(node.right);
+        }
+
+        // Draw Node
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, 20, 0, Math.PI * 2);
+        ctx.fillStyle = '#050505';
+        ctx.fill();
+        ctx.strokeStyle = '#ff00ff';
+        ctx.stroke();
+
+        // Glow
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = '#ff00ff';
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // Text
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 14px "Fira Code"';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(node.value, node.x, node.y);
+        
+        // Height/Balance info (optional, small text)
+        ctx.fillStyle = '#00f3ff';
+        ctx.font = '10px Arial';
+        ctx.fillText(`h:${node.height}`, node.x, node.y - 30);
+    }
+
+    // --- Interaction ---
+    function handleInsert() {
+        const val = parseInt(document.getElementById('insertVal').value);
+        if (isNaN(val)) return;
+        tree.root = tree.insert(tree.root, val);
+        log(`Inserted ${val}`, 'success');
+        draw();
+        document.getElementById('insertVal').value = '';
+        document.getElementById('insertVal').focus();
+    }
+
+    function handleDelete() {
+        const val = parseInt(document.getElementById('deleteVal').value);
+        if (isNaN(val)) return;
+        tree.root = tree.delete(tree.root, val);
+        log(`Deleted ${val}`, 'info');
+        draw();
+        document.getElementById('deleteVal').value = '';
+    }
+
+    function generateRandomTree() {
+        tree.root = null;
+        for(let i=0; i<15; i++) {
+            const val = Math.floor(Math.random() * 100);
+            tree.root = tree.insert(tree.root, val);
+        }
+        log('Generated random tree', 'info');
+        draw();
+    }
+
+    // --- Input Handling ---
+    document.getElementById('insertVal').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') handleInsert();
+    });
+
+    // --- Drag/Pan Support ---
+    const container = document.getElementById('canvasContainer');
+    container.addEventListener('mousedown', e => {
+        isDragging = true;
+        dragStart = { x: e.clientX, y: e.clientY };
+        initialCamera = { ...cameraOffset };
+        container.style.cursor = 'grabbing';
+    });
+    
+    window.addEventListener('mousemove', e => {
+        if (!isDragging) return;
+        const dx = e.clientX - dragStart.x;
+        const dy = e.clientY - dragStart.y;
+        cameraOffset.x = initialCamera.x + dx;
+        cameraOffset.y = initialCamera.y + dy;
+        draw();
+    });
+
+    window.addEventListener('mouseup', () => {
+        isDragging = false;
+        container.style.cursor = 'grab';
+    });
+
+    // Init
+    resizeCanvas();
+    generateRandomTree();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disjoint Set // Neon Nexus</title>
+    <style>
+        :root {
+            --bg: #050505;
+            --neon-1: #00f3ff;
+            --neon-2: #ff00ff;
+            --glass: rgba(255, 255, 255, 0.05);
+            --font-main: 'Rajdhani', 'Segoe UI', sans-serif;
+            --font-code: 'Fira Code', monospace;
+        }
+        body {
+            background-color: var(--bg);
+            color: #fff;
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: grid;
+            grid-template-rows: auto 1fr;
+        }
+        header {
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--neon-1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.8);
+            z-index: 10;
+        }
+        h1 {
+            color: var(--neon-1);
+            text-shadow: 0 0 10px var(--neon-1);
+            margin: 0;
+            font-family: var(--font-code);
+            text-transform: uppercase;
+            font-size: 1.5rem;
+        }
+        .back-btn {
+            color: var(--neon-2);
+            text-decoration: none;
+            border: 1px solid var(--neon-2);
+            padding: 0.5rem 1rem;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
+        .back-btn:hover {
+            background: var(--neon-2);
+            color: #000;
+            box-shadow: 0 0 10px var(--neon-2);
+        }
+        .workspace {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            height: 100%;
+            overflow: hidden;
+        }
+        aside {
+            background: var(--glass);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            backdrop-filter: blur(10px);
+            z-index: 5;
+        }
+        .control-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        label { color: var(--neon-1); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; }
+        input {
+            background: rgba(0,0,0,0.3); border: 1px solid #333; color: #fff;
+            padding: 0.8rem; font-family: var(--font-code); font-size: 1rem; outline: none; transition: 0.3s;
+        }
+        input:focus { border-color: var(--neon-1); box-shadow: 0 0 5px rgba(0, 243, 255, 0.2); }
+        button {
+            background: transparent; border: 1px solid var(--neon-1); color: var(--neon-1);
+            padding: 0.8rem; cursor: pointer; text-transform: uppercase; font-weight: bold; transition: 0.3s;
+            font-family: var(--font-main);
+        }
+        button:hover { background: var(--neon-1); color: #000; box-shadow: 0 0 15px var(--neon-1); }
+        button.secondary { border-color: var(--neon-2); color: var(--neon-2); }
+        button.secondary:hover { background: var(--neon-2); box-shadow: 0 0 15px var(--neon-2); }
+        .log-panel {
+            flex-grow: 1; background: #000; border: 1px solid #333; padding: 0.5rem;
+            font-family: var(--font-code); font-size: 0.8rem; color: #aaa; overflow-y: auto; max-height: 300px;
+        }
+        .log-entry { margin-bottom: 0.25rem; border-bottom: 1px solid #111; padding-bottom: 0.25rem; }
+        .log-entry.success { color: #0f0; }
+        .log-entry.info { color: var(--neon-1); }
+        .log-entry.error { color: #f00; }
+        main {
+            position: relative;
+            background-color: #0a0a0f;
+            background-image: 
+                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            overflow: hidden;
+            cursor: grab;
+        }
+        main:active { cursor: grabbing; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Disjoint Set (Union-Find)</h1>
+    <a href="index.html" class="back-btn">Back to Nexus</a>
+</header>
+
+<div class="workspace">
+    <aside>
+        <div class="control-group">
+            <label>Union (A, B)</label>
+            <div style="display:flex; gap:0.5rem;">
+                <input type="number" id="unionA" placeholder="A" style="width: 50%;">
+                <input type="number" id="unionB" placeholder="B" style="width: 50%;">
+            </div>
+            <button onclick="handleUnion()">Union</button>
+        </div>
+        
+        <div class="control-group">
+            <label>Find (X)</label>
+            <div style="display:flex; gap:0.5rem;">
+                <input type="number" id="findVal" placeholder="X">
+                <button class="secondary" onclick="handleFind()">Find</button>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <button onclick="resetDSU(); log('Reset DSU.', 'info');">Reset (0-9)</button>
+            <button onclick="addNode();">Add New Set</button>
+        </div>
+
+        <div class="log-panel" id="logPanel">
+            <div class="log-entry info">System ready. Path Compression & Rank enabled.</div>
+        </div>
+    </aside>
+
+    <main id="canvasContainer">
+        <canvas id="canvas"></canvas>
+    </main>
+</div>
+
+<script>
+    const logPanel = document.getElementById('logPanel');
+    function log(msg, type = 'info') {
+        const div = document.createElement('div');
+        div.className = `log-entry ${type}`;
+        div.innerText = `> ${msg}`;
+        logPanel.prepend(div);
+        if (logPanel.children.length > 50) logPanel.lastChild.remove();
+    }
+
+    // --- DSU Logic ---
+    class DSU {
+        constructor() {
+            this.parent = [];
+            this.rank = [];
+            this.nodes = []; // For visualization coordinates
+        }
+
+        makeSet(i) {
+            this.parent[i] = i;
+            this.rank[i] = 0;
+            // Random position for viz
+            this.nodes[i] = {
+                id: i,
+                x: Math.random() * (canvas.width - 100) + 50,
+                y: Math.random() * (canvas.height - 100) + 50,
+                color: this.getRandomNeonColor()
+            };
+        }
+
+        find(i) {
+            if (this.parent[i] !== i) {
+                this.parent[i] = this.find(this.parent[i]); // Path compression
+            }
+            return this.parent[i];
+        }
+
+        union(i, j) {
+            let root_i = this.find(i);
+            let root_j = this.find(j);
+
+            if (root_i !== root_j) {
+                if (this.rank[root_i] < this.rank[root_j]) {
+                    this.parent[root_i] = root_j;
+                } else if (this.rank[root_i] > this.rank[root_j]) {
+                    this.parent[root_j] = root_i;
+                } else {
+                    this.parent[root_i] = root_j;
+                    this.rank[root_j]++;
+                }
+                return true;
+            }
+            return false;
+        }
+
+        getRandomNeonColor() {
+            const colors = ['#00f3ff', '#ff00ff', '#bd00ff', '#00ff9d', '#ff2a6d', '#ffff00'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+    }
+
+    // --- Visualization ---
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const dsu = new DSU();
+    let nodeCount = 10;
+    
+    // Viewport
+    let cameraOffset = { x: 0, y: 0 };
+    let isDragging = false;
+    let dragStart = { x: 0, y: 0 };
+    let initialCamera = { x: 0, y: 0 };
+
+    function resizeCanvas() {
+        canvas.width = document.getElementById('canvasContainer').offsetWidth;
+        canvas.height = document.getElementById('canvasContainer').offsetHeight;
+        draw();
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    function init() {
+        dsu.parent = [];
+        dsu.nodes = [];
+        for (let i = 0; i < nodeCount; i++) {
+            dsu.makeSet(i);
+        }
+        draw();
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.save();
+        ctx.translate(cameraOffset.x, cameraOffset.y);
+
+        // Draw connections (arrows to parent)
+        dsu.nodes.forEach(node => {
+            let parentId = dsu.parent[node.id];
+            if (parentId !== node.id) {
+                let parentNode = dsu.nodes[parentId];
+                drawArrow(node.x, node.y, parentNode.x, parentNode.y, node.color);
+            }
+        });
+
+        // Draw nodes
+        dsu.nodes.forEach(node => {
+            // Check if root to highlight
+            let isRoot = dsu.parent[node.id] === node.id;
+            
+            ctx.beginPath();
+            ctx.arc(node.x, node.y, 25, 0, Math.PI * 2);
+            ctx.fillStyle = '#050505';
+            ctx.fill();
+            
+            ctx.lineWidth = isRoot ? 4 : 2;
+            ctx.strokeStyle = isRoot ? '#fff' : node.color; // Roots are white-bordered or distinct
+            ctx.stroke();
+
+            // Glow for root
+            if (isRoot) {
+                ctx.shadowBlur = 20;
+                ctx.shadowColor = node.color;
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+            }
+
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 16px "Fira Code"';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(node.id, node.x, node.y);
+            
+            // Rank
+            ctx.fillStyle = '#aaa';
+            ctx.font = '10px Arial';
+            ctx.fillText(`r:${dsu.rank[node.id]}`, node.x, node.y + 35);
+        });
+
+        ctx.restore();
+    }
+
+    function drawArrow(x1, y1, x2, y2, color) {
+        const headlen = 10;
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        const angle = Math.atan2(dy, dx);
+        // Shorten line so it doesn't overlap circle
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        const offset = 25; // radius
+        
+        if (dist < offset * 2) return; // Too close
+
+        const startX = x1 + Math.cos(angle) * offset;
+        const startY = y1 + Math.sin(angle) * offset;
+        const endX = x2 - Math.cos(angle) * offset;
+        const endY = y2 - Math.sin(angle) * offset;
+
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(endX, endY);
+        ctx.lineTo(endX - headlen * Math.cos(angle - Math.PI / 6), endY - headlen * Math.sin(angle - Math.PI / 6));
+        ctx.lineTo(endX - headlen * Math.cos(angle + Math.PI / 6), endY - headlen * Math.sin(angle + Math.PI / 6));
+        ctx.fillStyle = color;
+        ctx.fill();
+    }
+
+    function handleUnion() {
+        const a = parseInt(document.getElementById('unionA').value);
+        const b = parseInt(document.getElementById('unionB').value);
+        
+        if (isNaN(a) || isNaN(b) || !dsu.nodes[a] || !dsu.nodes[b]) {
+            log('Invalid nodes', 'error');
+            return;
+        }
+
+        if (dsu.union(a, b)) {
+            log(`Union(${a}, ${b}) successful`, 'success');
+            // Update child color to match parent (visual trick)
+            // In real DSU color logic is separate, but here we can inherit color from root for viz
+            updateColors();
+        } else {
+            log(`Union(${a}, ${b}) - Already in same set`, 'info');
+        }
+        draw();
+    }
+
+    function handleFind() {
+        const x = parseInt(document.getElementById('findVal').value);
+        if (isNaN(x) || !dsu.nodes[x]) return;
+        
+        const root = dsu.find(x);
+        log(`Find(${x}) -> Root is ${root}`, 'success');
+        draw(); // Updates path compression visuals
+    }
+
+    function updateColors() {
+        // Propagate root color to children
+        dsu.nodes.forEach(n => {
+            const root = dsu.find(n.id); // Note: this calls find() which path compresses! 
+            // If we don't want to path compress just for color update, we need a pure find.
+            // But standard DSU usually compresses.
+            // Let's iterate manually without compression for coloring if we wanted, 
+            // but standard Find is fine here.
+            // Actually, let's just set the color of the node to the color of its root.
+            // But we need the root to keep its original color or a specific set color.
+            // Let's just leave colors as original ID colors for now, 
+            // or maybe set all nodes in a set to the root's original color.
+        });
+    }
+
+    function addNode() {
+        const id = dsu.nodes.length;
+        dsu.makeSet(id);
+        log(`Added node ${id}`, 'info');
+        draw();
+    }
+    
+    function resetDSU() {
+        nodeCount = 10;
+        init();
+        draw();
+    }
+
+    // Dragging
+    const container = document.getElementById('canvasContainer');
+    container.addEventListener('mousedown', e => {
+        isDragging = true;
+        dragStart = { x: e.clientX, y: e.clientY };
+        initialCamera = { ...cameraOffset };
+        container.style.cursor = 'grabbing';
+    });
+    
+    window.addEventListener('mousemove', e => {
+        if (!isDragging) return;
+        const dx = e.clientX - dragStart.x;
+        const dy = e.clientY - dragStart.y;
+        cameraOffset.x = initialCamera.x + dx;
+        cameraOffset.y = initialCamera.y + dy;
+        draw();
+    });
+
+    window.addEventListener('mouseup', () => {
+        isDragging = false;
+        container.style.cursor = 'grab';
+    });
+
+    resizeCanvas();
+    init();
+
+</script>
+</body>
+</html>

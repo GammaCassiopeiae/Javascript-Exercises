@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skip List // Neon Nexus</title>
+    <style>
+        :root {
+            --bg: #050505;
+            --neon-1: #00f3ff;
+            --neon-2: #ff00ff;
+            --glass: rgba(255, 255, 255, 0.05);
+            --font-main: 'Rajdhani', 'Segoe UI', sans-serif;
+            --font-code: 'Fira Code', monospace;
+        }
+        body {
+            background-color: var(--bg);
+            color: #fff;
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: grid;
+            grid-template-rows: auto 1fr;
+        }
+        header {
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--neon-1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.8);
+            z-index: 10;
+        }
+        h1 {
+            color: var(--neon-1);
+            text-shadow: 0 0 10px var(--neon-1);
+            margin: 0;
+            font-family: var(--font-code);
+            text-transform: uppercase;
+            font-size: 1.5rem;
+        }
+        .back-btn {
+            color: var(--neon-2);
+            text-decoration: none;
+            border: 1px solid var(--neon-2);
+            padding: 0.5rem 1rem;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
+        .back-btn:hover {
+            background: var(--neon-2);
+            color: #000;
+            box-shadow: 0 0 10px var(--neon-2);
+        }
+        .workspace {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            height: 100%;
+            overflow: hidden;
+        }
+        aside {
+            background: var(--glass);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            backdrop-filter: blur(10px);
+            z-index: 5;
+        }
+        .control-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        label { color: var(--neon-1); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; }
+        input {
+            background: rgba(0,0,0,0.3); border: 1px solid #333; color: #fff;
+            padding: 0.8rem; font-family: var(--font-code); font-size: 1rem; outline: none; transition: 0.3s;
+        }
+        input:focus { border-color: var(--neon-1); box-shadow: 0 0 5px rgba(0, 243, 255, 0.2); }
+        button {
+            background: transparent; border: 1px solid var(--neon-1); color: var(--neon-1);
+            padding: 0.8rem; cursor: pointer; text-transform: uppercase; font-weight: bold; transition: 0.3s;
+            font-family: var(--font-main);
+        }
+        button:hover { background: var(--neon-1); color: #000; box-shadow: 0 0 15px var(--neon-1); }
+        button.secondary { border-color: var(--neon-2); color: var(--neon-2); }
+        button.secondary:hover { background: var(--neon-2); box-shadow: 0 0 15px var(--neon-2); }
+        .log-panel {
+            flex-grow: 1; background: #000; border: 1px solid #333; padding: 0.5rem;
+            font-family: var(--font-code); font-size: 0.8rem; color: #aaa; overflow-y: auto; max-height: 300px;
+        }
+        .log-entry { margin-bottom: 0.25rem; border-bottom: 1px solid #111; padding-bottom: 0.25rem; }
+        .log-entry.success { color: #0f0; }
+        .log-entry.info { color: var(--neon-1); }
+        .log-entry.error { color: #f00; }
+        main {
+            position: relative;
+            background-color: #0a0a0f;
+            background-image: 
+                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            overflow: hidden;
+            cursor: grab;
+        }
+        main:active { cursor: grabbing; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Skip List</h1>
+    <a href="index.html" class="back-btn">Back to Nexus</a>
+</header>
+
+<div class="workspace">
+    <aside>
+        <div class="control-group">
+            <label>Insert Value</label>
+            <div style="display:flex; gap:0.5rem;">
+                <input type="number" id="insertVal" placeholder="Integer">
+                <button onclick="handleInsert()">Add</button>
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label>Search</label>
+            <div style="display:flex; gap:0.5rem;">
+                <input type="number" id="searchVal" placeholder="Integer">
+                <button class="secondary" onclick="handleSearch()">Find</button>
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label>Delete</label>
+            <div style="display:flex; gap:0.5rem;">
+                <input type="number" id="deleteVal" placeholder="Integer">
+                <button class="secondary" onclick="handleDelete()">Del</button>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <button onclick="list = new SkipList(); draw(); log('List cleared.', 'info');">Clear List</button>
+            <button onclick="generateRandomList()">Random List</button>
+        </div>
+
+        <div class="log-panel" id="logPanel">
+            <div class="log-entry info">System ready. Max levels: 5.</div>
+        </div>
+    </aside>
+
+    <main id="canvasContainer">
+        <canvas id="canvas"></canvas>
+    </main>
+</div>
+
+<script>
+    const logPanel = document.getElementById('logPanel');
+    function log(msg, type = 'info') {
+        const div = document.createElement('div');
+        div.className = `log-entry ${type}`;
+        div.innerText = `> ${msg}`;
+        logPanel.prepend(div);
+        if (logPanel.children.length > 50) logPanel.lastChild.remove();
+    }
+
+    class Node {
+        constructor(value, level) {
+            this.value = value;
+            this.forward = new Array(level + 1).fill(null);
+            this.x = 0;
+            this.y = 0;
+        }
+    }
+
+    class SkipList {
+        constructor() {
+            this.MAX_LEVEL = 5;
+            this.p = 0.5;
+            this.level = 0;
+            this.header = new Node(-Infinity, this.MAX_LEVEL);
+        }
+
+        randomLevel() {
+            let lvl = 0;
+            while (Math.random() < this.p && lvl < this.MAX_LEVEL) {
+                lvl++;
+            }
+            return lvl;
+        }
+
+        insert(value) {
+            let update = new Array(this.MAX_LEVEL + 1).fill(null);
+            let current = this.header;
+
+            for (let i = this.level; i >= 0; i--) {
+                while (current.forward[i] && current.forward[i].value < value) {
+                    current = current.forward[i];
+                }
+                update[i] = current;
+            }
+
+            current = current.forward[0];
+
+            if (!current || current.value !== value) {
+                let rLevel = this.randomLevel();
+
+                if (rLevel > this.level) {
+                    for (let i = this.level + 1; i <= rLevel; i++) {
+                        update[i] = this.header;
+                    }
+                    this.level = rLevel;
+                }
+
+                let newNode = new Node(value, rLevel);
+
+                for (let i = 0; i <= rLevel; i++) {
+                    newNode.forward[i] = update[i].forward[i];
+                    update[i].forward[i] = newNode;
+                }
+            } else {
+                log('Duplicate value', 'error');
+            }
+        }
+
+        search(value) {
+            let current = this.header;
+            for (let i = this.level; i >= 0; i--) {
+                while (current.forward[i] && current.forward[i].value < value) {
+                    current = current.forward[i];
+                }
+            }
+            current = current.forward[0];
+            return current && current.value === value;
+        }
+        
+        delete(value) {
+             let update = new Array(this.MAX_LEVEL + 1).fill(null);
+            let current = this.header;
+
+            for (let i = this.level; i >= 0; i--) {
+                while (current.forward[i] && current.forward[i].value < value) {
+                    current = current.forward[i];
+                }
+                update[i] = current;
+            }
+
+            current = current.forward[0];
+
+            if (current && current.value === value) {
+                for(let i=0; i<=this.level; i++) {
+                    if (update[i].forward[i] !== current) break;
+                    update[i].forward[i] = current.forward[i];
+                }
+                
+                while(this.level > 0 && this.header.forward[this.level] == null) {
+                    this.level--;
+                }
+                return true;
+            }
+            return false;
+        }
+    }
+
+    // --- Visualization ---
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let list = new SkipList();
+    
+    // Viewport
+    let cameraOffset = { x: 50, y: 50 };
+    let isDragging = false;
+    let dragStart = { x: 0, y: 0 };
+    let initialCamera = { x: 0, y: 0 };
+
+    function resizeCanvas() {
+        canvas.width = document.getElementById('canvasContainer').offsetWidth;
+        canvas.height = document.getElementById('canvasContainer').offsetHeight;
+        draw();
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Collect all nodes into a flat array for calculating x positions
+        let nodes = [];
+        let curr = list.header;
+        while(curr) {
+            nodes.push(curr);
+            curr = curr.forward[0];
+        }
+        
+        const nodeWidth = 50;
+        const spacingX = 80;
+        const levelHeight = 60;
+        
+        // Base X starts at camera offset
+        let startX = cameraOffset.x;
+        let startY = cameraOffset.y + list.MAX_LEVEL * levelHeight; // Draw bottom up visually or top down? 
+        // Let's draw levels bottom-up (level 0 at bottom)
+        
+        // Draw nodes
+        nodes.forEach((node, idx) => {
+            node.x = startX + idx * spacingX;
+            node.y = startY; // Base Y
+            
+            // Draw node body (tall rectangle covering all its levels)
+            // Actually, skip lists usually drawn as towers or separate nodes per level.
+            // Let's draw separate nodes per level for clarity.
+            
+            for(let l = 0; l <= (node === list.header ? list.MAX_LEVEL : node.forward.length - 1); l++) {
+                 // For header, show max levels. For others, show their height.
+                 // Actually Node constructor stores forward array size.
+                 if (l >= node.forward.length) continue;
+                 
+                 let y = startY - l * levelHeight;
+                 
+                 // Draw Box
+                 ctx.fillStyle = '#050505';
+                 ctx.fillRect(node.x, y, 40, 40);
+                 ctx.strokeStyle = '#00f3ff';
+                 ctx.strokeRect(node.x, y, 40, 40);
+                 
+                 // Text
+                 ctx.fillStyle = '#fff';
+                 ctx.font = '12px "Fira Code"';
+                 ctx.textAlign = 'center';
+                 ctx.textBaseline = 'middle';
+                 ctx.fillText(node.value === -Infinity ? 'HEAD' : node.value, node.x + 20, y + 20);
+                 
+                 // Draw arrow to next
+                 let next = node.forward[l];
+                 if (next) {
+                     // Since we don't know next's X yet if we iterate strictly, 
+                     // but we calculated all nodes X in the loop.
+                     // next is in 'nodes' array? Yes.
+                     // Wait, next is a reference. We need its calculated X.
+                     // We need to have assigned X to all nodes first.
+                 }
+            }
+        });
+        
+        // Second pass for links (now that X is assigned)
+         nodes.forEach((node) => {
+             for(let l = 0; l < node.forward.length; l++) {
+                 let next = node.forward[l];
+                 if (next) {
+                     let y = startY - l * levelHeight + 20; // Center of box
+                     let startLinkX = node.x + 40;
+                     let endLinkX = next.x;
+                     
+                     ctx.strokeStyle = l === 0 ? '#555' : '#ff00ff'; // Base level diff color
+                     ctx.lineWidth = 2;
+                     ctx.beginPath();
+                     ctx.moveTo(startLinkX, y);
+                     ctx.lineTo(endLinkX, y);
+                     ctx.stroke();
+                     
+                     // Arrowhead
+                     ctx.beginPath();
+                     ctx.moveTo(endLinkX, y);
+                     ctx.lineTo(endLinkX - 5, y - 5);
+                     ctx.lineTo(endLinkX - 5, y + 5);
+                     ctx.fillStyle = l === 0 ? '#555' : '#ff00ff';
+                     ctx.fill();
+                 }
+             }
+         });
+    }
+
+    function handleInsert() {
+        const val = parseInt(document.getElementById('insertVal').value);
+        if (isNaN(val)) return;
+        list.insert(val);
+        log(`Inserted ${val}`, 'success');
+        draw();
+        document.getElementById('insertVal').value = '';
+    }
+
+    function handleSearch() {
+        const val = parseInt(document.getElementById('searchVal').value);
+        if (isNaN(val)) return;
+        if (list.search(val)) {
+            log(`Found ${val}`, 'success');
+        } else {
+            log(`${val} not found`, 'error');
+        }
+    }
+
+    function handleDelete() {
+        const val = parseInt(document.getElementById('deleteVal').value);
+        if (isNaN(val)) return;
+        if(list.delete(val)) {
+             log(`Deleted ${val}`, 'info');
+             draw();
+        } else {
+            log(`${val} not found`, 'error');
+        }
+        document.getElementById('deleteVal').value = '';
+    }
+
+    function generateRandomList() {
+        list = new SkipList();
+        let arr = [];
+        for(let i=0; i<10; i++) arr.push(Math.floor(Math.random() * 100));
+        arr.sort((a,b)=>a-b); // sorted insert looks cleaner usually, but random is fine
+        arr.forEach(x => list.insert(x));
+        log('Generated random list', 'info');
+        draw();
+    }
+
+    const container = document.getElementById('canvasContainer');
+    container.addEventListener('mousedown', e => {
+        isDragging = true;
+        dragStart = { x: e.clientX, y: e.clientY };
+        initialCamera = { ...cameraOffset };
+        container.style.cursor = 'grabbing';
+    });
+    
+    window.addEventListener('mousemove', e => {
+        if (!isDragging) return;
+        const dx = e.clientX - dragStart.x;
+        const dy = e.clientY - dragStart.y;
+        cameraOffset.x = initialCamera.x + dx;
+        cameraOffset.y = initialCamera.y + dy;
+        draw();
+    });
+
+    window.addEventListener('mouseup', () => {
+        isDragging = false;
+        container.style.cursor = 'grab';
+    });
+
+    resizeCanvas();
+    generateRandomList();
+
+</script>
+</body>
+</html>

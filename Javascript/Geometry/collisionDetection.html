@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Collision Detection Algorithms Demo</title>
+    <style>
+        body { margin: 0; background: #121212; color: #eee; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; }
+        canvas { background: #1e1e1e; border: 1px solid #444; border-radius: 4px; cursor: move; }
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; padding: 20px; max-width: 1000px; }
+        .box { display: flex; flex-direction: column; align-items: center; }
+        h2 { font-size: 1.1rem; color: #00ffcc; margin-bottom: 8px; }
+        .status { margin-top: 5px; font-weight: bold; }
+        .active { color: #ff4444; }
+        .inactive { color: #44ff44; }
+        .desc { font-size: 0.8rem; color: #aaa; text-align: center; max-width: 400px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+<h1>Collision Detection Laboratory</h1>
+
+<div class="grid">
+    <!-- Circle Collision -->
+    <div class="box">
+        <h2>1. Sphere/Circle</h2>
+        <p class="desc">Najenostavnejši: preveri, če je razdalja med središči manjša od vsote polmerov.</p>
+        <canvas id="cCircle" width="400" height="250"></canvas>
+        <div id="sCircle" class="status">Brez trka</div>
+    </div>
+
+    <!-- AABB Collision -->
+    <div class="box">
+        <h2>2. AABB (Axis-Aligned)</h2>
+        <p class="desc">Hitro: preveri prekrivanje na X in Y oseh (brez rotacije).</p>
+        <canvas id="cAABB" width="400" height="250"></canvas>
+        <div id="sAABB" class="status">Brez trka</div>
+    </div>
+
+    <!-- SAT Collision -->
+    <div class="box">
+        <h2>3. SAT (Separating Axis Theorem)</h2>
+        <p class="desc">Univerzalno: Če obstaja os, na kateri se projekciji ne prekrivata, ni trka.</p>
+        <canvas id="cSAT" width="400" height="250"></canvas>
+        <div id="sSAT" class="status">Brez trka</div>
+    </div>
+
+    <!-- OBB Collision -->
+    <div class="box">
+        <h2>4. OBB (Oriented Bounding Box)</h2>
+        <p class="desc">Natančno: AABB, ki se vrti skupaj z objektom (uporablja SAT logiko).</p>
+        <canvas id="cOBB" width="400" height="250"></canvas>
+        <div id="sOBB" class="status">Brez trka</div>
+    </div>
+
+    <!-- GJK Algorithm -->
+    <div class="box" style="grid-column: span 2;">
+        <h2>5. GJK (Gilbert-Johnson-Keerthi)</h2>
+        <p class="desc">Elegancija: Iskanje najbližje točke v Minkowski razliki (deluje za vse konveksne oblike).</p>
+        <canvas id="cGJK" width="820" height="300"></canvas>
+        <div id="sGJK" class="status">Brez trka</div>
+    </div>
+</div>
+
+<script>
+// --- UTILS ---
+const mouse = { x: 0, y: 0 };
+window.onmousemove = e => {
+    const rect = e.target.getBoundingClientRect?.();
+    if(rect) { mouse.x = e.clientX - rect.left; mouse.y = e.clientY - rect.top; }
+};
+
+function updateStatus(id, colliding) {
+    const el = document.getElementById(id);
+    el.innerText = colliding ? "TRK DETEKTIRAN!" : "Brez trka";
+    el.className = "status " + (colliding ? "active" : "inactive");
+}
+
+// --- 1. CIRCLE COLLISION ---
+const ctxCircle = document.getElementById('cCircle').getContext('2d');
+function drawCircle() {
+    const c1 = { x: 100, y: 125, r: 40 };
+    const c2 = { x: mouse.x, y: mouse.y, r: 30 };
+    
+    const dist = Math.hypot(c1.x - c2.x, c1.y - c2.y);
+    const collide = dist < (c1.r + c2.r);
+
+    ctxCircle.clearRect(0,0,400,250);
+    ctxCircle.fillStyle = collide ? 'rgba(255,0,0,0.5)' : 'rgba(0,255,204,0.5)';
+    [c1, c2].forEach(c => {
+        ctxCircle.beginPath(); ctxCircle.arc(c.x, c.y, c.r, 0, Math.PI*2); ctxCircle.fill();
+    });
+    updateStatus('sCircle', collide);
+    requestAnimationFrame(drawCircle);
+}
+
+// --- 2. AABB COLLISION ---
+const ctxAABB = document.getElementById('cAABB').getContext('2d');
+function drawAABB() {
+    const b1 = { x: 150, y: 75, w: 100, h: 100 };
+    const b2 = { x: mouse.x - 25, y: mouse.y - 25, w: 50, h: 50 };
+
+    const collide = b1.x < b2.x + b2.w && b1.x + b1.w > b2.x &&
+                    b1.y < b2.y + b2.h && b1.y + b1.h > b2.y;
+
+    ctxAABB.clearRect(0,0,400,250);
+    ctxAABB.fillStyle = collide ? 'rgba(255,0,0,0.5)' : 'rgba(0,255,204,0.5)';
+    ctxAABB.fillRect(b1.x, b1.y, b1.w, b1.h);
+    ctxAABB.fillRect(b2.x, b2.y, b2.w, b2.h);
+    updateStatus('sAABB', collide);
+    requestAnimationFrame(drawAABB);
+}
+
+// --- 3. SAT (Separating Axis Theorem) ---
+const ctxSAT = document.getElementById('cSAT').getContext('2d');
+function getAxes(poly) {
+    let axes = [];
+    for (let i = 0; i < poly.length; i++) {
+        let p1 = poly[i], p2 = poly[(i + 1) % poly.length];
+        let edge = { x: p1.x - p2.x, y: p1.y - p2.y };
+        axes.push({ x: -edge.y, y: edge.x }); // Normala
+    }
+    return axes;
+}
+
+function project(poly, axis) {
+    let min = Infinity, max = -Infinity;
+    for (let p of poly) {
+        let dot = p.x * axis.x + p.y * axis.y;
+        min = Math.min(min, dot); max = Math.max(max, dot);
+    }
+    return { min, max };
+}
+
+function checkSAT(p1, p2) {
+    let axes = [...getAxes(p1), ...getAxes(p2)];
+    for (let axis of axes) {
+        let proj1 = project(p1, axis), proj2 = project(p2, axis);
+        if (proj1.max < proj2.min || proj2.max < proj1.min) return false;
+    }
+    return true;
+}
+
+function drawSAT() {
+    const poly1 = [{x:200,y:50}, {x:280,y:150}, {x:120,y:150}];
+    const poly2 = [{x:mouse.x, y:mouse.y-30}, {x:mouse.x+40, y:mouse.y+20}, {x:mouse.x-40, y:mouse.y+20}];
+    
+    const collide = checkSAT(poly1, poly2);
+    ctxSAT.clearRect(0,0,400,250);
+    ctxSAT.fillStyle = collide ? 'rgba(255,0,0,0.5)' : 'rgba(0,255,204,0.5)';
+    [poly1, poly2].forEach(p => {
+        ctxSAT.beginPath(); ctxSAT.moveTo(p[0].x, p[0].y);
+        p.forEach(pt => ctxSAT.lineTo(pt.x, pt.y)); ctxSAT.closePath(); ctxSAT.fill();
+    });
+    updateStatus('sSAT', collide);
+    requestAnimationFrame(drawSAT);
+}
+
+// --- 4. OBB (Oriented Bounding Box) ---
+const ctxOBB = document.getElementById('cOBB').getContext('2d');
+function rotatePoint(px, py, ox, oy, angle) {
+    let s = Math.sin(angle), c = Math.cos(angle);
+    return { x: c*(px-ox)-s*(py-oy)+ox, y: s*(px-ox)+c*(py-oy)+oy };
+}
+
+function drawOBB() {
+    let time = Date.now() * 0.002;
+    let center1 = {x: 200, y: 125}, w1=80, h1=40;
+    let b1 = [
+        rotatePoint(center1.x-w1, center1.y-h1, center1.x, center1.y, time),
+        rotatePoint(center1.x+w1, center1.y-h1, center1.x, center1.y, time),
+        rotatePoint(center1.x+w1, center1.y+h1, center1.x, center1.y, time),
+        rotatePoint(center1.x-w1, center1.y+h1, center1.x, center1.y, time)
+    ];
+    let b2 = [
+        {x: mouse.x-30, y: mouse.y-30}, {x: mouse.x+30, y: mouse.y-30},
+        {x: mouse.x+30, y: mouse.y+30}, {x: mouse.x-30, y: mouse.y+30}
+    ];
+
+    const collide = checkSAT(b1, b2);
+    ctxOBB.clearRect(0,0,400,250);
+    ctxOBB.fillStyle = collide ? 'rgba(255,0,0,0.5)' : 'rgba(0,255,204,0.5)';
+    [b1, b2].forEach(p => {
+        ctxOBB.beginPath(); ctxOBB.moveTo(p[0].x, p[0].y);
+        p.forEach(pt => ctxOBB.lineTo(pt.x, pt.y)); ctxOBB.closePath(); ctxOBB.fill();
+    });
+    updateStatus('sOBB', collide);
+    requestAnimationFrame(drawOBB);
+}
+
+// --- 5. GJK ALGORITHM ---
+const ctxGJK = document.getElementById('cGJK').getContext('2d');
+function support(poly1, poly2, d) {
+    let p1 = poly1.reduce((max, p) => (p.x*d.x + p.y*d.y > max.dot) ? {dot: p.x*d.x + p.y*d.y, p} : max, {dot: -Infinity}).p;
+    let p2 = poly2.reduce((max, p) => (p.x*-d.x + p.y*-d.y > max.dot) ? {dot: p.x*-d.x + p.y*-d.y, p} : max, {dot: -Infinity}).p;
+    return { x: p1.x - p2.x, y: p1.y - p2.y };
+}
+
+function checkGJK(poly1, poly2) {
+    let d = { x: 1, y: 0 };
+    let simplex = [support(poly1, poly2, d)];
+    d = { x: -simplex[0].x, y: -simplex[0].y };
+
+    for (let i = 0; i < 20; i++) {
+        let A = support(poly1, poly2, d);
+        if (A.x * d.x + A.y * d.y < 0) return false;
+        simplex.push(A);
+        if (doSimplex(simplex, d)) return true;
+    }
+    return false;
+}
+
+function doSimplex(s, d) {
+    if (s.length === 2) { // Line
+        let B = s[0], A = s[1];
+        let AB = { x: B.x - A.x, y: B.y - A.y }, AO = { x: -A.x, y: -A.y };
+        let perp = { x: -AB.y, y: AB.x };
+        if (perp.x * AO.x + perp.y * AO.y < 0) perp = { x: -perp.x, y: -perp.y };
+        d.x = perp.x; d.y = perp.y;
+    } else { // Triangle
+        let C = s[0], B = s[1], A = s[2];
+        let AB = { x: B.x - A.x, y: B.y - A.y }, AC = { x: C.x - A.x, y: C.y - A.y }, AO = { x: -A.x, y: -A.y };
+        let ABp = { x: -AB.y, y: AB.x }; if (ABp.x * AC.x + ABp.y * AC.y > 0) ABp = { x: -ABp.x, y: -ABp.y };
+        let ACp = { x: -AC.y, y: AC.x }; if (ACp.x * AB.x + ACp.y * AB.y > 0) ACp = { x: -ACp.x, y: -ACp.y };
+
+        if (ABp.x * AO.x + ABp.y * AO.y > 0) { s.splice(0, 1); d.x = ABp.x; d.y = ABp.y; }
+        else if (ACp.x * AO.x + ACp.y * AO.y > 0) { s.splice(1, 1); d.x = ACp.x; d.y = ACp.y; }
+        else return true;
+    }
+    return false;
+}
+
+function drawGJK() {
+    const p1 = [{x:410,y:50}, {x:550,y:80}, {x:500,y:200}, {x:350,y:150}];
+    const p2 = [{x:mouse.x-40, y:mouse.y-20}, {x:mouse.x+40, y:mouse.y-40}, {x:mouse.x+20, y:mouse.y+40}];
+    
+    const collide = checkGJK(p1, p2);
+    ctxGJK.clearRect(0,0,820,300);
+    ctxGJK.fillStyle = collide ? 'rgba(255,0,0,0.5)' : 'rgba(0,255,204,0.5)';
+    [p1, p2].forEach(p => {
+        ctxGJK.beginPath(); ctxGJK.moveTo(p[0].x, p[0].y);
+        p.forEach(pt => ctxGJK.lineTo(pt.x, pt.y)); ctxGJK.closePath(); ctxGJK.fill();
+    });
+    updateStatus('sGJK', collide);
+    requestAnimationFrame(drawGJK);
+}
+
+// Start all
+drawCircle(); drawAABB(); drawSAT(); drawOBB(); drawGJK();
+</script>
+</body>
+</html>

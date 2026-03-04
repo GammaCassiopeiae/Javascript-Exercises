@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Spatial Partitioning Lab</title>
+    <style>
+        body { margin: 0; background: #0f0f0f; color: #e0e0e0; font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; }
+        .container { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 20px; padding: 20px; width: 100%; max-width: 1400px; }
+        .card { background: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 15px; display: flex; flex-direction: column; align-items: center; }
+        canvas { background: #000; border-radius: 8px; cursor: crosshair; width: 400px; height: 400px; }
+        h2 { color: #00ffcc; margin: 0 0 10px 0; font-size: 1.2rem; }
+        p { font-size: 0.85rem; color: #aaa; text-align: center; margin-bottom: 15px; height: 40px; }
+        .stats { margin-top: 10px; font-family: monospace; color: #00ffcc; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+<h1>Spatial Partitioning Algorithms</h1>
+
+<div class="container">
+    <!-- QUADTREE -->
+    <div class="card">
+        <h2>1. Quadtree</h2>
+        <p>Rekurzivno deli prostor na 4 kvadrante. Veja se razcepi le, ko število točk preseže kapaciteto.</p>
+        <canvas id="cQuad"></canvas>
+        <div class="stats" id="sQuad">Točk: 0</div>
+    </div>
+
+    <!-- BVH -->
+    <div class="card">
+        <h2>2. BVH (Bounding Volume Hierarchy)</h2>
+        <p>Hierarhija uokvirjenih volumnov, ki tesno objamejo skupine objektov. Odlično za premikajoče se objekte.</p>
+        <canvas id="cBVH"></canvas>
+        <div class="stats" id="sBVH">Vozlišč: 0</div>
+    </div>
+
+    <!-- BSP TREE -->
+    <div class="card">
+        <h2>3. BSP Tree (2D)</h2>
+        <p>Binarna delitev prostora s hiperravninami (črtami). Uporablja se za določanje vidnosti in statično geometrijo.</p>
+        <canvas id="cBSP"></canvas>
+        <div class="stats" id="sBSP">Regij: 0</div>
+    </div>
+</div>
+
+<script>
+// --- UTILS & SHARED ---
+const mouse = { x: 0, y: 0 };
+document.addEventListener('mousemove', (e) => {
+    const rect = e.target.getBoundingClientRect?.();
+    if(rect) { mouse.x = e.clientX - rect.left; mouse.y = e.clientY - rect.top; }
+});
+
+// --- 1. QUADTREE IMPLEMENTATION ---
+class Point { constructor(x, y) { this.x = x; this.y = y; } }
+class Rectangle { 
+    constructor(x, y, w, h) { this.x = x; this.y = y; this.w = w; this.h = h; }
+    contains(p) { return p.x >= this.x - this.w && p.x <= this.x + this.w && p.y >= this.y - this.h && p.y <= this.y + this.h; }
+}
+
+class QuadTree {
+    constructor(boundary, n) {
+        this.boundary = boundary;
+        this.capacity = n;
+        this.points = [];
+        this.divided = false;
+    }
+
+    subdivide() {
+        let {x, y, w, h} = this.boundary;
+        this.nw = new QuadTree(new Rectangle(x - w/2, y - h/2, w/2, h/2), this.capacity);
+        this.ne = new QuadTree(new Rectangle(x + w/2, y - h/2, w/2, h/2), this.capacity);
+        this.sw = new QuadTree(new Rectangle(x - w/2, y + h/2, w/2, h/2), this.capacity);
+        this.se = new QuadTree(new Rectangle(x + w/2, y + h/2, w/2, h/2), this.capacity);
+        this.divided = true;
+    }
+
+    insert(p) {
+        if (!this.boundary.contains(p)) return false;
+        if (this.points.length < this.capacity) {
+            this.points.push(p);
+            return true;
+        }
+        if (!this.divided) this.subdivide();
+        return (this.nw.insert(p) || this.ne.insert(p) || this.sw.insert(p) || this.se.insert(p));
+    }
+
+    show(ctx) {
+        ctx.strokeStyle = '#333';
+        ctx.strokeRect(this.boundary.x - this.boundary.w, this.boundary.y - this.boundary.h, this.boundary.w * 2, this.boundary.h * 2);
+        if (this.divided) {
+            this.nw.show(ctx); this.ne.show(ctx); this.sw.show(ctx); this.se.show(ctx);
+        }
+    }
+}
+
+const canvasQuad = document.getElementById('cQuad');
+const ctxQuad = canvasQuad.getContext('2d');
+canvasQuad.width = canvasQuad.height = 400;
+let qPoints = [];
+
+function loopQuad() {
+    ctxQuad.clearRect(0,0,400,400);
+    let qt = new QuadTree(new Rectangle(200, 200, 200, 200), 4);
+    if(qPoints.length < 100) qPoints.push(new Point(Math.random()*400, Math.random()*400));
+    qPoints.forEach(p => qt.insert(p));
+    qt.insert(new Point(mouse.x, mouse.y));
+    qt.show(ctxQuad);
+    ctxQuad.fillStyle = '#00ffcc';
+    qPoints.forEach(p => ctxQuad.fillRect(p.x-1, p.y-1, 2, 2));
+    document.getElementById('sQuad').innerText = `Točk: ${qPoints.length}`;
+    requestAnimationFrame(loopQuad);
+}
+
+// --- 2. BVH (BOUNDING VOLUME HIERARCHY) ---
+const canvasBVH = document.getElementById('cBVH');
+const ctxBVH = canvasBVH.getContext('2d');
+canvasBVH.width = canvasBVH.height = 400;
+
+let bvhObjects = Array.from({length: 12}, () => ({
+    x: Math.random()*300+50, y: Math.random()*300+50, 
+    vx: (Math.random()-0.5)*2, vy: (Math.random()-0.5)*2, r: 10
+}));
+
+function drawBVHNode(objs, depth) {
+    if (objs.length === 0) return;
+    
+    // Izračun AABB (Bounding Box)
+    let minX = Math.min(...objs.map(o => o.x - o.r));
+    let maxX = Math.max(...objs.map(o => o.x + o.r));
+    let minY = Math.min(...objs.map(o => o.y - o.r));
+    let maxY = Math.max(...objs.map(o => o.y + o.r));
+
+    ctxBVH.strokeStyle = `hsl(${depth * 60}, 70%, 50%)`;
+    ctxBVH.strokeRect(minX, minY, maxX - minX, maxY - minY);
+
+    if (objs.length <= 1) return;
+
+    // Split po daljši osi
+    objs.sort((a, b) => (maxX - minX > maxY - minY) ? a.x - b.x : a.y - b.y);
+    let mid = Math.floor(objs.length / 2);
+    drawBVHNode(objs.slice(0, mid), depth + 1);
+    drawBVHNode(objs.slice(mid), depth + 1);
+}
+
+function loopBVH() {
+    ctxBVH.clearRect(0,0,400,400);
+    bvhObjects.forEach(o => {
+        o.x += o.vx; o.y += o.vy;
+        if(o.x<10 || o.x>390) o.vx *= -1;
+        if(o.y<10 || o.y>390) o.vy *= -1;
+        ctxBVH.fillStyle = '#fff';
+        ctxBVH.beginPath(); ctxBVH.arc(o.x, o.y, o.r, 0, Math.PI*2); ctxBVH.fill();
+    });
+    drawBVHNode(bvhObjects, 0);
+    document.getElementById('sBVH').innerText = `Vozlišč: ${bvhObjects.length * 2 - 1}`;
+    requestAnimationFrame(loopBVH);
+}
+
+// --- 3. BSP TREE (Simple 2D Split) ---
+const canvasBSP = document.getElementById('cBSP');
+const ctxBSP = canvasBSP.getContext('2d');
+canvasBSP.width = canvasBSP.height = 400;
+
+function drawBSPSplit(x, y, w, h, depth) {
+    if (depth <= 0) {
+        ctxBSP.fillStyle = `rgba(0, 255, 204, ${0.1 + (Math.random() * 0.2)})`;
+        ctxBSP.fillRect(x+2, y+2, w-4, h-4);
+        return 1;
+    }
+
+    ctxBSP.strokeStyle = '#444';
+    let splitVertical = w > h;
+    let count = 0;
+
+    if (splitVertical) {
+        let splitX = w * (0.4 + Math.random() * 0.2);
+        ctxBSP.beginPath(); ctxBSP.moveTo(x + splitX, y); ctxBSP.lineTo(x + splitX, y + h); ctxBSP.stroke();
+        count += drawBSPSplit(x, y, splitX, h, depth - 1);
+        count += drawBSPSplit(x + splitX, y, w - splitX, h, depth - 1);
+    } else {
+        let splitY = h * (0.4 + Math.random() * 0.2);
+        ctxBSP.beginPath(); ctxBSP.moveTo(x, y + splitY); ctxBSP.lineTo(x + w, y + splitY); ctxBSP.stroke();
+        count += drawBSPSplit(x, y, w, splitY, depth - 1);
+        count += drawBSPSplit(x, y + splitY, w, h - splitY, depth - 1);
+    }
+    return count;
+}
+
+function loopBSP() {
+    ctxBSP.clearRect(0,0,400,400);
+    // Uporabimo fiksno seme za animacijo ali statičen prikaz
+    Math.seed = 42; 
+    const regions = drawBSPSplit(0, 0, 400, 400, 4);
+    document.getElementById('sBSP').innerText = `Regij: ${regions}`;
+    setTimeout(() => requestAnimationFrame(loopBSP), 1000); // Počasnejše osveževanje za BSP
+}
+
+// Start All
+loopQuad();
+loopBVH();
+loopBSP();
+
+</script>
+</body>
+</html>

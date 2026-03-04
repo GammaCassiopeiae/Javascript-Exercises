@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trie (Prefix Tree) // Neon Nexus</title>
+    <style>
+        :root {
+            --bg: #050505;
+            --neon-1: #00f3ff;
+            --neon-2: #ff00ff;
+            --glass: rgba(255, 255, 255, 0.05);
+            --font-main: 'Rajdhani', 'Segoe UI', sans-serif;
+            --font-code: 'Fira Code', monospace;
+        }
+        body {
+            background-color: var(--bg);
+            color: #fff;
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: grid;
+            grid-template-rows: auto 1fr;
+        }
+        header {
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--neon-1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.8);
+            z-index: 10;
+        }
+        h1 {
+            color: var(--neon-1);
+            text-shadow: 0 0 10px var(--neon-1);
+            margin: 0;
+            font-family: var(--font-code);
+            text-transform: uppercase;
+            font-size: 1.5rem;
+        }
+        .back-btn {
+            color: var(--neon-2);
+            text-decoration: none;
+            border: 1px solid var(--neon-2);
+            padding: 0.5rem 1rem;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
+        .back-btn:hover {
+            background: var(--neon-2);
+            color: #000;
+            box-shadow: 0 0 10px var(--neon-2);
+        }
+        .workspace {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            height: 100%;
+            overflow: hidden;
+        }
+        aside {
+            background: var(--glass);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            backdrop-filter: blur(10px);
+            z-index: 5;
+        }
+        .control-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        label { color: var(--neon-1); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; }
+        input {
+            background: rgba(0,0,0,0.3); border: 1px solid #333; color: #fff;
+            padding: 0.8rem; font-family: var(--font-code); font-size: 1rem; outline: none; transition: 0.3s;
+        }
+        input:focus { border-color: var(--neon-1); box-shadow: 0 0 5px rgba(0, 243, 255, 0.2); }
+        button {
+            background: transparent; border: 1px solid var(--neon-1); color: var(--neon-1);
+            padding: 0.8rem; cursor: pointer; text-transform: uppercase; font-weight: bold; transition: 0.3s;
+            font-family: var(--font-main);
+        }
+        button:hover { background: var(--neon-1); color: #000; box-shadow: 0 0 15px var(--neon-1); }
+        button.secondary { border-color: var(--neon-2); color: var(--neon-2); }
+        button.secondary:hover { background: var(--neon-2); box-shadow: 0 0 15px var(--neon-2); }
+        .log-panel {
+            flex-grow: 1; background: #000; border: 1px solid #333; padding: 0.5rem;
+            font-family: var(--font-code); font-size: 0.8rem; color: #aaa; overflow-y: auto; max-height: 300px;
+        }
+        .log-entry { margin-bottom: 0.25rem; border-bottom: 1px solid #111; padding-bottom: 0.25rem; }
+        .log-entry.success { color: #0f0; }
+        .log-entry.info { color: var(--neon-1); }
+        .log-entry.error { color: #f00; }
+        main {
+            position: relative;
+            background-color: #0a0a0f;
+            background-image: 
+                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            overflow: hidden;
+            cursor: grab;
+        }
+        main:active { cursor: grabbing; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Trie (Prefix Tree)</h1>
+    <a href="index.html" class="back-btn">Back to Nexus</a>
+</header>
+
+<div class="workspace">
+    <aside>
+        <div class="control-group">
+            <label>Insert Word</label>
+            <div style="display:flex; gap:0.5rem;">
+                <input type="text" id="insertVal" placeholder="Word">
+                <button onclick="handleInsert()">Add</button>
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label>Search Word</label>
+            <div style="display:flex; gap:0.5rem;">
+                <input type="text" id="searchVal" placeholder="Word">
+                <button class="secondary" onclick="handleSearch()">Find</button>
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label>Delete Word</label>
+            <div style="display:flex; gap:0.5rem;">
+                <input type="text" id="deleteVal" placeholder="Word">
+                <button class="secondary" onclick="handleDelete()">Del</button>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <button onclick="trie = new Trie(); draw(); log('Trie cleared.', 'info');">Clear Trie</button>
+        </div>
+
+        <div class="log-panel" id="logPanel">
+            <div class="log-entry info">System ready. Enter words (a-z).</div>
+        </div>
+    </aside>
+
+    <main id="canvasContainer">
+        <canvas id="canvas"></canvas>
+    </main>
+</div>
+
+<script>
+    const logPanel = document.getElementById('logPanel');
+    function log(msg, type = 'info') {
+        const div = document.createElement('div');
+        div.className = `log-entry ${type}`;
+        div.innerText = `> ${msg}`;
+        logPanel.prepend(div);
+        if (logPanel.children.length > 50) logPanel.lastChild.remove();
+    }
+
+    class TrieNode {
+        constructor(char = '') {
+            this.char = char;
+            this.children = {};
+            this.isEndOfWord = false;
+            this.x = 0;
+            this.y = 0;
+        }
+    }
+
+    class Trie {
+        constructor() {
+            this.root = new TrieNode('root');
+        }
+
+        insert(word) {
+            let node = this.root;
+            for (let char of word) {
+                if (!node.children[char]) {
+                    node.children[char] = new TrieNode(char);
+                }
+                node = node.children[char];
+            }
+            node.isEndOfWord = true;
+        }
+
+        search(word) {
+            let node = this.root;
+            for (let char of word) {
+                if (!node.children[char]) return false;
+                node = node.children[char];
+            }
+            return node.isEndOfWord;
+        }
+
+        delete(word) {
+            this.deleteRecursively(this.root, word, 0);
+        }
+
+        deleteRecursively(node, word, index) {
+            if (index === word.length) {
+                if (!node.isEndOfWord) return false;
+                node.isEndOfWord = false;
+                return Object.keys(node.children).length === 0;
+            }
+
+            let char = word[index];
+            if (!node.children[char]) return false;
+
+            let shouldDeleteChild = this.deleteRecursively(node.children[char], word, index + 1);
+
+            if (shouldDeleteChild) {
+                delete node.children[char];
+                return Object.keys(node.children).length === 0 && !node.isEndOfWord;
+            }
+            return false;
+        }
+    }
+
+    // --- Visualization ---
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let trie = new Trie();
+    
+    // Default words
+    trie.insert("cat");
+    trie.insert("car");
+    trie.insert("code");
+    
+    // Viewport
+    let cameraOffset = { x: 0, y: 50 };
+    let isDragging = false;
+    let dragStart = { x: 0, y: 0 };
+    let initialCamera = { x: 0, y: 0 };
+
+    function resizeCanvas() {
+        canvas.width = document.getElementById('canvasContainer').offsetWidth;
+        canvas.height = document.getElementById('canvasContainer').offsetHeight;
+        cameraOffset.x = canvas.width / 2;
+        draw();
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    function assignCoords(node, x, y, widthSpan) {
+        if (!node) return;
+        node.x = x;
+        node.y = y;
+        
+        const keys = Object.keys(node.children).sort();
+        if (keys.length === 0) return;
+
+        const totalWidth = widthSpan;
+        const segment = totalWidth / keys.length;
+        let startX = x - totalWidth / 2 + segment / 2;
+
+        keys.forEach((key, index) => {
+            let child = node.children[key];
+            assignCoords(child, startX + index * segment, y + 60, segment);
+        });
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        assignCoords(trie.root, cameraOffset.x, cameraOffset.y, canvas.width * 1.5); // Wider spread for trie
+        
+        drawNode(trie.root);
+    }
+
+    function drawNode(node) {
+        if (!node) return;
+
+        const keys = Object.keys(node.children);
+        
+        // Links first
+        ctx.strokeStyle = '#00f3ff';
+        ctx.lineWidth = 1;
+        keys.forEach(key => {
+            let child = node.children[key];
+            ctx.beginPath();
+            ctx.moveTo(node.x, node.y);
+            ctx.lineTo(child.x, child.y);
+            ctx.stroke();
+            drawNode(child);
+        });
+
+        // Node Body
+        ctx.beginPath();
+        // Smaller nodes for trie usually
+        ctx.arc(node.x, node.y, 15, 0, Math.PI * 2);
+        ctx.fillStyle = node.isEndOfWord ? '#ff00ff' : '#050505'; // Magenta for end of word
+        ctx.fill();
+        ctx.strokeStyle = node.isEndOfWord ? '#ff00ff' : '#00f3ff';
+        ctx.stroke();
+        
+        // Glow if end of word
+        if (node.isEndOfWord) {
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = '#ff00ff';
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+        }
+
+        // Text
+        ctx.fillStyle = node.isEndOfWord ? '#000' : '#fff';
+        ctx.font = 'bold 12px "Fira Code"';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        // If root, show 'root' or '*'
+        ctx.fillText(node.char === 'root' ? '*' : node.char, node.x, node.y);
+    }
+
+    function handleInsert() {
+        const val = document.getElementById('insertVal').value.trim();
+        if (!val) return;
+        trie.insert(val);
+        log(`Inserted "${val}"`, 'success');
+        draw();
+        document.getElementById('insertVal').value = '';
+    }
+
+    function handleSearch() {
+        const val = document.getElementById('searchVal').value.trim();
+        if (!val) return;
+        const found = trie.search(val);
+        log(`Search "${val}": ${found ? 'FOUND' : 'NOT FOUND'}`, found ? 'success' : 'error');
+    }
+
+    function handleDelete() {
+        const val = document.getElementById('deleteVal').value.trim();
+        if (!val) return;
+        trie.delete(val);
+        log(`Deleted "${val}"`, 'info');
+        draw();
+        document.getElementById('deleteVal').value = '';
+    }
+
+    document.getElementById('insertVal').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') handleInsert();
+    });
+
+    const container = document.getElementById('canvasContainer');
+    container.addEventListener('mousedown', e => {
+        isDragging = true;
+        dragStart = { x: e.clientX, y: e.clientY };
+        initialCamera = { ...cameraOffset };
+        container.style.cursor = 'grabbing';
+    });
+    
+    window.addEventListener('mousemove', e => {
+        if (!isDragging) return;
+        const dx = e.clientX - dragStart.x;
+        const dy = e.clientY - dragStart.y;
+        cameraOffset.x = initialCamera.x + dx;
+        cameraOffset.y = initialCamera.y + dy;
+        draw();
+    });
+
+    window.addEventListener('mouseup', () => {
+        isDragging = false;
+        container.style.cursor = 'grab';
+    });
+
+    resizeCanvas();
+    log('Initialized with "cat", "car", "code"', 'info');
+
+</script>
+</body>
+</html>

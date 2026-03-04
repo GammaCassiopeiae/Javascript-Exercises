@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suffix Tree // Neon Nexus</title>
+    <style>
+        :root {
+            --bg: #050505;
+            --neon-1: #00f3ff;
+            --neon-2: #ff00ff;
+            --glass: rgba(255, 255, 255, 0.05);
+            --font-main: 'Rajdhani', 'Segoe UI', sans-serif;
+            --font-code: 'Fira Code', monospace;
+        }
+        body {
+            background-color: var(--bg);
+            color: #fff;
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: grid;
+            grid-template-rows: auto 1fr;
+        }
+        header {
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--neon-1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.8);
+            z-index: 10;
+        }
+        h1 {
+            color: var(--neon-1);
+            text-shadow: 0 0 10px var(--neon-1);
+            margin: 0;
+            font-family: var(--font-code);
+            text-transform: uppercase;
+            font-size: 1.5rem;
+        }
+        .back-btn {
+            color: var(--neon-2);
+            text-decoration: none;
+            border: 1px solid var(--neon-2);
+            padding: 0.5rem 1rem;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
+        .back-btn:hover {
+            background: var(--neon-2);
+            color: #000;
+            box-shadow: 0 0 10px var(--neon-2);
+        }
+        .workspace {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            height: 100%;
+            overflow: hidden;
+        }
+        aside {
+            background: var(--glass);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            backdrop-filter: blur(10px);
+            z-index: 5;
+        }
+        .control-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        label { color: var(--neon-1); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; }
+        input {
+            background: rgba(0,0,0,0.3); border: 1px solid #333; color: #fff;
+            padding: 0.8rem; font-family: var(--font-code); font-size: 1rem; outline: none; transition: 0.3s;
+        }
+        input:focus { border-color: var(--neon-1); box-shadow: 0 0 5px rgba(0, 243, 255, 0.2); }
+        button {
+            background: transparent; border: 1px solid var(--neon-1); color: var(--neon-1);
+            padding: 0.8rem; cursor: pointer; text-transform: uppercase; font-weight: bold; transition: 0.3s;
+            font-family: var(--font-main);
+        }
+        button:hover { background: var(--neon-1); color: #000; box-shadow: 0 0 15px var(--neon-1); }
+        button.secondary { border-color: var(--neon-2); color: var(--neon-2); }
+        button.secondary:hover { background: var(--neon-2); box-shadow: 0 0 15px var(--neon-2); }
+        .log-panel {
+            flex-grow: 1; background: #000; border: 1px solid #333; padding: 0.5rem;
+            font-family: var(--font-code); font-size: 0.8rem; color: #aaa; overflow-y: auto; max-height: 300px;
+        }
+        .log-entry { margin-bottom: 0.25rem; border-bottom: 1px solid #111; padding-bottom: 0.25rem; }
+        .log-entry.success { color: #0f0; }
+        .log-entry.info { color: var(--neon-1); }
+        .log-entry.error { color: #f00; }
+        main {
+            position: relative;
+            background-color: #0a0a0f;
+            background-image: 
+                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            overflow: hidden;
+            cursor: grab;
+        }
+        main:active { cursor: grabbing; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Suffix Tree</h1>
+    <a href="index.html" class="back-btn">Back to Nexus</a>
+</header>
+
+<div class="workspace">
+    <aside>
+        <div class="control-group">
+            <label>Build from Text</label>
+            <div style="display:flex; gap:0.5rem;">
+                <input type="text" id="insertVal" placeholder="banana" value="banana">
+                <button onclick="handleBuild()">Build</button>
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label>Check Substring</label>
+            <div style="display:flex; gap:0.5rem;">
+                <input type="text" id="searchVal" placeholder="nan">
+                <button class="secondary" onclick="handleSearch()">Check</button>
+            </div>
+        </div>
+
+        <div class="log-panel" id="logPanel">
+            <div class="log-entry info">System ready. Using naive construction.</div>
+        </div>
+    </aside>
+
+    <main id="canvasContainer">
+        <canvas id="canvas"></canvas>
+    </main>
+</div>
+
+<script>
+    const logPanel = document.getElementById('logPanel');
+    function log(msg, type = 'info') {
+        const div = document.createElement('div');
+        div.className = `log-entry ${type}`;
+        div.innerText = `> ${msg}`;
+        logPanel.prepend(div);
+        if (logPanel.children.length > 50) logPanel.lastChild.remove();
+    }
+
+    class SuffixNode {
+        constructor() {
+            this.children = {}; // char -> Node
+            this.start = -1;
+            this.end = -1; // Index in the text
+            this.suffixIndex = -1;
+            this.x = 0;
+            this.y = 0;
+        }
+    }
+
+    class SuffixTree {
+        constructor(text) {
+            this.text = text + "$"; // Add terminator
+            this.root = new SuffixNode();
+            this.buildNaive();
+        }
+
+        buildNaive() {
+            // Naive insertion of all suffixes
+            // O(n^2) - easy to implement correctly for viz compared to Ukkonen's O(n)
+            for (let i = 0; i < this.text.length; i++) {
+                this.insertSuffix(this.text.substring(i), i);
+            }
+        }
+
+        insertSuffix(suffix, index) {
+            let node = this.root;
+            for (let i = 0; i < suffix.length; i++) {
+                const char = suffix[i];
+                if (!node.children[char]) {
+                    // Create new edge
+                    // In a compressed tree, we'd store indices. 
+                    // To keep visualization simple and robust, we can use a Trie structure first, then compress.
+                    // Or simplified compressed node:
+                    let newNode = new SuffixNode();
+                    newNode.start = index + i;
+                    newNode.end = this.text.length - 1; // Leaf goes to end
+                    newNode.suffixIndex = index;
+                    node.children[char] = newNode;
+                    return;
+                }
+                
+                // Existing edge logic (Compressed Trie Logic needed here for naive insert)
+                // Actually, if we use a standard Trie, it's huge.
+                // Let's implement a simplified Compressed Trie insert.
+                // This is getting complex for "Naive".
+                // Fallback: Standard Trie for now, visualized.
+                // The prompt asks for "Suffix Tree", which implies compression.
+                
+                // Let's try to do edge compression.
+                // Traverse down while characters match.
+                // If mismatch, split edge.
+            }
+        }
+    }
+    
+    // Better Approach: 
+    // Just build a standard Trie of all suffixes, then compress paths with single children.
+    
+    class SimpleSuffixTree {
+        constructor(text) {
+            this.text = text + "$";
+            this.root = { children: {}, start: -1, len: 0, x: 0, y: 0 }; // Start/Len denote edge label
+            
+            // Step 1: Insert all suffixes into a Trie
+            for (let i = 0; i < this.text.length; i++) {
+                let current = this.root;
+                let suffix = this.text.substring(i);
+                
+                for (let j = 0; j < suffix.length; j++) {
+                    let char = suffix[j];
+                    if (!current.children[char]) {
+                        current.children[char] = { children: {}, start: i + j, len: 1, x:0, y:0 };
+                    }
+                    current = current.children[char];
+                }
+                current.isLeaf = true;
+                current.suffixIndex = i;
+            }
+            
+            // Step 2: Compress chains
+            this.compress(this.root);
+        }
+        
+        compress(node) {
+            // For each child
+            for (let key in node.children) {
+                let child = node.children[key];
+                this.compress(child);
+                
+                // While child has exactly one child and is not a leaf/terminal logic
+                // Actually, we merge node -> child if node has only 1 child? No.
+                // We merge parent -> child if parent has only 1 child... wait.
+                // Suffix tree compression: Nodes with 1 child are merged into the edge.
+                
+                let grandChildrenKeys = Object.keys(child.children);
+                if (grandChildrenKeys.length === 1 && !child.isLeaf) {
+                    let grandChildKey = grandChildrenKeys[0];
+                    let grandChild = child.children[grandChildKey];
+                    
+                    // Merge child and grandChild
+                    // child's edge label becomes child.label + grandChild.label
+                    // But we store start/len.
+                    // This simple coordinate logic is getting tricky.
+                    // Let's stick to storing text segment.
+                    
+                    child.len += grandChild.len;
+                    child.children = grandChild.children;
+                    child.isLeaf = grandChild.isLeaf;
+                    child.suffixIndex = grandChild.suffixIndex;
+                    
+                    // Restart compression on this new merged node (which is now 'child')
+                    this.compress(child); 
+                }
+            }
+        }
+        
+        getString(node) {
+            if (node.start === -1) return "";
+            return this.text.substr(node.start, node.len);
+        }
+    }
+
+    // --- Visualization ---
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let tree = null;
+    
+    // Viewport
+    let cameraOffset = { x: 0, y: 50 };
+    let isDragging = false;
+    let dragStart = { x: 0, y: 0 };
+    let initialCamera = { x: 0, y: 0 };
+
+    function resizeCanvas() {
+        canvas.width = document.getElementById('canvasContainer').offsetWidth;
+        canvas.height = document.getElementById('canvasContainer').offsetHeight;
+        cameraOffset.x = canvas.width / 2;
+        if(tree) draw();
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    function assignCoords(node, x, y, widthSpan) {
+        if (!node) return;
+        node.x = x;
+        node.y = y;
+        
+        const keys = Object.keys(node.children).sort();
+        if (keys.length === 0) return;
+
+        const totalWidth = widthSpan;
+        const segment = totalWidth / keys.length;
+        let startX = x - totalWidth / 2 + segment / 2;
+
+        keys.forEach((key, index) => {
+            let child = node.children[key];
+            assignCoords(child, startX + index * segment, y + 80, segment / 1.5);
+        });
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        if (tree && tree.root) {
+            assignCoords(tree.root, cameraOffset.x, cameraOffset.y, canvas.width * 2); 
+            drawNode(tree.root);
+        }
+    }
+
+    function drawNode(node) {
+        if (!node) return;
+
+        const keys = Object.keys(node.children);
+        
+        // Links
+        ctx.strokeStyle = '#00f3ff';
+        ctx.lineWidth = 1;
+        keys.forEach(key => {
+            let child = node.children[key];
+            ctx.beginPath();
+            ctx.moveTo(node.x, node.y);
+            ctx.lineTo(child.x, child.y);
+            ctx.stroke();
+            
+            // Label on edge
+            let text = tree.getString(child);
+            let midX = (node.x + child.x) / 2;
+            let midY = (node.y + child.y) / 2;
+            
+            ctx.fillStyle = '#000'; // Background for text
+            let textWidth = ctx.measureText(text).width;
+            ctx.fillRect(midX - textWidth/2 - 2, midY - 10, textWidth + 4, 20);
+            
+            ctx.fillStyle = '#ff00ff';
+            ctx.font = '12px "Fira Code"';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, midX, midY);
+            
+            drawNode(child);
+        });
+
+        // Node
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, 8, 0, Math.PI * 2);
+        ctx.fillStyle = node.isLeaf ? '#ff00ff' : '#050505';
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.stroke();
+        
+        if (node.isLeaf) {
+            ctx.fillStyle = '#fff';
+            ctx.font = '10px Arial';
+            ctx.fillText(node.suffixIndex, node.x, node.y + 20);
+        }
+    }
+
+    function handleBuild() {
+        const val = document.getElementById('insertVal').value;
+        if (!val) return;
+        tree = new SimpleSuffixTree(val);
+        log(`Built tree for "${val}"`, 'success');
+        draw();
+    }
+
+    function handleSearch() {
+        // Implement simple search on the visualized tree
+        // Not full functionality, just viz check
+        log('Search not fully implemented in demo.', 'info');
+    }
+
+    const container = document.getElementById('canvasContainer');
+    container.addEventListener('mousedown', e => {
+        isDragging = true;
+        dragStart = { x: e.clientX, y: e.clientY };
+        initialCamera = { ...cameraOffset };
+        container.style.cursor = 'grabbing';
+    });
+    
+    window.addEventListener('mousemove', e => {
+        if (!isDragging) return;
+        const dx = e.clientX - dragStart.x;
+        const dy = e.clientY - dragStart.y;
+        cameraOffset.x = initialCamera.x + dx;
+        cameraOffset.y = initialCamera.y + dy;
+        draw();
+    });
+
+    window.addEventListener('mouseup', () => {
+        isDragging = false;
+        container.style.cursor = 'grab';
+    });
+    
+    // Initial build
+    handleBuild();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Scalar to Vector Field Demo</title>
+    <style>
+        :root { --bg: #050505; --accent: #00ffcc; --ui: rgba(20, 20, 25, 0.8); }
+        body { margin: 0; background: var(--bg); color: #eee; font-family: 'Inter', sans-serif; overflow: hidden; }
+        canvas { display: block; }
+        .ui { position: absolute; top: 20px; left: 20px; background: var(--ui); padding: 20px; border-radius: 12px; border: 1px solid #333; pointer-events: none; max-width: 300px; }
+        h1 { font-size: 1.2rem; color: var(--accent); margin: 0 0 10px 0; }
+        p { font-size: 0.85rem; line-height: 1.4; color: #aaa; }
+        b { color: #fff; }
+        .stats { font-family: monospace; font-size: 0.8rem; margin-top: 10px; color: var(--accent); }
+    </style>
+</head>
+<body>
+
+<div class="ui">
+    <h1>Gradient Field (∇f)</h1>
+    <p><b>Skalarno polje:</b> Ozadje predstavlja višino (svetlo = visoko, temno = nizko).</p>
+    <p><b>Vektorsko polje:</b> Puščice kažejo smer <b>Gradienta</b> (smer najstrmejšega vzpona).</p>
+    <p><b>Fizika:</b> Delci se premikajo v nasprotni smeri gradienta (navzdol), kot bi delovala gravitacija.</p>
+    <div class="stats" id="status">Generiranje polja...</div>
+</div>
+
+<canvas id="canvas"></canvas>
+
+<script>
+/**
+ * 1. MATEMATIČNA PODLAGA: PERLIN NOISE ZA SKALARNO POLJE
+ */
+const Perlin = new (function() {
+    this.p = new Uint8Array(512);
+    const p = new Uint8Array(256);
+    for(let i=0; i<256; i++) p[i] = i;
+    for(let i=255; i>0; i--) { const j = Math.floor(Math.random()*(i+1)); [p[i], p[j]] = [p[j], p[i]]; }
+    for(let i=0; i<512; i++) this.p[i] = p[i & 255];
+
+    this.noise = function(x, y) {
+        const X = Math.floor(x) & 255, Y = Math.floor(y) & 255;
+        x -= Math.floor(x); y -= Math.floor(y);
+        const u = x*x*x*(x*(x*6-15)+10), v = y*y*y*(y*(y*6-15)+10);
+        const a = this.p[X]+Y, b = this.p[X+1]+Y;
+        const lerp = (t, a, b) => a + t * (b - a);
+        const grad = (hash, x, y) => {
+            const h = hash & 15;
+            return ((h<8?x:y) * (h&1?-1:1) + (h<4?y:h==12||h==14?x:0) * (h&2?-1:1));
+        };
+        return lerp(v, lerp(u, grad(this.p[a], x, y), grad(this.p[b], x-1, y)), 
+                       lerp(u, grad(this.p[a+1], x, y-1), grad(this.p[b+1], x-1, y-1)));
+    };
+})();
+
+/**
+ * 2. NASTAVITVE SIMULACIJE
+ */
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+let width, height;
+let particles = [];
+const numParticles = 150;
+const scale = 0.005; // Ločljivost skalarnega polja
+let time = 0;
+
+// Funkcija f(x, y), ki vrne skalar (višino)
+function getHeight(x, y) {
+    return Perlin.noise(x * scale, y * scale + time) * 100;
+}
+
+// Izračun Gradienta ∇f = (df/dx, df/dy)
+function getGradient(x, y) {
+    const h = 1.0; // Majhen korak za numerični odvod
+    const dx = (getHeight(x + h, y) - getHeight(x - h, y)) / (2 * h);
+    const dy = (getHeight(x, y + h) - getHeight(x, y - h)) / (2 * h);
+    return { x: dx, y: dy };
+}
+
+/**
+ * 3. DELCI
+ */
+class Particle {
+    constructor() { this.reset(); }
+    reset() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.vx = 0; this.vy = 0;
+        this.life = Math.random() * 200 + 100;
+    }
+    update() {
+        // Vzamemo gradient v trenutni točki
+        const grad = getGradient(this.x, this.y);
+        
+        // Sila deluje NAVZDOL (nasprotno od gradienta)
+        this.vx -= grad.x * 0.5;
+        this.vy -= grad.y * 0.5;
+        
+        // Trenje (da delci ne zdivjajo)
+        this.vx *= 0.95;
+        this.vy *= 0.95;
+        
+        this.x += this.vx;
+        this.y += this.vy;
+        this.life--;
+
+        if(this.life <= 0 || this.x < 0 || this.x > width || this.y < 0 || this.y > height) {
+            this.reset();
+        }
+    }
+    draw() {
+        ctx.fillStyle = '#00ffcc';
+        ctx.beginPath(); ctx.arc(this.x, this.y, 2, 0, Math.PI*2); ctx.fill();
+    }
+}
+
+/**
+ * 4. GLAVNA ZANKA
+ */
+function init() {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+    particles = Array.from({length: numParticles}, () => new Particle());
+}
+
+function loop() {
+    // 1. Nariši skalarno polje (višino) v ozadju
+    const step = 40;
+    ctx.fillStyle = '#050505';
+    ctx.fillRect(0,0,width,height);
+
+    for(let x=0; x<width; x+=step) {
+        for(let y=0; y<height; y+=step) {
+            const h = getHeight(x, y);
+            const intensity = (h + 50) / 100; // Normalizacija za barvo
+            
+            // Vizualizacija skalarnega polja (višina)
+            ctx.fillStyle = `rgba(0, 255, 204, ${intensity * 0.15})`;
+            ctx.fillRect(x, y, step, step);
+
+            // Vizualizacija vektorskega polja (Gradient)
+            const grad = getGradient(x, y);
+            ctx.strokeStyle = `rgba(255, 255, 255, 0.15)`;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(x + step/2, y + step/2);
+            ctx.lineTo(x + step/2 + grad.x * 10, y + step/2 + grad.y * 10);
+            ctx.stroke();
+        }
+    }
+
+    // 2. Posodobi in nariši delce
+    particles.forEach(p => {
+        p.update();
+        p.draw();
+    });
+
+    time += 0.002; // Premikanje polja skozi čas
+    document.getElementById('status').innerText = `Čas: ${time.toFixed(3)} | Delcev: ${particles.length}`;
+    requestAnimationFrame(loop);
+}
+
+window.onresize = init;
+init();
+loop();
+</script>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Physics & Motion Laboratory</title>
+    <style>
+        body { margin: 0; background: #050505; color: #eee; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .container { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 20px; padding: 20px; }
+        .card { background: #111; border: 1px solid #333; border-radius: 12px; padding: 15px; position: relative; overflow: hidden; }
+        canvas { background: #000; border: 1px solid #222; border-radius: 8px; width: 100%; height: 350px; cursor: crosshair; }
+        h2 { color: #00ffcc; margin-top: 0; font-size: 1.2rem; display: flex; justify-content: space-between; }
+        .math-info { font-family: monospace; font-size: 0.85rem; color: #888; background: #1a1a1a; padding: 10px; border-radius: 6px; margin-top: 10px; }
+        b { color: #ff3366; }
+        .btn { background: #00ffcc; color: #000; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div style="text-align: center; padding: 30px 20px 10px;">
+    <h1>Physics & Motion Algorithms</h1>
+    <p>Interaktivni prikaz vektorske matematike, integracije gibanja in konveksne lupine.</p>
+</div>
+
+<div class="container">
+    <!-- 1. VECTOR MATH (DOT & CROSS) -->
+    <div class="card">
+        <h2>Vektorska matematika (Dot & Cross)</h2>
+        <canvas id="cVector"></canvas>
+        <div class="math-info" id="iVector">
+            Dot Product: <span id="dotVal">0</span> (Kot med vektorjema)<br>
+            Cross Product: <span id="crossVal">0</span> (Smer vrtenja/Površina)
+        </div>
+    </div>
+
+    <!-- 2. INTEGRATION (EULER VS VERLET) -->
+    <div class="card">
+        <h2>Euler vs Verlet Integracija <button class="btn" onclick="resetPhysics()">Reset</button></h2>
+        <canvas id="cPhysics"></canvas>
+        <div class="math-info">
+            <span style="color:#00ffcc">● Euler:</span> Hitrost se sešteva (manj stabilno)<br>
+            <span style="color:#ff3366">● Verlet:</span> Pozicija temelji na prejšnji (bolj stabilno)
+        </div>
+    </div>
+
+    <!-- 3. CONVEX HULL (MONOTONE CHAIN) -->
+    <div class="card">
+        <h2>Convex Hull (Konveksna lupina) <button class="btn" onclick="resetHull()">Nove točke</button></h2>
+        <canvas id="cHull"></canvas>
+        <div class="math-info">
+            Najmanjši konveksni poligon, ki vsebuje vse točke.<br>
+            Algoritem: <b>Monotone Chain</b> (O(n log n)).
+        </div>
+    </div>
+</div>
+
+<script>
+// --- GLOBALNE MIŠKE ---
+const mouse = { x: 0, y: 0 };
+window.onmousemove = e => {
+    const rect = e.target.getBoundingClientRect?.();
+    if(rect) { mouse.x = e.clientX - rect.left; mouse.y = e.clientY - rect.top; }
+};
+
+// --- 1. DOT & CROSS PRODUCT ---
+const canvasVec = document.getElementById('cVector');
+const ctxVec = canvasVec.getContext('2d');
+
+function drawVectorMath() {
+    canvasVec.width = canvasVec.offsetWidth; canvasVec.height = 350;
+    const center = { x: canvasVec.width/2, y: canvasVec.height/2 };
+    
+    const v1 = { x: 100, y: 0 }; // Fiksni vektor
+    const v2 = { x: mouse.x - center.x, y: mouse.y - center.y };
+    
+    // Normalizacija za Dot Product (cos kota)
+    const mag2 = Math.hypot(v2.x, v2.y);
+    const v2n = { x: v2.x / mag2, y: v2.y / mag2 };
+    const dot = (v1.x/100 * v2n.x) + (v1.y/100 * v2n.y);
+    const cross = (v1.x * v2.y) - (v1.y * v2.x);
+
+    document.getElementById('dotVal').innerText = dot.toFixed(2);
+    document.getElementById('crossVal').innerText = Math.round(cross);
+
+    // Risanje
+    ctxVec.clearRect(0,0,canvasVec.width, canvasVec.height);
+    ctxVec.setLineDash([5, 5]); ctxVec.strokeStyle = "#333";
+    ctxVec.beginPath(); ctxVec.moveTo(0, center.y); ctxVec.lineTo(canvasVec.width, center.y); ctxVec.stroke();
+    ctxVec.setLineDash([]);
+
+    // Vektor 1 (Fiksni)
+    drawArrow(center.x, center.y, center.x + v1.x, center.y + v1.y, "#ff3366", "V1 (Forward)");
+    // Vektor 2 (Miška)
+    drawArrow(center.x, center.y, center.x + v2.x, center.y + v2.y, "#00ffcc", "V2 (Mouse)");
+
+    requestAnimationFrame(drawVectorMath);
+}
+
+function drawArrow(x1, y1, x2, y2, color, label) {
+    const headlen = 10;
+    const angle = Math.atan2(y2-y1, x2-x1);
+    ctxVec.strokeStyle = color; ctxVec.fillStyle = color; ctxVec.lineWidth = 3;
+    ctxVec.beginPath(); ctxVec.moveTo(x1, y1); ctxVec.lineTo(x2, y2); ctxVec.stroke();
+    ctxVec.beginPath();
+    ctxVec.moveTo(x2, y2);
+    ctxVec.lineTo(x2-headlen*Math.cos(angle-Math.PI/6), y2-headlen*Math.sin(angle-Math.PI/6));
+    ctxVec.lineTo(x2-headlen*Math.cos(angle+Math.PI/6), y2-headlen*Math.sin(angle+Math.PI/6));
+    ctxVec.fill();
+    ctxVec.fillText(label, x2 + 5, y2 - 5);
+}
+
+// --- 2. EULER VS VERLET INTEGRATION ---
+const canvasPhys = document.getElementById('cPhysics');
+const ctxPhys = canvasPhys.getContext('2d');
+let eulerObj, verletObj;
+
+function resetPhysics() {
+    eulerObj = { x: 50, y: 100, vx: 5, vy: 0 };
+    verletObj = { x: 50, y: 200, oldX: 45, oldY: 200 };
+}
+
+function drawPhysics() {
+    canvasPhys.width = canvasPhys.offsetWidth; canvasPhys.height = 350;
+    ctxPhys.clearRect(0,0,canvasPhys.width, canvasPhys.height);
+    const gravity = 0.2;
+
+    // EULER (p = p + v; v = v + a)
+    eulerObj.vy += gravity;
+    eulerObj.x += eulerObj.vx;
+    eulerObj.y += eulerObj.vy;
+    if(eulerObj.y > 330 || eulerObj.y < 20) eulerObj.vy *= -0.9;
+    if(eulerObj.x > canvasPhys.width - 20 || eulerObj.x < 20) eulerObj.vx *= -1;
+
+    // VERLET (p_new = 2p - p_old + a*dt^2)
+    let vxV = (verletObj.x - verletObj.oldX);
+    let vyV = (verletObj.y - verletObj.oldY) + gravity;
+    verletObj.oldX = verletObj.x;
+    verletObj.oldY = verletObj.y;
+    verletObj.x += vxV;
+    verletObj.y += vyV;
+
+    if(verletObj.y > 330) { verletObj.y = 330; verletObj.oldY = 330 + vyV * 0.9; }
+    if(verletObj.x > canvasPhys.width - 20 || verletObj.x < 20) verletObj.oldX = verletObj.x + vxV;
+
+    ctxPhys.fillStyle = "#00ffcc"; ctxPhys.beginPath(); ctxPhys.arc(eulerObj.x, eulerObj.y, 10, 0, Math.PI*2); ctxPhys.fill();
+    ctxPhys.fillStyle = "#ff3366"; ctxPhys.beginPath(); ctxPhys.arc(verletObj.x, verletObj.y, 10, 0, Math.PI*2); ctxPhys.fill();
+    
+    requestAnimationFrame(drawPhysics);
+}
+
+// --- 3. CONVEX HULL (Monotone Chain) ---
+const canvasHull = document.getElementById('cHull');
+const ctxHull = canvasHull.getContext('2d');
+let points = [];
+
+function resetHull() {
+    points = Array.from({length: 30}, () => ({
+        x: 50 + Math.random() * (canvasHull.offsetWidth - 100),
+        y: 50 + Math.random() * 250
+    }));
+}
+
+function getConvexHull(pts) {
+    pts.sort((a, b) => a.x !== b.x ? a.x - b.x : a.y - b.y);
+    const cross = (a, b, c) => (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+    
+    const lower = [];
+    for (let p of pts) {
+        while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], p) <= 0) lower.pop();
+        lower.push(p);
+    }
+    const upper = [];
+    for (let i = pts.length - 1; i >= 0; i--) {
+        let p = pts[i];
+        while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], p) <= 0) upper.pop();
+        upper.push(p);
+    }
+    upper.pop(); lower.pop();
+    return lower.concat(upper);
+}
+
+function drawHull() {
+    canvasHull.width = canvasHull.offsetWidth; canvasHull.height = 350;
+    ctxHull.clearRect(0,0,canvasHull.width, canvasHull.height);
+    
+    const activePoints = [...points, {x: mouse.x, y: mouse.y}];
+    const hull = getConvexHull(activePoints);
+
+    // Riši lupino
+    ctxHull.strokeStyle = "#00ffcc"; ctxHull.fillStyle = "rgba(0, 255, 204, 0.1)";
+    ctxHull.lineWidth = 2;
+    ctxHull.beginPath();
+    ctxHull.moveTo(hull[0].x, hull[0].y);
+    hull.forEach(p => ctxHull.lineTo(p.x, p.y));
+    ctxHull.closePath(); ctxHull.stroke(); ctxHull.fill();
+
+    // Riši točke
+    ctxHull.fillStyle = "#fff";
+    activePoints.forEach(p => {
+        ctxHull.beginPath(); ctxHull.arc(p.x, p.y, 3, 0, Math.PI*2); ctxHull.fill();
+    });
+
+    requestAnimationFrame(drawHull);
+}
+
+// Zagon
+resetPhysics();
+resetHull();
+drawVectorMath();
+drawPhysics();
+drawHull();
+</script>
+</body>
+</html>

@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B-Tree // Neon Nexus</title>
+    <style>
+        :root {
+            --bg: #050505;
+            --neon-1: #00f3ff;
+            --neon-2: #ff00ff;
+            --glass: rgba(255, 255, 255, 0.05);
+            --font-main: 'Rajdhani', 'Segoe UI', sans-serif;
+            --font-code: 'Fira Code', monospace;
+        }
+        body {
+            background-color: var(--bg);
+            color: #fff;
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: grid;
+            grid-template-rows: auto 1fr;
+        }
+        header {
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--neon-1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.8);
+            z-index: 10;
+        }
+        h1 {
+            color: var(--neon-1);
+            text-shadow: 0 0 10px var(--neon-1);
+            margin: 0;
+            font-family: var(--font-code);
+            text-transform: uppercase;
+            font-size: 1.5rem;
+        }
+        .back-btn {
+            color: var(--neon-2);
+            text-decoration: none;
+            border: 1px solid var(--neon-2);
+            padding: 0.5rem 1rem;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
+        .back-btn:hover {
+            background: var(--neon-2);
+            color: #000;
+            box-shadow: 0 0 10px var(--neon-2);
+        }
+        .workspace {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            height: 100%;
+            overflow: hidden;
+        }
+        aside {
+            background: var(--glass);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            backdrop-filter: blur(10px);
+            z-index: 5;
+        }
+        .control-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        label { color: var(--neon-1); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; }
+        input {
+            background: rgba(0,0,0,0.3); border: 1px solid #333; color: #fff;
+            padding: 0.8rem; font-family: var(--font-code); font-size: 1rem; outline: none; transition: 0.3s;
+        }
+        input:focus { border-color: var(--neon-1); box-shadow: 0 0 5px rgba(0, 243, 255, 0.2); }
+        button {
+            background: transparent; border: 1px solid var(--neon-1); color: var(--neon-1);
+            padding: 0.8rem; cursor: pointer; text-transform: uppercase; font-weight: bold; transition: 0.3s;
+            font-family: var(--font-main);
+        }
+        button:hover { background: var(--neon-1); color: #000; box-shadow: 0 0 15px var(--neon-1); }
+        button.secondary { border-color: var(--neon-2); color: var(--neon-2); }
+        button.secondary:hover { background: var(--neon-2); box-shadow: 0 0 15px var(--neon-2); }
+        .log-panel {
+            flex-grow: 1; background: #000; border: 1px solid #333; padding: 0.5rem;
+            font-family: var(--font-code); font-size: 0.8rem; color: #aaa; overflow-y: auto; max-height: 300px;
+        }
+        .log-entry { margin-bottom: 0.25rem; border-bottom: 1px solid #111; padding-bottom: 0.25rem; }
+        .log-entry.success { color: #0f0; }
+        .log-entry.info { color: var(--neon-1); }
+        .log-entry.error { color: #f00; }
+        main {
+            position: relative;
+            background-color: #0a0a0f;
+            background-image: 
+                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            overflow: hidden;
+            cursor: grab;
+        }
+        main:active { cursor: grabbing; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>B-Tree (Order 3)</h1>
+    <a href="index.html" class="back-btn">Back to Nexus</a>
+</header>
+
+<div class="workspace">
+    <aside>
+        <div class="control-group">
+            <label>Insert Value</label>
+            <div style="display:flex; gap:0.5rem;">
+                <input type="number" id="insertVal" placeholder="Integer">
+                <button onclick="handleInsert()">Add</button>
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <button onclick="tree = new BTree(3); draw(); log('Tree cleared.', 'info');">Clear Tree</button>
+            <button onclick="generateRandomTree()">Random Tree</button>
+        </div>
+
+        <div class="log-panel" id="logPanel">
+            <div class="log-entry info">System ready. B-Tree Order 3 (2-3 Tree).</div>
+        </div>
+    </aside>
+
+    <main id="canvasContainer">
+        <canvas id="canvas"></canvas>
+    </main>
+</div>
+
+<script>
+    const logPanel = document.getElementById('logPanel');
+    function log(msg, type = 'info') {
+        const div = document.createElement('div');
+        div.className = `log-entry ${type}`;
+        div.innerText = `> ${msg}`;
+        logPanel.prepend(div);
+        if (logPanel.children.length > 50) logPanel.lastChild.remove();
+    }
+
+    class BTreeNode {
+        constructor(leaf) {
+            this.leaf = leaf;
+            this.keys = [];
+            this.children = [];
+            this.x = 0;
+            this.y = 0;
+        }
+    }
+
+    class BTree {
+        constructor(t) {
+            this.root = null;
+            this.t = t; // Minimum degree (t=2 -> 2-3-4 tree, t=3 -> order 5/6)
+            // Wait, common definition: Max keys = 2*t - 1. Min keys = t - 1.
+            // Let's use t=2 for simpler visualization (max 3 keys, 4 children)
+            // Actually, prompt says Order 3 (2-3 tree logic usually) but let's stick to standard CLRS B-Tree
+            // If constructor(3), then max keys = 5.
+        }
+
+        traverse() {
+            if (this.root) this.traverseNode(this.root);
+        }
+
+        traverseNode(node) {
+            // ...
+        }
+
+        search(k) {
+            return this.root ? this.searchNode(this.root, k) : null;
+        }
+
+        searchNode(node, k) {
+            let i = 0;
+            while (i < node.keys.length && k > node.keys[i]) i++;
+            if (i < node.keys.length && node.keys[i] === k) return node;
+            if (node.leaf) return null;
+            return this.searchNode(node.children[i], k);
+        }
+
+        insert(k) {
+            if (!this.root) {
+                this.root = new BTreeNode(true);
+                this.root.keys[0] = k;
+            } else {
+                if (this.root.keys.length === 2 * this.t - 1) {
+                    let s = new BTreeNode(false);
+                    s.children[0] = this.root;
+                    this.splitChild(s, 0, this.root);
+                    let i = 0;
+                    if (s.keys[0] < k) i++;
+                    this.insertNonFull(s.children[i], k);
+                    this.root = s;
+                } else {
+                    this.insertNonFull(this.root, k);
+                }
+            }
+        }
+
+        insertNonFull(x, k) {
+            let i = x.keys.length - 1;
+            if (x.leaf) {
+                while (i >= 0 && x.keys[i] > k) {
+                    x.keys[i + 1] = x.keys[i];
+                    i--;
+                }
+                x.keys[i + 1] = k;
+            } else {
+                while (i >= 0 && x.keys[i] > k) i--;
+                if (x.children[i + 1].keys.length === 2 * this.t - 1) {
+                    this.splitChild(x, i + 1, x.children[i + 1]);
+                    if (x.keys[i + 1] < k) i++;
+                }
+                this.insertNonFull(x.children[i + 1], k);
+            }
+        }
+
+        splitChild(x, i, y) {
+            let z = new BTreeNode(y.leaf);
+            // Splitting logic for t=2 (max 3 keys).
+            // y has 2t-1 keys. z gets t-1 keys.
+            for (let j = 0; j < this.t - 1; j++) z.keys[j] = y.keys[j + this.t];
+            
+            if (!y.leaf) {
+                for (let j = 0; j < this.t; j++) z.children[j] = y.children[j + this.t];
+            }
+            
+            y.keys.length = this.t - 1; // Truncate
+            // In JS array length truncation works, but let's be safe
+            y.keys = y.keys.slice(0, this.t - 1);
+            if(!y.leaf) y.children = y.children.slice(0, this.t);
+
+            for (let j = x.keys.length; j >= i + 1; j--) x.children[j + 1] = x.children[j];
+            x.children[i + 1] = z;
+
+            for (let j = x.keys.length - 1; j >= i; j--) x.keys[j + 1] = x.keys[j];
+            x.keys[i] = y.keys[this.t - 1]; // Wait, we need to access the original y array before slice?
+            // Ah, I sliced y too early. Let's fix.
+            // Re-implement correctly:
+        }
+        
+        // Let's use a simpler implementation for split without slice issues
+        splitChild(x, i, y) {
+             let z = new BTreeNode(y.leaf);
+             // Move last t-1 keys of y to z
+             z.keys = y.keys.splice(this.t, this.t - 1);
+             // If not leaf, move last t children of y to z
+             if (!y.leaf) {
+                 z.children = y.children.splice(this.t, this.t);
+             }
+             
+             // Median key
+             let median = y.keys.pop(); // The key at index t-1 (0-based)
+             
+             // Insert median into x
+             x.keys.splice(i, 0, median);
+             // Insert z into x children
+             x.children.splice(i + 1, 0, z);
+        }
+    }
+    
+    // Correct split logic override
+    BTree.prototype.splitChild = function(x, i, y) {
+        let z = new BTreeNode(y.leaf);
+        // t=2. y has 3 keys [0,1,2]. median is index 1. z gets index 2.
+        // Generic: y has 2t-1 keys. Median is index t-1.
+        // z takes keys from t to 2t-1. (t-1 keys)
+        
+        let medianIndex = this.t - 1;
+        let median = y.keys[medianIndex];
+        
+        z.keys = y.keys.slice(medianIndex + 1);
+        y.keys = y.keys.slice(0, medianIndex);
+        
+        if (!y.leaf) {
+            z.children = y.children.slice(medianIndex + 1); // children indices match +1 logic?
+            // if keys are 0..2, children are 0..3. median 1. 
+            // left keys 0. left children 0,1. 
+            // right keys 2. right children 2,3.
+            // So split index for children is medianIndex + 1. Correct.
+            y.children = y.children.slice(0, medianIndex + 1);
+        }
+        
+        x.keys.splice(i, 0, median);
+        x.children.splice(i + 1, 0, z);
+    }
+
+
+    // --- Visualization ---
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let tree = new BTree(2); // Order t=2 (Max keys 3, Max children 4)
+    
+    // Viewport
+    let cameraOffset = { x: 0, y: 50 };
+    let isDragging = false;
+    let dragStart = { x: 0, y: 0 };
+    let initialCamera = { x: 0, y: 0 };
+
+    function resizeCanvas() {
+        canvas.width = document.getElementById('canvasContainer').offsetWidth;
+        canvas.height = document.getElementById('canvasContainer').offsetHeight;
+        cameraOffset.x = canvas.width / 2;
+        draw();
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    function assignCoords(node, x, y, widthSpan) {
+        if (!node) return;
+        node.x = x;
+        node.y = y;
+        
+        // Simple logic: distribute children evenly
+        if (!node.leaf) {
+            const count = node.children.length;
+            const segment = widthSpan / count;
+            let startX = x - widthSpan / 2 + segment / 2;
+            
+            node.children.forEach((child, i) => {
+                assignCoords(child, startX + i * segment, y + 80, segment);
+            });
+        }
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        if (tree.root) {
+            assignCoords(tree.root, cameraOffset.x, cameraOffset.y, canvas.width * 0.8);
+            drawNode(tree.root);
+        }
+    }
+
+    function drawNode(node) {
+        if (!node) return;
+
+        // Draw Links
+        if (!node.leaf) {
+            ctx.strokeStyle = '#00f3ff';
+            ctx.lineWidth = 1;
+            node.children.forEach(child => {
+                ctx.beginPath();
+                ctx.moveTo(node.x, node.y + 15); // Bottom of node
+                ctx.lineTo(child.x, child.y - 15); // Top of child
+                ctx.stroke();
+                drawNode(child);
+            });
+        }
+
+        // Draw Node Box
+        const keyCount = node.keys.length;
+        const boxWidth = keyCount * 30 + 10;
+        const boxHeight = 30;
+        
+        ctx.fillStyle = '#050505';
+        ctx.fillRect(node.x - boxWidth/2, node.y - boxHeight/2, boxWidth, boxHeight);
+        ctx.strokeStyle = '#ff00ff';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(node.x - boxWidth/2, node.y - boxHeight/2, boxWidth, boxHeight);
+        
+        // Draw Keys
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 14px "Fira Code"';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        
+        node.keys.forEach((key, i) => {
+            // Distribute keys within box
+            // total width 100%. key i is at (i - (n-1)/2) * spacing
+            let xPos = node.x - ((keyCount - 1) * 30) / 2 + i * 30;
+            ctx.fillText(key, xPos, node.y);
+            
+            // Draw separators
+            if (i < keyCount - 1) {
+                ctx.strokeStyle = '#333';
+                ctx.beginPath();
+                ctx.moveTo(xPos + 15, node.y - 10);
+                ctx.lineTo(xPos + 15, node.y + 10);
+                ctx.stroke();
+            }
+        });
+    }
+
+    function handleInsert() {
+        const val = parseInt(document.getElementById('insertVal').value);
+        if (isNaN(val)) return;
+        tree.insert(val);
+        log(`Inserted ${val}`, 'success');
+        draw();
+        document.getElementById('insertVal').value = '';
+        document.getElementById('insertVal').focus();
+    }
+
+    function generateRandomTree() {
+        tree = new BTree(2);
+        for(let i=0; i<15; i++) {
+            const val = Math.floor(Math.random() * 100);
+            tree.insert(val);
+        }
+        log('Generated random B-Tree', 'info');
+        draw();
+    }
+
+    document.getElementById('insertVal').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') handleInsert();
+    });
+
+    const container = document.getElementById('canvasContainer');
+    container.addEventListener('mousedown', e => {
+        isDragging = true;
+        dragStart = { x: e.clientX, y: e.clientY };
+        initialCamera = { ...cameraOffset };
+        container.style.cursor = 'grabbing';
+    });
+    
+    window.addEventListener('mousemove', e => {
+        if (!isDragging) return;
+        const dx = e.clientX - dragStart.x;
+        const dy = e.clientY - dragStart.y;
+        cameraOffset.x = initialCamera.x + dx;
+        cameraOffset.y = initialCamera.y + dy;
+        draw();
+    });
+
+    window.addEventListener('mouseup', () => {
+        isDragging = false;
+        container.style.cursor = 'grab';
+    });
+
+    resizeCanvas();
+    generateRandomTree();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Splay Tree // Neon Nexus</title>
+    <style>
+        :root {
+            --bg: #050505;
+            --neon-1: #00f3ff; /* Cyan */
+            --neon-2: #bd00ff; /* Purple */
+            --glass: rgba(255, 255, 255, 0.05);
+            --font-main: 'Rajdhani', 'Segoe UI', sans-serif;
+            --font-code: 'Fira Code', monospace;
+        }
+        body {
+            background-color: var(--bg);
+            color: #fff;
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: grid;
+            grid-template-rows: auto 1fr;
+        }
+        header {
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--neon-1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.8);
+            z-index: 10;
+        }
+        h1 {
+            color: var(--neon-1);
+            text-shadow: 0 0 10px var(--neon-1);
+            margin: 0;
+            font-family: var(--font-code);
+            text-transform: uppercase;
+            font-size: 1.5rem;
+        }
+        .back-btn {
+            color: var(--neon-2);
+            text-decoration: none;
+            border: 1px solid var(--neon-2);
+            padding: 0.5rem 1rem;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
+        .back-btn:hover {
+            background: var(--neon-2);
+            color: #000;
+            box-shadow: 0 0 10px var(--neon-2);
+        }
+        .workspace {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            height: 100%;
+            overflow: hidden;
+        }
+        aside {
+            background: var(--glass);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            backdrop-filter: blur(10px);
+            z-index: 5;
+        }
+        .control-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        label { color: var(--neon-1); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; }
+        input {
+            background: rgba(0,0,0,0.3); border: 1px solid #333; color: #fff;
+            padding: 0.8rem; font-family: var(--font-code); font-size: 1rem; outline: none; transition: 0.3s;
+        }
+        input:focus { border-color: var(--neon-1); box-shadow: 0 0 5px rgba(0, 243, 255, 0.2); }
+        button {
+            background: transparent; border: 1px solid var(--neon-1); color: var(--neon-1);
+            padding: 0.8rem; cursor: pointer; text-transform: uppercase; font-weight: bold; transition: 0.3s;
+            font-family: var(--font-main);
+        }
+        button:hover { background: var(--neon-1); color: #000; box-shadow: 0 0 15px var(--neon-1); }
+        button.secondary { border-color: var(--neon-2); color: var(--neon-2); }
+        button.secondary:hover { background: var(--neon-2); box-shadow: 0 0 15px var(--neon-2); }
+        .log-panel {
+            flex-grow: 1; background: #000; border: 1px solid #333; padding: 0.5rem;
+            font-family: var(--font-code); font-size: 0.8rem; color: #aaa; overflow-y: auto; max-height: 300px;
+        }
+        .log-entry { margin-bottom: 0.25rem; border-bottom: 1px solid #111; padding-bottom: 0.25rem; }
+        .log-entry.success { color: #0f0; }
+        .log-entry.info { color: var(--neon-1); }
+        .log-entry.error { color: #f00; }
+        main {
+            position: relative;
+            background-color: #0a0a0f;
+            background-image: 
+                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            overflow: hidden;
+            cursor: grab;
+        }
+        main:active { cursor: grabbing; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Splay Tree Visualizer</h1>
+    <a href="index.html" class="back-btn">Back to Nexus</a>
+</header>
+
+<div class="workspace">
+    <aside>
+        <div class="control-group">
+            <label>Insert Value</label>
+            <div style="display:flex; gap:0.5rem;">
+                <input type="number" id="insertVal" placeholder="Integer">
+                <button onclick="handleInsert()">Add</button>
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label>Search / Access</label>
+            <div style="display:flex; gap:0.5rem;">
+                <input type="number" id="searchVal" placeholder="Integer">
+                <button class="secondary" onclick="handleSearch()">Splay</button>
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label>Delete Value</label>
+            <div style="display:flex; gap:0.5rem;">
+                <input type="number" id="deleteVal" placeholder="Integer">
+                <button class="secondary" onclick="handleDelete()">Del</button>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <button onclick="tree.root = null; draw(); log('Tree cleared.', 'info');">Clear Tree</button>
+            <button onclick="generateRandomTree()">Random Tree</button>
+        </div>
+
+        <div class="log-panel" id="logPanel">
+            <div class="log-entry info">System ready. Splaying moves nodes to root.</div>
+        </div>
+    </aside>
+
+    <main id="canvasContainer">
+        <canvas id="canvas"></canvas>
+    </main>
+</div>
+
+<script>
+    const logPanel = document.getElementById('logPanel');
+    function log(msg, type = 'info') {
+        const div = document.createElement('div');
+        div.className = `log-entry ${type}`;
+        div.innerText = `> ${msg}`;
+        logPanel.prepend(div);
+        if (logPanel.children.length > 50) logPanel.lastChild.remove();
+    }
+
+    class Node {
+        constructor(value) {
+            this.value = value;
+            this.left = null;
+            this.right = null;
+            this.x = 0;
+            this.y = 0;
+        }
+    }
+
+    class SplayTree {
+        constructor() {
+            this.root = null;
+        }
+
+        rightRotate(x) {
+            let y = x.left;
+            x.left = y.right;
+            y.right = x;
+            return y;
+        }
+
+        leftRotate(x) {
+            let y = x.right;
+            x.right = y.left;
+            y.left = x;
+            return y;
+        }
+
+        splay(root, value) {
+            if (!root || root.value === value) return root;
+
+            // Key lies in left subtree
+            if (value < root.value) {
+                if (!root.left) return root;
+
+                // Zig-Zig (Left Left)
+                if (value < root.left.value) {
+                    root.left.left = this.splay(root.left.left, value);
+                    root = this.rightRotate(root);
+                } 
+                // Zig-Zag (Left Right)
+                else if (value > root.left.value) {
+                    root.left.right = this.splay(root.left.right, value);
+                    if (root.left.right) root.left = this.leftRotate(root.left);
+                }
+
+                return (root.left) ? this.rightRotate(root) : root;
+            } 
+            // Key lies in right subtree
+            else {
+                if (!root.right) return root;
+
+                // Zag-Zag (Right Right)
+                if (value > root.right.value) {
+                    root.right.right = this.splay(root.right.right, value);
+                    root = this.leftRotate(root);
+                } 
+                // Zag-Zig (Right Left)
+                else if (value < root.right.value) {
+                    root.right.left = this.splay(root.right.left, value);
+                    if (root.right.left) root.right = this.rightRotate(root.right);
+                }
+
+                return (root.right) ? this.leftRotate(root) : root;
+            }
+        }
+
+        search(value) {
+            this.root = this.splay(this.root, value);
+            return this.root && this.root.value === value;
+        }
+
+        insert(value) {
+            if (!this.root) {
+                this.root = new Node(value);
+                return;
+            }
+
+            this.root = this.splay(this.root, value);
+
+            if (this.root.value === value) return; // Duplicate
+
+            let newNode = new Node(value);
+
+            if (value < this.root.value) {
+                newNode.right = this.root;
+                newNode.left = this.root.left;
+                this.root.left = null;
+            } else {
+                newNode.left = this.root;
+                newNode.right = this.root.right;
+                this.root.right = null;
+            }
+
+            this.root = newNode;
+        }
+        
+        delete(value) {
+            if (!this.root) return;
+            
+            this.root = this.splay(this.root, value);
+            
+            if (this.root.value !== value) return; // Not found
+            
+            let temp;
+            if (!this.root.left) {
+                temp = this.root;
+                this.root = this.root.right;
+            } else {
+                temp = this.root;
+                this.root = this.splay(this.root.left, value);
+                this.root.right = temp.right;
+            }
+        }
+    }
+
+    // --- Visualization ---
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const tree = new SplayTree();
+    
+    let cameraOffset = { x: 0, y: 50 };
+    let isDragging = false;
+    let dragStart = { x: 0, y: 0 };
+    let initialCamera = { x: 0, y: 0 };
+
+    function resizeCanvas() {
+        canvas.width = document.getElementById('canvasContainer').offsetWidth;
+        canvas.height = document.getElementById('canvasContainer').offsetHeight;
+        cameraOffset.x = canvas.width / 2;
+        draw();
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    function assignCoords(node, x, y, offset) {
+        if (!node) return;
+        node.x = x;
+        node.y = y;
+        assignCoords(node.left, x - offset, y + 60, offset / 2);
+        assignCoords(node.right, x + offset, y + 60, offset / 2);
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        if (tree.root) {
+            assignCoords(tree.root, cameraOffset.x, cameraOffset.y, 250);
+            drawNode(tree.root);
+        }
+    }
+
+    function drawNode(node) {
+        if (!node) return;
+
+        ctx.strokeStyle = '#bd00ff';
+        ctx.lineWidth = 2;
+
+        if (node.left) {
+            ctx.beginPath();
+            ctx.moveTo(node.x, node.y);
+            ctx.lineTo(node.left.x, node.left.y);
+            ctx.stroke();
+            drawNode(node.left);
+        }
+        if (node.right) {
+            ctx.beginPath();
+            ctx.moveTo(node.x, node.y);
+            ctx.lineTo(node.right.x, node.right.y);
+            ctx.stroke();
+            drawNode(node.right);
+        }
+
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, 20, 0, Math.PI * 2);
+        ctx.fillStyle = '#050505';
+        ctx.fill();
+        ctx.strokeStyle = '#00f3ff';
+        ctx.stroke();
+
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = '#00f3ff';
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 14px "Fira Code"';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(node.value, node.x, node.y);
+    }
+
+    function handleInsert() {
+        const val = parseInt(document.getElementById('insertVal').value);
+        if (isNaN(val)) return;
+        tree.insert(val);
+        log(`Inserted ${val}`, 'success');
+        draw();
+        document.getElementById('insertVal').value = '';
+    }
+
+    function handleSearch() {
+        const val = parseInt(document.getElementById('searchVal').value);
+        if (isNaN(val)) return;
+        if (tree.search(val)) {
+            log(`Found & Splayed ${val}`, 'success');
+        } else {
+            log(`${val} not found (but splayed last accessed)`, 'info');
+        }
+        draw();
+        document.getElementById('searchVal').value = '';
+    }
+
+    function handleDelete() {
+        const val = parseInt(document.getElementById('deleteVal').value);
+        if (isNaN(val)) return;
+        tree.delete(val);
+        log(`Deleted ${val}`, 'info');
+        draw();
+        document.getElementById('deleteVal').value = '';
+    }
+
+    function generateRandomTree() {
+        tree.root = null;
+        for(let i=0; i<10; i++) {
+            const val = Math.floor(Math.random() * 100);
+            tree.insert(val);
+        }
+        log('Generated random tree', 'info');
+        draw();
+    }
+
+    const container = document.getElementById('canvasContainer');
+    container.addEventListener('mousedown', e => {
+        isDragging = true;
+        dragStart = { x: e.clientX, y: e.clientY };
+        initialCamera = { ...cameraOffset };
+        container.style.cursor = 'grabbing';
+    });
+    
+    window.addEventListener('mousemove', e => {
+        if (!isDragging) return;
+        const dx = e.clientX - dragStart.x;
+        const dy = e.clientY - dragStart.y;
+        cameraOffset.x = initialCamera.x + dx;
+        cameraOffset.y = initialCamera.y + dy;
+        draw();
+    });
+
+    window.addEventListener('mouseup', () => {
+        isDragging = false;
+        container.style.cursor = 'grab';
+    });
+
+    resizeCanvas();
+    generateRandomTree();
+
+</script>
+</body>
+</html>

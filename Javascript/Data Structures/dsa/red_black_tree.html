@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red-Black Tree // Neon Nexus</title>
+    <style>
+        :root {
+            --bg: #050505;
+            --neon-1: #00f3ff; /* Cyan */
+            --neon-2: #ff00ff; /* Magenta */
+            --node-red: #ff2a6d;
+            --node-black: #050505;
+            --glass: rgba(255, 255, 255, 0.05);
+            --font-main: 'Rajdhani', 'Segoe UI', sans-serif;
+            --font-code: 'Fira Code', monospace;
+        }
+        body {
+            background-color: var(--bg);
+            color: #fff;
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: grid;
+            grid-template-rows: auto 1fr;
+        }
+        header {
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--neon-1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.8);
+            z-index: 10;
+        }
+        h1 {
+            color: var(--neon-1);
+            text-shadow: 0 0 10px var(--neon-1);
+            margin: 0;
+            font-family: var(--font-code);
+            text-transform: uppercase;
+            font-size: 1.5rem;
+        }
+        .back-btn {
+            color: var(--neon-2);
+            text-decoration: none;
+            border: 1px solid var(--neon-2);
+            padding: 0.5rem 1rem;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
+        .back-btn:hover {
+            background: var(--neon-2);
+            color: #000;
+            box-shadow: 0 0 10px var(--neon-2);
+        }
+        .workspace {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            height: 100%;
+            overflow: hidden;
+        }
+        aside {
+            background: var(--glass);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            backdrop-filter: blur(10px);
+            z-index: 5;
+        }
+        .control-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        label { color: var(--neon-1); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; }
+        input {
+            background: rgba(0,0,0,0.3); border: 1px solid #333; color: #fff;
+            padding: 0.8rem; font-family: var(--font-code); font-size: 1rem; outline: none; transition: 0.3s;
+        }
+        input:focus { border-color: var(--neon-1); box-shadow: 0 0 5px rgba(0, 243, 255, 0.2); }
+        button {
+            background: transparent; border: 1px solid var(--neon-1); color: var(--neon-1);
+            padding: 0.8rem; cursor: pointer; text-transform: uppercase; font-weight: bold; transition: 0.3s;
+            font-family: var(--font-main);
+        }
+        button:hover { background: var(--neon-1); color: #000; box-shadow: 0 0 15px var(--neon-1); }
+        button.secondary { border-color: var(--neon-2); color: var(--neon-2); }
+        button.secondary:hover { background: var(--neon-2); box-shadow: 0 0 15px var(--neon-2); }
+        .log-panel {
+            flex-grow: 1; background: #000; border: 1px solid #333; padding: 0.5rem;
+            font-family: var(--font-code); font-size: 0.8rem; color: #aaa; overflow-y: auto; max-height: 300px;
+        }
+        .log-entry { margin-bottom: 0.25rem; border-bottom: 1px solid #111; padding-bottom: 0.25rem; }
+        .log-entry.success { color: #0f0; }
+        .log-entry.info { color: var(--neon-1); }
+        .log-entry.error { color: #f00; }
+        main {
+            position: relative;
+            background-color: #0a0a0f;
+            background-image: 
+                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            overflow: hidden;
+            cursor: grab;
+        }
+        main:active { cursor: grabbing; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Red-Black Tree Visualizer</h1>
+    <a href="index.html" class="back-btn">Back to Nexus</a>
+</header>
+
+<div class="workspace">
+    <aside>
+        <div class="control-group">
+            <label>Insert Value</label>
+            <div style="display:flex; gap:0.5rem;">
+                <input type="number" id="insertVal" placeholder="Integer">
+                <button onclick="handleInsert()">Add</button>
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <button onclick="tree.root = null; draw(); log('Tree cleared.', 'info');">Clear Tree</button>
+            <button onclick="generateRandomTree()">Random Tree</button>
+        </div>
+
+        <div class="log-panel" id="logPanel">
+            <div class="log-entry info">System ready. Red=Neon Red, Black=Void.</div>
+        </div>
+    </aside>
+
+    <main id="canvasContainer">
+        <canvas id="canvas"></canvas>
+    </main>
+</div>
+
+<script>
+    // --- Logger ---
+    const logPanel = document.getElementById('logPanel');
+    function log(msg, type = 'info') {
+        const div = document.createElement('div');
+        div.className = `log-entry ${type}`;
+        div.innerText = `> ${msg}`;
+        logPanel.prepend(div);
+        if (logPanel.children.length > 50) logPanel.lastChild.remove();
+    }
+
+    // --- RB Tree Logic ---
+    const RED = true;
+    const BLACK = false;
+
+    class Node {
+        constructor(value, color = RED, left = null, right = null) {
+            this.value = value;
+            this.color = color;
+            this.left = left;
+            this.right = right;
+            this.x = 0;
+            this.y = 0;
+        }
+    }
+
+    class RedBlackTree {
+        constructor() {
+            this.root = null;
+        }
+
+        isRed(node) {
+            if (node == null) return false;
+            return node.color == RED;
+        }
+
+        rotateLeft(h) {
+            let x = h.right;
+            h.right = x.left;
+            x.left = h;
+            x.color = h.color;
+            h.color = RED;
+            return x;
+        }
+
+        rotateRight(h) {
+            let x = h.left;
+            h.left = x.right;
+            x.right = h;
+            x.color = h.color;
+            h.color = RED;
+            return x;
+        }
+
+        flipColors(h) {
+            h.color = RED;
+            h.left.color = BLACK;
+            h.right.color = BLACK;
+        }
+
+        insert(value) {
+            this.root = this.insertNode(this.root, value);
+            this.root.color = BLACK;
+        }
+
+        insertNode(h, value) {
+            if (h == null) return new Node(value);
+
+            if (value < h.value) h.left = this.insertNode(h.left, value);
+            else if (value > h.value) h.right = this.insertNode(h.right, value);
+            else {
+                log(`Duplicate ${value} ignored.`, 'error');
+                return h;
+            }
+
+            if (this.isRed(h.right) && !this.isRed(h.left)) h = this.rotateLeft(h);
+            if (this.isRed(h.left) && this.isRed(h.left.left)) h = this.rotateRight(h);
+            if (this.isRed(h.left) && this.isRed(h.right)) this.flipColors(h);
+
+            return h;
+        }
+    }
+
+    // --- Visualization ---
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const tree = new RedBlackTree();
+    
+    // Viewport
+    let cameraOffset = { x: 0, y: 50 };
+    let isDragging = false;
+    let dragStart = { x: 0, y: 0 };
+    let initialCamera = { x: 0, y: 0 };
+
+    function resizeCanvas() {
+        canvas.width = document.getElementById('canvasContainer').offsetWidth;
+        canvas.height = document.getElementById('canvasContainer').offsetHeight;
+        cameraOffset.x = canvas.width / 2;
+        draw();
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    function assignCoords(node, x, y, offset) {
+        if (!node) return;
+        node.x = x;
+        node.y = y;
+        assignCoords(node.left, x - offset, y + 60, offset / 2);
+        assignCoords(node.right, x + offset, y + 60, offset / 2);
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        if (tree.root) {
+            assignCoords(tree.root, cameraOffset.x, cameraOffset.y, 200);
+            drawNode(tree.root);
+        }
+    }
+
+    function drawNode(node) {
+        if (!node) return;
+
+        // Links
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#555'; // Darker links for RB
+        
+        if (node.left) {
+            ctx.beginPath();
+            ctx.moveTo(node.x, node.y);
+            ctx.lineTo(node.left.x, node.left.y);
+            ctx.stroke();
+            drawNode(node.left);
+        }
+        if (node.right) {
+            ctx.beginPath();
+            ctx.moveTo(node.x, node.y);
+            ctx.lineTo(node.right.x, node.right.y);
+            ctx.stroke();
+            drawNode(node.right);
+        }
+
+        // Node Body
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, 20, 0, Math.PI * 2);
+        
+        if (node.color === RED) {
+            ctx.fillStyle = '#aa0000'; // Darker red fill
+            ctx.strokeStyle = '#ff2a6d'; // Neon Red Border
+            ctx.shadowColor = '#ff2a6d';
+        } else {
+            ctx.fillStyle = '#000000';
+            ctx.strokeStyle = '#888'; // Grey border for black node
+            ctx.shadowColor = 'transparent';
+        }
+        
+        ctx.shadowBlur = node.color === RED ? 15 : 0;
+        ctx.fill();
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // Text
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 14px "Fira Code"';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(node.value, node.x, node.y);
+    }
+
+    // --- Interaction ---
+    function handleInsert() {
+        const val = parseInt(document.getElementById('insertVal').value);
+        if (isNaN(val)) return;
+        tree.insert(val);
+        log(`Inserted ${val}`, 'success');
+        draw();
+        document.getElementById('insertVal').value = '';
+        document.getElementById('insertVal').focus();
+    }
+
+    function generateRandomTree() {
+        tree.root = null;
+        for(let i=0; i<15; i++) {
+            const val = Math.floor(Math.random() * 100);
+            tree.insert(val);
+        }
+        log('Generated random tree', 'info');
+        draw();
+    }
+
+    document.getElementById('insertVal').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') handleInsert();
+    });
+
+    // Pan
+    const container = document.getElementById('canvasContainer');
+    container.addEventListener('mousedown', e => {
+        isDragging = true;
+        dragStart = { x: e.clientX, y: e.clientY };
+        initialCamera = { ...cameraOffset };
+        container.style.cursor = 'grabbing';
+    });
+    
+    window.addEventListener('mousemove', e => {
+        if (!isDragging) return;
+        const dx = e.clientX - dragStart.x;
+        const dy = e.clientY - dragStart.y;
+        cameraOffset.x = initialCamera.x + dx;
+        cameraOffset.y = initialCamera.y + dy;
+        draw();
+    });
+
+    window.addEventListener('mouseup', () => {
+        isDragging = false;
+        container.style.cursor = 'grab';
+    });
+
+    resizeCanvas();
+    generateRandomTree();
+
+</script>
+</body>
+</html>

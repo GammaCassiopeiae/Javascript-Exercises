@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>NavMesh Generacija in A* Iskanje</title>
+    <style>
+        body { margin: 0; background: #1a1a1a; color: white; font-family: sans-serif; overflow: hidden; }
+        canvas { display: block; cursor: crosshair; }
+        .ui { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.7); padding: 15px; border-radius: 8px; pointer-events: none; }
+        b { color: #00ffcc; }
+    </style>
+</head>
+<body>
+
+<div class="ui">
+    <h3>NavMesh Demo</h3>
+    <p>1. Klikni za postavitev <b>cilja (zelena)</b></p>
+    <p>2. Agent (modra) bo izračunal pot po <b>NavMesh-u</b></p>
+    <p>Mreža se generira na podlagi praznih prostorov.</p>
+</div>
+
+<canvas id="canvas"></canvas>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+// Nastavitve
+const gridSize = 60;
+const nodes = [];
+const obstacles = [];
+
+// Generiranje naključnih ovir
+for(let i = 0; i < 8; i++) {
+    obstacles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        w: 100 + Math.random() * 150,
+        h: 100 + Math.random() * 150
+    });
+}
+
+// 1. GENERACIJA NAVMESH VOZLIŠČ (Nodes)
+function generateNavMesh() {
+    for (let x = gridSize/2; x < canvas.width; x += gridSize) {
+        for (let y = gridSize/2; y < canvas.height; y += gridSize) {
+            let inside = obstacles.some(o => x > o.x && x < o.x + o.w && y > o.y && y < o.y + o.h);
+            if (!inside) {
+                nodes.push({ x, y, neighbors: [], g: 0, h: 0, f: 0, parent: null });
+            }
+        }
+    }
+
+    // Povezovanje sosedov (Edge creation)
+    nodes.forEach(n1 => {
+        nodes.forEach(n2 => {
+            const dist = Math.hypot(n1.x - n2.x, n1.y - n2.y);
+            if (dist > 0 && dist < gridSize * 1.5) {
+                n1.neighbors.push(n2);
+            }
+        });
+    });
+}
+
+// 2. A* ALGORITEM ZA ISKANJE POTI
+function findPath(startNode, endNode) {
+    let openSet = [startNode];
+    let closedSet = [];
+
+    nodes.forEach(n => { n.g = n.h = n.f = 0; n.parent = null; });
+
+    while (openSet.length > 0) {
+        let current = openSet.reduce((prev, curr) => prev.f < curr.f ? prev : curr);
+
+        if (current === endNode) {
+            let path = [];
+            while (current.parent) {
+                path.push(current);
+                current = current.parent;
+            }
+            return path.reverse();
+        }
+
+        openSet = openSet.filter(n => n !== current);
+        closedSet.push(current);
+
+        current.neighbors.forEach(neighbor => {
+            if (closedSet.includes(neighbor)) return;
+
+            let gScore = current.g + 1;
+            if (!openSet.includes(neighbor) || gScore < neighbor.g) {
+                neighbor.parent = current;
+                neighbor.g = gScore;
+                neighbor.h = Math.hypot(neighbor.x - endNode.x, neighbor.y - endNode.y);
+                neighbor.f = neighbor.g + neighbor.h;
+                if (!openSet.includes(neighbor)) openSet.push(neighbor);
+            }
+        });
+    }
+    return [];
+}
+
+// 3. VIZUALIZACIJA
+let agent = { x: 100, y: 100 };
+let target = { x: 500, y: 400 };
+let path = [];
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Riši ovire
+    ctx.fillStyle = '#333';
+    obstacles.forEach(o => ctx.fillRect(o.x, o.y, o.w, o.h));
+
+    // Riši NavMesh povezave
+    ctx.strokeStyle = '#222';
+    ctx.lineWidth = 1;
+    nodes.forEach(n => {
+        n.neighbors.forEach(s => {
+            ctx.beginPath();
+            ctx.moveTo(n.x, n.y);
+            ctx.lineTo(s.x, s.y);
+            ctx.stroke();
+        });
+    });
+
+    // Riši pot
+    if (path.length > 0) {
+        ctx.strokeStyle = '#00ffcc';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(agent.x, agent.y);
+        path.forEach(p => ctx.lineTo(p.x, p.y));
+        ctx.stroke();
+    }
+
+    // Riši agenta in cilj
+    ctx.fillStyle = 'blue';
+    ctx.beginPath(); ctx.arc(agent.x, agent.y, 10, 0, Math.PI*2); ctx.fill();
+    
+    ctx.fillStyle = '#00ffcc';
+    ctx.beginPath(); ctx.arc(target.x, target.y, 12, 0, Math.PI*2); ctx.fill();
+
+    requestAnimationFrame(draw);
+}
+
+// Interakcija
+canvas.addEventListener('mousedown', (e) => {
+    target.x = e.clientX;
+    target.y = e.clientY;
+    
+    const startNode = nodes.reduce((prev, curr) => 
+        Math.hypot(curr.x - agent.x, curr.y - agent.y) < Math.hypot(prev.x - agent.x, prev.y - agent.y) ? curr : prev);
+    
+    const endNode = nodes.reduce((prev, curr) => 
+        Math.hypot(curr.x - target.x, curr.y - target.y) < Math.hypot(prev.x - target.x, prev.y - target.y) ? curr : prev);
+
+    path = findPath(startNode, endNode);
+});
+
+generateNavMesh();
+draw();
+</script>
+</body>
+</html>

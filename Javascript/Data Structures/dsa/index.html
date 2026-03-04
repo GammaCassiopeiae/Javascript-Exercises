@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Nexus // Data Structures</title>
+    <style>
+        :root {
+            --bg: #050505;
+            --neon-1: #00f3ff; /* Cyan */
+            --neon-2: #ff00ff; /* Magenta */
+            --glass: rgba(255, 255, 255, 0.05);
+            --font-main: 'Rajdhani', 'Segoe UI', sans-serif;
+            --font-code: 'Fira Code', monospace;
+        }
+        body {
+            background-color: var(--bg);
+            color: #fff;
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+        }
+        header {
+            padding: 2rem;
+            border-bottom: 1px solid var(--neon-1);
+            text-align: center;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        h1 {
+            color: var(--neon-1);
+            text-shadow: 0 0 10px var(--neon-1), 0 0 20px var(--neon-1);
+            margin: 0;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        main {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .card {
+            background: var(--glass);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--neon-2);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.2);
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--neon-1), var(--neon-2));
+            opacity: 0.5;
+        }
+        .card h2 {
+            margin-top: 0;
+            font-size: 1.25rem;
+            color: var(--neon-2);
+            font-family: var(--font-code);
+        }
+        .card p {
+            color: #aaa;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+        .btn {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: 1px solid var(--neon-1);
+            color: var(--neon-1);
+            text-decoration: none;
+            text-transform: uppercase;
+            font-weight: bold;
+            text-align: center;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .btn:hover {
+            background: var(--neon-1);
+            color: #000;
+            box-shadow: 0 0 15px var(--neon-1);
+        }
+        footer {
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #666;
+            font-size: 0.8rem;
+        }
+        .section-title {
+            grid-column: 1 / -1;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            color: #fff;
+            border-left: 4px solid var(--neon-1);
+            padding-left: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Neon Nexus // Algorithms</h1>
+</header>
+
+<main>
+    <div class="grid">
+        <h2 class="section-title">Self-Balancing BSTs</h2>
+        
+        <div class="card">
+            <h2>AVL Tree</h2>
+            <p>Strictly balanced binary search tree. Height difference ≤ 1.</p>
+            <a href="avl_tree.html" class="btn">Visualize</a>
+        </div>
+
+        <div class="card">
+            <h2>Red-Black Tree</h2>
+            <p>Self-balancing BST using color bits (Red/Black) to ensure balance.</p>
+            <a href="red_black_tree.html" class="btn">Visualize</a>
+        </div>
+
+        <div class="card">
+            <h2>Splay Tree</h2>
+            <p>Self-adjusting BST that moves accessed elements to the root.</p>
+            <a href="splay_tree.html" class="btn">Visualize</a>
+        </div>
+
+        <div class="card">
+            <h2>B-Tree</h2>
+            <p>Self-balancing tree data structure that maintains sorted data and allows searches, insertions, and deletions in logarithmic time.</p>
+            <a href="b_tree.html" class="btn">Visualize</a>
+        </div>
+
+        <h2 class="section-title">Advanced Data Structures</h2>
+
+        <div class="card">
+            <h2>Disjoint Set (Union-Find)</h2>
+            <p>Tracks a set of elements partitioned into disjoint subsets. Supports Union and Find.</p>
+            <a href="disjoint_set.html" class="btn">Visualize</a>
+        </div>
+
+        <div class="card">
+            <h2>Trie (Prefix Tree)</h2>
+            <p>Tree data structure used to store associative arrays where keys are strings.</p>
+            <a href="trie.html" class="btn">Visualize</a>
+        </div>
+        
+        <div class="card">
+            <h2>Suffix Tree</h2>
+            <p>Compressed trie containing all suffixes of a text. Powerful for string problems.</p>
+            <a href="suffix_tree.html" class="btn">Visualize</a>
+        </div>
+
+        <div class="card">
+            <h2>Segment Tree</h2>
+            <p>Tree used for storing information about intervals. Efficient range queries.</p>
+            <a href="segment_tree.html" class="btn">Visualize</a>
+        </div>
+        
+        <div class="card">
+            <h2>Fenwick Tree (BIT)</h2>
+            <p>Binary Indexed Tree. Efficient prefix sums and point updates.</p>
+            <a href="fenwick_tree.html" class="btn">Visualize</a>
+        </div>
+        
+        <div class="card">
+            <h2>Skip List</h2>
+            <p>Probabilistic data structure that allows O(log n) search within an ordered sequence.</p>
+            <a href="skip_list.html" class="btn">Visualize</a>
+        </div>
+
+    </div>
+</main>
+
+<footer>
+    &copy; 2026 Neon Nexus System. Adhering to the Neon-Grid Architect Manifesto.
+</footer>
+
+</body>
+</html>

@@ -1,16 +1,48 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Collision Detection: AABB, Circle, SAT</title>
     <style>
-        body { background: #0f172a; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; margin: 0; overflow: hidden; }
-        canvas { background: #1e293b; cursor: none; }
-        .ui { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.8); padding: 15px; border-radius: 8px; border: 1px solid #334155; pointer-events: none; }
-        .hit { color: #f43f5e; font-weight: bold; }
-        .safe { color: #10b981; }
+        body {
+            background: #0f172a;
+            color: white;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        canvas {
+            background: #1e293b;
+            cursor: none;
+        }
+
+        .ui {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            pointer-events: none;
+        }
+
+        .hit {
+            color: #f43f5e;
+            font-weight: bold;
+        }
+
+        .safe {
+            color: #10b981;
+        }
     </style>
 </head>
+
 <body>
     <div class="ui">
         <h3>Zaznavanje trkov</h3>
@@ -28,19 +60,39 @@
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        let mouse = { x: 0, y: 0 };
+        let mouse = {
+            x: 0,
+            y: 0
+        };
 
         // 1. AABB (Pravokotnik)
-        const box = { x: 100, y: 100, w: 100, h: 100 };
-        
+        const box = {
+            x: 100,
+            y: 100,
+            w: 100,
+            h: 100
+        };
+
         // 2. Krog
-        const circle = { x: 150, y: 350, r: 60 };
+        const circle = {
+            x: 150,
+            y: 350,
+            r: 60
+        };
 
         // 3. SAT (Mnogokotnik - trikotnik)
-        const triangle = [
-            { x: 400, y: 200 },
-            { x: 500, y: 350 },
-            { x: 300, y: 350 }
+        const triangle = [{
+                x: 400,
+                y: 200
+            },
+            {
+                x: 500,
+                y: 350
+            },
+            {
+                x: 300,
+                y: 350
+            }
         ];
 
         // --- ALGORITMI ---
@@ -116,4 +168,5 @@
         draw();
     </script>
 </body>
+
 </html>

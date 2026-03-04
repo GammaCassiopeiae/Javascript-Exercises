@@ -1,19 +1,24 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lime Full-Screen Grid</title>
     <style>
         /* Odstranimo robove in nastavimo polno višino */
-        * { box-sizing: border-box; }
-        
-        body, html {
+        * {
+            box-sizing: border-box;
+        }
+
+        body,
+        html {
             margin: 0;
             padding: 0;
             height: 100%;
             width: 100%;
-            overflow-x: hidden; /* Prepreči vodoravni drsnik */
+            overflow-x: hidden;
+            /* Prepreči vodoravni drsnik */
         }
 
         .grid-container {
@@ -24,7 +29,8 @@
             grid-auto-rows: minmax(150px, 1fr);
             min-height: 100vh;
             width: 100vw;
-            gap: 2px; /* Minimalen razmik za "full cover" izgled */
+            gap: 2px;
+            /* Minimalen razmik za "full cover" izgled */
             background-color: #000;
         }
 
@@ -54,7 +60,7 @@
         /* Stil za gumb-števec */
         .counter-btn {
             cursor: pointer;
-            border: 2px solid rgba(0,0,0,0.2);
+            border: 2px solid rgba(0, 0, 0, 0.2);
             background: white;
             min-width: 60px;
             font-size: 1.2rem;
@@ -68,10 +74,13 @@
 
         /* Prilagoditev za mobilne naprave (manj stolpcev) */
         @media (max-width: 768px) {
-            .grid-container { grid-template-columns: repeat(2, 1fr); }
+            .grid-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
     </style>
 </head>
+
 <body>
 
     <div class="grid-container" id="main-grid"></div>
@@ -83,7 +92,7 @@
         for (let i = 0; i < totalDivs; i++) {
             const parent = document.createElement('div');
             parent.className = 'parent-div';
-            
+
             // Gradient od svetle lime do zelo temne lime
             // Lightness gre od 90% (skoraj bela) do 10% (skoraj črna)
             const lightness = 90 - (i * (80 / (totalDivs - 1)));
@@ -98,7 +107,7 @@
             const child2 = document.createElement('button');
             child2.className = 'child-div counter-btn';
             child2.textContent = '0';
-            
+
             // DOM Event Listener za inkrement
             child2.addEventListener('click', function() {
                 this.textContent = parseInt(this.textContent) + 1;
@@ -110,5 +119,5 @@
         }
     </script>
 </body>
-</html>
 
+</html>

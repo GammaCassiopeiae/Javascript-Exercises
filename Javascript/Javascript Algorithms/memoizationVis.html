@@ -1,27 +1,93 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Memoizacija Vizualizacija</title>
     <style>
-        :root { --bg: #0f172a; --primary: #38bdf8; --memo: #22c55e; --text: #f1f5f9; }
-        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-        canvas { background: #1e293b; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .controls { margin-top: 20px; display: flex; gap: 10px; align-items: center; background: #334155; padding: 15px 25px; border-radius: 50px; }
-        input { background: #0f172a; border: 1px solid var(--primary); color: white; padding: 8px; border-radius: 5px; width: 50px; text-align: center; }
-        button { background: var(--primary); border: none; padding: 10px 20px; color: #0f172a; font-weight: bold; border-radius: 5px; cursor: pointer; transition: 0.2s; }
-        button:hover:not(:disabled) { transform: scale(1.05); background: #7dd3fc; }
-        button:disabled { background: #475569; cursor: not-allowed; }
-        #status { font-family: monospace; font-size: 1.1rem; color: var(--primary); margin-bottom: 10px; height: 1.5em; }
+        :root {
+            --bg: #0f172a;
+            --primary: #38bdf8;
+            --memo: #22c55e;
+            --text: #f1f5f9;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        canvas {
+            background: #1e293b;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            background: #334155;
+            padding: 15px 25px;
+            border-radius: 50px;
+        }
+
+        input {
+            background: #0f172a;
+            border: 1px solid var(--primary);
+            color: white;
+            padding: 8px;
+            border-radius: 5px;
+            width: 50px;
+            text-align: center;
+        }
+
+        button {
+            background: var(--primary);
+            border: none;
+            padding: 10px 20px;
+            color: #0f172a;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover:not(:disabled) {
+            transform: scale(1.05);
+            background: #7dd3fc;
+        }
+
+        button:disabled {
+            background: #475569;
+            cursor: not-allowed;
+        }
+
+        #status {
+            font-family: monospace;
+            font-size: 1.1rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+            height: 1.5em;
+        }
     </style>
 </head>
+
 <body>
 
     <h1>Memoizacija (Fibonacci)</h1>
     <div id="status">Vnesite n (max 15) za vizualizacijo rekurzije s spominom</div>
-    
+
     <canvas id="memoCanvas" width="800" height="300"></canvas>
-    
+
     <div class="controls">
         <label>n = </label>
         <input type="number" id="nInput" value="10" min="1" max="15">
@@ -58,9 +124,9 @@
         // Risanje "spominske tabele" na Canvas
         function draw(activeN = -1, hit = false) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
+
             const nLimit = parseInt(nInput.value);
-            
+
             // Izris celic za memoizacijo
             for (let i = 0; i <= nLimit; i++) {
                 const x = OFFSET_X + i * (CELL_SIZE + 5);
@@ -93,10 +159,10 @@
                     ctx.fillStyle = "white";
                     ctx.font = "bold 14px Arial";
                     ctx.textAlign = "center";
-                    ctx.fillText(memo[i], x + CELL_SIZE/2, y + CELL_SIZE/1.6);
+                    ctx.fillText(memo[i], x + CELL_SIZE / 2, y + CELL_SIZE / 1.6);
                 }
             }
-            
+
             ctx.textAlign = "left";
             ctx.fillStyle = "white";
             ctx.fillText(`Število klicev: ${callCount}`, OFFSET_X, 50);
@@ -107,7 +173,7 @@
         // Rekurzivna funkcija z memoizacijo in vizualizacijo
         async function fib(n) {
             callCount++;
-            
+
             // Preverjanje v "Cache-u" (Bistvo memoizacije)
             if (n in memo) {
                 statusEl.innerText = `Cache HIT: fib(${n}) že poznamo!`;
@@ -138,12 +204,12 @@
         async function run() {
             const targetN = parseInt(nInput.value);
             if (targetN > 15) return;
-            
+
             startBtn.disabled = true;
             resetBtn.disabled = true;
-            
+
             const result = await fib(targetN);
-            
+
             statusEl.innerText = `Končano! fib(${targetN}) = ${result}. Skupaj ${callCount} klicev.`;
             statusEl.style.color = "white";
             resetBtn.disabled = false;
@@ -155,4 +221,5 @@
         init();
     </script>
 </body>
+
 </html>

@@ -1,36 +1,136 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Vizualizacija: Union-Find (DSU)</title>
     <style>
-        :root { --primary: #00cec9; --accent: #6c5ce7; --bg: #f0f2f5; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 95%; max-width: 800px; text-align: center; }
-        
-        /* Prikaz vozlišč */
-        .nodes-grid { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin: 30px 0; }
-        .node {
-            width: 60px; height: 80px; border: 2px solid #dfe6e9; border-radius: 8px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background: white; transition: all 0.3s; position: relative;
+        :root {
+            --primary: #00cec9;
+            --accent: #6c5ce7;
+            --bg: #f0f2f5;
         }
-        .node-id { font-weight: bold; font-size: 1.2rem; color: #2d3436; }
-        .node-parent { font-size: 0.7rem; color: #b2bec3; margin-top: 5px; }
-        
-        .active { border-color: var(--accent); background: #f3f0ff; transform: translateY(-5px); }
-        .representative { border-color: var(--primary); background: #e0faf9; border-width: 3px; }
 
-        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: #f8f9fa; padding: 20px; border-radius: 8px; }
-        .control-group { display: flex; flex-direction: column; gap: 8px; }
-        input { padding: 10px; border: 1px solid #ddd; border-radius: 5px; text-align: center; }
-        button { padding: 10px; cursor: pointer; border: none; border-radius: 5px; font-weight: bold; color: white; transition: 0.2s; }
-        .btn-union { background: var(--accent); }
-        .btn-find { background: var(--primary); }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
 
-        #log { margin-top: 20px; padding: 15px; background: #2d3436; color: #dfe6e9; border-radius: 6px; font-family: monospace; font-size: 0.85rem; text-align: left; min-height: 50px; }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 95%;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        /* Prikaz vozlišč */
+        .nodes-grid {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+
+        .node {
+            width: 60px;
+            height: 80px;
+            border: 2px solid #dfe6e9;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .node-id {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #2d3436;
+        }
+
+        .node-parent {
+            font-size: 0.7rem;
+            color: #b2bec3;
+            margin-top: 5px;
+        }
+
+        .active {
+            border-color: var(--accent);
+            background: #f3f0ff;
+            transform: translateY(-5px);
+        }
+
+        .representative {
+            border-color: var(--primary);
+            background: #e0faf9;
+            border-width: 3px;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        button {
+            padding: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            color: white;
+            transition: 0.2s;
+        }
+
+        .btn-union {
+            background: var(--accent);
+        }
+
+        .btn-find {
+            background: var(--primary);
+        }
+
+        #log {
+            margin-top: 20px;
+            padding: 15px;
+            background: #2d3436;
+            color: #dfe6e9;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            text-align: left;
+            min-height: 50px;
+        }
     </style>
 </head>
+
 <body>
 
     <div class="container">
@@ -62,8 +162,12 @@
 
     <script>
         const N = 8;
-        let parent = Array.from({length: N}, (_, i) => i);
-        let rank = Array.from({length: N}, () => 0);
+        let parent = Array.from({
+            length: N
+        }, (_, i) => i);
+        let rank = Array.from({
+            length: N
+        }, () => 0);
 
         function find(i) {
             if (parent[i] === i) return i;
@@ -128,17 +232,17 @@
 
             document.querySelectorAll('.node').forEach(n => n.classList.remove('active'));
             const log = document.getElementById('log');
-            
+
             let curr = a;
             let path = [];
-            while(true) {
+            while (true) {
                 path.push(curr);
                 document.getElementById(`node-${curr}`).classList.add('active');
                 if (parent[curr] === curr) break;
                 curr = parent[curr];
                 await new Promise(r => setTimeout(r, 400));
             }
-            
+
             // Sprožimo dejanski find s path compression za naslednji render
             const root = find(a);
             log.innerText = `FIND(${a}): Pot = ${path.join(' -> ')}. Predstavnik je ${root}.`;
@@ -148,4 +252,5 @@
         render();
     </script>
 </body>
+
 </html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Stack (Sklad) Vizualizacija</title>
@@ -10,8 +11,16 @@
             --danger: #ff7675;
             --bg: #f0f2f5;
         }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
         .stack-container {
             width: 200px;
             height: 400px;
@@ -23,7 +32,7 @@
             align-items: center;
             padding: 10px;
             background: white;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             overflow: hidden;
         }
 
@@ -41,7 +50,7 @@
             font-size: 1.1rem;
             animation: pushAnim 0.4s ease-out;
             transition: all 0.3s;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .stack-element.popping {
@@ -49,25 +58,77 @@
         }
 
         @keyframes pushAnim {
-            from { transform: translateY(-500px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateY(-500px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         @keyframes popAnim {
-            to { transform: translateY(-500px); opacity: 0; }
+            to {
+                transform: translateY(-500px);
+                opacity: 0;
+            }
         }
 
-        .controls { margin-top: 30px; display: flex; gap: 10px; align-items: center; }
-        input { padding: 10px; border: 2px solid #ddd; border-radius: 8px; width: 60px; text-align: center; font-size: 1rem; }
-        button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 8px; font-weight: bold; color: white; transition: 0.2s; }
-        .btn-push { background: var(--primary); }
-        .btn-pop { background: var(--danger); }
-        button:hover { opacity: 0.8; transform: translateY(-2px); }
-        button:disabled { background: #b2bec3; cursor: not-allowed; }
+        .controls {
+            margin-top: 30px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
 
-        #status { margin-top: 15px; font-weight: bold; color: #2d3436; height: 1.5em; }
+        input {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            width: 60px;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            color: white;
+            transition: 0.2s;
+        }
+
+        .btn-push {
+            background: var(--primary);
+        }
+
+        .btn-pop {
+            background: var(--danger);
+        }
+
+        button:hover {
+            opacity: 0.8;
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            background: #b2bec3;
+            cursor: not-allowed;
+        }
+
+        #status {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #2d3436;
+            height: 1.5em;
+        }
     </style>
 </head>
+
 <body>
 
     <h1>Vizualizacija Sklada (Stack)</h1>
@@ -97,7 +158,7 @@
 
             const val = inputField.value;
             stackData.push(val);
-            
+
             const element = document.createElement('div');
             element.className = 'stack-element';
             element.innerText = val;
@@ -105,7 +166,7 @@
 
             statusText.innerText = `Vstavljeno: ${val}`;
             statusText.style.color = "#2d3436";
-            
+
             // Priprava za naslednji vnos
             inputField.value = Math.floor(Math.random() * 90) + 10;
         }
@@ -119,7 +180,7 @@
 
             const elements = document.getElementsByClassName('stack-element');
             const topElement = elements[elements.length - 1];
-            
+
             topElement.classList.add('popping');
             const removedVal = stackData.pop();
             statusText.innerText = `Odstranjeno: ${removedVal}`;
@@ -132,4 +193,5 @@
         }
     </script>
 </body>
+
 </html>

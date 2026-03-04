@@ -1,24 +1,94 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>LCS Algoritem (Dinamično programiranje)</title>
     <style>
-        body { background: #0f172a; color: #f8fafc; font-family: 'Fira Code', monospace; display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        .card { background: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #334155; width: 100%; max-width: 600px; }
-        .inputs { display: flex; gap: 10px; margin-bottom: 20px; }
-        input { background: #0f172a; border: 1px solid #334155; color: #38bdf8; padding: 10px; border-radius: 4px; flex: 1; font-size: 1rem; }
-        button { background: #38bdf8; color: #0f172a; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        
-        table { border-collapse: collapse; margin-top: 20px; width: 100%; font-size: 0.8rem; }
-        td, th { border: 1px solid #334155; width: 30px; height: 30px; text-align: center; }
-        th { background: #0f172a; color: #94a3b8; }
-        .match { background: #064e3b; color: #34d399; font-weight: bold; }
-        
-        .result-box { margin-top: 20px; padding: 15px; background: #1e293b; border-left: 4px solid #38bdf8; }
-        b { color: #fbbf24; }
+        body {
+            background: #0f172a;
+            color: #f8fafc;
+            font-family: 'Fira Code', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .card {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #334155;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .inputs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            background: #0f172a;
+            border: 1px solid #334155;
+            color: #38bdf8;
+            padding: 10px;
+            border-radius: 4px;
+            flex: 1;
+            font-size: 1rem;
+        }
+
+        button {
+            background: #38bdf8;
+            color: #0f172a;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        table {
+            border-collapse: collapse;
+            margin-top: 20px;
+            width: 100%;
+            font-size: 0.8rem;
+        }
+
+        td,
+        th {
+            border: 1px solid #334155;
+            width: 30px;
+            height: 30px;
+            text-align: center;
+        }
+
+        th {
+            background: #0f172a;
+            color: #94a3b8;
+        }
+
+        .match {
+            background: #064e3b;
+            color: #34d399;
+            font-weight: bold;
+        }
+
+        .result-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: #1e293b;
+            border-left: 4px solid #38bdf8;
+        }
+
+        b {
+            color: #fbbf24;
+        }
     </style>
 </head>
+
 <body>
 
     <div class="card">
@@ -42,7 +112,9 @@
 
             // 1. Ustvarjanje DP tabele (m+1 x n+1)
             // dp[i][j] hrani dolžino LCS za s1[0...i-1] in s2[0...j-1]
-            let dp = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
+            let dp = Array.from({
+                length: m + 1
+            }, () => Array(n + 1).fill(0));
 
             // 2. Polnjenje tabele (Dinamično programiranje)
             for (let i = 1; i <= m; i++) {
@@ -59,14 +131,16 @@
 
             // 3. Rekonstrukcija niza (Backtracking skozi tabelo)
             let lcsStr = "";
-            let i = m, j = n;
+            let i = m,
+                j = n;
             const matchCoords = [];
 
             while (i > 0 && j > 0) {
                 if (s1[i - 1] === s2[j - 1]) {
                     lcsStr = s1[i - 1] + lcsStr;
                     matchCoords.push(`${i}-${j}`);
-                    i--; j--;
+                    i--;
+                    j--;
                 } else if (dp[i - 1][j] > dp[i][j - 1]) {
                     i--;
                 } else {
@@ -75,7 +149,7 @@
             }
 
             // 4. Izpis rezultatov
-            document.getElementById('result').innerHTML = 
+            document.getElementById('result').innerHTML =
                 `Dolžina: <b>${dp[m][n]}</b><br>` +
                 `Podzaporedje: <b style="color: #34d399;">${lcsStr || "Ni ujemanj"}</b>`;
 
@@ -100,4 +174,5 @@
         }
     </script>
 </body>
+
 </html>

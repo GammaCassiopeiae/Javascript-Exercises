@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,11 +30,21 @@
             background: white;
             padding: 2rem;
             border-radius: 1rem;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
         }
 
-        h1 { text-align: center; color: var(--primary); margin-bottom: 0.5rem; }
-        .subtitle { text-align: center; color: #64748b; margin-bottom: 2rem; font-size: 0.9rem; }
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
 
         .controls {
             display: flex;
@@ -61,7 +72,9 @@
             transition: background 0.2s;
         }
 
-        button:hover { background: var(--secondary); }
+        button:hover {
+            background: var(--secondary);
+        }
 
         .section-title {
             font-weight: bold;
@@ -107,97 +120,104 @@
             color: var(--secondary);
         }
 
-        .fraction span:first-child { border-bottom: 2px solid var(--text); padding: 0 4px; }
-        
-        .highlight { color: var(--accent); }
+        .fraction span:first-child {
+            border-bottom: 2px solid var(--text);
+            padding: 0 4px;
+        }
+
+        .highlight {
+            color: var(--accent);
+        }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <h1>Stern-Brocotovo Zaporedje</h1>
-    <p class="subtitle">Izračun zaporedja s(n) in pripadajočih racionalnih števil s(n)/s(n+1)</p>
+    <div class="container">
+        <h1>Stern-Brocotovo Zaporedje</h1>
+        <p class="subtitle">Izračun zaporedja s(n) in pripadajočih racionalnih števil s(n)/s(n+1)</p>
 
-    <div class="controls">
-        <label for="limit">Število členov:</label>
-        <input type="number" id="limit" value="32" min="2" max="500">
-        <button onclick="render()">Generiraj</button>
+        <div class="controls">
+            <label for="limit">Število členov:</label>
+            <input type="number" id="limit" value="32" min="2" max="500">
+            <button onclick="render()">Generiraj</button>
+        </div>
+
+        <div class="section-title">Celoštevilsko zaporedje s(n):</div>
+        <div id="sequenceOutput" class="sequence-container"></div>
+
+        <div class="section-title">Generirani ulomki (racionalna števila):</div>
+        <div id="fractionOutput" class="fraction-container"></div>
     </div>
 
-    <div class="section-title">Celoštevilsko zaporedje s(n):</div>
-    <div id="sequenceOutput" class="sequence-container"></div>
+    <script>
+        /**
+         * Generira Sternovo zaporedje do n-tega člena
+         * Časovna zahtevnost: O(n)
+         */
+        function generateSternSequence(n) {
+            const s = new Array(n + 1);
+            s[0] = 0;
+            s[1] = 1;
 
-    <div class="section-title">Generirani ulomki (racionalna števila):</div>
-    <div id="fractionOutput" class="fraction-container"></div>
-</div>
-
-<script>
-    /**
-     * Generira Sternovo zaporedje do n-tega člena
-     * Časovna zahtevnost: O(n)
-     */
-    function generateSternSequence(n) {
-        const s = new Array(n + 1);
-        s[0] = 0;
-        s[1] = 1;
-
-        for (let i = 2; i <= n; i++) {
-            if (i % 2 === 0) {
-                // s(2n) = s(n)
-                s[i] = s[Math.floor(i / 2)];
-            } else {
-                // s(2n + 1) = s(n) + s(n + 1)
-                let half = Math.floor(i / 2);
-                s[i] = s[half] + s[half + 1];
+            for (let i = 2; i <= n; i++) {
+                if (i % 2 === 0) {
+                    // s(2n) = s(n)
+                    s[i] = s[Math.floor(i / 2)];
+                } else {
+                    // s(2n + 1) = s(n) + s(n + 1)
+                    let half = Math.floor(i / 2);
+                    s[i] = s[half] + s[half + 1];
+                }
             }
+            return s;
         }
-        return s;
-    }
 
-    function render() {
-        const n = parseInt(document.getElementById('limit').value);
-        const seqOut = document.getElementById('sequenceOutput');
-        const fracOut = document.getElementById('fractionOutput');
+        function render() {
+            const n = parseInt(document.getElementById('limit').value);
+            const seqOut = document.getElementById('sequenceOutput');
+            const fracOut = document.getElementById('fractionOutput');
 
-        // Čiščenje prejšnjih rezultatov
-        seqOut.innerHTML = '';
-        fracOut.innerHTML = '';
+            // Čiščenje prejšnjih rezultatov
+            seqOut.innerHTML = '';
+            fracOut.innerHTML = '';
 
-        const s = generateSternSequence(n);
+            const s = generateSternSequence(n);
 
-        // Izris zaporedja števil
-        s.forEach((val, i) => {
-            if (i === 0) return; // Običajno začnemo prikaz z 1
-            const div = document.createElement('div');
-            div.className = 'num-box';
-            div.innerText = val;
-            seqOut.appendChild(div);
-        });
+            // Izris zaporedja števil
+            s.forEach((val, i) => {
+                if (i === 0) return; // Običajno začnemo prikaz z 1
+                const div = document.createElement('div');
+                div.className = 'num-box';
+                div.innerText = val;
+                seqOut.appendChild(div);
+            });
 
-        // Izris racionalnih števil (s(i) / s(i+1))
-        // Ta zaporedna razmerja pokrijejo vsa pozitivna racionalna števila
-        for (let i = 1; i < s.length - 1; i++) {
-            const fracDiv = document.createElement('div');
-            fracDiv.className = 'fraction';
-            fracDiv.innerHTML = `
+            // Izris racionalnih števil (s(i) / s(i+1))
+            // Ta zaporedna razmerja pokrijejo vsa pozitivna racionalna števila
+            for (let i = 1; i < s.length - 1; i++) {
+                const fracDiv = document.createElement('div');
+                fracDiv.className = 'fraction';
+                fracDiv.innerHTML = `
                 <span>${s[i]}</span>
                 <span>${s[i+1]}</span>
             `;
-            fracOut.appendChild(fracDiv);
-            
-            // Dodaj vejico med ulomki
-            if (i < s.length - 2) {
-                const separator = document.createElement('span');
-                separator.innerText = ', ';
-                separator.style.alignSelf = 'center';
-                fracOut.appendChild(separator);
+                fracOut.appendChild(fracDiv);
+
+                // Dodaj vejico med ulomki
+                if (i < s.length - 2) {
+                    const separator = document.createElement('span');
+                    separator.innerText = ', ';
+                    separator.style.alignSelf = 'center';
+                    fracOut.appendChild(separator);
+                }
             }
         }
-    }
 
-    // Začetni izris
-    render();
-</script>
+        // Začetni izris
+        render();
+    </script>
 
 </body>
+
 </html>

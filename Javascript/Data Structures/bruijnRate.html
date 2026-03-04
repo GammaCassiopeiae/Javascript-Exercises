@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,12 +27,16 @@
             background: white;
             padding: 2rem;
             border-radius: 1rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
             width: 100%;
             max-width: 700px;
         }
 
-        h1 { color: var(--primary); margin-top: 0; text-align: center; }
+        h1 {
+            color: var(--primary);
+            margin-top: 0;
+            text-align: center;
+        }
 
         .description {
             font-size: 0.9rem;
@@ -68,7 +73,9 @@
             transition: background 0.2s;
         }
 
-        button:hover { background: #0e7490; }
+        button:hover {
+            background: #0e7490;
+        }
 
         .grid {
             display: grid;
@@ -110,59 +117,61 @@
         }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <h1>Moser-de Bruijn Zaporedje</h1>
-    
-    <div class="description">
-        To zaporedje ($S_n$) vključuje števila, ki so vsote različnih potenc števila 4. 
-        Zanimivost: $S_n$ dobimo tako, da vzamemo binarni zapis števila $n$ in ga preberemo, kot da je v osnovi 4.
+    <div class="container">
+        <h1>Moser-de Bruijn Zaporedje</h1>
+
+        <div class="description">
+            To zaporedje ($S_n$) vključuje števila, ki so vsote različnih potenc števila 4.
+            Zanimivost: $S_n$ dobimo tako, da vzamemo binarni zapis števila $n$ in ga preberemo, kot da je v osnovi 4.
+        </div>
+
+        <div class="controls">
+            <input type="number" id="countInput" value="12" min="1" max="100">
+            <button onclick="generateSequence()">Generiraj člene</button>
+        </div>
+
+        <div id="resultGrid" class="grid"></div>
     </div>
 
-    <div class="controls">
-        <input type="number" id="countInput" value="12" min="1" max="100">
-        <button onclick="generateSequence()">Generiraj člene</button>
-    </div>
+    <script>
+        /**
+         * Izračuna n-ti člen Moser-de Bruijnovega zaporedja.
+         * Metoda: Pretvori n v binarno obliko in interpretira bite kot potence 4.
+         */
+        function getMoserDeBruijn(n) {
+            let binaryStr = n.toString(2); // n v binarnem (baza 2)
+            return parseInt(binaryStr, 4); // rezultat interpretiran v bazi 4
+        }
 
-    <div id="resultGrid" class="grid"></div>
-</div>
+        function generateSequence() {
+            const count = parseInt(document.getElementById('countInput').value);
+            const grid = document.getElementById('resultGrid');
+            grid.innerHTML = '';
 
-<script>
-    /**
-     * Izračuna n-ti člen Moser-de Bruijnovega zaporedja.
-     * Metoda: Pretvori n v binarno obliko in interpretira bite kot potence 4.
-     */
-    function getMoserDeBruijn(n) {
-        let binaryStr = n.toString(2); // n v binarnem (baza 2)
-        return parseInt(binaryStr, 4); // rezultat interpretiran v bazi 4
-    }
+            if (isNaN(count) || count < 1) return;
 
-    function generateSequence() {
-        const count = parseInt(document.getElementById('countInput').value);
-        const grid = document.getElementById('resultGrid');
-        grid.innerHTML = '';
+            for (let i = 0; i < count; i++) {
+                const value = getMoserDeBruijn(i);
+                const binary = i.toString(2);
 
-        if (isNaN(count) || count < 1) return;
-
-        for (let i = 0; i < count; i++) {
-            const value = getMoserDeBruijn(i);
-            const binary = i.toString(2);
-            
-            const card = document.createElement('div');
-            card.className = 'item';
-            card.innerHTML = `
+                const card = document.createElement('div');
+                card.className = 'item';
+                card.innerHTML = `
                 <span class="index">n = ${i}</span>
                 <span class="val">${value}</span>
                 <div class="binary-info">Bin: ${binary}</div>
             `;
-            grid.appendChild(card);
+                grid.appendChild(card);
+            }
         }
-    }
 
-    // Začetni zagon
-    generateSequence();
-</script>
+        // Začetni zagon
+        generateSequence();
+    </script>
 
 </body>
+
 </html>

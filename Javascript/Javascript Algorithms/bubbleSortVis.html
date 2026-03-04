@@ -1,21 +1,52 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Vizualizacija Bubble Sort</title>
     <style>
-        body { background: #1a1a1a; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; }
-        canvas { background: #000; border: 2px solid #444; border-radius: 8px; margin-top: 20px; }
-        .controls { margin-top: 20px; gap: 10px; display: flex; }
-        button { padding: 10px 20px; cursor: pointer; background: #007bff; border: none; color: white; border-radius: 4px; }
-        button:disabled { background: #444; }
+        body {
+            background: #1a1a1a;
+            color: white;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        canvas {
+            background: #000;
+            border: 2px solid #444;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .controls {
+            margin-top: 20px;
+            gap: 10px;
+            display: flex;
+        }
+
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+            background: #007bff;
+            border: none;
+            color: white;
+            border-radius: 4px;
+        }
+
+        button:disabled {
+            background: #444;
+        }
     </style>
 </head>
+
 <body>
 
     <h1>Bubble Sort Vizualizacija</h1>
     <canvas id="sortCanvas" width="800" height="400"></canvas>
-    
+
     <div class="controls">
         <button id="resetBtn">Ponastavi polje</button>
         <button id="sortBtn">Začni razvrščanje</button>
@@ -33,7 +64,9 @@
 
         // Generiranje naključnih števil
         function initArray() {
-            array = Array.from({ length: ARRAY_SIZE }, () => Math.floor(Math.random() * (canvas.height - 20)) + 10);
+            array = Array.from({
+                length: ARRAY_SIZE
+            }, () => Math.floor(Math.random() * (canvas.height - 20)) + 10);
             drawArray();
             sortBtn.disabled = false;
         }
@@ -60,7 +93,7 @@
                 for (let j = 0; j < n - i - 1; j++) {
                     // Vizualizacija trenutne primerjave
                     drawArray([j, j + 1]);
-                    await sleep(10); 
+                    await sleep(10);
 
                     if (array[j] > array[j + 1]) {
                         // Zamenjava elementov
@@ -69,7 +102,7 @@
                     }
                 }
             }
-            
+
             drawArray(); // Končni prikaz
             resetBtn.disabled = false;
         }
@@ -82,4 +115,5 @@
         initArray();
     </script>
 </body>
+
 </html>

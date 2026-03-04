@@ -1,17 +1,55 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Bubble Sort Vizualizacija</title>
     <style>
-        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; background: #f0f2f5; }
-        .container { display: flex; align-items: flex-end; height: 300px; gap: 4px; margin: 20px; padding: 10px; border-bottom: 2px solid #333; }
-        .bar { width: 30px; background-color: #3498db; transition: height 0.2s, background-color 0.2s; }
-        .bar.active { background-color: #e74c3c; } /* Trenutna primerjava */
-        .bar.sorted { background-color: #2ecc71; } /* Urejeno */
-        button { padding: 10px 20px; cursor: pointer; background: #2c3e50; color: white; border: none; border-radius: 4px; }
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #f0f2f5;
+        }
+
+        .container {
+            display: flex;
+            align-items: flex-end;
+            height: 300px;
+            gap: 4px;
+            margin: 20px;
+            padding: 10px;
+            border-bottom: 2px solid #333;
+        }
+
+        .bar {
+            width: 30px;
+            background-color: #3498db;
+            transition: height 0.2s, background-color 0.2s;
+        }
+
+        .bar.active {
+            background-color: #e74c3c;
+        }
+
+        /* Trenutna primerjava */
+        .bar.sorted {
+            background-color: #2ecc71;
+        }
+
+        /* Urejeno */
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
     </style>
 </head>
+
 <body>
 
     <h1>Bubble Sort Vizualizacija</h1>
@@ -73,4 +111,5 @@
         createBars();
     </script>
 </body>
+
 </html>

@@ -1,32 +1,122 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Vizualizacija: Bloom Filter</title>
     <style>
-        :root { --bit-off: #dfe6e9; --bit-on: #6c5ce7; --highlight: #fd79a8; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f9f9fb; display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 95%; max-width: 800px; text-align: center; }
-        
-        .bit-array { display: flex; justify-content: center; gap: 4px; margin: 30px 0; flex-wrap: wrap; }
-        .bit { 
-            width: 35px; height: 45px; border: 1px solid #b2bec3; border-radius: 4px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background: var(--bit-off); transition: all 0.3s; font-size: 0.8rem; font-weight: bold;
+        :root {
+            --bit-off: #dfe6e9;
+            --bit-on: #6c5ce7;
+            --highlight: #fd79a8;
         }
-        .bit.on { background: var(--bit-on); color: white; border-color: #4834d4; }
-        .bit.checking { background: var(--highlight); color: white; transform: scale(1.1); z-index: 5; }
-        .bit-idx { font-size: 0.6rem; color: #636e72; margin-top: 2px; }
 
-        .controls { display: flex; gap: 10px; justify-content: center; background: #f1f2f6; padding: 20px; border-radius: 8px; }
-        input { padding: 10px; border: 1px solid #ddd; border-radius: 6px; width: 180px; }
-        button { padding: 10px 15px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; color: white; background: #2d3436; }
-        .btn-check { background: var(--highlight); }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f9f9fb;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
 
-        #status { margin-top: 20px; font-weight: 500; min-height: 1.5em; }
-        .hash-info { font-size: 0.8rem; color: #636e72; margin-top: 10px; font-family: monospace; }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 95%;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        .bit-array {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .bit {
+            width: 35px;
+            height: 45px;
+            border: 1px solid #b2bec3;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: var(--bit-off);
+            transition: all 0.3s;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .bit.on {
+            background: var(--bit-on);
+            color: white;
+            border-color: #4834d4;
+        }
+
+        .bit.checking {
+            background: var(--highlight);
+            color: white;
+            transform: scale(1.1);
+            z-index: 5;
+        }
+
+        .bit-idx {
+            font-size: 0.6rem;
+            color: #636e72;
+            margin-top: 2px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            background: #f1f2f6;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            width: 180px;
+        }
+
+        button {
+            padding: 10px 15px;
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            color: white;
+            background: #2d3436;
+        }
+
+        .btn-check {
+            background: var(--highlight);
+        }
+
+        #status {
+            margin-top: 20px;
+            font-weight: 500;
+            min-height: 1.5em;
+        }
+
+        .hash-info {
+            font-size: 0.8rem;
+            color: #636e72;
+            margin-top: 10px;
+            font-family: monospace;
+        }
     </style>
 </head>
+
 <body>
 
     <div class="container">
@@ -81,7 +171,7 @@
 
             const h1 = hash1(val);
             const h2 = hash2(val);
-            
+
             bits[h1] = true;
             bits[h2] = true;
 
@@ -97,13 +187,13 @@
 
             const h1 = hash1(val);
             const h2 = hash2(val);
-            
+
             render([h1, h2]);
             await new Promise(r => setTimeout(r, 600));
 
             const maybeIn = bits[h1] && bits[h2];
             const status = document.getElementById('status');
-            
+
             if (maybeIn) {
                 status.innerHTML = `<span style="color: #e67e22;">Morda je v filtru!</span> (Oba bita sta 1)`;
             } else {
@@ -115,4 +205,5 @@
         render();
     </script>
 </body>
+
 </html>

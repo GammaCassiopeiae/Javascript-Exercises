@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,7 +28,7 @@
             background-color: var(--card);
             padding: 2rem;
             border-radius: 1rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
             text-align: center;
             width: 100%;
             max-width: 800px;
@@ -80,11 +81,12 @@
         }
     </style>
 </head>
+
 <body>
 
     <div class="container">
         <h1>Fibonaccijev Vizualizator</h1>
-        
+
         <div class="controls">
             <label for="count">Število elementov:</label>
             <input type="number" id="count" value="10" min="2" max="25">
@@ -124,7 +126,7 @@
             const n = parseInt(countInput.value);
             const sequence = getFibonacciSequence(n);
             const maxVal = sequence[sequence.length - 1];
-            
+
             // Posodobitev besedila
             statsArea.innerText = `Zaporedje: ${sequence.join(', ')}`;
 
@@ -135,11 +137,11 @@
             const barGap = 10;
             const availableWidth = canvas.width - (padding * 2);
             const barWidth = (availableWidth / n) - barGap;
-            
+
             sequence.forEach((val, i) => {
                 // Izračun višine stolpca (normalizirano na višino canvasa)
                 const barHeight = maxVal === 0 ? 0 : (val / maxVal) * (canvas.height - padding * 2);
-                
+
                 const x = padding + i * (barWidth + barGap);
                 const y = canvas.height - padding - barHeight;
 
@@ -181,4 +183,5 @@
         drawGraph();
     </script>
 </body>
+
 </html>

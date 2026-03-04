@@ -1,28 +1,94 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Knapsack DP Vizualizacija</title>
     <style>
-        :root { --bg: #0f172a; --primary: #38bdf8; --accent: #f472b6; --cell: #1e293b; --text: #f1f5f9; }
-        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-        canvas { background: #111827; border: 2px solid #334155; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .controls { margin-top: 20px; display: flex; gap: 15px; align-items: center; background: #1e293b; padding: 15px 25px; border-radius: 12px; border: 1px solid #334155; }
-        button { background: var(--primary); border: none; padding: 10px 20px; color: #0f172a; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.2s; }
-        button:hover:not(:disabled) { background: #7dd3fc; transform: translateY(-2px); }
-        button:disabled { background: #475569; cursor: not-allowed; }
-        #status { font-family: monospace; font-size: 1.1rem; color: var(--accent); margin-bottom: 10px; height: 1.5em; text-align: center; }
-        .info-box { margin-bottom: 15px; font-size: 0.9rem; color: #94a3b8; }
+        :root {
+            --bg: #0f172a;
+            --primary: #38bdf8;
+            --accent: #f472b6;
+            --cell: #1e293b;
+            --text: #f1f5f9;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        canvas {
+            background: #111827;
+            border: 2px solid #334155;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            background: #1e293b;
+            padding: 15px 25px;
+            border-radius: 12px;
+            border: 1px solid #334155;
+        }
+
+        button {
+            background: var(--primary);
+            border: none;
+            padding: 10px 20px;
+            color: #0f172a;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover:not(:disabled) {
+            background: #7dd3fc;
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            background: #475569;
+            cursor: not-allowed;
+        }
+
+        #status {
+            font-family: monospace;
+            font-size: 1.1rem;
+            color: var(--accent);
+            margin-bottom: 10px;
+            height: 1.5em;
+            text-align: center;
+        }
+
+        .info-box {
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
     </style>
 </head>
+
 <body>
 
     <h1>0/1 Knapsack DP Vizualizacija</h1>
     <div class="info-box">Predmeti (Teža, Vrednost): [2, 3], [3, 4], [4, 5], [5, 8] | Kapaciteta: 7</div>
     <div id="status">Pripravljen za gradnjo DP tabele...</div>
-    
+
     <canvas id="knapsackCanvas" width="800" height="450"></canvas>
-    
+
     <div class="controls">
         <button id="startBtn">Začni reševanje</button>
         <button id="resetBtn" style="background: #475569; color: white;">Ponastavi</button>
@@ -40,28 +106,43 @@
         const resetBtn = document.getElementById('resetBtn');
 
         // Podatki o predmetih (teža, vrednost)
-        const items = [
-            { w: 2, v: 3 },
-            { w: 3, v: 4 },
-            { w: 4, v: 5 },
-            { w: 5, v: 8 }
+        const items = [{
+                w: 2,
+                v: 3
+            },
+            {
+                w: 3,
+                v: 4
+            },
+            {
+                w: 4,
+                v: 5
+            },
+            {
+                w: 5,
+                v: 8
+            }
         ];
         const capacity = 7;
         const n = items.length;
 
         // DP Tabela (n+1 vrstic x capacity+1 stolpcev)
-        let dp = Array.from({ length: n + 1 }, () => new Array(capacity + 1).fill(null));
-        
+        let dp = Array.from({
+            length: n + 1
+        }, () => new Array(capacity + 1).fill(null));
+
         const CELL_SIZE = 60;
         const OFFSET_X = 120;
         const OFFSET_Y = 80;
 
         function init() {
-            dp = Array.from({ length: n + 1 }, () => new Array(capacity + 1).fill(null));
+            dp = Array.from({
+                length: n + 1
+            }, () => new Array(capacity + 1).fill(null));
             // Prva vrstica in stolpec sta 0
-            for(let i=0; i<=n; i++) dp[i][0] = 0;
-            for(let j=0; j<=capacity; j++) dp[0][j] = 0;
-            
+            for (let i = 0; i <= n; i++) dp[i][0] = 0;
+            for (let j = 0; j <= capacity; j++) dp[0][j] = 0;
+
             draw();
             startBtn.disabled = false;
             statusEl.innerText = "DP tabela inicializirana z ničlami.";
@@ -70,23 +151,23 @@
 
         function draw(currI = -1, currJ = -1, compareI = -1, compareJ = -1) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
+
             // Naslovi stolpcev (Kapaciteta)
             ctx.fillStyle = "#94a3b8";
             ctx.font = "14px Arial";
-            for(let j=0; j<=capacity; j++) {
+            for (let j = 0; j <= capacity; j++) {
                 ctx.fillText(`W:${j}`, OFFSET_X + j * CELL_SIZE + 20, OFFSET_Y - 10);
             }
 
             // Naslovi vrstic (Predmeti)
-            for(let i=0; i<=n; i++) {
+            for (let i = 0; i <= n; i++) {
                 ctx.fillStyle = "#94a3b8";
                 const label = i === 0 ? "Nič" : `P${i}(w:${items[i-1].w},v:${items[i-1].v})`;
                 ctx.textAlign = "right";
                 ctx.fillText(label, OFFSET_X - 10, OFFSET_Y + i * CELL_SIZE + 35);
                 ctx.textAlign = "left";
 
-                for(let j=0; j<=capacity; j++) {
+                for (let j = 0; j <= capacity; j++) {
                     const x = OFFSET_X + j * CELL_SIZE;
                     const y = OFFSET_Y + i * CELL_SIZE;
 
@@ -94,7 +175,7 @@
                     ctx.fillStyle = "var(--cell)";
                     if (i === currI && j === currJ) ctx.fillStyle = "var(--accent)";
                     else if (i === compareI && j === compareJ) ctx.fillStyle = "#334155";
-                    
+
                     ctx.fillRect(x, y, CELL_SIZE - 2, CELL_SIZE - 2);
 
                     // Vrednost v celici
@@ -102,7 +183,7 @@
                         ctx.fillStyle = "white";
                         ctx.font = "bold 18px Arial";
                         ctx.textAlign = "center";
-                        ctx.fillText(dp[i][j], x + CELL_SIZE/2, y + CELL_SIZE/1.7);
+                        ctx.fillText(dp[i][j], x + CELL_SIZE / 2, y + CELL_SIZE / 1.7);
                     }
                 }
             }
@@ -115,8 +196,8 @@
             resetBtn.disabled = true;
 
             for (let i = 1; i <= n; i++) {
-                const itemW = items[i-1].w;
-                const itemV = items[i-1].v;
+                const itemW = items[i - 1].w;
+                const itemV = items[i - 1].v;
 
                 for (let j = 1; j <= capacity; j++) {
                     statusEl.innerText = `Preverjam predmet ${i} pri kapaciteti ${j}...`;
@@ -126,18 +207,18 @@
                     if (itemW <= j) {
                         // Možnost 1: Vzamemo predmet (vrednost + ostanek zgoraj levo)
                         // Možnost 2: Ne vzamemo (vrednost neposredno zgoraj)
-                        const take = itemV + dp[i-1][j - itemW];
-                        const skip = dp[i-1][j];
-                        
+                        const take = itemV + dp[i - 1][j - itemW];
+                        const skip = dp[i - 1][j];
+
                         statusEl.innerText = `Primerjam: Vzeti (${take}) vs Izpustiti (${skip})`;
-                        draw(i, j, i-1, j-itemW); // Poudari prejšnje stanje, če vzamemo
+                        draw(i, j, i - 1, j - itemW); // Poudari prejšnje stanje, če vzamemo
                         await sleep(600);
-                        
+
                         dp[i][j] = Math.max(take, skip);
                     } else {
                         statusEl.innerText = `Predmet ${i} je pretežak (${itemW} > ${j}). Preskakujem.`;
-                        dp[i][j] = dp[i-1][j];
-                        draw(i, j, i-1, j);
+                        dp[i][j] = dp[i - 1][j];
+                        draw(i, j, i - 1, j);
                         await sleep(400);
                     }
                     draw(i, j);
@@ -155,4 +236,5 @@
         init();
     </script>
 </body>
+
 </html>

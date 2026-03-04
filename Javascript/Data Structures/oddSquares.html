@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,12 +28,16 @@
             background: var(--card);
             padding: 2rem;
             border-radius: 1rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 600px;
         }
 
-        h1 { color: var(--primary-dark); font-size: 1.5rem; text-align: center; }
+        h1 {
+            color: var(--primary-dark);
+            font-size: 1.5rem;
+            text-align: center;
+        }
 
         .formula {
             background: #fef3c7;
@@ -60,7 +65,9 @@
             outline: none;
         }
 
-        input:focus { border-color: var(--primary); }
+        input:focus {
+            border-color: var(--primary);
+        }
 
         button {
             background: var(--primary);
@@ -73,7 +80,9 @@
             transition: background 0.2s;
         }
 
-        button:hover { background: var(--primary-dark); }
+        button:hover {
+            background: var(--primary-dark);
+        }
 
         .results {
             display: none;
@@ -112,82 +121,91 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <h1>Vsota $1^2 + 3^2 + 5^2 + \dots$</h1>
-    
-    <div class="formula">
-        $S_n = \sum_{i=1}^{n} (2i-1)^2$
+    <div class="container">
+        <h1>Vsota $1^2 + 3^2 + 5^2 + \dots$</h1>
+
+        <div class="formula">
+            $S_n = \sum_{i=1}^{n} (2i-1)^2$
+        </div>
+
+        <div class="input-group">
+            <input type="number" id="nInput" value="5" min="1" max="1000" placeholder="Število členov (n)">
+            <button onclick="calculateOddSquares()">Izračunaj</button>
+        </div>
+
+        <div id="results" class="results">
+            <span class="label">Potek seštevanja:</span>
+            <div id="stepList" class="step-list"></div>
+
+            <span class="label">Končna vsota:</span>
+            <div id="finalSum" class="total-display"></div>
+        </div>
     </div>
 
-    <div class="input-group">
-        <input type="number" id="nInput" value="5" min="1" max="1000" placeholder="Število členov (n)">
-        <button onclick="calculateOddSquares()">Izračunaj</button>
-    </div>
+    <script>
+        /**
+         * Izračuna vsoto kvadratov prvih n lihih števil.
+         * Uporablja BigInt za preprečevanje izgube natančnosti pri velikih n.
+         */
+        function calculateOddSquares() {
+            const nInput = document.getElementById('nInput');
+            const n = parseInt(nInput.value);
+            const resultsDiv = document.getElementById('results');
+            const stepList = document.getElementById('stepList');
+            const finalSum = document.getElementById('finalSum');
 
-    <div id="results" class="results">
-        <span class="label">Potek seštevanja:</span>
-        <div id="stepList" class="step-list"></div>
-        
-        <span class="label">Končna vsota:</span>
-        <div id="finalSum" class="total-display"></div>
-    </div>
-</div>
-
-<script>
-    /**
-     * Izračuna vsoto kvadratov prvih n lihih števil.
-     * Uporablja BigInt za preprečevanje izgube natančnosti pri velikih n.
-     */
-    function calculateOddSquares() {
-        const nInput = document.getElementById('nInput');
-        const n = parseInt(nInput.value);
-        const resultsDiv = document.getElementById('results');
-        const stepList = document.getElementById('stepList');
-        const finalSum = document.getElementById('finalSum');
-
-        if (isNaN(n) || n < 1) {
-            alert("Prosim vnesite veljavno število n (vsaj 1).");
-            return;
-        }
-
-        let currentSum = BigInt(0);
-        let stepsHTML = "";
-
-        for (let i = 1; i <= n; i++) {
-            // Liho število: 2i - 1
-            let oddNum = BigInt(2 * i - 1);
-            let square = oddNum * oddNum;
-            currentSum += square;
-
-            // Priprava izpisa korakov (omejimo na prvih 100 za hitrost DOM-a)
-            if (i <= 100) {
-                stepsHTML += `n=${i}: ${oddNum}² = ${square} (Vsota: ${currentSum})<br>`;
+            if (isNaN(n) || n < 1) {
+                alert("Prosim vnesite veljavno število n (vsaj 1).");
+                return;
             }
+
+            let currentSum = BigInt(0);
+            let stepsHTML = "";
+
+            for (let i = 1; i <= n; i++) {
+                // Liho število: 2i - 1
+                let oddNum = BigInt(2 * i - 1);
+                let square = oddNum * oddNum;
+                currentSum += square;
+
+                // Priprava izpisa korakov (omejimo na prvih 100 za hitrost DOM-a)
+                if (i <= 100) {
+                    stepsHTML += `n=${i}: ${oddNum}² = ${square} (Vsota: ${currentSum})<br>`;
+                }
+            }
+
+            if (n > 100) {
+                stepsHTML += `... [prikazanih le prvih 100 členov] ...`;
+            }
+
+            // DOM posodobitev
+            resultsDiv.style.display = 'block';
+            stepList.innerHTML = stepsHTML;
+            finalSum.innerText = currentSum.toString();
+
+            // Pomik na dno seznama korakov
+            stepList.scrollTop = 0;
         }
 
-        if (n > 100) {
-            stepsHTML += `... [prikazanih le prvih 100 členov] ...`;
-        }
-
-        // DOM posodobitev
-        resultsDiv.style.display = 'block';
-        stepList.innerHTML = stepsHTML;
-        finalSum.innerText = currentSum.toString();
-        
-        // Pomik na dno seznama korakov
-        stepList.scrollTop = 0;
-    }
-
-    // Izračun ob prvem nalaganju
-    window.onload = calculateOddSquares;
-</script>
+        // Izračun ob prvem nalaganju
+        window.onload = calculateOddSquares;
+    </script>
 
 </body>
+
 </html>

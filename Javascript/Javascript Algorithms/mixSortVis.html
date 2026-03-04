@@ -1,25 +1,78 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Mix Sort Vizualizacija</title>
     <style>
-        :root { --accent: #f0db4f; --bg: #111; }
-        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-        canvas { background: #222; border: 3px solid #333; border-radius: 8px; box-shadow: 0 15px 35px rgba(0,0,0,0.8); }
-        .controls { margin-top: 20px; display: flex; gap: 15px; }
-        button { background: var(--accent); border: none; color: #000; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-weight: bold; text-transform: uppercase; transition: 0.2s; }
-        button:hover { background: #ffd700; transform: scale(1.05); }
-        button:disabled { background: #444; color: #888; cursor: not-allowed; transform: none; }
-        .info { margin-bottom: 10px; font-family: monospace; color: var(--accent); }
+        :root {
+            --accent: #f0db4f;
+            --bg: #111;
+        }
+
+        body {
+            background: var(--bg);
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        canvas {
+            background: #222;
+            border: 3px solid #333;
+            border-radius: 8px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8);
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+        }
+
+        button {
+            background: var(--accent);
+            border: none;
+            color: #000;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: #ffd700;
+            transform: scale(1.05);
+        }
+
+        button:disabled {
+            background: #444;
+            color: #888;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .info {
+            margin-bottom: 10px;
+            font-family: monospace;
+            color: var(--accent);
+        }
     </style>
 </head>
+
 <body>
 
     <h1>Mix Sort (Cocktail Shaker)</h1>
     <div class="info" id="status">Pripravljen</div>
     <canvas id="canvas" width="800" height="400"></canvas>
-    
+
     <div class="controls">
         <button id="resetBtn">Ponastavi</button>
         <button id="sortBtn">Zaženi Mix Sort</button>
@@ -38,7 +91,9 @@
 
         // Ustvari naključno polje prek DOM API
         function init() {
-            array = Array.from({ length: COUNT }, () => Math.floor(Math.random() * (canvas.height - 50)) + 20);
+            array = Array.from({
+                length: COUNT
+            }, () => Math.floor(Math.random() * (canvas.height - 50)) + 20);
             draw();
             sortBtn.disabled = false;
             statusEl.innerText = "Status: Čakam na ukaz";
@@ -109,4 +164,5 @@
         init();
     </script>
 </body>
+
 </html>

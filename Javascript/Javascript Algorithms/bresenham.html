@@ -1,15 +1,39 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Bresenham's Line Algorithm</title>
     <style>
-        body { background: #111; color: #eee; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; }
-        canvas { border: 2px solid #444; background: #000; cursor: crosshair; image-rendering: pixelated; }
-        .ui { margin: 20px; text-align: center; }
-        .code-note { color: #888; font-size: 0.9em; max-width: 600px; }
+        body {
+            background: #111;
+            color: #eee;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        canvas {
+            border: 2px solid #444;
+            background: #000;
+            cursor: crosshair;
+            image-rendering: pixelated;
+        }
+
+        .ui {
+            margin: 20px;
+            text-align: center;
+        }
+
+        .code-note {
+            color: #888;
+            font-size: 0.9em;
+            max-width: 600px;
+        }
     </style>
 </head>
+
 <body>
     <h1>Bresenhamov algoritem</h1>
     <div class="ui">
@@ -23,7 +47,10 @@
         const ctx = canvas.getContext('2d');
         const pixelSize = 10; // Povečamo piksle za boljšo vidnost
         let isDrawing = false;
-        let startPos = { x: 0, y: 0 };
+        let startPos = {
+            x: 0,
+            y: 0
+        };
 
         function drawPixel(x, y, color = "#00ffcc") {
             ctx.fillStyle = color;
@@ -73,13 +100,19 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             // Narišemo mrežo za referenco
             ctx.strokeStyle = "#222";
-            for(let i=0; i<canvas.width; i+=pixelSize) {
-                ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i, canvas.height); ctx.stroke();
+            for (let i = 0; i < canvas.width; i += pixelSize) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, canvas.height);
+                ctx.stroke();
             }
-            for(let j=0; j<canvas.height; j+=pixelSize) {
-                ctx.beginPath(); ctx.moveTo(0,j); ctx.lineTo(canvas.width, j); ctx.stroke();
+            for (let j = 0; j < canvas.height; j += pixelSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, j);
+                ctx.lineTo(canvas.width, j);
+                ctx.stroke();
             }
-            
+
             const currentPos = getMousePos(e);
             drawBresenhamLine(startPos.x, startPos.y, currentPos.x, currentPos.y);
         };
@@ -87,4 +120,5 @@
         window.onmouseup = () => isDrawing = false;
     </script>
 </body>
+
 </html>

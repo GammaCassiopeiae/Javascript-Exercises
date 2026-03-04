@@ -1,28 +1,108 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Vizualizacija: Suffix Array</title>
     <style>
-        :root { --primary: #6c5ce7; --highlight: #fd79a8; --bg: #f9f9fb; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 95%; max-width: 700px; text-align: center; }
-        
-        table { width: 100%; border-collapse: collapse; margin: 25px 0; background: white; font-size: 0.9rem; }
-        th, td { padding: 12px; border: 1px solid #dfe6e9; text-align: left; }
-        th { background: #f1f2f6; color: #2d3436; }
-        
-        .suffix-text { font-family: monospace; font-size: 1.1rem; }
-        .match { background: var(--highlight); color: white; border-radius: 2px; }
-        .index-col { width: 60px; font-weight: bold; color: var(--primary); text-align: center; }
+        :root {
+            --primary: #6c5ce7;
+            --highlight: #fd79a8;
+            --bg: #f9f9fb;
+        }
 
-        .controls { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
-        input { padding: 10px; border: 2px solid #ddd; border-radius: 6px; flex-grow: 1; min-width: 150px; }
-        button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; color: white; background: var(--primary); }
-        
-        .search-box { background: #f1f2f6; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 95%;
+            max-width: 700px;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: white;
+            font-size: 0.9rem;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border: 1px solid #dfe6e9;
+            text-align: left;
+        }
+
+        th {
+            background: #f1f2f6;
+            color: #2d3436;
+        }
+
+        .suffix-text {
+            font-family: monospace;
+            font-size: 1.1rem;
+        }
+
+        .match {
+            background: var(--highlight);
+            color: white;
+            border-radius: 2px;
+        }
+
+        .index-col {
+            width: 60px;
+            font-weight: bold;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        input {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            flex-grow: 1;
+            min-width: 150px;
+        }
+
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            color: white;
+            background: var(--primary);
+        }
+
+        .search-box {
+            background: #f1f2f6;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
+
 <body>
 
     <div class="container">
@@ -65,7 +145,7 @@
 
             // Ključni korak: Sortiranje pripon po abecedi (Leksikografsko)
             suffixArray.sort((a, b) => a.suffix.localeCompare(b.suffix));
-            
+
             render();
             searchPattern();
         }
@@ -98,7 +178,7 @@
         function searchPattern() {
             const pattern = document.getElementById('patternInput').value.toUpperCase();
             const status = document.getElementById('status');
-            
+
             // Ponastavi barve
             document.querySelectorAll('.suffix-text').forEach((td, i) => {
                 td.innerHTML = suffixArray[i].suffix;
@@ -122,13 +202,14 @@
                 }
             });
 
-            status.innerText = foundCount > 0 
-                ? `Najdenih ${foundCount} pojavitev vzorca.` 
-                : "Vzorec ni bil najden.";
+            status.innerText = foundCount > 0 ?
+                `Najdenih ${foundCount} pojavitev vzorca.` :
+                "Vzorec ni bil najden.";
         }
 
         // Začetni izris
         buildArray();
     </script>
 </body>
+
 </html>

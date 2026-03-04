@@ -1,23 +1,68 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Insertion Sort Vizualizacija</title>
     <style>
-        :root { --main: #6366f1; --highlight: #f43f5e; --sorted: #10b981; --bg: #0f172a; }
-        body { background: var(--bg); color: white; font-family: system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-        canvas { background: #1e293b; border-radius: 8px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); }
-        .controls { margin-top: 25px; display: flex; gap: 15px; }
-        button { background: var(--main); border: none; color: white; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: opacity 0.2s; }
-        button:hover { opacity: 0.9; }
-        button:disabled { background: #475569; cursor: not-allowed; }
+        :root {
+            --main: #6366f1;
+            --highlight: #f43f5e;
+            --sorted: #10b981;
+            --bg: #0f172a;
+        }
+
+        body {
+            background: var(--bg);
+            color: white;
+            font-family: system-ui, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        canvas {
+            background: #1e293b;
+            border-radius: 8px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        .controls {
+            margin-top: 25px;
+            display: flex;
+            gap: 15px;
+        }
+
+        button {
+            background: var(--main);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        button:disabled {
+            background: #475569;
+            cursor: not-allowed;
+        }
     </style>
 </head>
+
 <body>
 
     <h1>Insertion Sort</h1>
     <canvas id="sortCanvas" width="800" height="400"></canvas>
-    
+
     <div class="controls">
         <button id="shuffleBtn">Premešaj</button>
         <button id="sortBtn">Uredi</button>
@@ -36,7 +81,9 @@
 
         // Inicializacija naključnih podatkov
         function init() {
-            array = Array.from({ length: COUNT }, () => Math.floor(Math.random() * (canvas.height - 50)) + 20);
+            array = Array.from({
+                length: COUNT
+            }, () => Math.floor(Math.random() * (canvas.height - 50)) + 20);
             draw();
             sortBtn.disabled = false;
         }
@@ -44,12 +91,12 @@
         // Risanje polja na Canvas
         function draw(activeIdx = -1, compareIdx = -1, sortedUpTo = -1) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
+
             array.forEach((val, i) => {
                 ctx.fillStyle = i <= sortedUpTo ? "#10b981" : "#475569"; // Urejeno vs neurejeno
-                if (i === activeIdx) ctx.fillStyle = "#f43f5e";        // Element, ki ga premikamo
-                if (i === compareIdx) ctx.fillStyle = "#fbbf24";       // Element, s katerim primerjamo
-                
+                if (i === activeIdx) ctx.fillStyle = "#f43f5e"; // Element, ki ga premikamo
+                if (i === compareIdx) ctx.fillStyle = "#fbbf24"; // Element, s katerim primerjamo
+
                 ctx.fillRect(i * BAR_WIDTH, canvas.height - val, BAR_WIDTH - GAP, val);
             });
         }
@@ -72,12 +119,12 @@
                 while (j >= 0 && array[j] > key) {
                     array[j + 1] = array[j];
                     j = j - 1;
-                    
+
                     draw(j + 1, j, i); // Vizualizacija premikanja elementov v desno
                     await sleep(30);
                 }
                 array[j + 1] = key;
-                
+
                 draw(j + 1, -1, i);
                 await sleep(50);
             }
@@ -93,4 +140,5 @@
         init();
     </script>
 </body>
+
 </html>

@@ -1,35 +1,107 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Vizualizacija: B-Tree (Red 3)</title>
     <style>
-        :root { --node-bg: #34495e; --key-bg: #ecf0f1; --line: #bdc3c7; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 95%; max-width: 1000px; text-align: center; }
-        
-        #treeCanvas { position: relative; width: 100%; min-height: 450px; margin-top: 40px; }
-        
+        :root {
+            --node-bg: #34495e;
+            --key-bg: #ecf0f1;
+            --line: #bdc3c7;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f4f7f6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 95%;
+            max-width: 1000px;
+            text-align: center;
+        }
+
+        #treeCanvas {
+            position: relative;
+            width: 100%;
+            min-height: 450px;
+            margin-top: 40px;
+        }
+
         .b-node {
-            position: absolute; display: flex; background: var(--node-bg);
-            border: 2px solid #2c3e50; border-radius: 6px; overflow: hidden;
-            z-index: 2; transition: all 0.5s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            position: absolute;
+            display: flex;
+            background: var(--node-bg);
+            border: 2px solid #2c3e50;
+            border-radius: 6px;
+            overflow: hidden;
+            z-index: 2;
+            transition: all 0.5s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
-        
+
         .key {
-            padding: 8px 12px; background: var(--key-bg); color: #2c3e50;
-            font-weight: bold; border-right: 1px solid #bdc3c7; min-width: 25px;
+            padding: 8px 12px;
+            background: var(--key-bg);
+            color: #2c3e50;
+            font-weight: bold;
+            border-right: 1px solid #bdc3c7;
+            min-width: 25px;
         }
-        .key:last-child { border-right: none; }
 
-        .line { position: absolute; background: var(--line); height: 2px; transform-origin: 0 0; z-index: 1; transition: all 0.5s ease; }
+        .key:last-child {
+            border-right: none;
+        }
 
-        .controls { margin: 20px 0; display: flex; gap: 10px; justify-content: center; }
-        input { padding: 10px; border: 2px solid #ddd; border-radius: 6px; width: 80px; }
-        button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; color: white; background: #27ae60; }
-        #status { font-size: 0.9rem; color: #7f8c8d; }
+        .line {
+            position: absolute;
+            background: var(--line);
+            height: 2px;
+            transform-origin: 0 0;
+            z-index: 1;
+            transition: all 0.5s ease;
+        }
+
+        .controls {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        input {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            width: 80px;
+        }
+
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            color: white;
+            background: #27ae60;
+        }
+
+        #status {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
     </style>
 </head>
+
 <body>
 
     <div class="container">
@@ -64,7 +136,7 @@
             let newNode = new BTreeNode(fullChild.isLeaf);
             // Vzamemo srednji element
             let midKey = fullChild.keys[T - 1];
-            
+
             // Premaknemo ključe v novo vozlišče
             newNode.keys = fullChild.keys.splice(T, T - 1);
             if (!fullChild.isLeaf) {
@@ -120,7 +192,7 @@
                 kDiv.innerText = k;
                 div.appendChild(kDiv);
             });
-            
+
             canvas.appendChild(div);
             const nodeWidth = div.offsetWidth;
             div.style.left = `${x - nodeWidth / 2}px`;
@@ -139,8 +211,8 @@
         }
 
         function drawLine(x1, y1, x2, y2) {
-            const len = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
-            const ang = Math.atan2(y2-y1, x2-x1) * 180 / Math.PI;
+            const len = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+            const ang = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
             const line = document.createElement('div');
             line.className = 'line';
             line.style.width = `${len}px`;
@@ -163,9 +235,13 @@
             draw(root, canvas.offsetWidth / 2, 20, canvas.offsetWidth * 0.8);
         }
 
-        function reset() { root = new BTreeNode(); render(); }
+        function reset() {
+            root = new BTreeNode();
+            render();
+        }
         window.onresize = render;
         render();
     </script>
 </body>
+
 </html>

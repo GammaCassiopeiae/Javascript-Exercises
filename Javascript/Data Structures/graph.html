@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Graf Traversal Vizualizacija</title>
@@ -12,42 +13,116 @@
             --visited: #10b981;
             --accent: #3b82f6;
         }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #f1f5f9; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
-        
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: #f1f5f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+
         .graph-container {
-            position: relative; width: 600px; height: 400px;
-            background: #111827; border: 2px solid #334155; border-radius: 16px;
-            margin: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+            width: 600px;
+            height: 400px;
+            background: #111827;
+            border: 2px solid #334155;
+            border-radius: 16px;
+            margin: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
         .node {
-            position: absolute; width: 45px; height: 45px;
-            background: var(--node); border: 3px solid var(--edge);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-weight: bold; z-index: 10; transition: all 0.4s ease;
+            position: absolute;
+            width: 45px;
+            height: 45px;
+            background: var(--node);
+            border: 3px solid var(--edge);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            z-index: 10;
+            transition: all 0.4s ease;
         }
-        .node.visiting { background: var(--visiting); border-color: white; transform: scale(1.2); box-shadow: 0 0 20px var(--visiting); }
-        .node.visited { background: var(--visited); border-color: #ecfdf5; }
+
+        .node.visiting {
+            background: var(--visiting);
+            border-color: white;
+            transform: scale(1.2);
+            box-shadow: 0 0 20px var(--visiting);
+        }
+
+        .node.visited {
+            background: var(--visited);
+            border-color: #ecfdf5;
+        }
 
         .edge {
-            position: absolute; background: var(--edge); height: 2px;
-            transform-origin: left center; z-index: 1; transition: background 0.3s;
+            position: absolute;
+            background: var(--edge);
+            height: 2px;
+            transform-origin: left center;
+            z-index: 1;
+            transition: background 0.3s;
         }
-        .edge.active { background: var(--accent); height: 4px; z-index: 2; }
 
-        .controls { display: flex; gap: 10px; background: #1e293b; padding: 15px 25px; border-radius: 12px; }
-        button { 
-            padding: 10px 20px; cursor: pointer; border: none; border-radius: 8px; 
-            font-weight: bold; color: white; transition: 0.2s;
+        .edge.active {
+            background: var(--accent);
+            height: 4px;
+            z-index: 2;
         }
-        .btn-bfs { background: #3b82f6; }
-        .btn-dfs { background: #8b5cf6; }
-        button:hover:not(:disabled) { opacity: 0.8; transform: translateY(-2px); }
-        button:disabled { background: #475569; cursor: not-allowed; }
 
-        #log { margin-top: 15px; color: #94a3b8; font-family: monospace; height: 1.5em; }
+        .controls {
+            display: flex;
+            gap: 10px;
+            background: #1e293b;
+            padding: 15px 25px;
+            border-radius: 12px;
+        }
+
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            color: white;
+            transition: 0.2s;
+        }
+
+        .btn-bfs {
+            background: #3b82f6;
+        }
+
+        .btn-dfs {
+            background: #8b5cf6;
+        }
+
+        button:hover:not(:disabled) {
+            opacity: 0.8;
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            background: #475569;
+            cursor: not-allowed;
+        }
+
+        #log {
+            margin-top: 15px;
+            color: #94a3b8;
+            font-family: monospace;
+            height: 1.5em;
+        }
     </style>
 </head>
+
 <body>
 
     <h1>Prehajanje Grafov (BFS & DFS)</h1>
@@ -67,13 +142,41 @@
 
         // Podatki o grafu (Adjacency List)
         const graph = {
-            'A': { x: 100, y: 200, neighbors: ['B', 'C', 'D'] },
-            'B': { x: 300, y: 100, neighbors: ['A', 'E', 'F'] },
-            'C': { x: 300, y: 200, neighbors: ['A', 'G'] },
-            'D': { x: 300, y: 300, neighbors: ['A', 'G'] },
-            'E': { x: 500, y: 70,  neighbors: ['B'] },
-            'F': { x: 500, y: 150, neighbors: ['B'] },
-            'G': { x: 500, y: 250, neighbors: ['C', 'D'] }
+            'A': {
+                x: 100,
+                y: 200,
+                neighbors: ['B', 'C', 'D']
+            },
+            'B': {
+                x: 300,
+                y: 100,
+                neighbors: ['A', 'E', 'F']
+            },
+            'C': {
+                x: 300,
+                y: 200,
+                neighbors: ['A', 'G']
+            },
+            'D': {
+                x: 300,
+                y: 300,
+                neighbors: ['A', 'G']
+            },
+            'E': {
+                x: 500,
+                y: 70,
+                neighbors: ['B']
+            },
+            'F': {
+                x: 500,
+                y: 150,
+                neighbors: ['B']
+            },
+            'G': {
+                x: 500,
+                y: 250,
+                neighbors: ['C', 'D']
+            }
         };
 
         const edgeElements = {};
@@ -107,10 +210,12 @@
         function drawEdge(u, v) {
             const edge = document.createElement('div');
             edge.className = 'edge';
-            const x1 = graph[u].x, y1 = graph[u].y;
-            const x2 = graph[v].x, y2 = graph[v].y;
-            const len = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
-            const angle = Math.atan2(y2-y1, x2-x1) * 180 / Math.PI;
+            const x1 = graph[u].x,
+                y1 = graph[u].y;
+            const x2 = graph[v].x,
+                y2 = graph[v].y;
+            const len = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+            const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
             edge.style.width = `${len}px`;
             edge.style.left = `${x1}px`;
             edge.style.top = `${y1}px`;
@@ -132,7 +237,7 @@
         async function runTraversal(type) {
             document.querySelectorAll('button').forEach(b => b.disabled = true);
             const visited = new Set();
-            
+
             if (type === 'BFS') {
                 let queue = ['A'];
                 visited.add('A');
@@ -174,4 +279,5 @@
         initGraph();
     </script>
 </body>
+
 </html>

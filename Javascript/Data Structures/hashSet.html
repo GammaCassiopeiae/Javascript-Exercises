@@ -1,39 +1,116 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Vizualizacija: Hash Set</title>
     <style>
-        :root { --primary: #00b894; --bg: #f8f9fa; --node: #55efc4; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        .container { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 95%; max-width: 600px; text-align: center; }
-        
-        .set-display { 
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; 
-            margin: 30px 0; padding: 20px; border: 2px dashed #dfe6e9; border-radius: 10px;
+        :root {
+            --primary: #00b894;
+            --bg: #f8f9fa;
+            --node: #55efc4;
         }
-        
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 95%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        .set-display {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 30px 0;
+            padding: 20px;
+            border: 2px dashed #dfe6e9;
+            border-radius: 10px;
+        }
+
         .bucket {
-            min-height: 80px; background: #fff; border: 1px solid #eee; border-radius: 8px;
-            display: flex; flex-direction: column; align-items: center; padding: 5px;
+            min-height: 80px;
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 5px;
         }
-        .bucket-label { font-size: 0.6rem; color: #b2bec3; margin-bottom: 5px; }
+
+        .bucket-label {
+            font-size: 0.6rem;
+            color: #b2bec3;
+            margin-bottom: 5px;
+        }
 
         .element {
-            background: var(--node); color: #006266; padding: 5px 10px; border-radius: 4px;
-            font-weight: bold; font-size: 0.9rem; margin: 2px;
+            background: var(--node);
+            color: #006266;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin: 2px;
             animation: bounceIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
 
-        @keyframes bounceIn { from { transform: scale(0); } to { transform: scale(1); } }
+        @keyframes bounceIn {
+            from {
+                transform: scale(0);
+            }
 
-        .controls { display: flex; gap: 10px; justify-content: center; margin-bottom: 10px; }
-        input { padding: 10px; border: 2px solid #eee; border-radius: 6px; width: 150px; }
-        button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; color: white; background: var(--primary); }
-        
-        #message { height: 1.2em; color: #636e72; font-size: 0.9rem; margin-top: 10px; }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        input {
+            padding: 10px;
+            border: 2px solid #eee;
+            border-radius: 6px;
+            width: 150px;
+        }
+
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            color: white;
+            background: var(--primary);
+        }
+
+        #message {
+            height: 1.2em;
+            color: #636e72;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
     </style>
 </head>
+
 <body>
 
     <div class="container">
@@ -84,9 +161,11 @@
 
         function render() {
             display.innerHTML = '';
-            
+
             // Ustvarimo vizualna vedra
-            const buckets = Array.from({ length: BUCKET_COUNT }, () => []);
+            const buckets = Array.from({
+                length: BUCKET_COUNT
+            }, () => []);
             mySet.forEach(val => {
                 buckets[getHash(val)].push(val);
             });
@@ -95,14 +174,14 @@
                 const bDiv = document.createElement('div');
                 bDiv.className = 'bucket';
                 bDiv.innerHTML = `<span class="bucket-label">Vedro ${i}</span>`;
-                
+
                 content.forEach(item => {
                     const el = document.createElement('div');
                     el.className = 'element';
                     el.innerText = item;
                     bDiv.appendChild(el);
                 });
-                
+
                 display.appendChild(bDiv);
             });
         }
@@ -110,4 +189,5 @@
         render();
     </script>
 </body>
+
 </html>

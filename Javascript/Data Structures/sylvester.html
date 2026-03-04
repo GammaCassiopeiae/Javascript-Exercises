@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,12 +26,15 @@
             background: var(--card);
             padding: 2rem;
             border-radius: 1rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
             width: 100%;
             max-width: 800px;
         }
 
-        h1 { color: var(--primary); margin-top: 0; }
+        h1 {
+            color: var(--primary);
+            margin-top: 0;
+        }
 
         .formula {
             background: #f3f4f6;
@@ -68,7 +72,9 @@
             transition: opacity 0.2s;
         }
 
-        button:hover { opacity: 0.9; }
+        button:hover {
+            opacity: 0.9;
+        }
 
         .table-container {
             overflow-x: auto;
@@ -80,13 +86,17 @@
             margin-top: 1rem;
         }
 
-        th, td {
+        th,
+        td {
             text-align: left;
             padding: 12px;
             border-bottom: 1px solid var(--border);
         }
 
-        th { background-color: #f9fafb; color: #4b5563; }
+        th {
+            background-color: #f9fafb;
+            color: #4b5563;
+        }
 
         .big-num {
             font-family: 'Courier New', monospace;
@@ -102,92 +112,94 @@
         }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <h1>Sylvestrovo Zaporedje</h1>
-    
-    <div class="formula">
-        a<sub>0</sub> = 2 <br>
-        a<sub>n</sub> = a<sub>n-1</sub><sup>2</sup> - a<sub>n-1</sub> + 1
+    <div class="container">
+        <h1>Sylvestrovo Zaporedje</h1>
+
+        <div class="formula">
+            a<sub>0</sub> = 2 <br>
+            a<sub>n</sub> = a<sub>n-1</sub><sup>2</sup> - a<sub>n-1</sub> + 1
+        </div>
+
+        <div class="controls">
+            <label for="steps">Število členov:</label>
+            <input type="number" id="steps" value="6" min="1" max="10">
+            <button onclick="generateSylvester()">Generiraj</button>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 50px;">n</th>
+                        <th>Vrednost a<sub>n</sub></th>
+                    </tr>
+                </thead>
+                <tbody id="resultBody"></tbody>
+            </table>
+        </div>
+
+        <p class="warning">
+            * Zaradi dvojno eksponentne rasti število števk hitro naraste. Pri n=10 ima število že več sto števk.
+        </p>
     </div>
 
-    <div class="controls">
-        <label for="steps">Število členov:</label>
-        <input type="number" id="steps" value="6" min="1" max="10">
-        <button onclick="generateSylvester()">Generiraj</button>
-    </div>
+    <script>
+        /**
+         * Izračuna Sylvestrovo zaporedje z uporabo BigInt podatkovne strukture.
+         * BigInt je nujen, saj vrednosti hitro presežejo Number.MAX_SAFE_INTEGER.
+         */
+        function calculateSylvester(n) {
+            let sequence = [];
+            if (n <= 0) return sequence;
 
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th style="width: 50px;">n</th>
-                    <th>Vrednost a<sub>n</sub></th>
-                </tr>
-            </thead>
-            <tbody id="resultBody"></tbody>
-        </table>
-    </div>
-
-    <p class="warning">
-        * Zaradi dvojno eksponentne rasti število števk hitro naraste. Pri n=10 ima število že več sto števk.
-    </p>
-</div>
-
-<script>
-    /**
-     * Izračuna Sylvestrovo zaporedje z uporabo BigInt podatkovne strukture.
-     * BigInt je nujen, saj vrednosti hitro presežejo Number.MAX_SAFE_INTEGER.
-     */
-    function calculateSylvester(n) {
-        let sequence = [];
-        if (n <= 0) return sequence;
-
-        let current = 2n; // a0 = 2
-        sequence.push(current);
-
-        for (let i = 1; i < n; i++) {
-            // Formula: a_n = a_{n-1}^2 - a_{n-1} + 1
-            current = (current * current) - current + 1n;
+            let current = 2n; // a0 = 2
             sequence.push(current);
-        }
-        return sequence;
-    }
 
-    function generateSylvester() {
-        const n = parseInt(document.getElementById('steps').value);
-        const tbody = document.getElementById('resultBody');
-        
-        // Omejitev za stabilnost brskalnika pri prikazu
-        if (isNaN(n) || n < 1) return;
-        if (n > 12) {
-            alert("Vrednosti nad n=12 so prevelike za učinkovit prikaz v brskalniku.");
-            return;
+            for (let i = 1; i < n; i++) {
+                // Formula: a_n = a_{n-1}^2 - a_{n-1} + 1
+                current = (current * current) - current + 1n;
+                sequence.push(current);
+            }
+            return sequence;
         }
 
-        const sequence = calculateSylvester(n);
-        tbody.innerHTML = '';
+        function generateSylvester() {
+            const n = parseInt(document.getElementById('steps').value);
+            const tbody = document.getElementById('resultBody');
 
-        sequence.forEach((val, index) => {
-            const row = document.createElement('tr');
-            
-            const cellIndex = document.createElement('td');
-            cellIndex.innerText = index;
-            
-            const cellVal = document.createElement('td');
-            cellVal.className = 'big-num';
-            cellVal.innerText = val.toString();
+            // Omejitev za stabilnost brskalnika pri prikazu
+            if (isNaN(n) || n < 1) return;
+            if (n > 12) {
+                alert("Vrednosti nad n=12 so prevelike za učinkovit prikaz v brskalniku.");
+                return;
+            }
 
-            row.appendChild(cellIndex);
-            row.appendChild(cellVal);
-            tbody.appendChild(row);
-        });
-    }
+            const sequence = calculateSylvester(n);
+            tbody.innerHTML = '';
 
-    // Začetni izračun
-    generateSylvester();
-</script>
+            sequence.forEach((val, index) => {
+                const row = document.createElement('tr');
+
+                const cellIndex = document.createElement('td');
+                cellIndex.innerText = index;
+
+                const cellVal = document.createElement('td');
+                cellVal.className = 'big-num';
+                cellVal.innerText = val.toString();
+
+                row.appendChild(cellIndex);
+                row.appendChild(cellVal);
+                tbody.appendChild(row);
+            });
+        }
+
+        // Začetni izračun
+        generateSylvester();
+    </script>
 
 </body>
+
 </html>

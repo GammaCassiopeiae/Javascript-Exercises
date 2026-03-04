@@ -1,15 +1,38 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>BSP Tree Visualizer</title>
     <style>
-        body { background: #111; color: #00ffcc; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; }
-        canvas { background: #000; border: 2px solid #333; cursor: crosshair; }
-        .info { margin: 20px; max-width: 600px; line-height: 1.5; color: #888; }
-        strong { color: #00ffcc; }
+        body {
+            background: #111;
+            color: #00ffcc;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        canvas {
+            background: #000;
+            border: 2px solid #333;
+            cursor: crosshair;
+        }
+
+        .info {
+            margin: 20px;
+            max-width: 600px;
+            line-height: 1.5;
+            color: #888;
+        }
+
+        strong {
+            color: #00ffcc;
+        }
     </style>
 </head>
+
 <body>
     <h1>BSP Tree (Binarna delitev prostora)</h1>
     <div class="info">
@@ -27,14 +50,14 @@
         class BSPNode {
             constructor(divider) {
                 this.divider = divider; // Črta, ki deli prostor
-                this.front = null;      // Prednja stran drevesa
-                this.back = null;       // Zadnja stran drevesa
+                this.front = null; // Prednja stran drevesa
+                this.back = null; // Zadnja stran drevesa
             }
         }
 
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
+
             // Izris obstoječih črt
             lines.forEach(l => {
                 ctx.strokeStyle = '#00ffcc';
@@ -43,7 +66,7 @@
                 ctx.moveTo(l.x1, l.y1);
                 ctx.lineTo(l.x2, l.y2);
                 ctx.stroke();
-                
+
                 // Označba smeri "naprej" (normala)
                 const midX = (l.x1 + l.x2) / 2;
                 const midY = (l.y1 + l.y2) / 2;
@@ -65,23 +88,40 @@
             }
         }
 
-        let currentMouse = { x: 0, y: 0 };
+        let currentMouse = {
+            x: 0,
+            y: 0
+        };
         canvas.onmousedown = (e) => {
             const rect = canvas.getBoundingClientRect();
-            startPos = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+            startPos = {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
         };
 
         canvas.onmousemove = (e) => {
             const rect = canvas.getBoundingClientRect();
-            currentMouse = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+            currentMouse = {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
             draw();
         };
 
         canvas.onmouseup = (e) => {
             const rect = canvas.getBoundingClientRect();
-            const endPos = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+            const endPos = {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
             if (Math.hypot(endPos.x - startPos.x, endPos.y - startPos.y) > 10) {
-                lines.push({ x1: startPos.x, y1: startPos.y, x2: endPos.x, y2: endPos.y });
+                lines.push({
+                    x1: startPos.x,
+                    y1: startPos.y,
+                    x2: endPos.x,
+                    y2: endPos.y
+                });
             }
             startPos = null;
             draw();
@@ -92,4 +132,5 @@
         // buildBSP(walls) { ... }
     </script>
 </body>
+
 </html>

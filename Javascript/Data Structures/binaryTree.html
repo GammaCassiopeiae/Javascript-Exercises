@@ -1,37 +1,99 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Vizualizacija: Dvojiško drevo</title>
     <style>
-        :root { --node-bg: #00cec9; --line-color: #636e72; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        .container { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 95%; max-width: 800px; text-align: center; }
-        
-        /* Grafični prikaz drevesa */
-        .tree-container { 
-            position: relative; width: 100%; min-height: 400px; margin-top: 50px;
-            display: flex; justify-content: center;
+        :root {
+            --node-bg: #00cec9;
+            --line-color: #636e72;
         }
-        
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f2f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 95%;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        /* Grafični prikaz drevesa */
+        .tree-container {
+            position: relative;
+            width: 100%;
+            min-height: 400px;
+            margin-top: 50px;
+            display: flex;
+            justify-content: center;
+        }
+
         .node {
-            width: 40px; height: 40px; background: var(--node-bg); color: white;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-weight: bold; position: absolute; z-index: 2; transition: all 0.5s ease;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 40px;
+            height: 40px;
+            background: var(--node-bg);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            position: absolute;
+            z-index: 2;
+            transition: all 0.5s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .line {
-            position: absolute; background: var(--line-color); height: 2px;
-            transform-origin: 0 0; z-index: 1; transition: all 0.5s ease;
+            position: absolute;
+            background: var(--line-color);
+            height: 2px;
+            transform-origin: 0 0;
+            z-index: 1;
+            transition: all 0.5s ease;
         }
 
-        .controls { margin-top: 30px; display: flex; gap: 10px; justify-content: center; }
-        input { padding: 10px; border: 2px solid #ddd; border-radius: 5px; width: 80px; }
-        button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 5px; font-weight: bold; color: white; background: #0984e3; }
-        button:hover { background: #074b83; }
+        .controls {
+            margin-top: 30px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        input {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            width: 80px;
+        }
+
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            color: white;
+            background: #0984e3;
+        }
+
+        button:hover {
+            background: #074b83;
+        }
     </style>
 </head>
+
 <body>
 
     <div class="container">
@@ -65,15 +127,19 @@
         // Logika za vstavljanje (Level-order insertion za preprosto dvojiško drevo)
         function insert(root, val) {
             if (!root) return new Node(val);
-            
+
             let queue = [root];
             while (queue.length > 0) {
                 let node = queue.shift();
-                if (!node.left) { node.left = new Node(val); break; }
-                else queue.push(node.left);
-                
-                if (!node.right) { node.right = new Node(val); break; }
-                else queue.push(node.right);
+                if (!node.left) {
+                    node.left = new Node(val);
+                    break;
+                } else queue.push(node.left);
+
+                if (!node.right) {
+                    node.right = new Node(val);
+                    break;
+                } else queue.push(node.right);
             }
             return root;
         }
@@ -128,9 +194,13 @@
             if (root) drawTree(root, canvas.offsetWidth / 2 - 20, 20, 0);
         }
 
-        function resetTree() { root = null; render(); }
+        function resetTree() {
+            root = null;
+            render();
+        }
 
         window.onresize = render;
     </script>
 </body>
+
 </html>

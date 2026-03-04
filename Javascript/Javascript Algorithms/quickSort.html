@@ -1,19 +1,64 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>QuickSort Vizualizacija</title>
     <style>
-        body { background: #0f172a; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding-top: 20px; }
-        .container { display: flex; align-items: flex-end; height: 300px; gap: 4px; margin: 40px; }
-        .bar { background: #38bdf8; width: 20px; transition: height 0.2s, background 0.2s; border-radius: 2px 2px 0 0; }
-        .pivot { background: #f43f5e !important; }
-        .compare { background: #fbbf24 !important; }
-        .sorted { background: #22c55e !important; }
-        button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; background: #38bdf8; color: #0f172a; }
-        .controls { display: flex; gap: 10px; }
+        body {
+            background: #0f172a;
+            color: white;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+        }
+
+        .container {
+            display: flex;
+            align-items: flex-end;
+            height: 300px;
+            gap: 4px;
+            margin: 40px;
+        }
+
+        .bar {
+            background: #38bdf8;
+            width: 20px;
+            transition: height 0.2s, background 0.2s;
+            border-radius: 2px 2px 0 0;
+        }
+
+        .pivot {
+            background: #f43f5e !important;
+        }
+
+        .compare {
+            background: #fbbf24 !important;
+        }
+
+        .sorted {
+            background: #22c55e !important;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            background: #38bdf8;
+            color: #0f172a;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+        }
     </style>
 </head>
+
 <body>
     <h1>QuickSort Algoritem</h1>
     <div class="controls">
@@ -29,7 +74,9 @@
         const container = document.getElementById('container');
 
         function resetArray() {
-            array = Array.from({length: count}, () => Math.floor(Math.random() * 250) + 10);
+            array = Array.from({
+                length: count
+            }, () => Math.floor(Math.random() * 250) + 10);
             render();
             document.getElementById('status').innerText = "Pripravljen.";
         }
@@ -91,4 +138,5 @@
         resetArray();
     </script>
 </body>
+
 </html>

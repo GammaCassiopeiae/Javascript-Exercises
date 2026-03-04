@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,13 +25,17 @@
             background: var(--card);
             padding: 2rem;
             border-radius: 1rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
             width: 100%;
             max-width: 600px;
         }
 
-        h1 { color: var(--primary); font-size: 1.5rem; margin-top: 0; }
-        
+        h1 {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-top: 0;
+        }
+
         .formula {
             background: #eff6ff;
             padding: 1rem;
@@ -64,7 +69,9 @@
             cursor: pointer;
         }
 
-        button:hover { background: #1d4ed8; }
+        button:hover {
+            background: #1d4ed8;
+        }
 
         .result-box {
             margin-top: 1rem;
@@ -93,70 +100,78 @@
             word-break: break-all;
         }
 
-        .label { font-size: 0.8rem; text-transform: uppercase; color: #94a3b8; display: block; margin-bottom: 5px; }
+        .label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: #94a3b8;
+            display: block;
+            margin-bottom: 5px;
+        }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <h1>Vsota zaporedja ponavljajočih števk</h1>
-    
-    <div class="formula">
-        S<sub>n</sub> = 2 + 22 + 222 + ... + 22...2 (n-krat)
+    <div class="container">
+        <h1>Vsota zaporedja ponavljajočih števk</h1>
+
+        <div class="formula">
+            S<sub>n</sub> = 2 + 22 + 222 + ... + 22...2 (n-krat)
+        </div>
+
+        <div class="input-group">
+            <input type="number" id="steps" value="5" min="1" max="500" placeholder="Število členov (n)">
+            <button onclick="calculateSum()">Izračunaj</button>
+        </div>
+
+        <div id="resultArea" class="result-box">
+            <span class="label">Členi zaporedja:</span>
+            <div id="terms" class="term-list"></div>
+
+            <span class="label">Skupna vsota (BigInt):</span>
+            <div id="totalSum" class="total"></div>
+        </div>
     </div>
 
-    <div class="input-group">
-        <input type="number" id="steps" value="5" min="1" max="500" placeholder="Število členov (n)">
-        <button onclick="calculateSum()">Izračunaj</button>
-    </div>
+    <script>
+        /**
+         * Izračuna vsoto zaporedja 2, 22, 222... do n-tega člena.
+         * Uporabljamo BigInt za obdelavo poljubno dolgih števil.
+         */
+        function calculateSum() {
+            const n = parseInt(document.getElementById('steps').value);
+            const resultArea = document.getElementById('resultArea');
+            const termsDiv = document.getElementById('terms');
+            const totalDiv = document.getElementById('totalSum');
 
-    <div id="resultArea" class="result-box">
-        <span class="label">Členi zaporedja:</span>
-        <div id="terms" class="term-list"></div>
-        
-        <span class="label">Skupna vsota (BigInt):</span>
-        <div id="totalSum" class="total"></div>
-    </div>
-</div>
+            if (isNaN(n) || n < 1) return;
 
-<script>
-    /**
-     * Izračuna vsoto zaporedja 2, 22, 222... do n-tega člena.
-     * Uporabljamo BigInt za obdelavo poljubno dolgih števil.
-     */
-    function calculateSum() {
-        const n = parseInt(document.getElementById('steps').value);
-        const resultArea = document.getElementById('resultArea');
-        const termsDiv = document.getElementById('terms');
-        const totalDiv = document.getElementById('totalSum');
+            let currentTerm = "";
+            let sum = BigInt(0);
+            let allTerms = [];
 
-        if (isNaN(n) || n < 1) return;
+            // Algoritem za generiranje členov in seštevanje
+            for (let i = 1; i <= n; i++) {
+                // Ustvarimo niz iz '2'-k i-krat
+                currentTerm = "2".repeat(i);
+                let termAsBigInt = BigInt(currentTerm);
 
-        let currentTerm = "";
-        let sum = BigInt(0);
-        let allTerms = [];
+                sum += termAsBigInt;
 
-        // Algoritem za generiranje členov in seštevanje
-        for (let i = 1; i <= n; i++) {
-            // Ustvarimo niz iz '2'-k i-krat
-            currentTerm = "2".repeat(i);
-            let termAsBigInt = BigInt(currentTerm);
-            
-            sum += termAsBigInt;
-            
-            // Shranimo za prikaz (omejimo prikaz na prvih 50 členov za hitrost DOM-a)
-            if (i <= 50) allTerms.push(currentTerm);
+                // Shranimo za prikaz (omejimo prikaz na prvih 50 členov za hitrost DOM-a)
+                if (i <= 50) allTerms.push(currentTerm);
+            }
+
+            // Prikaz v DOM
+            resultArea.style.display = 'block';
+            termsDiv.innerText = allTerms.join(" + ") + (n > 50 ? " ... + [zadnji člen]" : "");
+            totalDiv.innerText = sum.toString();
         }
 
-        // Prikaz v DOM
-        resultArea.style.display = 'block';
-        termsDiv.innerText = allTerms.join(" + ") + (n > 50 ? " ... + [zadnji člen]" : "");
-        totalDiv.innerText = sum.toString();
-    }
-
-    // Začetni izračun
-    calculateSum();
-</script>
+        // Začetni izračun
+        calculateSum();
+    </script>
 
 </body>
+
 </html>

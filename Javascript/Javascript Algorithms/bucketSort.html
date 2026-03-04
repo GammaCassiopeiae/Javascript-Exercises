@@ -1,26 +1,100 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Bucket Sort Vizualizacija</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        .main-container { display: flex; align-items: flex-end; height: 180px; gap: 5px; margin-bottom: 40px; padding: 15px; background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); min-width: 400px; }
-        .buckets-wrapper { display: flex; gap: 20px; justify-content: center; width: 100%; }
-        .bucket { width: 80px; min-height: 120px; background: #dfe6e9; border: 2px dashed #b2bec3; border-radius: 8px; display: flex; flex-direction: column-reverse; align-items: center; padding: 5px; position: relative; }
-        .bucket::after { content: attr(data-label); position: absolute; bottom: -25px; font-size: 12px; color: #636e72; }
-        .bar { width: 15px; background-color: #3498db; transition: all 0.4s ease; border-radius: 2px; }
-        .bar.moving { background-color: #e67e22; transform: scale(1.1); }
-        .bar.sorted { background-color: #2ecc71; }
-        .controls { margin-top: 40px; }
-        button { padding: 12px 24px; cursor: pointer; background: #2d3436; color: white; border: none; border-radius: 5px; font-weight: bold; }
-        button:disabled { background: #b2bec3; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f4f8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .main-container {
+            display: flex;
+            align-items: flex-end;
+            height: 180px;
+            gap: 5px;
+            margin-bottom: 40px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            min-width: 400px;
+        }
+
+        .buckets-wrapper {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .bucket {
+            width: 80px;
+            min-height: 120px;
+            background: #dfe6e9;
+            border: 2px dashed #b2bec3;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: center;
+            padding: 5px;
+            position: relative;
+        }
+
+        .bucket::after {
+            content: attr(data-label);
+            position: absolute;
+            bottom: -25px;
+            font-size: 12px;
+            color: #636e72;
+        }
+
+        .bar {
+            width: 15px;
+            background-color: #3498db;
+            transition: all 0.4s ease;
+            border-radius: 2px;
+        }
+
+        .bar.moving {
+            background-color: #e67e22;
+            transform: scale(1.1);
+        }
+
+        .bar.sorted {
+            background-color: #2ecc71;
+        }
+
+        .controls {
+            margin-top: 40px;
+        }
+
+        button {
+            padding: 12px 24px;
+            cursor: pointer;
+            background: #2d3436;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        button:disabled {
+            background: #b2bec3;
+        }
     </style>
 </head>
+
 <body>
 
     <h1>Bucket Sort Vizualizacija</h1>
-    
+
     <!-- Glavni seznam -->
     <div class="main-container" id="mainArray"></div>
 
@@ -49,7 +123,9 @@
         ];
 
         // Naključni podatki (0 - 250)
-        const data = Array.from({length: 20}, () => Math.floor(Math.random() * 240));
+        const data = Array.from({
+            length: 20
+        }, () => Math.floor(Math.random() * 240));
         const bars = [];
 
         function createBars() {
@@ -69,12 +145,18 @@
             document.getElementById('startBtn').disabled = true;
 
             // 1. FAZA: Porazdelitev v koše
-            const buckets = [[], [], [], [], []];
-            
+            const buckets = [
+                [],
+                [],
+                [],
+                [],
+                []
+            ];
+
             for (let bar of bars) {
                 bar.classList.add('moving');
                 const val = parseInt(bar.getAttribute('data-value'));
-                
+
                 // Določanje indeksa koša
                 let bucketIdx = Math.floor(val / 50);
                 if (bucketIdx > 4) bucketIdx = 4;
@@ -90,9 +172,9 @@
             // 2. FAZA: Urejanje znotraj košev in vračanje
             for (let i = 0; i < buckets.length; i++) {
                 let currentBucket = buckets[i];
-                
+
                 // Enostavno urejanje (Insertion Sort logika) znotraj koša
-                currentBucket.sort((a, b) => 
+                currentBucket.sort((a, b) =>
                     parseInt(a.getAttribute('data-value')) - parseInt(b.getAttribute('data-value'))
                 );
 
@@ -110,4 +192,5 @@
         createBars();
     </script>
 </body>
+
 </html>

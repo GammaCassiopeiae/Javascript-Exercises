@@ -1,22 +1,62 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Selection Sort Vizualizacija</title>
     <style>
-        body { background: #0a0a0a; color: #eee; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        canvas { background: #111; border: 2px solid #333; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .controls { margin-top: 20px; display: flex; gap: 10px; }
-        button { background: #6200ee; color: white; border: none; padding: 10px 25px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        button:hover { background: #7c4dff; }
-        button:disabled { background: #333; color: #777; cursor: not-allowed; }
+        body {
+            background: #0a0a0a;
+            color: #eee;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        canvas {
+            background: #111;
+            border: 2px solid #333;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            background: #6200ee;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #7c4dff;
+        }
+
+        button:disabled {
+            background: #333;
+            color: #777;
+            cursor: not-allowed;
+        }
     </style>
 </head>
+
 <body>
 
     <h1>Selection Sort Vizualizacija</h1>
     <canvas id="canvas" width="800" height="400"></canvas>
-    
+
     <div class="controls">
         <button id="reset">Ponastavi</button>
         <button id="start">Začni urejanje</button>
@@ -34,7 +74,9 @@
 
         // Generiranje polja
         function init() {
-            array = Array.from({ length: SIZE }, () => Math.floor(Math.random() * (canvas.height - 40)) + 20);
+            array = Array.from({
+                length: SIZE
+            }, () => Math.floor(Math.random() * (canvas.height - 40)) + 20);
             draw();
             startBtn.disabled = false;
         }
@@ -45,8 +87,8 @@
             array.forEach((val, i) => {
                 ctx.fillStyle = "#3d5afe"; // Privzeta barva
                 if (i <= sortedIdx) ctx.fillStyle = "#00e676"; // Urejeno
-                if (i === current) ctx.fillStyle = "#ff1744";  // Trenutni element
-                if (i === minIdx) ctx.fillStyle = "#ffea00";   // Trenutno najdeni minimum
+                if (i === current) ctx.fillStyle = "#ff1744"; // Trenutni element
+                if (i === minIdx) ctx.fillStyle = "#ffea00"; // Trenutno najdeni minimum
 
                 ctx.fillRect(i * BAR_WIDTH, canvas.height - val, BAR_WIDTH - 2, val);
             });
@@ -61,7 +103,7 @@
 
             for (let i = 0; i < array.length; i++) {
                 let minIdx = i;
-                
+
                 for (let j = i + 1; j < array.length; j++) {
                     // Vizualizacija primerjave
                     draw(j, minIdx, i - 1);
@@ -76,7 +118,7 @@
                     // Zamenjava v pomnilniku
                     [array[i], array[minIdx]] = [array[minIdx], array[i]];
                 }
-                
+
                 draw(-1, -1, i);
                 await sleep(50);
             }
@@ -91,4 +133,5 @@
         init();
     </script>
 </body>
+
 </html>

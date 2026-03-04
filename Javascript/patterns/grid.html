@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,7 +27,8 @@
         }
 
         .parent-div {
-            background-color: #ff4d4d; /* Lightest neon scarlet */
+            background-color: #ff4d4d;
+            /* Lightest neon scarlet */
             border-radius: 8px;
             padding: 16px;
             box-shadow: 0 4px 15px rgba(255, 77, 77, 0.3);
@@ -46,11 +48,13 @@
         }
 
         .child-div:nth-child(odd) {
-            background-color: #ff6b6b; /* Lighter reds */
+            background-color: #ff6b6b;
+            /* Lighter reds */
         }
 
         .child-div:nth-child(even) {
-            background-color: #e84a4a; /* Darker reds */
+            background-color: #e84a4a;
+            /* Darker reds */
         }
 
         /* Color gradient from light to dark neon scarlet */
@@ -65,42 +69,106 @@
 
         /* Define the color progression for each parent div */
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.8;
+            }
         }
 
-        .parent-div:nth-child(2) { background-color: #ff7a7a; }
-        .parent-div:nth-child(3) { background-color: #ff9c9c; }
-        .parent-div:nth-child(4) { background-color: #ffa5a5; }
-        .parent-div:nth-child(5) { background-color: #ffbbba; }
-        .parent-div:nth-child(6) { background-color: #ffc3c3; }
-        .parent-div:nth-child(7) { background-color: #ffcccb; }
-        .parent-div:nth-child(8) { background-color: #ffdddb; }
-        .parent-div:nth-child(9) { background-color: #ffdeea; }
-        .parent-div:nth-child(10) { background-color: #ff5a5a; }
-        .parent-div:nth-child(11) { background-color: #ff7f7f; }
-        .parent-div:nth-child(12) { background-color: #ff9c9c; }
-        .parent-div:nth-child(13) { background-color: #ffbbba; }
-        .parent-div:nth-child(14) { background-color: #ffcccb; }
-        .parent-div:nth-child(15) { background-color: #ffdddb; }
-        .parent-div:nth-child(16) { background-color: #fe3737; }
-        .parent-div:nth-child(17) { background-color: #f84e4e; }
-        .parent-div:nth-child(18) { background-color: #d92a2a; }
-        .parent-div:nth-child(19) { background-color: #b30c0c; }
-        .parent-div:nth-child(20) { background-color: #8f0000; }
+        .parent-div:nth-child(2) {
+            background-color: #ff7a7a;
+        }
+
+        .parent-div:nth-child(3) {
+            background-color: #ff9c9c;
+        }
+
+        .parent-div:nth-child(4) {
+            background-color: #ffa5a5;
+        }
+
+        .parent-div:nth-child(5) {
+            background-color: #ffbbba;
+        }
+
+        .parent-div:nth-child(6) {
+            background-color: #ffc3c3;
+        }
+
+        .parent-div:nth-child(7) {
+            background-color: #ffcccb;
+        }
+
+        .parent-div:nth-child(8) {
+            background-color: #ffdddb;
+        }
+
+        .parent-div:nth-child(9) {
+            background-color: #ffdeea;
+        }
+
+        .parent-div:nth-child(10) {
+            background-color: #ff5a5a;
+        }
+
+        .parent-div:nth-child(11) {
+            background-color: #ff7f7f;
+        }
+
+        .parent-div:nth-child(12) {
+            background-color: #ff9c9c;
+        }
+
+        .parent-div:nth-child(13) {
+            background-color: #ffbbba;
+        }
+
+        .parent-div:nth-child(14) {
+            background-color: #ffcccb;
+        }
+
+        .parent-div:nth-child(15) {
+            background-color: #ffdddb;
+        }
+
+        .parent-div:nth-child(16) {
+            background-color: #fe3737;
+        }
+
+        .parent-div:nth-child(17) {
+            background-color: #f84e4e;
+        }
+
+        .parent-div:nth-child(18) {
+            background-color: #d92a2a;
+        }
+
+        .parent-div:nth-child(19) {
+            background-color: #b30c0c;
+        }
+
+        .parent-div:nth-child(20) {
+            background-color: #8f0000;
+        }
 
         /* Add subtle animation to each parent div */
         .parent-div {
             animation: pulse 3s infinite;
         }
     </style>
-    
+
 </head>
+
 <body>
 
     <div class="grid-container">
         <!-- Parent Div 1 -->
-        
+
         <div class="parent-div" style="background-color:#ff4d4d;">
             <div class="child-div">Child 1</div>
             <div class="child-div">Child 2</div>
@@ -221,4 +289,5 @@
         </div>
     </div>
 </body>
+
 </html>

@@ -1,17 +1,56 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Flood Fill Algoritem</title>
     <style>
-        body { background: #121212; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; }
-        canvas { border: 2px solid #444; background: #000; cursor: crosshair; image-rendering: pixelated; }
-        .controls { margin: 20px; display: flex; gap: 10px; align-items: center; }
-        input[type="color"] { border: none; width: 40px; height: 40px; cursor: pointer; background: none; }
-        button { padding: 10px 20px; cursor: pointer; background: #333; color: white; border: 1px solid #555; border-radius: 4px; }
-        button:hover { background: #444; }
+        body {
+            background: #121212;
+            color: white;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        canvas {
+            border: 2px solid #444;
+            background: #000;
+            cursor: crosshair;
+            image-rendering: pixelated;
+        }
+
+        .controls {
+            margin: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        input[type="color"] {
+            border: none;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            background: none;
+        }
+
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+            background: #333;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background: #444;
+        }
     </style>
 </head>
+
 <body>
     <h1>Flood Fill Demo</h1>
     <div class="controls">
@@ -28,9 +67,11 @@
         const colorPicker = document.getElementById('colorPicker');
         const gridSize = 50; // 50x50 mreža
         const pixelSize = canvas.width / gridSize;
-        
+
         // Inicializacija mreže (0 = prazno, 1 = stena)
-        let grid = Array.from({ length: gridSize }, () => Array(gridSize).fill(0));
+        let grid = Array.from({
+            length: gridSize
+        }, () => Array(gridSize).fill(0));
 
         function drawGrid() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -86,11 +127,14 @@
         canvas.oncontextmenu = (e) => e.preventDefault();
 
         function clearCanvas() {
-            grid = Array.from({ length: gridSize }, () => Array(gridSize).fill(0));
+            grid = Array.from({
+                length: gridSize
+            }, () => Array(gridSize).fill(0));
             drawGrid();
         }
 
         drawGrid();
     </script>
 </body>
+
 </html>

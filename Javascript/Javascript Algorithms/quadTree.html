@@ -1,14 +1,39 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Quadtree Spatial Partitioning</title>
     <style>
-        body { background: #050505; color: #00ffcc; font-family: monospace; display: flex; flex-direction: column; align-items: center; margin: 0; overflow: hidden; }
-        canvas { background: #000; cursor: crosshair; }
-        .ui { position: absolute; top: 10px; pointer-events: none; text-align: center; background: rgba(0,0,0,0.7); padding: 10px; border-radius: 5px; border: 1px solid #333; }
+        body {
+            background: #050505;
+            color: #00ffcc;
+            font-family: monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        canvas {
+            background: #000;
+            cursor: crosshair;
+        }
+
+        .ui {
+            position: absolute;
+            top: 10px;
+            pointer-events: none;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #333;
+        }
     </style>
 </head>
+
 <body>
     <div class="ui">
         <b>Quadtree vizualizacija</b><br>
@@ -24,16 +49,22 @@
         canvas.height = window.innerHeight;
 
         class Point {
-            constructor(x, y) { this.x = x; this.y = y; }
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+            }
         }
 
         class Rectangle {
             constructor(x, y, w, h) {
-                this.x = x; this.y = y; this.w = w; this.h = h;
+                this.x = x;
+                this.y = y;
+                this.w = w;
+                this.h = h;
             }
             contains(point) {
                 return (point.x >= this.x - this.w && point.x <= this.x + this.w &&
-                        point.y >= this.y - this.h && point.y <= this.y + this.h);
+                    point.y >= this.y - this.h && point.y <= this.y + this.h);
             }
         }
 
@@ -46,11 +77,16 @@
             }
 
             subdivide() {
-                let {x, y, w, h} = this.boundary;
-                this.nw = new QuadTree(new Rectangle(x - w/2, y - h/2, w/2, h/2), this.capacity);
-                this.ne = new QuadTree(new Rectangle(x + w/2, y - h/2, w/2, h/2), this.capacity);
-                this.sw = new QuadTree(new Rectangle(x - w/2, y + h/2, w/2, h/2), this.capacity);
-                this.se = new QuadTree(new Rectangle(x + w/2, y + h/2, w/2, h/2), this.capacity);
+                let {
+                    x,
+                    y,
+                    w,
+                    h
+                } = this.boundary;
+                this.nw = new QuadTree(new Rectangle(x - w / 2, y - h / 2, w / 2, h / 2), this.capacity);
+                this.ne = new QuadTree(new Rectangle(x + w / 2, y - h / 2, w / 2, h / 2), this.capacity);
+                this.sw = new QuadTree(new Rectangle(x - w / 2, y + h / 2, w / 2, h / 2), this.capacity);
+                this.se = new QuadTree(new Rectangle(x + w / 2, y + h / 2, w / 2, h / 2), this.capacity);
                 this.divided = true;
             }
 
@@ -62,8 +98,8 @@
                     return true;
                 } else {
                     if (!this.divided) this.subdivide();
-                    return (this.nw.insert(point) || this.ne.insert(point) || 
-                            this.sw.insert(point) || this.se.insert(point));
+                    return (this.nw.insert(point) || this.ne.insert(point) ||
+                        this.sw.insert(point) || this.se.insert(point));
                 }
             }
 
@@ -71,32 +107,37 @@
                 ctx.strokeStyle = '#222';
                 ctx.strokeRect(this.boundary.x - this.boundary.w, this.boundary.y - this.boundary.h, this.boundary.w * 2, this.boundary.h * 2);
                 if (this.divided) {
-                    this.nw.show(); this.ne.show(); this.sw.show(); this.se.show();
+                    this.nw.show();
+                    this.ne.show();
+                    this.sw.show();
+                    this.se.show();
                 }
                 ctx.fillStyle = '#00ffcc';
                 for (let p of this.points) {
-                    ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI * 2); ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+                    ctx.fill();
                 }
             }
         }
 
         let points = [];
-        const boundary = new Rectangle(canvas.width/2, canvas.height/2, canvas.width/2, canvas.height/2);
-        
+        const boundary = new Rectangle(canvas.width / 2, canvas.height / 2, canvas.width / 2, canvas.height / 2);
+
         function animate() {
             ctx.fillStyle = 'black';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
+
             let qt = new QuadTree(boundary, 4);
             for (let p of points) qt.insert(p);
             qt.show();
-            
+
             requestAnimationFrame(animate);
         }
 
         canvas.onmousemove = (e) => {
-            for(let i=0; i<3; i++) { // Dodamo par točk za efekt
-                points.push(new Point(e.clientX + Math.random()*10 - 5, e.clientY + Math.random()*10 - 5));
+            for (let i = 0; i < 3; i++) { // Dodamo par točk za efekt
+                points.push(new Point(e.clientX + Math.random() * 10 - 5, e.clientY + Math.random() * 10 - 5));
             }
             if (points.length > 1000) points.shift();
         };
@@ -104,4 +145,5 @@
         animate();
     </script>
 </body>
+
 </html>

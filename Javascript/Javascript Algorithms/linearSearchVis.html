@@ -1,26 +1,92 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Linear Search Vizualizacija</title>
     <style>
-        :root { --bg: #111827; --primary: #3b82f6; --target: #f59e0b; --found: #10b981; --text: #f3f4f6; }
-        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-        canvas { background: #1f2937; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        .controls { margin-top: 20px; display: flex; gap: 10px; align-items: center; background: #374151; padding: 15px; border-radius: 50px; }
-        input { background: #111827; border: 1px solid #4b5563; color: white; padding: 8px 12px; border-radius: 20px; width: 60px; text-align: center; }
-        button { background: var(--primary); border: none; padding: 10px 20px; color: white; font-weight: bold; border-radius: 20px; cursor: pointer; transition: 0.2s; }
-        button:hover:not(:disabled) { opacity: 0.8; transform: translateY(-1px); }
-        button:disabled { background: #4b5563; cursor: not-allowed; }
-        .status { margin-bottom: 10px; font-family: monospace; font-size: 1.1rem; color: var(--target); }
+        :root {
+            --bg: #111827;
+            --primary: #3b82f6;
+            --target: #f59e0b;
+            --found: #10b981;
+            --text: #f3f4f6;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        canvas {
+            background: #1f2937;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            background: #374151;
+            padding: 15px;
+            border-radius: 50px;
+        }
+
+        input {
+            background: #111827;
+            border: 1px solid #4b5563;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            width: 60px;
+            text-align: center;
+        }
+
+        button {
+            background: var(--primary);
+            border: none;
+            padding: 10px 20px;
+            color: white;
+            font-weight: bold;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover:not(:disabled) {
+            opacity: 0.8;
+            transform: translateY(-1px);
+        }
+
+        button:disabled {
+            background: #4b5563;
+            cursor: not-allowed;
+        }
+
+        .status {
+            margin-bottom: 10px;
+            font-family: monospace;
+            font-size: 1.1rem;
+            color: var(--target);
+        }
     </style>
 </head>
+
 <body>
 
     <h1>Linear Search</h1>
     <div class="status" id="status">Vnesite število in kliknite Išči</div>
     <canvas id="searchCanvas" width="800" height="350"></canvas>
-    
+
     <div class="controls">
         <button id="resetBtn">Novo polje</button>
         <input type="number" id="targetInput" value="50">
@@ -41,7 +107,9 @@
 
         // Inicializacija naključnih podatkov prek DOM API
         function init() {
-            array = Array.from({ length: COUNT }, () => Math.floor(Math.random() * 90) + 10);
+            array = Array.from({
+                length: COUNT
+            }, () => Math.floor(Math.random() * 90) + 10);
             draw();
             searchBtn.disabled = false;
             statusEl.innerText = "Pripravljen na iskanje";
@@ -51,19 +119,19 @@
         // Risanje na Canvas
         function draw(currentIndex = -1, foundIndex = -1) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
+
             array.forEach((val, i) => {
                 ctx.fillStyle = "#3b82f6"; // Osnovna modra
-                
+
                 if (i === currentIndex) ctx.fillStyle = "#ef4444"; // Trenutno preverjanje (rdeča)
-                if (i === foundIndex) ctx.fillStyle = "#10b981";   // Najdeno (zelena)
-                
+                if (i === foundIndex) ctx.fillStyle = "#10b981"; // Najdeno (zelena)
+
                 const barHeight = (val / 100) * (canvas.height - 60);
                 const x = i * BAR_WIDTH;
                 const y = canvas.height - barHeight - 30;
 
                 ctx.fillRect(x + 2, y, BAR_WIDTH - 4, barHeight);
-                
+
                 // Izpis vrednosti pod stolpcem
                 ctx.fillStyle = "white";
                 ctx.font = "10px Arial";
@@ -115,4 +183,5 @@
         init();
     </script>
 </body>
+
 </html>

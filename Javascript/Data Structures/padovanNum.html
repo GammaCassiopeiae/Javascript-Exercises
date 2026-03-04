@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,12 +27,16 @@
             background: white;
             padding: 2rem;
             border-radius: 1rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
             width: 100%;
             max-width: 600px;
         }
 
-        h1 { margin-top: 0; color: var(--primary); text-align: center; }
+        h1 {
+            margin-top: 0;
+            color: var(--primary);
+            text-align: center;
+        }
 
         .input-group {
             display: flex;
@@ -48,7 +53,9 @@
             outline: none;
         }
 
-        input:focus { border-color: var(--primary); }
+        input:focus {
+            border-color: var(--primary);
+        }
 
         button {
             background: var(--primary);
@@ -61,7 +68,9 @@
             transition: transform 0.1s;
         }
 
-        button:active { transform: scale(0.98); }
+        button:active {
+            transform: scale(0.98);
+        }
 
         .result-area {
             margin-top: 1.5rem;
@@ -86,7 +95,10 @@
             font-size: 1.1rem;
         }
 
-        .arrow { color: #9ca3af; font-weight: bold; }
+        .arrow {
+            color: #9ca3af;
+            font-weight: bold;
+        }
 
         .info-box {
             margin-top: 1.5rem;
@@ -109,110 +121,112 @@
         }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <h1>Aliquotovo Zaporedje</h1>
-    <p style="font-size: 0.9rem; color: #6b7280; margin-bottom: 1.5rem;">
-        Vnesite število, da vidite vsoto njegovih pravih deliteljev v zaporedju.
-    </p>
+    <div class="container">
+        <h1>Aliquotovo Zaporedje</h1>
+        <p style="font-size: 0.9rem; color: #6b7280; margin-bottom: 1.5rem;">
+            Vnesite število, da vidite vsoto njegovih pravih deliteljev v zaporedju.
+        </p>
 
-    <div class="input-group">
-        <input type="number" id="startNum" placeholder="Vnesite število (npr. 12, 28, 220)" min="1">
-        <button onclick="startCalculation()">Generiraj</button>
+        <div class="input-group">
+            <input type="number" id="startNum" placeholder="Vnesite število (npr. 12, 28, 220)" min="1">
+            <button onclick="startCalculation()">Generiraj</button>
+        </div>
+
+        <div id="resultDisplay" class="result-area" style="display: none;">
+            <div id="sequenceContainer" class="sequence-flow"></div>
+            <div id="statusInfo" class="info-box"></div>
+        </div>
     </div>
 
-    <div id="resultDisplay" class="result-area" style="display: none;">
-        <div id="sequenceContainer" class="sequence-flow"></div>
-        <div id="statusInfo" class="info-box"></div>
-    </div>
-</div>
-
-<script>
-    /**
-     * Izračuna vsoto pravih deliteljev (Proper Divisors)
-     * npr. za 12: 1 + 2 + 3 + 4 + 6 = 16
-     */
-    function sumProperDivisors(n) {
-        if (n <= 1) return 0;
-        let sum = 1;
-        for (let i = 2; i <= Math.sqrt(n); i++) {
-            if (n % i === 0) {
-                sum += i;
-                let other = n / i;
-                if (other !== i) sum += other;
+    <script>
+        /**
+         * Izračuna vsoto pravih deliteljev (Proper Divisors)
+         * npr. za 12: 1 + 2 + 3 + 4 + 6 = 16
+         */
+        function sumProperDivisors(n) {
+            if (n <= 1) return 0;
+            let sum = 1;
+            for (let i = 2; i <= Math.sqrt(n); i++) {
+                if (n % i === 0) {
+                    sum += i;
+                    let other = n / i;
+                    if (other !== i) sum += other;
+                }
             }
-        }
-        return sum;
-    }
-
-    function startCalculation() {
-        const input = document.getElementById('startNum');
-        const container = document.getElementById('sequenceContainer');
-        const info = document.getElementById('statusInfo');
-        const display = document.getElementById('resultDisplay');
-
-        let current = parseInt(input.value);
-        if (isNaN(current) || current < 1) return;
-
-        display.style.display = 'block';
-        container.innerHTML = '';
-        
-        let sequence = [current];
-        let visited = new Set([current]);
-        let terminationReason = "";
-
-        // Generiranje zaporedja (omejitev na 50 korakov za varnost)
-        while (current > 1 && sequence.length < 50) {
-            let next = sumProperDivisors(current);
-            
-            if (next === 0) {
-                sequence.push(0);
-                terminationReason = "Zaporedje se je končalo pri 0.";
-                break;
-            }
-
-            if (next === current) {
-                sequence.push(next);
-                terminationReason = `Število ${current} je <b>popolno število</b> (ponavlja se v neskončnost).`;
-                break;
-            }
-
-            if (visited.has(next)) {
-                sequence.push(next);
-                terminationReason = `Zaporedje je vstopilo v <b>cikel</b> pri številu ${next}.`;
-                break;
-            }
-
-            sequence.push(next);
-            visited.add(next);
-            current = next;
-
-            if (sequence.length === 50) {
-                terminationReason = "Dosežena omejitev 50 členov (zaporedje morda raste v neskončnost).";
-            }
+            return sum;
         }
 
-        if (current === 1) terminationReason = "Zaporedje se je končalo pri 1 (praštevilo v zadnjem koraku).";
+        function startCalculation() {
+            const input = document.getElementById('startNum');
+            const container = document.getElementById('sequenceContainer');
+            const info = document.getElementById('statusInfo');
+            const display = document.getElementById('resultDisplay');
 
-        // Izris v DOM
-        sequence.forEach((num, index) => {
-            const span = document.createElement('span');
-            span.className = 'step';
-            span.innerText = num;
-            container.appendChild(span);
+            let current = parseInt(input.value);
+            if (isNaN(current) || current < 1) return;
 
-            if (index < sequence.length - 1) {
-                const arrow = document.createElement('span');
-                arrow.className = 'arrow';
-                arrow.innerHTML = ' &rarr; ';
-                container.appendChild(arrow);
+            display.style.display = 'block';
+            container.innerHTML = '';
+
+            let sequence = [current];
+            let visited = new Set([current]);
+            let terminationReason = "";
+
+            // Generiranje zaporedja (omejitev na 50 korakov za varnost)
+            while (current > 1 && sequence.length < 50) {
+                let next = sumProperDivisors(current);
+
+                if (next === 0) {
+                    sequence.push(0);
+                    terminationReason = "Zaporedje se je končalo pri 0.";
+                    break;
+                }
+
+                if (next === current) {
+                    sequence.push(next);
+                    terminationReason = `Število ${current} je <b>popolno število</b> (ponavlja se v neskončnost).`;
+                    break;
+                }
+
+                if (visited.has(next)) {
+                    sequence.push(next);
+                    terminationReason = `Zaporedje je vstopilo v <b>cikel</b> pri številu ${next}.`;
+                    break;
+                }
+
+                sequence.push(next);
+                visited.add(next);
+                current = next;
+
+                if (sequence.length === 50) {
+                    terminationReason = "Dosežena omejitev 50 členov (zaporedje morda raste v neskončnost).";
+                }
             }
-        });
 
-        info.innerHTML = `<strong>Rezultat:</strong> ${terminationReason}`;
-    }
-</script>
+            if (current === 1) terminationReason = "Zaporedje se je končalo pri 1 (praštevilo v zadnjem koraku).";
+
+            // Izris v DOM
+            sequence.forEach((num, index) => {
+                const span = document.createElement('span');
+                span.className = 'step';
+                span.innerText = num;
+                container.appendChild(span);
+
+                if (index < sequence.length - 1) {
+                    const arrow = document.createElement('span');
+                    arrow.className = 'arrow';
+                    arrow.innerHTML = ' &rarr; ';
+                    container.appendChild(arrow);
+                }
+            });
+
+            info.innerHTML = `<strong>Rezultat:</strong> ${terminationReason}`;
+        }
+    </script>
 
 </body>
+
 </html>

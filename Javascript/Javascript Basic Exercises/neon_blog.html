@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <!-- Fonts: Directive 111 & 112 -->
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Fira+Code&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <!-- 
         NEON-NOIR ARCHITECT MANIFESTO COMPLIANCE:
@@ -193,8 +195,7 @@
             `;
 
             // --- 2. DATA SOURCE ---
-            const BLOG_POSTS = [
-                {
+            const BLOG_POSTS = [{
                     id: 1,
                     title: "The Rise of Synthetic DOM",
                     date: "2026-03-01",
@@ -229,7 +230,7 @@
                     excerpt: "Analyzing the long-term impact of Shadow DOM and Custom Elements on the framework ecosystem.",
                     link: "#"
                 },
-                 {
+                {
                     id: 6,
                     title: "The Future of CSS Grid",
                     date: "2026-02-10",
@@ -239,7 +240,7 @@
             ];
 
             // --- 3. DOM ENGINE ---
-            
+
             // Helper: Inject CSS
             function injectStyles() {
                 const styleEl = document.createElement('style');
@@ -259,60 +260,60 @@
             function createHeader() {
                 const header = el('header', 'header');
                 const container = el('div', 'l-container header__content');
-                
+
                 const logo = el('a', 'c-logo', 'Neon // Chronicles');
                 logo.href = '#';
-                
+
                 const nav = el('nav');
                 const btn = el('a', 'c-btn', 'Archive');
                 btn.href = '#';
-                
+
                 nav.appendChild(btn);
                 container.appendChild(logo);
                 container.appendChild(nav);
                 header.appendChild(container);
-                
+
                 return header;
             }
 
             // Component: Hero
             function createHero() {
                 const section = el('section', 'l-container c-hero');
-                
+
                 const title = el('h1', 'c-hero__title');
                 const gradientText = el('span', 'u-text-gradient', 'Digital Perspectives');
                 title.appendChild(document.createTextNode('Future '));
                 title.appendChild(gradientText);
-                
+
                 const sub = el('p', '', 'Curated thoughts on code, design, and the digital frontier.');
                 sub.style.color = 'var(--text-muted)';
                 sub.style.maxWidth = '600px';
                 sub.style.margin = '0 auto';
-                
+
                 section.appendChild(title);
                 section.appendChild(sub);
-                
+
                 return section;
             }
 
             // Component: Blog Card
             function createCard(post) {
                 const article = el('article', 'c-card');
-                
+
                 const date = el('time', 'c-card__date', post.date);
                 date.setAttribute('datetime', post.date);
-                
+
                 const title = el('h2', 'c-card__title', post.title);
                 const excerpt = el('p', 'c-card__excerpt', post.excerpt);
-                
+
                 const link = el('a', 'c-btn', 'Read Entry ➜');
                 link.href = post.link;
-                
+
                 article.appendChild(date);
                 article.appendChild(title);
                 article.appendChild(excerpt);
                 article.appendChild(link);
-                
+
                 return article;
             }
 
@@ -335,16 +336,16 @@
 
                 // 3. Assemble Layout
                 docFrag.appendChild(createHeader());
-                
+
                 const main = el('main');
                 main.appendChild(createHero());
-                
+
                 const grid = el('div', 'l-container l-grid');
                 BLOG_POSTS.forEach(post => {
                     grid.appendChild(createCard(post));
                 });
                 main.appendChild(grid);
-                
+
                 docFrag.appendChild(main);
                 docFrag.appendChild(createFooter());
 
@@ -362,4 +363,5 @@
         })();
     </script>
 </body>
+
 </html>

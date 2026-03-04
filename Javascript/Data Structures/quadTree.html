@@ -1,22 +1,83 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Vizualizacija: Quadtree</title>
     <style>
-        :root { --primary: #0984e3; --border: #2d3436; --bg: #f8f9fa; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
-        
-        #canvas-container { position: relative; width: 400px; height: 400px; border: 2px solid var(--border); background: white; cursor: crosshair; margin: 20px auto; overflow: hidden; }
-        .quad-line { position: absolute; background: #dfe6e9; z-index: 1; pointer-events: none; }
-        .point { width: 6px; height: 6px; background: var(--primary); border-radius: 50%; position: absolute; transform: translate(-50%, -50%); z-index: 5; }
+        :root {
+            --primary: #0984e3;
+            --border: #2d3436;
+            --bg: #f8f9fa;
+        }
 
-        .controls { margin-top: 20px; }
-        button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; color: white; background: var(--border); }
-        #status { margin-top: 15px; font-size: 0.9rem; color: #636e72; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        #canvas-container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            border: 2px solid var(--border);
+            background: white;
+            cursor: crosshair;
+            margin: 20px auto;
+            overflow: hidden;
+        }
+
+        .quad-line {
+            position: absolute;
+            background: #dfe6e9;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .point {
+            width: 6px;
+            height: 6px;
+            background: var(--primary);
+            border-radius: 50%;
+            position: absolute;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+        }
+
+        .controls {
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            color: white;
+            background: var(--border);
+        }
+
+        #status {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #636e72;
+        }
     </style>
 </head>
+
 <body>
 
     <div class="container">
@@ -38,12 +99,19 @@
         const container = document.getElementById('canvas-container');
         let points = [];
 
-        class Point { constructor(x, y) { this.x = x; this.y = y; } }
+        class Point {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+            }
+        }
 
         class Rectangle {
             constructor(x, y, w, h) {
-                this.x = x; this.y = y; // center
-                this.w = w; this.h = h; // pol-širina/višina
+                this.x = x;
+                this.y = y; // center
+                this.w = w;
+                this.h = h; // pol-širina/višina
             }
         }
 
@@ -55,11 +123,16 @@
             }
 
             subdivide() {
-                let { x, y, w, h } = this.boundary;
-                this.nw = new QuadTree(new Rectangle(x - w/2, y - h/2, w/2, h/2));
-                this.ne = new QuadTree(new Rectangle(x + w/2, y - h/2, w/2, h/2));
-                this.sw = new QuadTree(new Rectangle(x - w/2, y + h/2, w/2, h/2));
-                this.se = new QuadTree(new Rectangle(x + w/2, y + h/2, w/2, h/2));
+                let {
+                    x,
+                    y,
+                    w,
+                    h
+                } = this.boundary;
+                this.nw = new QuadTree(new Rectangle(x - w / 2, y - h / 2, w / 2, h / 2));
+                this.ne = new QuadTree(new Rectangle(x + w / 2, y - h / 2, w / 2, h / 2));
+                this.sw = new QuadTree(new Rectangle(x - w / 2, y + h / 2, w / 2, h / 2));
+                this.se = new QuadTree(new Rectangle(x + w / 2, y + h / 2, w / 2, h / 2));
                 this.divided = true;
 
                 // Nariši črte delitve
@@ -77,13 +150,13 @@
 
                 if (!this.divided) this.subdivide();
 
-                return (this.nw.insert(point) || this.ne.insert(point) || 
-                        this.sw.insert(point) || this.se.insert(point));
+                return (this.nw.insert(point) || this.ne.insert(point) ||
+                    this.sw.insert(point) || this.se.insert(point));
             }
 
             contains(rect, p) {
                 return (p.x >= rect.x - rect.w && p.x <= rect.x + rect.w &&
-                        p.y >= rect.y - rect.h && p.y <= rect.y + rect.h);
+                    p.y >= rect.y - rect.h && p.y <= rect.y + rect.h);
             }
         }
 
@@ -110,7 +183,7 @@
             const rect = container.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
-            
+
             const p = new Point(x, y);
             qt.insert(p);
 
@@ -127,4 +200,5 @@
         }
     </script>
 </body>
+
 </html>

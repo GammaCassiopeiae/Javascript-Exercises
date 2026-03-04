@@ -1,25 +1,77 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Bucket Sort Vizualizacija</title>
     <style>
-        :root { --bg: #0f172a; --bar: #38bdf8; --bucket-bg: #1e293b; --text: #f1f5f9; }
-        body { background: var(--bg); color: var(--text); font-family: system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-        canvas { background: var(--bucket-bg); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .controls { margin-top: 25px; display: flex; gap: 15px; }
-        button { background: #6366f1; border: none; color: white; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        button:hover:not(:disabled) { background: #4f46e5; transform: scale(1.05); }
-        button:disabled { background: #334155; color: #94a3b8; cursor: not-allowed; }
-        .status { margin-bottom: 10px; font-size: 1.1rem; color: #a5b4fc; }
+        :root {
+            --bg: #0f172a;
+            --bar: #38bdf8;
+            --bucket-bg: #1e293b;
+            --text: #f1f5f9;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: system-ui, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        canvas {
+            background: var(--bucket-bg);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .controls {
+            margin-top: 25px;
+            display: flex;
+            gap: 15px;
+        }
+
+        button {
+            background: #6366f1;
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        button:hover:not(:disabled) {
+            background: #4f46e5;
+            transform: scale(1.05);
+        }
+
+        button:disabled {
+            background: #334155;
+            color: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .status {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            color: #a5b4fc;
+        }
     </style>
 </head>
+
 <body>
 
     <h1>Bucket Sort</h1>
     <div class="status" id="status">Pripravljen na razporejanje...</div>
     <canvas id="canvas" width="800" height="450"></canvas>
-    
+
     <div class="controls">
         <button id="resetBtn">Novo polje</button>
         <button id="sortBtn">Razvrsti v koše</button>
@@ -38,7 +90,9 @@
         const BAR_WIDTH = canvas.width / COUNT;
 
         function init() {
-            array = Array.from({ length: COUNT }, () => Math.floor(Math.random() * (canvas.height - 100)) + 20);
+            array = Array.from({
+                length: COUNT
+            }, () => Math.floor(Math.random() * (canvas.height - 100)) + 20);
             draw();
             sortBtn.disabled = false;
             statusEl.innerText = "Polje generirano (0 - 450)";
@@ -47,7 +101,7 @@
         // Risanje stanja (DOM/Canvas API)
         function draw(highlightIndices = [], bucketBorders = false) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
+
             // Izris mej košev, če je aktivno
             if (bucketBorders) {
                 ctx.strokeStyle = "#334155";
@@ -72,9 +126,11 @@
         async function bucketSort() {
             sortBtn.disabled = true;
             resetBtn.disabled = true;
-            
+
             let n = array.length;
-            let buckets = Array.from({ length: BUCKET_COUNT }, () => []);
+            let buckets = Array.from({
+                length: BUCKET_COUNT
+            }, () => []);
             let maxVal = Math.max(...array);
 
             // 1. Porazdelitev v koše
@@ -82,7 +138,7 @@
             for (let i = 0; i < n; i++) {
                 let bucketIndex = Math.floor((array[i] / (maxVal + 1)) * BUCKET_COUNT);
                 buckets[bucketIndex].push(array[i]);
-                
+
                 // Vizualni učinek "skeniranja"
                 draw([i], true);
                 await sleep(30);
@@ -94,7 +150,7 @@
             for (let b = 0; b < BUCKET_COUNT; b++) {
                 // Urejanje znotraj koša (Insertion Sort v ozadju)
                 buckets[b].sort((a, b) => a - b);
-                
+
                 for (let val of buckets[b]) {
                     array[currentIndex] = val;
                     draw([currentIndex], true);
@@ -114,4 +170,5 @@
         init();
     </script>
 </body>
+
 </html>

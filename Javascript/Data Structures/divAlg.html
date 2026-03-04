@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,12 +26,16 @@
             background: white;
             padding: 2rem;
             border-radius: 1rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 500px;
         }
 
-        h2 { color: #1e293b; margin-top: 0; text-align: center; }
+        h2 {
+            color: #1e293b;
+            margin-top: 0;
+            text-align: center;
+        }
 
         textarea {
             width: 100%;
@@ -74,8 +79,15 @@
             text-transform: uppercase;
         }
 
-        .is-divisible { background: #dcfce7; color: var(--success); }
-        .not-divisible { background: #fee2e2; color: var(--fail); }
+        .is-divisible {
+            background: #dcfce7;
+            color: var(--success);
+        }
+
+        .not-divisible {
+            background: #fee2e2;
+            color: var(--fail);
+        }
 
         .info-text {
             font-size: 0.85rem;
@@ -84,73 +96,75 @@
         }
     </style>
 </head>
+
 <body>
 
-<div class="card">
-    <h2>Preverjalnik deljivosti</h2>
-    <p class="info-text">Vnesite poljubno dolgo celo število:</p>
-    <textarea id="bigNumberInput" placeholder="Npr. 123456789012345678901234567890"></textarea>
-    
-    <div class="grid" id="resultsGrid">
-        <!-- Rezultati se generirajo tukaj -->
+    <div class="card">
+        <h2>Preverjalnik deljivosti</h2>
+        <p class="info-text">Vnesite poljubno dolgo celo število:</p>
+        <textarea id="bigNumberInput" placeholder="Npr. 123456789012345678901234567890"></textarea>
+
+        <div class="grid" id="resultsGrid">
+            <!-- Rezultati se generirajo tukaj -->
+        </div>
     </div>
-</div>
 
-<script>
-    const input = document.getElementById('bigNumberInput');
-    const grid = document.getElementById('resultsGrid');
-    const divisors = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+    <script>
+        const input = document.getElementById('bigNumberInput');
+        const grid = document.getElementById('resultsGrid');
+        const divisors = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 
-    /**
-     * Glavna funkcija za preverjanje deljivosti.
-     * Uporabljamo BigInt za varno delo z velikimi števili.
-     */
-    function checkDivisibility() {
-        const value = input.value.trim();
-        grid.innerHTML = '';
+        /**
+         * Glavna funkcija za preverjanje deljivosti.
+         * Uporabljamo BigInt za varno delo z velikimi števili.
+         */
+        function checkDivisibility() {
+            const value = input.value.trim();
+            grid.innerHTML = '';
 
-        if (!value || !/^\d+$/.test(value)) {
-            return;
+            if (!value || !/^\d+$/.test(value)) {
+                return;
+            }
+
+            try {
+                const bigNum = BigInt(value);
+
+                divisors.forEach(d => {
+                    const isDivisible = bigNum % BigInt(d) === 0n;
+                    createUIElement(d, isDivisible);
+                });
+            } catch (e) {
+                console.error("Napaka pri pretvorbi v BigInt", e);
+            }
         }
 
-        try {
-            const bigNum = BigInt(value);
+        /**
+         * Ustvari HTML element za posamezen rezultat
+         */
+        function createUIElement(divisor, isDivisible) {
+            const div = document.createElement('div');
+            div.className = 'checker-item';
 
-            divisors.forEach(d => {
-                const isDivisible = bigNum % BigInt(d) === 0n;
-                createUIElement(d, isDivisible);
-            });
-        } catch (e) {
-            console.error("Napaka pri pretvorbi v BigInt", e);
+            const label = document.createElement('span');
+            label.innerText = `Z deliteljem ${divisor}:`;
+
+            const status = document.createElement('span');
+            status.className = `status ${isDivisible ? 'is-divisible' : 'not-divisible'}`;
+            status.innerText = isDivisible ? 'DA' : 'NE';
+
+            div.appendChild(label);
+            div.appendChild(status);
+            grid.appendChild(div);
         }
-    }
 
-    /**
-     * Ustvari HTML element za posamezen rezultat
-     */
-    function createUIElement(divisor, isDivisible) {
-        const div = document.createElement('div');
-        div.className = 'checker-item';
-        
-        const label = document.createElement('span');
-        label.innerText = `Z deliteljem ${divisor}:`;
+        // Posodabljaj rezultate ob tipkanju
+        input.addEventListener('input', checkDivisibility);
 
-        const status = document.createElement('span');
-        status.className = `status ${isDivisible ? 'is-divisible' : 'not-divisible'}`;
-        status.innerText = isDivisible ? 'DA' : 'NE';
-
-        div.appendChild(label);
-        div.appendChild(status);
-        grid.appendChild(div);
-    }
-
-    // Posodabljaj rezultate ob tipkanju
-    input.addEventListener('input', checkDivisibility);
-
-    // Začetni klic
-    input.value = "12345678901234567890";
-    checkDivisibility();
-</script>
+        // Začetni klic
+        input.value = "12345678901234567890";
+        checkDivisibility();
+    </script>
 
 </body>
+
 </html>

@@ -1,26 +1,93 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Binary Search Vizualizacija</title>
     <style>
-        :root { --bg: #0f172a; --primary: #38bdf8; --accent: #fbbf24; --success: #22c55e; --fail: #ef4444; }
-        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-        canvas { background: #1e293b; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin: 20px 0; }
-        .controls { display: flex; gap: 10px; align-items: center; background: #334155; padding: 15px 25px; border-radius: 50px; }
-        input { background: #0f172a; border: 1px solid var(--primary); color: white; padding: 8px; border-radius: 5px; width: 60px; text-align: center; font-weight: bold; }
-        button { background: var(--primary); border: none; padding: 10px 20px; color: #0f172a; font-weight: bold; border-radius: 5px; cursor: pointer; transition: 0.2s; }
-        button:hover:not(:disabled) { transform: scale(1.05); background: #7dd3fc; }
-        button:disabled { background: #475569; cursor: not-allowed; }
-        #status { font-family: monospace; font-size: 1.2rem; color: var(--accent); min-height: 1.5em; }
+        :root {
+            --bg: #0f172a;
+            --primary: #38bdf8;
+            --accent: #fbbf24;
+            --success: #22c55e;
+            --fail: #ef4444;
+        }
+
+        body {
+            background: var(--bg);
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        canvas {
+            background: #1e293b;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            margin: 20px 0;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            background: #334155;
+            padding: 15px 25px;
+            border-radius: 50px;
+        }
+
+        input {
+            background: #0f172a;
+            border: 1px solid var(--primary);
+            color: white;
+            padding: 8px;
+            border-radius: 5px;
+            width: 60px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        button {
+            background: var(--primary);
+            border: none;
+            padding: 10px 20px;
+            color: #0f172a;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover:not(:disabled) {
+            transform: scale(1.05);
+            background: #7dd3fc;
+        }
+
+        button:disabled {
+            background: #475569;
+            cursor: not-allowed;
+        }
+
+        #status {
+            font-family: monospace;
+            font-size: 1.2rem;
+            color: var(--accent);
+            min-height: 1.5em;
+        }
     </style>
 </head>
+
 <body>
 
     <h1>Binary Search Vizualizacija</h1>
     <div id="status">Generirajte polje za začetek</div>
     <canvas id="searchCanvas" width="800" height="400"></canvas>
-    
+
     <div class="controls">
         <button id="resetBtn">Novo polje</button>
         <input type="number" id="targetInput" value="50">
@@ -42,9 +109,11 @@
         // Inicializacija in obvezno urejanje polja
         function init() {
             // Ustvari naključne unikatne vrednosti in jih uredi
-            array = Array.from({ length: COUNT }, () => Math.floor(Math.random() * 100) + 1)
-                         .sort((a, b) => a - b);
-            
+            array = Array.from({
+                    length: COUNT
+                }, () => Math.floor(Math.random() * 100) + 1)
+                .sort((a, b) => a - b);
+
             draw();
             searchBtn.disabled = false;
             statusEl.innerText = "Polje je urejeno. Vnesite cilj.";
@@ -54,22 +123,22 @@
         // Risanje na Canvas (DOM API)
         function draw(low = -1, high = -1, mid = -1, found = false) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
+
             array.forEach((val, i) => {
                 // Barvna logika:
                 // Sive = izven iskalnega območja
                 // Modre = trenutno iskalno območje
                 // Rumena = sredina (mid)
                 // Zelena = najdeno
-                ctx.fillStyle = "#475569"; 
-                
+                ctx.fillStyle = "#475569";
+
                 if (i >= low && i <= high) ctx.fillStyle = "var(--primary)";
                 if (i === mid) ctx.fillStyle = "var(--accent)";
                 if (found && i === mid) ctx.fillStyle = "var(--success)";
 
                 const barHeight = (val / 110) * (canvas.height - 60);
                 ctx.fillRect(i * BAR_WIDTH, canvas.height - barHeight - 20, BAR_WIDTH - 2, barHeight);
-                
+
                 // Indeksi pod stolpci
                 if (i === low || i === high || i === mid) {
                     ctx.fillStyle = "white";
@@ -94,7 +163,7 @@
             while (low <= high) {
                 let mid = Math.floor((low + high) / 2);
                 statusEl.innerText = `Iščem med indeksi ${low} in ${high}. Sredina (mid) je ${array[mid]}.`;
-                
+
                 draw(low, high, mid);
                 await sleep(800); // Počasneje za lažje sledenje
 
@@ -132,4 +201,5 @@
         init();
     </script>
 </body>
+
 </html>

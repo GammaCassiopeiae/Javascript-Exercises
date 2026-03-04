@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>100 Lime Shapes - Nested Loops</title>
@@ -14,7 +15,13 @@
             flex-direction: column;
             align-items: center;
         }
-        h1 { margin: 20px; text-transform: uppercase; letter-spacing: 2px; }
+
+        h1 {
+            margin: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
         .grid-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -22,6 +29,7 @@
             width: 95vw;
             padding: 20px;
         }
+
         .shape-card {
             border: 1px solid #32CD32;
             display: flex;
@@ -30,10 +38,12 @@
             padding: 10px;
             background: #050505;
         }
+
         canvas {
             background: transparent;
             margin-top: 10px;
         }
+
         .label {
             font-size: 10px;
             text-align: center;
@@ -42,6 +52,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <h1>Geometric & Fractal Lime Matrix</h1>
@@ -57,7 +68,7 @@
         // 1. Loop za vrstice (vizualno v gridu)
         // 2. Loop za stolpce (vizualno v gridu)
         // 3. Loop znotraj funkcije risanja za generiranje točk oblike
-        
+
         const rows = 10;
         const cols = 10;
 
@@ -68,7 +79,7 @@
 
                 const card = document.createElement('div');
                 card.className = 'shape-card';
-                
+
                 const canvas = document.createElement('canvas');
                 canvas.width = 100;
                 canvas.height = 100;
@@ -96,7 +107,7 @@
 
             // Tretja notranja zanka za risanje geometrije (npr. stranice poligonov)
             if (index < 23) { // Poligoni in trikotniki
-                let sides = (index % 10) + 3; 
+                let sides = (index % 10) + 3;
                 for (let i = 0; i <= sides; i++) {
                     let x = centerX + size * Math.cos(i * 2 * Math.PI / sides);
                     let y = centerY + size * Math.sin(i * 2 * Math.PI / sides);
@@ -104,7 +115,7 @@
                     else ctx.lineTo(x, y);
                 }
             } else if (index === 90) { // Mandelbrot / Fractal aproksimacija
-                for(let i=0; i<100; i++) { // Notranja zanka za točke
+                for (let i = 0; i < 100; i++) { // Notranja zanka za točke
                     let x = Math.random() * 100;
                     let y = Math.random() * 100;
                     ctx.rect(x, y, 1, 1);
@@ -112,7 +123,7 @@
             } else if (index >= 30 && index <= 32) { // Zvezde
                 let spikes = index === 30 ? 5 : (index === 31 ? 6 : 8);
                 for (let i = 0; i < spikes * 2; i++) {
-                    let r = (i % 2 === 0) ? size : size/2;
+                    let r = (i % 2 === 0) ? size : size / 2;
                     let x = centerX + r * Math.cos(i * Math.PI / spikes);
                     let y = centerY + r * Math.sin(i * Math.PI / spikes);
                     if (i === 0) ctx.moveTo(x, y);
@@ -122,8 +133,8 @@
                 // Generično risanje za ostale abstraktne oblike (spirale, valovi)
                 for (let i = 0; i < 50; i++) {
                     let angle = 0.1 * i;
-                    let x = centerX + (size * Math.cos(angle)) * (i/50);
-                    let y = centerY + (size * Math.sin(angle)) * (i/50);
+                    let x = centerX + (size * Math.cos(angle)) * (i / 50);
+                    let y = centerY + (size * Math.sin(angle)) * (i / 50);
                     ctx.lineTo(x, y);
                 }
             }
@@ -132,4 +143,5 @@
         }
     </script>
 </body>
+
 </html>

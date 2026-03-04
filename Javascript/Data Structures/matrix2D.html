@@ -1,35 +1,104 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Vizualizacija: Matrika (2D Array)</title>
     <style>
-        :root { --primary: #0984e3; --secondary: #6c5ce7; --bg: #f9f9fb; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
-        
+        :root {
+            --primary: #0984e3;
+            --secondary: #6c5ce7;
+            --bg: #f9f9fb;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
         /* Mreža matrike */
-        .matrix-grid { 
-            display: inline-grid; gap: 8px; padding: 20px; 
-            background: #2d3436; border-radius: 8px; border: 4px solid #636e72;
+        .matrix-grid {
+            display: inline-grid;
+            gap: 8px;
+            padding: 20px;
+            background: #2d3436;
+            border-radius: 8px;
+            border: 4px solid #636e72;
             margin: 20px 0;
         }
-        
-        .cell {
-            width: 50px; height: 50px; background: white; border-radius: 4px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            font-weight: bold; position: relative; transition: 0.3s;
-        }
-        .cell-idx { font-size: 0.6rem; color: #b2bec3; margin-top: 2px; }
-        .highlight { background: var(--secondary); color: white; transform: scale(1.1); }
 
-        .controls { display: flex; gap: 10px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
-        input { padding: 8px; border: 1px solid #ddd; border-radius: 4px; width: 50px; text-align: center; }
-        button { padding: 10px 15px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; color: white; background: var(--primary); }
-        
-        #status { margin-top: 15px; font-family: monospace; color: #2d3436; }
+        .cell {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            position: relative;
+            transition: 0.3s;
+        }
+
+        .cell-idx {
+            font-size: 0.6rem;
+            color: #b2bec3;
+            margin-top: 2px;
+        }
+
+        .highlight {
+            background: var(--secondary);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 50px;
+            text-align: center;
+        }
+
+        button {
+            padding: 10px 15px;
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            color: white;
+            background: var(--primary);
+        }
+
+        #status {
+            margin-top: 15px;
+            font-family: monospace;
+            color: #2d3436;
+        }
     </style>
 </head>
+
 <body>
 
     <div class="container">
@@ -62,7 +131,7 @@
             const display = document.getElementById('matrixDisplay');
             const rows = matrix.length;
             const cols = matrix[0].length;
-            
+
             display.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
             display.innerHTML = '';
 
@@ -100,11 +169,11 @@
         function transpose() {
             const newMatrix = matrix[0].map((_, c) => matrix.map(row => row[c]));
             matrix = newMatrix;
-            
+
             // Posodobi omejitve za inpute
             document.getElementById('rowIn').max = matrix.length - 1;
             document.getElementById('colIn').max = matrix[0].length - 1;
-            
+
             render();
             document.getElementById('status').innerText = "Matrika je bila transponirana.";
         }
@@ -112,4 +181,5 @@
         render();
     </script>
 </body>
+
 </html>

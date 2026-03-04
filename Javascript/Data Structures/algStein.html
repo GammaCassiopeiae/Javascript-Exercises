@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -114,102 +115,104 @@
         }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <h2>Steinov GCD Algoritem</h2>
-    <p class="desc">
-        Binarni GCD algoritem uporablja bitne operacije namesto deljenja, kar je na določenih procesorjih hitrejše.
-    </p>
-    
-    <div class="input-group">
-        <label for="numA">Število A</label>
-        <input type="number" id="numA" placeholder="Vnesi prvo število">
+    <div class="container">
+        <h2>Steinov GCD Algoritem</h2>
+        <p class="desc">
+            Binarni GCD algoritem uporablja bitne operacije namesto deljenja, kar je na določenih procesorjih hitrejše.
+        </p>
+
+        <div class="input-group">
+            <label for="numA">Število A</label>
+            <input type="number" id="numA" placeholder="Vnesi prvo število">
+        </div>
+
+        <div class="input-group">
+            <label for="numB">Število B</label>
+            <input type="number" id="numB" placeholder="Vnesi drugo število">
+        </div>
+
+        <button id="calcBtn">Izračunaj GCD (Binary)</button>
+
+        <div id="resBox" class="result-box">
+            <div class="result-title">Največji skupni delitelj</div>
+            <div id="resVal" class="result-value">0</div>
+            <small id="binaryInfo" style="color: #9ca3af;"></small>
+        </div>
     </div>
 
-    <div class="input-group">
-        <label for="numB">Število B</label>
-        <input type="number" id="numB" placeholder="Vnesi drugo število">
-    </div>
+    <script>
+        /**
+         * Stein's (Binary) GCD Algorithm Implementation
+         */
+        const SteinsAlgorithm = {
+            calculate: function(a, b) {
+                // Osnovni primeri
+                if (a === 0) return b;
+                if (b === 0) return a;
 
-    <button id="calcBtn">Izračunaj GCD (Binary)</button>
-
-    <div id="resBox" class="result-box">
-        <div class="result-title">Največji skupni delitelj</div>
-        <div id="resVal" class="result-value">0</div>
-        <small id="binaryInfo" style="color: #9ca3af;"></small>
-    </div>
-</div>
-
-<script>
-    /**
-     * Stein's (Binary) GCD Algorithm Implementation
-     */
-    const SteinsAlgorithm = {
-        calculate: function(a, b) {
-            // Osnovni primeri
-            if (a === 0) return b;
-            if (b === 0) return a;
-
-            // Najdemo skupni faktor 2 z bitnim zamikom (shift)
-            // To je ekvivalentno: kolikokrat sta obe števili deljivi z 2
-            let shift = 0;
-            while (((a | b) & 1) === 0) {
-                a >>= 1;
-                b >>= 1;
-                shift++;
-            }
-
-            // Odstranimo vse faktorje 2 iz 'a'
-            while ((a & 1) === 0) a >>= 1;
-
-            do {
-                // Odstranimo vse faktorje 2 iz 'b'
-                while ((b & 1) === 0) b >>= 1;
-
-                // Zdaj sta a in b oba liha. Če je a > b, ju zamenjaj
-                if (a > b) {
-                    let temp = a;
-                    a = b;
-                    b = temp;
+                // Najdemo skupni faktor 2 z bitnim zamikom (shift)
+                // To je ekvivalentno: kolikokrat sta obe števili deljivi z 2
+                let shift = 0;
+                while (((a | b) & 1) === 0) {
+                    a >>= 1;
+                    b >>= 1;
+                    shift++;
                 }
 
-                // Odštejemo manjše od večjega (b = b - a)
-                // Ker sta oba liha, bo razlika vedno soda, zato jo v naslednjem koraku spet zmanjšamo
-                b = b - a;
-                
-            } while (b !== 0);
+                // Odstranimo vse faktorje 2 iz 'a'
+                while ((a & 1) === 0) a >>= 1;
 
-            // Rezultat pomnožimo nazaj s skupnim faktorjem 2 (2^shift)
-            return a << shift;
-        }
-    };
+                do {
+                    // Odstranimo vse faktorje 2 iz 'b'
+                    while ((b & 1) === 0) b >>= 1;
 
-    /**
-     * DOM Logic
-     */
-    const btn = document.getElementById('calcBtn');
-    const resBox = document.getElementById('resBox');
-    const resVal = document.getElementById('resVal');
-    const info = document.getElementById('binaryInfo');
+                    // Zdaj sta a in b oba liha. Če je a > b, ju zamenjaj
+                    if (a > b) {
+                        let temp = a;
+                        a = b;
+                        b = temp;
+                    }
 
-    btn.addEventListener('click', () => {
-        const valA = parseInt(document.getElementById('numA').value);
-        const valB = parseInt(document.getElementById('numB').value);
+                    // Odštejemo manjše od večjega (b = b - a)
+                    // Ker sta oba liha, bo razlika vedno soda, zato jo v naslednjem koraku spet zmanjšamo
+                    b = b - a;
 
-        if (isNaN(valA) || isNaN(valB)) {
-            alert("Vnesite veljavni števili.");
-            return;
-        }
+                } while (b !== 0);
 
-        const gcd = SteinsAlgorithm.calculate(Math.abs(valA), Math.abs(valB));
-        
-        // Prikaz rezultata
-        resVal.textContent = gcd;
-        info.textContent = `Uporabljen bitni premik za izračun GCD(${valA}, ${valB})`;
-        resBox.style.display = 'block';
-    });
-</script>
+                // Rezultat pomnožimo nazaj s skupnim faktorjem 2 (2^shift)
+                return a << shift;
+            }
+        };
+
+        /**
+         * DOM Logic
+         */
+        const btn = document.getElementById('calcBtn');
+        const resBox = document.getElementById('resBox');
+        const resVal = document.getElementById('resVal');
+        const info = document.getElementById('binaryInfo');
+
+        btn.addEventListener('click', () => {
+            const valA = parseInt(document.getElementById('numA').value);
+            const valB = parseInt(document.getElementById('numB').value);
+
+            if (isNaN(valA) || isNaN(valB)) {
+                alert("Vnesite veljavni števili.");
+                return;
+            }
+
+            const gcd = SteinsAlgorithm.calculate(Math.abs(valA), Math.abs(valB));
+
+            // Prikaz rezultata
+            resVal.textContent = gcd;
+            info.textContent = `Uporabljen bitni premik za izračun GCD(${valA}, ${valB})`;
+            resBox.style.display = 'block';
+        });
+    </script>
 
 </body>
+
 </html>

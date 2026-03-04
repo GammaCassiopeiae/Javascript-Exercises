@@ -1,43 +1,148 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Vizualizacija: Deque</title>
     <style>
-        :root { --primary: #fdb827; --secondary: #212121; --bg: #fdfdfd; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        .container { background: white; padding: 2rem; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); width: 100%; max-width: 700px; text-align: center; border: 1px solid #eee; }
-        
-        .deque-area { 
-            display: flex; align-items: center; justify-content: center;
-            min-height: 120px; border: 3px solid var(--secondary); border-radius: 15px;
-            margin: 40px 0; padding: 15px; gap: 10px; overflow-x: auto; background: #fafafa;
+        :root {
+            --primary: #fdb827;
+            --secondary: #212121;
+            --bg: #fdfdfd;
         }
-        
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 700px;
+            text-align: center;
+            border: 1px solid #eee;
+        }
+
+        .deque-area {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 120px;
+            border: 3px solid var(--secondary);
+            border-radius: 15px;
+            margin: 40px 0;
+            padding: 15px;
+            gap: 10px;
+            overflow-x: auto;
+            background: #fafafa;
+        }
+
         .element {
-            min-width: 70px; height: 70px; background: var(--primary); color: var(--secondary);
-            display: flex; align-items: center; justify-content: center;
-            border-radius: 10px; font-weight: 800; border: 2px solid var(--secondary);
-            animation: zoomIn 0.3s ease; position: relative;
+            min-width: 70px;
+            height: 70px;
+            background: var(--primary);
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-weight: 800;
+            border: 2px solid var(--secondary);
+            animation: zoomIn 0.3s ease;
+            position: relative;
         }
 
-        .label { position: absolute; top: -25px; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; color: #888; width: 100%; }
+        .label {
+            position: absolute;
+            top: -25px;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+            width: 100%;
+        }
 
-        @keyframes zoomIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.5);
+                opacity: 0;
+            }
 
-        .controls-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
-        .group { display: flex; flex-direction: column; gap: 8px; padding: 10px; background: #f1f1f1; border-radius: 10px; }
-        h4 { margin: 0 0 5px 0; font-size: 0.9rem; color: #555; }
-        
-        input { padding: 12px; border: 2px solid #ddd; border-radius: 8px; text-align: center; font-size: 1rem; margin-bottom: 10px; }
-        button { padding: 10px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; transition: 0.2s; }
-        
-        .btn-add { background: var(--secondary); color: white; }
-        .btn-rem { background: #ff7675; color: white; }
-        button:hover { opacity: 0.9; transform: translateY(-2px); }
-        button:active { transform: translateY(0); }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 10px;
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        h4 {
+            margin: 0 0 5px 0;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        input {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .btn-add {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-rem {
+            background: #ff7675;
+            color: white;
+        }
+
+        button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
     </style>
 </head>
+
 <body>
 
     <div class="container">
@@ -75,10 +180,10 @@
                 const el = document.createElement('div');
                 el.className = 'element';
                 el.innerText = val;
-                
+
                 if (idx === 0) el.innerHTML += '<span class="label">Front</span>';
                 if (idx === deque.length - 1 && deque.length > 1) el.innerHTML += '<span class="label">Rear</span>';
-                
+
                 display.appendChild(el);
             });
         }
@@ -88,7 +193,8 @@
             if (!input.value) return;
             deque.push(input.value); // [Array.push](https://developer.mozilla.org)
             msg.innerText = `Dodano "${input.value}" na konec (REAR).`;
-            input.value = ''; update();
+            input.value = '';
+            update();
         }
 
         function remRear() {
@@ -103,7 +209,8 @@
             if (!input.value) return;
             deque.unshift(input.value); // [Array.unshift](https://developer.mozilla.org)
             msg.innerText = `Dodano "${input.value}" na začetek (FRONT).`;
-            input.value = ''; update();
+            input.value = '';
+            update();
         }
 
         function remFront() {
@@ -114,4 +221,5 @@
         }
     </script>
 </body>
+
 </html>

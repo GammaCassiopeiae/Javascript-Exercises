@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Neon-Noir DOM API Dashboard</title>
 </head>
+
 <body>
     <script>
         /**
@@ -108,16 +110,16 @@
         // --- Header ---
         const header = document.createElement("header");
         header.className = "c-header";
-        
+
         const logo = document.createElement("div");
         logo.className = "c-header__logo";
         logo.innerHTML = 'NEON<span>CORE</span>';
-        
+
         const nav = document.createElement("nav");
         nav.className = "c-header__nav";
         const navList = document.createElement("ul");
         navList.className = "u-list-reset u-flex-center";
-        
+
         ["Nadzor", "Sistem", "Terminal"].forEach((text, i) => {
             const li = document.createElement("li");
             const a = document.createElement("a");
@@ -141,7 +143,7 @@
 
         const mainContent = document.createElement("main");
         mainContent.className = "l-main-content";
-        
+
         const section = document.createElement("section");
         section.className = "c-section";
 
@@ -157,7 +159,7 @@
         const cardConfig = document.createElement("div");
         cardConfig.className = "c-card u-col-span-8";
         cardConfig.innerHTML = `<h2 style="margin-bottom:1.5rem">Konfiguracija Vozlišča</h2>`;
-        
+
         const form = document.createElement("form");
         form.className = "c-form";
 
@@ -175,13 +177,13 @@
         };
 
         form.appendChild(createInputGroup("ID Vozlišča", "node-id", "PX-9900"));
-        
+
         const submitBtn = document.createElement("button");
         submitBtn.type = "submit";
         submitBtn.className = "c-button--primary";
         submitBtn.textContent = "Posodobi Protokol";
         form.appendChild(submitBtn);
-        
+
         cardConfig.appendChild(form);
 
         // Card 2: Status (Col 4)
@@ -235,7 +237,7 @@
                 submitBtn.style.borderColor = "var(--neon-primary)";
             }, 1000);
         });
-
     </script>
 </body>
+
 </html>

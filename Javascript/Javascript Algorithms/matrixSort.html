@@ -1,41 +1,95 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Matrix Sort Vizualizacija</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #121212; color: white; display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        .grid { 
-            display: grid; 
-            grid-template-columns: repeat(5, 60px); 
-            grid-template-rows: repeat(5, 60px); 
-            gap: 10px; 
-            margin: 20px; 
-            padding: 15px; 
-            background: #1e1e1e; 
-            border-radius: 8px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #121212;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
         }
-        .cell { 
-            width: 60px; height: 60px; 
-            display: flex; align-items: center; justify-content: center; 
-            background: #333; border-radius: 4px; font-weight: bold; font-size: 1.2rem;
-            transition: all 0.3s ease; border: 2px solid transparent;
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(5, 60px);
+            grid-template-rows: repeat(5, 60px);
+            gap: 10px;
+            margin: 20px;
+            padding: 15px;
+            background: #1e1e1e;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
-        .cell.active { background: #e74c3c; border-color: #ff7675; transform: scale(1.1); z-index: 10; }
-        .cell.compare { background: #3498db; border-color: #74b9ff; }
-        .cell.sorted { background: #2ecc71; color: #000; }
-        .controls { margin-top: 20px; display: flex; gap: 10px; }
-        button { padding: 12px 24px; cursor: pointer; background: #00cec9; border: none; border-radius: 5px; font-weight: bold; transition: 0.2s; }
-        button:hover { background: #81ecec; }
-        button:disabled { background: #636e72; cursor: not-allowed; }
+
+        .cell {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #333;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .cell.active {
+            background: #e74c3c;
+            border-color: #ff7675;
+            transform: scale(1.1);
+            z-index: 10;
+        }
+
+        .cell.compare {
+            background: #3498db;
+            border-color: #74b9ff;
+        }
+
+        .cell.sorted {
+            background: #2ecc71;
+            color: #000;
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 12px 24px;
+            cursor: pointer;
+            background: #00cec9;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: #81ecec;
+        }
+
+        button:disabled {
+            background: #636e72;
+            cursor: not-allowed;
+        }
     </style>
 </head>
+
 <body>
 
     <h1>Matrix Sort Vizualizacija</h1>
     <p>Urejanje 5x5 matrike (od leve proti desni, od zgoraj navzdol)</p>
-    
+
     <div class="grid" id="matrixGrid"></div>
 
     <div class="controls">
@@ -65,7 +119,7 @@
 
         async function matrixSort() {
             let n = cells.length;
-            
+
             // Uporabimo Bubble Sort logiko na sploščeni matriki
             for (let i = 0; i < n; i++) {
                 for (let j = 0; j < n - i - 1; j++) {
@@ -102,4 +156,5 @@
         initMatrix();
     </script>
 </body>
+
 </html>

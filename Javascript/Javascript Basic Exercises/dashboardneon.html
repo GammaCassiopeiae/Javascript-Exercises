@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="sl" data-js-theme="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -28,7 +29,7 @@
             /* Spacing */
             --space-fluid: clamp(1rem, 3vw, 2.5rem);
             --space-m: 1.5rem;
-            
+
             /* Z-Index Scale */
             --z-base: 1;
             --z-sticky: 100;
@@ -43,7 +44,9 @@
         02. GLOBAL RESET (Rule 5, 92, 93)
         ======================================== 
         */
-        *, *::before, *::after {
+        *,
+        *::before,
+        *::after {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
@@ -59,10 +62,27 @@
             scrollbar-gutter: stable;
         }
 
-        ul { list-style: none; }
-        a { text-decoration: none; color: inherit; }
-        button { cursor: pointer; border: none; background: none; font: inherit; }
-        canvas { display: block; width: 100%; height: 100%; }
+        ul {
+            list-style: none;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            background: none;
+            font: inherit;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
 
         /* 
         ========================================
@@ -72,7 +92,7 @@
         .l-app-shell {
             display: grid;
             min-height: 100svh;
-            grid-template-areas: 
+            grid-template-areas:
                 "header"
                 "main"
                 "footer";
@@ -82,7 +102,7 @@
 
         @media (min-width: 1024px) {
             .l-app-shell {
-                grid-template-areas: 
+                grid-template-areas:
                     "sidebar header"
                     "sidebar main"
                     "sidebar footer";
@@ -105,7 +125,10 @@
         }
 
         @media (min-width: 1024px) {
-            .c-sidebar { display: flex; flex-direction: column; }
+            .c-sidebar {
+                display: flex;
+                flex-direction: column;
+            }
         }
 
         .c-brand {
@@ -126,7 +149,8 @@
             margin-bottom: 0.5rem;
         }
 
-        .c-nav__link:hover, .c-nav__link.is-active {
+        .c-nav__link:hover,
+        .c-nav__link.is-active {
             color: white;
             background: var(--clr-surface-alt);
             box-shadow: inset 3px 0 0 var(--clr-primary);
@@ -191,16 +215,39 @@
         }
 
         /* Grid Spans */
-        .c-card--hero { grid-column: 1 / -1; min-height: 350px; }
-        .c-card--stat { grid-column: span 12; }
-        .c-card--chart-wide { grid-column: span 12; }
-        .c-card--chart-half { grid-column: span 12; }
-        .c-card--chart-third { grid-column: span 12; }
+        .c-card--hero {
+            grid-column: 1 / -1;
+            min-height: 350px;
+        }
+
+        .c-card--stat {
+            grid-column: span 12;
+        }
+
+        .c-card--chart-wide {
+            grid-column: span 12;
+        }
+
+        .c-card--chart-half {
+            grid-column: span 12;
+        }
+
+        .c-card--chart-third {
+            grid-column: span 12;
+        }
 
         @media (min-width: 768px) {
-            .c-card--stat { grid-column: span 3; }
-            .c-card--chart-half { grid-column: span 6; }
-            .c-card--chart-third { grid-column: span 4; }
+            .c-card--stat {
+                grid-column: span 3;
+            }
+
+            .c-card--chart-half {
+                grid-column: span 6;
+            }
+
+            .c-card--chart-third {
+                grid-column: span 4;
+            }
         }
 
         /* 
@@ -230,22 +277,41 @@
             text-align: left;
         }
 
-        .c-table__th { padding: 1rem; background: var(--clr-surface-alt); color: var(--clr-muted); font-size: 0.75rem; text-transform: uppercase; }
-        .c-table__td { padding: 1rem; border-bottom: 1px solid var(--clr-border); font-family: monospace; }
+        .c-table__th {
+            padding: 1rem;
+            background: var(--clr-surface-alt);
+            color: var(--clr-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+
+        .c-table__td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--clr-border);
+            font-family: monospace;
+        }
 
         /* 
         ========================================
         08. UTILITIES (Rule 24)
         ======================================== 
         */
-        .u-neon-text { color: var(--clr-primary); text-shadow: 0 0 10px var(--clr-primary-glow); }
-        .u-flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .u-neon-text {
+            color: var(--clr-primary);
+            text-shadow: 0 0 10px var(--clr-primary-glow);
+        }
+
+        .u-flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
     </style>
 </head>
 
 <body>
     <div class="l-app-shell">
-        
+
         <!-- SIDEBAR -->
         <aside class="c-sidebar">
             <div class="c-brand">NEON_ARCH</div>
@@ -271,7 +337,7 @@
 
         <!-- MAIN CONTENT -->
         <main class="c-main">
-            
+
             <h2 class="c-section-title">Globalni Nadzor</h2>
 
             <!-- Stat Cards -->
@@ -335,7 +401,9 @@
 
             <!-- DONUT CHART -->
             <section class="c-card c-card--chart-half">
-                <header><h3>Poraba virov (Donut)</h3></header>
+                <header>
+                    <h3>Poraba virov (Donut)</h3>
+                </header>
                 <div class="c-canvas-wrapper">
                     <canvas id="js-donut-chart"></canvas>
                 </div>
@@ -343,7 +411,9 @@
 
             <!-- PIE CHART -->
             <section class="c-card c-card--chart-third">
-                <header><h3>Distribucija (Pie)</h3></header>
+                <header>
+                    <h3>Distribucija (Pie)</h3>
+                </header>
                 <div class="c-canvas-wrapper">
                     <canvas id="js-pie-chart"></canvas>
                 </div>
@@ -351,7 +421,9 @@
 
             <!-- PLOT CHART -->
             <section class="c-card c-card--chart-third" style="grid-column: span 8;">
-                <header><h3>Sistemski dogodki (Plot)</h3></header>
+                <header>
+                    <h3>Sistemski dogodki (Plot)</h3>
+                </header>
                 <div class="c-canvas-wrapper">
                     <canvas id="js-plot-chart"></canvas>
                 </div>
@@ -386,26 +458,39 @@
                 canvas.height = rect.height * dpr;
                 const ctx = canvas.getContext('2d');
                 ctx.scale(dpr, dpr);
-                return { ctx, w: rect.width, h: rect.height };
+                return {
+                    ctx,
+                    w: rect.width,
+                    h: rect.height
+                };
             };
 
             const drawLine = () => {
-                const { ctx, w, h } = setupCanvas('js-line-chart');
+                const {
+                    ctx,
+                    w,
+                    h
+                } = setupCanvas('js-line-chart');
                 ctx.strokeStyle = COLORS.primary;
                 ctx.lineWidth = 3;
                 ctx.shadowBlur = 15;
                 ctx.shadowColor = COLORS.primary;
                 ctx.beginPath();
                 ctx.moveTo(0, h * 0.7);
-                for(let i = 0; i <= 10; i++) {
-                    ctx.lineTo((w/10) * i, h * (0.3 + Math.random() * 0.4));
+                for (let i = 0; i <= 10; i++) {
+                    ctx.lineTo((w / 10) * i, h * (0.3 + Math.random() * 0.4));
                 }
                 ctx.stroke();
             };
 
             const drawDonut = () => {
-                const { ctx, w, h } = setupCanvas('js-donut-chart');
-                const x = w/2, y = h/2;
+                const {
+                    ctx,
+                    w,
+                    h
+                } = setupCanvas('js-donut-chart');
+                const x = w / 2,
+                    y = h / 2;
                 ctx.lineWidth = 20;
                 // Background
                 ctx.beginPath();
@@ -414,7 +499,7 @@
                 ctx.stroke();
                 // Value
                 ctx.beginPath();
-                ctx.arc(x, y, 60, -Math.PI/2, Math.PI * 0.8);
+                ctx.arc(x, y, 60, -Math.PI / 2, Math.PI * 0.8);
                 ctx.strokeStyle = COLORS.accent;
                 ctx.shadowBlur = 10;
                 ctx.shadowColor = COLORS.accent;
@@ -422,26 +507,36 @@
             };
 
             const drawPie = () => {
-                const { ctx, w, h } = setupCanvas('js-pie-chart');
-                const x = w/2, y = h/2, r = 70;
+                const {
+                    ctx,
+                    w,
+                    h
+                } = setupCanvas('js-pie-chart');
+                const x = w / 2,
+                    y = h / 2,
+                    r = 70;
                 const data = [0.4, 0.35, 0.25];
                 const colors = [COLORS.primary, COLORS.secondary, COLORS.accent];
                 let angle = 0;
                 data.forEach((val, i) => {
                     ctx.beginPath();
                     ctx.moveTo(x, y);
-                    ctx.arc(x, y, r, angle, angle + (Math.PI*2*val));
+                    ctx.arc(x, y, r, angle, angle + (Math.PI * 2 * val));
                     ctx.fillStyle = colors[i];
                     ctx.fill();
-                    angle += Math.PI*2*val;
+                    angle += Math.PI * 2 * val;
                 });
             };
 
             const drawPlot = () => {
-                const { ctx, w, h } = setupCanvas('js-plot-chart');
-                for(let i = 0; i < 60; i++) {
+                const {
+                    ctx,
+                    w,
+                    h
+                } = setupCanvas('js-plot-chart');
+                for (let i = 0; i < 60; i++) {
                     ctx.beginPath();
-                    ctx.arc(Math.random()*w, Math.random()*h, 3, 0, Math.PI*2);
+                    ctx.arc(Math.random() * w, Math.random() * h, 3, 0, Math.PI * 2);
                     ctx.fillStyle = i % 2 === 0 ? COLORS.primary : COLORS.secondary;
                     ctx.fill();
                 }
@@ -470,4 +565,5 @@
         document.addEventListener('DOMContentLoaded', NeonApp.init);
     </script>
 </body>
+
 </html>

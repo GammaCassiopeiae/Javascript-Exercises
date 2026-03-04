@@ -1,14 +1,35 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>A* Pathfinding Demo</title>
     <style>
-        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; background: #222; color: #fff; }
-        canvas { border: 2px solid #555; cursor: crosshair; background: #000; }
-        .controls { margin: 10px; }
-        button { padding: 8px 16px; cursor: pointer; }
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #222;
+            color: #fff;
+        }
+
+        canvas {
+            border: 2px solid #555;
+            cursor: crosshair;
+            background: #000;
+        }
+
+        .controls {
+            margin: 10px;
+        }
+
+        button {
+            padding: 8px 16px;
+            cursor: pointer;
+        }
     </style>
 </head>
+
 <body>
     <h2>A* Pathfinding</h2>
     <div class="controls">
@@ -20,15 +41,34 @@
     <script>
         const canvas = document.getElementById('gridCanvas');
         const ctx = canvas.getContext('2d');
-        const cols = 30, rows = 20;
-        const w = canvas.width / cols, h = canvas.height / rows;
+        const cols = 30,
+            rows = 20;
+        const w = canvas.width / cols,
+            h = canvas.height / rows;
         let grid = [];
-        let start = { x: 0, y: 0 }, end = { x: cols - 1, y: rows - 1 };
+        let start = {
+                x: 0,
+                y: 0
+            },
+            end = {
+                x: cols - 1,
+                y: rows - 1
+            };
 
         function initGrid() {
-            grid = Array.from({ length: cols }, (_, i) => 
-                Array.from({ length: rows }, (_, j) => ({
-                    x: i, y: j, wall: false, g: 0, h: 0, f: 0, parent: null
+            grid = Array.from({
+                    length: cols
+                }, (_, i) =>
+                Array.from({
+                    length: rows
+                }, (_, j) => ({
+                    x: i,
+                    y: j,
+                    wall: false,
+                    g: 0,
+                    h: 0,
+                    f: 0,
+                    parent: null
                 }))
             );
         }
@@ -39,18 +79,25 @@
                 for (let j = 0; j < rows; j++) {
                     ctx.strokeStyle = '#333';
                     ctx.strokeRect(i * w, j * h, w, h);
-                    if (grid[i][j].wall) { ctx.fillStyle = '#555'; ctx.fillRect(i * w, j * h, w, h); }
+                    if (grid[i][j].wall) {
+                        ctx.fillStyle = '#555';
+                        ctx.fillRect(i * w, j * h, w, h);
+                    }
                 }
             }
-            ctx.fillStyle = 'green'; ctx.fillRect(start.x * w, start.y * h, w, h);
-            ctx.fillStyle = 'red'; ctx.fillRect(end.x * w, end.y * h, w, h);
-            
+            ctx.fillStyle = 'green';
+            ctx.fillRect(start.x * w, start.y * h, w, h);
+            ctx.fillStyle = 'red';
+            ctx.fillRect(end.x * w, end.y * h, w, h);
+
             const path = solveAStar();
             if (path) {
-                ctx.strokeStyle = '#00ffcc'; ctx.lineWidth = 3;
+                ctx.strokeStyle = '#00ffcc';
+                ctx.lineWidth = 3;
                 ctx.beginPath();
                 path.forEach((p, idx) => {
-                    const cx = p.x * w + w / 2, cy = p.y * h + h / 2;
+                    const cx = p.x * w + w / 2,
+                        cy = p.y * h + h / 2;
                     idx === 0 ? ctx.moveTo(cx, cy) : ctx.lineTo(cx, cy);
                 });
                 ctx.stroke();
@@ -60,20 +107,32 @@
         function solveAStar() {
             let openSet = [grid[start.x][start.y]];
             let closedSet = new Set();
-            grid.flat().forEach(node => { node.g = node.h = node.f = 0; node.parent = null; });
+            grid.flat().forEach(node => {
+                node.g = node.h = node.f = 0;
+                node.parent = null;
+            });
 
             while (openSet.length > 0) {
                 let current = openSet.reduce((prev, curr) => prev.f < curr.f ? prev : curr);
                 if (current === grid[end.x][end.y]) {
                     let path = [];
-                    while (current) { path.push(current); current = current.parent; }
+                    while (current) {
+                        path.push(current);
+                        current = current.parent;
+                    }
                     return path;
                 }
                 openSet = openSet.filter(n => n !== current);
                 closedSet.add(current);
 
-                [[0,1],[0,-1],[1,0],[-1,0]].forEach(([dx, dy]) => {
-                    let nx = current.x + dx, ny = current.y + dy;
+                [
+                    [0, 1],
+                    [0, -1],
+                    [1, 0],
+                    [-1, 0]
+                ].forEach(([dx, dy]) => {
+                    let nx = current.x + dx,
+                        ny = current.y + dy;
                     if (nx >= 0 && nx < cols && ny >= 0 && ny < rows) {
                         let neighbor = grid[nx][ny];
                         if (!neighbor.wall && !closedSet.has(neighbor)) {
@@ -94,13 +153,19 @@
 
         canvas.onmousedown = (e) => {
             const rect = canvas.getBoundingClientRect();
-            const x = Math.floor((e.clientX - rect.left) / w), y = Math.floor((e.clientY - rect.top) / h);
-            if(grid[x] && grid[x][y]) grid[x][y].wall = !grid[x][y].wall;
+            const x = Math.floor((e.clientX - rect.left) / w),
+                y = Math.floor((e.clientY - rect.top) / h);
+            if (grid[x] && grid[x][y]) grid[x][y].wall = !grid[x][y].wall;
             draw();
         };
 
-        function resetGrid() { initGrid(); draw(); }
-        initGrid(); draw();
+        function resetGrid() {
+            initGrid();
+            draw();
+        }
+        initGrid();
+        draw();
     </script>
 </body>
+
 </html>

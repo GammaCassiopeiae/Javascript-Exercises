@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +9,8 @@
         body {
             margin: 0;
             background-color: #050505;
-            color: #00ff41; /* Matrix zelena */
+            color: #00ff41;
+            /* Matrix zelena */
             font-family: 'Courier New', Courier, monospace;
             overflow: hidden;
             display: flex;
@@ -41,9 +43,14 @@
             gap: 20px;
         }
 
-        .label { font-weight: bold; text-transform: uppercase; letter-spacing: 2px; }
+        .label {
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
     </style>
 </head>
+
 <body>
 
     <div class="ui-overlay">
@@ -149,7 +156,10 @@
                 const x = final2d[0] * scale + width / 2;
                 const y = final2d[1] * scale + height / 2;
 
-                projected2d.push({x, y});
+                projected2d.push({
+                    x,
+                    y
+                });
 
                 // Izris točk
                 ctx.fillStyle = "#00ff41";
@@ -182,4 +192,5 @@
         draw();
     </script>
 </body>
+
 </html>

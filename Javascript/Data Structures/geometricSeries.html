@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,13 +25,17 @@
             background: var(--card);
             padding: 2rem;
             border-radius: 1rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
             width: 100%;
             max-width: 550px;
         }
 
-        h1 { color: var(--primary); font-size: 1.4rem; margin-top: 0; }
-        
+        h1 {
+            color: var(--primary);
+            font-size: 1.4rem;
+            margin-top: 0;
+        }
+
         .info {
             background: #f8fafc;
             padding: 1rem;
@@ -64,7 +69,9 @@
             cursor: pointer;
         }
 
-        button:hover { background: #047857; }
+        button:hover {
+            background: #047857;
+        }
 
         #resultArea {
             display: none;
@@ -92,70 +99,72 @@
         }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <h1>Vsota geometrijskega zaporedja</h1>
-    
-    <div class="info">
-        Zaporedje: 0.6, 0.06, 0.006, ... <br>
-        Vsota teži proti <strong>0.666... (2/3)</strong>, ko gre n proti neskončnosti.
+    <div class="container">
+        <h1>Vsota geometrijskega zaporedja</h1>
+
+        <div class="info">
+            Zaporedje: 0.6, 0.06, 0.006, ... <br>
+            Vsota teži proti <strong>0.666... (2/3)</strong>, ko gre n proti neskončnosti.
+        </div>
+
+        <div class="input-group">
+            <input type="number" id="nTerms" value="5" min="1" max="100" placeholder="Število členov (n)">
+            <button onclick="calculateSum()">Izračunaj</button>
+        </div>
+
+        <div id="resultArea">
+            <span class="label">Vizualni prikaz vsote:</span>
+            <div id="visualSum" class="math" style="margin-bottom: 1rem;"></div>
+
+            <span class="label">Natančna decimalna vsota:</span>
+            <div id="finalResult" class="math"></div>
+        </div>
     </div>
 
-    <div class="input-group">
-        <input type="number" id="nTerms" value="5" min="1" max="100" placeholder="Število členov (n)">
-        <button onclick="calculateSum()">Izračunaj</button>
-    </div>
+    <script>
+        /**
+         * Izračuna vsoto zaporedja 0.6, 0.06, 0.006... do n-tega člena.
+         */
+        function calculateSum() {
+            const n = parseInt(document.getElementById('nTerms').value);
+            const resultArea = document.getElementById('resultArea');
+            const visualDiv = document.getElementById('visualSum');
+            const finalDiv = document.getElementById('finalResult');
 
-    <div id="resultArea">
-        <span class="label">Vizualni prikaz vsote:</span>
-        <div id="visualSum" class="math" style="margin-bottom: 1rem;"></div>
-        
-        <span class="label">Natančna decimalna vsota:</span>
-        <div id="finalResult" class="math"></div>
-    </div>
-</div>
+            if (isNaN(n) || n < 1) return;
 
-<script>
-    /**
-     * Izračuna vsoto zaporedja 0.6, 0.06, 0.006... do n-tega člena.
-     */
-    function calculateSum() {
-        const n = parseInt(document.getElementById('nTerms').value);
-        const resultArea = document.getElementById('resultArea');
-        const visualDiv = document.getElementById('visualSum');
-        const finalDiv = document.getElementById('finalResult');
+            let totalSum = 0;
+            let termsArray = [];
 
-        if (isNaN(n) || n < 1) return;
+            // Generiranje členov in seštevanje
+            for (let i = 1; i <= n; i++) {
+                // Vsak člen je 0.6 * (0.1)^(i-1)
+                let term = 0.6 * Math.pow(0.1, i - 1);
+                totalSum += term;
 
-        let totalSum = 0;
-        let termsArray = [];
-
-        // Generiranje členov in seštevanje
-        for (let i = 1; i <= n; i++) {
-            // Vsak člen je 0.6 * (0.1)^(i-1)
-            let term = 0.6 * Math.pow(0.1, i - 1);
-            totalSum += term;
-            
-            // Shranimo niz za vizualni prikaz (omejimo na prvih 10 členov)
-            if (i <= 7) {
-                termsArray.push(term.toFixed(i));
+                // Shranimo niz za vizualni prikaz (omejimo na prvih 10 členov)
+                if (i <= 7) {
+                    termsArray.push(term.toFixed(i));
+                }
             }
+
+            // DOM posodobitev
+            resultArea.style.display = 'block';
+
+            // Prikaz zaporedja (0.6 + 0.06 + ...)
+            visualDiv.innerText = termsArray.join(" + ") + (n > 7 ? " + ..." : "");
+
+            // Natančen izpraz rezultata (omejen na n decimalnih mest)
+            finalDiv.innerText = totalSum.toFixed(n);
         }
 
-        // DOM posodobitev
-        resultArea.style.display = 'block';
-        
-        // Prikaz zaporedja (0.6 + 0.06 + ...)
-        visualDiv.innerText = termsArray.join(" + ") + (n > 7 ? " + ..." : "");
-        
-        // Natančen izpraz rezultata (omejen na n decimalnih mest)
-        finalDiv.innerText = totalSum.toFixed(n);
-    }
-
-    // Začetni izračun
-    calculateSum();
-</script>
+        // Začetni izračun
+        calculateSum();
+    </script>
 
 </body>
+
 </html>

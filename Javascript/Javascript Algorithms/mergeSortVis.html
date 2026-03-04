@@ -1,25 +1,76 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Merge Sort Vizualizacija</title>
     <style>
-        :root { --bg: #0f172a; --primary: #818cf8; --highlight: #f87171; --accent: #34d399; }
-        body { background: var(--bg); color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-        canvas { background: #1e293b; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .controls { margin-top: 20px; display: flex; gap: 10px; }
-        button { background: var(--primary); border: none; padding: 10px 20px; color: white; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.2s; }
-        button:hover:not(:disabled) { background: #6366f1; transform: translateY(-2px); }
-        button:disabled { background: #475569; cursor: not-allowed; }
-        .status { margin-bottom: 10px; font-family: monospace; color: var(--accent); }
+        :root {
+            --bg: #0f172a;
+            --primary: #818cf8;
+            --highlight: #f87171;
+            --accent: #34d399;
+        }
+
+        body {
+            background: var(--bg);
+            color: white;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        canvas {
+            background: #1e293b;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            background: var(--primary);
+            border: none;
+            padding: 10px 20px;
+            color: white;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover:not(:disabled) {
+            background: #6366f1;
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            background: #475569;
+            cursor: not-allowed;
+        }
+
+        .status {
+            margin-bottom: 10px;
+            font-family: monospace;
+            color: var(--accent);
+        }
     </style>
 </head>
+
 <body>
 
     <h1>Merge Sort</h1>
     <div class="status" id="status">Pripravljen</div>
     <canvas id="canvas" width="800" height="400"></canvas>
-    
+
     <div class="controls">
         <button id="resetBtn">Novo polje</button>
         <button id="sortBtn">Uredi (Divide & Conquer)</button>
@@ -37,7 +88,9 @@
         const BAR_WIDTH = canvas.width / COUNT;
 
         function init() {
-            array = Array.from({ length: COUNT }, () => Math.floor(Math.random() * (canvas.height - 40)) + 20);
+            array = Array.from({
+                length: COUNT
+            }, () => Math.floor(Math.random() * (canvas.height - 40)) + 20);
             draw();
             sortBtn.disabled = false;
             statusEl.innerText = "Polje pripravljeno";
@@ -60,7 +113,7 @@
             if (start >= end) return;
 
             const mid = Math.floor((start + end) / 2);
-            
+
             await mergeSort(start, mid);
             await mergeSort(mid + 1, end);
             await merge(start, mid, end);
@@ -70,8 +123,10 @@
         async function merge(start, mid, end) {
             let left = array.slice(start, mid + 1);
             let right = array.slice(mid + 1, end + 1);
-            
-            let i = 0, j = 0, k = start;
+
+            let i = 0,
+                j = 0,
+                k = start;
 
             while (i < left.length && j < right.length) {
                 if (left[i] <= right[j]) {
@@ -88,14 +143,16 @@
 
             while (i < left.length) {
                 array[k] = left[i];
-                i++; k++;
+                i++;
+                k++;
                 draw([start, end]);
                 await sleep(20);
             }
 
             while (j < right.length) {
                 array[k] = right[j];
-                j++; k++;
+                j++;
+                k++;
                 draw([start, end]);
                 await sleep(20);
             }
@@ -116,4 +173,5 @@
         init();
     </script>
 </body>
+
 </html>

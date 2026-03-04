@@ -1,53 +1,142 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>5D Matrix Vizualizacija</title>
     <style>
-        :root { --bg: #0f172a; --text: #f1f5f9; --border: #334155; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
-        
-        h1 { margin-bottom: 5px; color: #3b82f6; }
-        p { color: #94a3b8; margin-bottom: 20px; font-size: 0.9rem; }
+        :root {
+            --bg: #0f172a;
+            --text: #f1f5f9;
+            --border: #334155;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        h1 {
+            margin-bottom: 5px;
+            color: #3b82f6;
+        }
+
+        p {
+            color: #94a3b8;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
 
         /* 5D Wrapper - Mreža 4D objektov */
-        .matrix-5d { 
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; 
-            padding: 20px; border: 2px dashed #475569; border-radius: 20px;
+        .matrix-5d {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            padding: 20px;
+            border: 2px dashed #475569;
+            border-radius: 20px;
         }
 
         /* 4D Wrapper - Vrstica 3D kock */
-        .matrix-4d { 
-            display: flex; gap: 20px; background: rgba(255,255,255,0.03); 
-            padding: 15px; border-radius: 12px; border: 1px solid var(--border);
+        .matrix-4d {
+            display: flex;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
             position: relative;
         }
-        .matrix-4d::before { content: '4D Tesseract'; position: absolute; top: -10px; left: 10px; font-size: 10px; background: var(--bg); padding: 0 5px; color: #6366f1; }
+
+        .matrix-4d::before {
+            content: '4D Tesseract';
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            font-size: 10px;
+            background: var(--bg);
+            padding: 0 5px;
+            color: #6366f1;
+        }
 
         /* 3D Wrapper - Sklad 2D mrež */
-        .matrix-3d { 
-            display: flex; flex-direction: column; gap: 8px; 
+        .matrix-3d {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
         /* 2D Grid */
-        .matrix-2d { 
-            display: grid; grid-template-columns: repeat(2, 30px); gap: 4px; 
+        .matrix-2d {
+            display: grid;
+            grid-template-columns: repeat(2, 30px);
+            gap: 4px;
         }
 
         .cell {
-            width: 30px; height: 30px; background: #1e293b; border: 1px solid #3b82f6;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 10px; font-weight: bold; border-radius: 4px;
-            transition: all 0.3s; cursor: crosshair;
+            width: 30px;
+            height: 30px;
+            background: #1e293b;
+            border: 1px solid #3b82f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            border-radius: 4px;
+            transition: all 0.3s;
+            cursor: crosshair;
         }
-        .cell:hover { background: #3b82f6; color: white; transform: scale(1.2); z-index: 20; }
-        .cell.highlight { background: #f59e0b; color: black; box-shadow: 0 0 15px #f59e0b; }
 
-        .controls { margin-top: 30px; background: #1e293b; padding: 20px; border-radius: 12px; display: flex; gap: 15px; }
-        input { padding: 8px; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: white; width: 80px; }
-        button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; background: #3b82f6; color: white; }
+        .cell:hover {
+            background: #3b82f6;
+            color: white;
+            transform: scale(1.2);
+            z-index: 20;
+        }
+
+        .cell.highlight {
+            background: #f59e0b;
+            color: black;
+            box-shadow: 0 0 15px #f59e0b;
+        }
+
+        .controls {
+            margin-top: 30px;
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+            display: flex;
+            gap: 15px;
+        }
+
+        input {
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: white;
+            width: 80px;
+        }
+
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            background: #3b82f6;
+            color: white;
+        }
     </style>
 </head>
+
 <body>
 
     <h1>5D Matrix (2x2x2x2x2)</h1>
@@ -97,7 +186,7 @@
                                 cell.id = `c-${d5}-${d4}-${d3}-${d2}-${d1}`;
                                 cell.innerText = val;
                                 cell.title = `Indeks: [${d5},${d4},${d3},${d2},${d1}]`;
-                                
+
                                 el3.appendChild(cell);
                             }
                         }
@@ -129,9 +218,12 @@
             });
         }
 
-        function randomize() { init5D(); }
+        function randomize() {
+            init5D();
+        }
 
         init5D();
     </script>
 </body>
+
 </html>

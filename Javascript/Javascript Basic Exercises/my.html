@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,14 +17,16 @@
             --spacing-unit: 1rem;
             --z-sticky: 100;
             --z-modal: 1000;
-            
+
             /* Fluid Scaling (9) */
             --font-size-base: clamp(1rem, 0.95rem + 0.25vw, 1.25rem);
             --font-size-h1: clamp(2rem, 1.5rem + 2vw, 4rem);
         }
 
         /* Box Model Integrity (5) */
-        *, *::before, *::after {
+        *,
+        *::before,
+        *::after {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
@@ -34,17 +37,19 @@
             background-color: var(--color-bg);
             color: var(--color-text);
             line-height: 1.6;
-            overflow-x: hidden; /* (92) */
+            overflow-x: hidden;
+            /* (92) */
             display: flex;
             flex-direction: column;
-            min-height: 100svh; /* (49, 66) */
+            min-height: 100svh;
+            /* (49, 66) */
         }
 
         /* III. THE HOLY TRINITY LAYOUT - CSS GRID (8, 51, 52) */
         .l-page-wrapper {
             display: grid;
             gap: 0;
-            grid-template-areas: 
+            grid-template-areas:
                 "header"
                 "main"
                 "aside"
@@ -54,7 +59,7 @@
         @media (min-width: 768px) {
             .l-page-wrapper {
                 grid-template-columns: 1fr 300px;
-                grid-template-areas: 
+                grid-template-areas:
                     "header header"
                     "main aside"
                     "footer footer";
@@ -64,7 +69,8 @@
         /* II. HTML STRUCTURE & BEM STRICTNESS (3, 21, 22) */
         .c-header {
             grid-area: header;
-            position: sticky; /* (65) */
+            position: sticky;
+            /* (65) */
             top: 0;
             z-index: var(--z-sticky);
             background: rgba(10, 10, 12, 0.9);
@@ -74,9 +80,12 @@
         }
 
         .c-header__nav-list {
-            display: flex; /* (57) */
-            justify-content: space-between; /* (61) */
-            list-style: none; /* (41) */
+            display: flex;
+            /* (57) */
+            justify-content: space-between;
+            /* (61) */
+            list-style: none;
+            /* (41) */
         }
 
         .c-main {
@@ -93,7 +102,8 @@
 
         .c-footer {
             grid-area: footer;
-            margin-top: auto; /* (66) */
+            margin-top: auto;
+            /* (66) */
             padding: var(--spacing-unit);
             text-align: center;
             border-top: 1px solid #333;
@@ -119,8 +129,13 @@
         }
 
         /* UTILITIES (24) */
-        .u-text-glow { text-shadow: 0 0 10px var(--color-neon-primary); }
-        .u-mb-2 { margin-bottom: 2rem; }
+        .u-text-glow {
+            text-shadow: 0 0 10px var(--color-neon-primary);
+        }
+
+        .u-mb-2 {
+            margin-bottom: 2rem;
+        }
 
         /* FORM STYLING (25, 34, 46) */
         .c-form__group {
@@ -147,6 +162,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <div class="l-page-wrapper">
@@ -209,7 +225,7 @@
                 glowBtn.addEventListener('click', () => {
                     // Toggle state using classList (23)
                     const isActive = mainTitle.classList.toggle('is-active');
-                    
+
                     if (isActive) {
                         mainTitle.style.color = 'var(--color-neon-secondary)';
                         glowBtn.textContent = 'Deaktiviraj';
@@ -217,7 +233,7 @@
                         mainTitle.style.color = '';
                         glowBtn.textContent = 'Aktiviraj Neon';
                     }
-                    
+
                     console.log(`State: ${isActive ? 'Neon Active' : 'Neon Idle'}`);
                 });
             }
@@ -234,4 +250,5 @@
         });
     </script>
 </body>
+
 </html>

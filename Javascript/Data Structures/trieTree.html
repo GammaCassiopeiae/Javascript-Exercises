@@ -1,31 +1,116 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Vizualizacija: Trie (Prefix Tree)</title>
     <style>
-        :root { --node-bg: #ffffff; --node-border: #341f97; --highlight: #54a0ff; --end-node: #ee5253; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f1f2f6; display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 95%; max-width: 1000px; text-align: center; }
-        
-        #treeCanvas { position: relative; width: 100%; min-height: 500px; margin-top: 40px; border: 1px solid #eee; background: #fafafa; border-radius: 8px; overflow: hidden; }
-        
-        .trie-node {
-            width: 32px; height: 32px; background: var(--node-bg); border: 2px solid var(--node-border);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-weight: bold; position: absolute; z-index: 2; transition: all 0.4s ease; font-size: 0.8rem;
+        :root {
+            --node-bg: #ffffff;
+            --node-border: #341f97;
+            --highlight: #54a0ff;
+            --end-node: #ee5253;
         }
-        .is-end { border-color: var(--end-node); background: #ffeded; color: var(--end-node); }
-        .root-node { background: #341f97; color: white; }
 
-        .line { position: absolute; background: #cbd5e0; height: 1px; transform-origin: 0 0; z-index: 1; transition: all 0.4s ease; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f1f2f6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
 
-        .controls { margin-bottom: 20px; display: flex; gap: 10px; justify-content: center; }
-        input { padding: 10px; border: 2px solid #ddd; border-radius: 6px; width: 150px; text-transform: uppercase; }
-        button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; color: white; background: #341f97; }
-        #status { font-size: 0.9rem; color: #57606f; margin-top: 10px; }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 95%;
+            max-width: 1000px;
+            text-align: center;
+        }
+
+        #treeCanvas {
+            position: relative;
+            width: 100%;
+            min-height: 500px;
+            margin-top: 40px;
+            border: 1px solid #eee;
+            background: #fafafa;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .trie-node {
+            width: 32px;
+            height: 32px;
+            background: var(--node-bg);
+            border: 2px solid var(--node-border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            position: absolute;
+            z-index: 2;
+            transition: all 0.4s ease;
+            font-size: 0.8rem;
+        }
+
+        .is-end {
+            border-color: var(--end-node);
+            background: #ffeded;
+            color: var(--end-node);
+        }
+
+        .root-node {
+            background: #341f97;
+            color: white;
+        }
+
+        .line {
+            position: absolute;
+            background: #cbd5e0;
+            height: 1px;
+            transform-origin: 0 0;
+            z-index: 1;
+            transition: all 0.4s ease;
+        }
+
+        .controls {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        input {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            width: 150px;
+            text-transform: uppercase;
+        }
+
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            color: white;
+            background: #341f97;
+        }
+
+        #status {
+            font-size: 0.9rem;
+            color: #57606f;
+            margin-top: 10px;
+        }
     </style>
 </head>
+
 <body>
 
     <div class="container">
@@ -71,7 +156,7 @@
             div.className = 'trie-node';
             if (node === root) div.classList.add('root-node');
             if (node.isEndOfWord) div.classList.add('is-end');
-            
+
             div.innerText = node.char === 'ROOT' ? 'R' : node.char;
             div.style.left = `${x - 16}px`;
             div.style.top = `${y - 16}px`;
@@ -79,13 +164,13 @@
 
             const childrenChars = Object.keys(node.children).sort();
             const childCount = childrenChars.length;
-            
+
             if (childCount > 0) {
                 const step = width / childCount;
                 childrenChars.forEach((char, i) => {
                     const nextX = (x - width / 2) + (step * i) + step / 2;
                     const nextY = y + 70;
-                    
+
                     drawLine(x, y, nextX, nextY);
                     draw(node.children[char], nextX, nextY, step, level + 1);
                 });
@@ -93,8 +178,8 @@
         }
 
         function drawLine(x1, y1, x2, y2) {
-            const len = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
-            const ang = Math.atan2(y2-y1, x2-x1) * 180 / Math.PI;
+            const len = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+            const ang = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
             const line = document.createElement('div');
             line.className = 'line';
             line.style.width = `${len}px`;
@@ -118,9 +203,9 @@
             draw(root, canvas.offsetWidth / 2, 40, canvas.offsetWidth * 0.9, 0);
         }
 
-        function reset() { 
-            root = new TrieNode('ROOT'); 
-            render(); 
+        function reset() {
+            root = new TrieNode('ROOT');
+            render();
             document.getElementById('status').innerText = "Drevo počiščeno.";
         }
 
@@ -128,4 +213,5 @@
         render();
     </script>
 </body>
+
 </html>

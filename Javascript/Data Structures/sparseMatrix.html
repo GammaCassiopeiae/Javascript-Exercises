@@ -1,32 +1,130 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Vizualizacija: Redka matrika (Sparse Matrix)</title>
     <style>
-        :root { --primary: #0984e3; --zero: #dfe6e9; --value: #e17055; --bg: #f5f6fa; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 95%; max-width: 900px; text-align: center; }
-        
-        .layout { display: flex; gap: 40px; justify-content: center; align-items: flex-start; margin-top: 30px; flex-wrap: wrap; }
-        
+        :root {
+            --primary: #0984e3;
+            --zero: #dfe6e9;
+            --value: #e17055;
+            --bg: #f5f6fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 95%;
+            max-width: 900px;
+            text-align: center;
+        }
+
+        .layout {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            align-items: flex-start;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
         /* Standardni prikaz matrike */
-        .matrix-view { display: grid; grid-template-columns: repeat(5, 40px); gap: 5px; padding: 10px; background: #2d3436; border-radius: 4px; }
-        .cell { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; border-radius: 2px; transition: 0.3s; }
-        .cell-zero { background: var(--zero); color: #b2bec3; }
-        .cell-val { background: var(--value); color: white; font-weight: bold; transform: scale(1.05); }
+        .matrix-view {
+            display: grid;
+            grid-template-columns: repeat(5, 40px);
+            gap: 5px;
+            padding: 10px;
+            background: #2d3436;
+            border-radius: 4px;
+        }
+
+        .cell {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            border-radius: 2px;
+            transition: 0.3s;
+        }
+
+        .cell-zero {
+            background: var(--zero);
+            color: #b2bec3;
+        }
+
+        .cell-val {
+            background: var(--value);
+            color: white;
+            font-weight: bold;
+            transform: scale(1.05);
+        }
 
         /* Stisnjena tabela (Sparse Representation) */
-        .sparse-table { border-collapse: collapse; font-size: 0.9rem; min-width: 200px; }
-        .sparse-table th, .sparse-table td { border: 1px solid #ddd; padding: 8px 12px; text-align: center; }
-        .sparse-table th { background: var(--primary); color: white; }
-        .sparse-table tr:nth-child(even) { background: #f8f9fa; }
+        .sparse-table {
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            min-width: 200px;
+        }
 
-        .controls { margin-top: 30px; background: #f1f2f6; padding: 15px; border-radius: 8px; display: flex; gap: 10px; }
-        input { padding: 8px; border: 1px solid #ddd; border-radius: 4px; width: 60px; text-align: center; }
-        button { padding: 10px 15px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; color: white; background: var(--primary); }
+        .sparse-table th,
+        .sparse-table td {
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            text-align: center;
+        }
+
+        .sparse-table th {
+            background: var(--primary);
+            color: white;
+        }
+
+        .sparse-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .controls {
+            margin-top: 30px;
+            background: #f1f2f6;
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            gap: 10px;
+        }
+
+        input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 60px;
+            text-align: center;
+        }
+
+        button {
+            padding: 10px 15px;
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            color: white;
+            background: var(--primary);
+        }
     </style>
 </head>
+
 <body>
 
     <div class="container">
@@ -43,7 +141,11 @@
                 <h4>Stisnjena oblika (Triplets)</h4>
                 <table class="sparse-table" id="sparseTable">
                     <thead>
-                        <tr><th>Vrstica</th><th>Stolpec</th><th>Vrednost</th></tr>
+                        <tr>
+                            <th>Vrstica</th>
+                            <th>Stolpec</th>
+                            <th>Vrednost</th>
+                        </tr>
                     </thead>
                     <tbody id="sparseBody"></tbody>
                 </table>
@@ -74,9 +176,13 @@
             } else {
                 const existing = sparseData.find(item => item.r === r && item.c === c);
                 if (existing) existing.v = v;
-                else sparseData.push({ r, c, v });
+                else sparseData.push({
+                    r,
+                    c,
+                    v
+                });
             }
-            
+
             sparseData.sort((a, b) => a.r - b.r || a.c - b.c);
             render();
         }
@@ -107,8 +213,12 @@
             document.getElementById('status').innerText = `Prihranek: Ne shranjujemo ${saved} ničel.`;
         }
 
-        function clearAll() { sparseData = []; render(); }
+        function clearAll() {
+            sparseData = [];
+            render();
+        }
         render();
     </script>
 </body>
+
 </html>

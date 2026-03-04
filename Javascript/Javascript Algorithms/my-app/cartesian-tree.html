@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cartesian Tree</title>
+    <style>
+        :root { --neon-primary: #00f3ff; --neon-secondary: #ff00ff; --bg-dark: #050505; --bg-card: rgba(255,255,255,0.05); --border-neon: 1px solid rgba(0,243,255,0.3); --ease-out: cubic-bezier(0.16,1,0.3,1); }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: system-ui, sans-serif; background: var(--bg-dark); color: #fff; min-height: 100vh; }
+        .l-header { position: sticky; top: 0; z-index: 1000; background: rgba(5,5,5,0.9); backdrop-filter: blur(10px); border-bottom: var(--border-neon); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .header__title { font-size: 1.5rem; color: var(--neon-primary); text-shadow: 0 0 5px var(--neon-primary); }
+        .header__back { color: var(--neon-secondary); text-decoration: none; padding: 0.5rem 1rem; border: var(--border-neon); border-radius: 8px; transition: all 0.3s var(--ease-out); }
+        .header__back:hover { box-shadow: 0 0 10px var(--neon-secondary); }
+        .l-main { display: grid; grid-template-columns: 1fr 350px; gap: 1rem; padding: 1rem; max-width: 1400px; margin: 0 auto; }
+        @media (max-width: 900px) { .l-main { grid-template-columns: 1fr; } }
+        .canvas-container { background: var(--bg-card); border: var(--border-neon); border-radius: 12px; padding: 1rem; backdrop-filter: blur(10px); }
+        #treeCanvas { width: 100%; height: 350px; display: block; }
+        .array-container { background: var(--bg-card); border: var(--border-neon); border-radius: 12px; padding: 1rem; margin-top: 1rem; }
+        #arrayCanvas { width: 100%; height: 60px; display: block; }
+        .controls { background: var(--bg-card); border: var(--border-neon); border-radius: 12px; padding: 1.5rem; backdrop-filter: blur(10px); }
+        .controls__section { margin-bottom: 1.5rem; }
+        .controls__title { color: var(--neon-secondary); font-size: 1.1rem; margin-bottom: 1rem; text-shadow: 0 0 5px var(--neon-secondary); }
+        .input-group { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+        .input-group input { flex: 1; padding: 0.8rem; background: rgba(0,0,0,0.3); border: var(--border-neon); border-radius: 8px; color: #fff; font-size: 1rem; caret-color: var(--neon-primary); }
+        .input-group input:focus { outline: none; box-shadow: 0 0 10px var(--neon-primary); }
+        .btn { padding: 0.8rem 1.5rem; background: rgba(0,243,255,0.1); border: var(--border-neon); border-radius: 8px; color: var(--neon-primary); cursor: pointer; font-size: 1rem; transition: all 0.3s var(--ease-out); }
+        .btn:hover { background: rgba(0,243,255,0.2); box-shadow: 0 0 15px var(--neon-primary); }
+        .info-box { background: rgba(0,0,0,0.3); border-radius: 8px; padding: 1rem; margin-top: 1rem; }
+        .info-box p { margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .info-box span { color: var(--neon-primary); }
+    </style>
+</head>
+<body>
+    <header class="l-header">
+        <h1 class="header__title">Cartesian Tree</h1>
+        <a href="index.html" class="header__back">← Back to Index</a>
+    </header>
+    <main class="l-main">
+        <div>
+            <div class="canvas-container"><canvas id="treeCanvas"></canvas></div>
+            <div class="array-container"><canvas id="arrayCanvas"></canvas></div>
+        </div>
+        <aside class="controls">
+            <div class="controls__section">
+                <h3 class="controls__title">Update Value</h3>
+                <div class="input-group">
+                    <input type="number" id="idxInput" placeholder="Index" min="0" max="9">
+                    <input type="number" id="valInput" placeholder="Value" min="1" max="100">
+                    <button class="btn" onclick="updateValue()">Update</button>
+                </div>
+            </div>
+            <div class="controls__section">
+                <h3 class="controls__title">Info</h3>
+                <div class="info-box">
+                    <p>Array Size: <span id="arraySize">10</span></p>
+                    <p>Root Value: <span id="rootValue">-</span></p>
+                </div>
+            </div>
+            <div class="controls__section">
+                <h3 class="controls__title">Actions</h3>
+                <button class="btn" onclick="randomize()" style="width: 100%;">Random Array</button>
+            </div>
+        </aside>
+    </main>
+    <script>
+        const treeCanvas = document.getElementById('treeCanvas');
+        const treeCtx = treeCanvas.getContext('2d');
+        const arrayCanvas = document.getElementById('arrayCanvas');
+        const arrayCtx = arrayCanvas.getContext('2d');
+        function resizeCanvas() {
+            treeCanvas.width = treeCanvas.parentElement.clientWidth;
+            treeCanvas.height = 350;
+            arrayCanvas.width = arrayCanvas.parentElement.clientWidth;
+            arrayCanvas.height = 60;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        let arr = [8, 3, 9, 1, 5, 7, 2, 6, 4, 10];
+        class CartesianNode {
+            constructor(value, index) {
+                this.value = value;
+                this.index = index;
+                this.left = null;
+                this.right = null;
+            }
+        }
+        class CartesianTree {
+            constructor(arr) {
+                this.arr = arr;
+                this.root = this.build(arr);
+            }
+            build(arr) {
+                const stack = [];
+                for (let i = 0; i < arr.length; i++) {
+                    const node = new CartesianNode(arr[i], i);
+                    let last = null;
+                    while (stack.length && stack[stack.length - 1].value > node.value) {
+                        last = stack.pop();
+                    }
+                    node.left = last;
+                    if (stack.length) stack[stack.length - 1].right = node;
+                    stack.push(node);
+                }
+                return stack[0] || null;
+            }
+            update(idx, val) {
+                this.arr[idx] = val;
+                this.root = this.build(this.arr);
+            }
+        }
+        let cartTree = new CartesianTree(arr);
+        function drawTree() {
+            treeCtx.clearRect(0, 0, treeCanvas.width, treeCanvas.height);
+            if (!cartTree.root) return;
+            const nodes = [];
+            collectNodes(cartTree.root, nodes, 0);
+            const levels = {};
+            nodes.forEach(n => { if (!levels[n.depth]) levels[n.depth] = []; levels[n.depth].push(n); });
+            const levelHeight = 70;
+            Object.keys(levels).sort((a,b) => a-b).forEach((depth) => {
+                const levelNodes = levels[depth];
+                const spacing = treeCanvas.width / (levelNodes.length + 1);
+                levelNodes.forEach((node, i) => {
+                    const x = (i + 1) * spacing;
+                    const y = 40 + depth * levelHeight;
+                    node.x = x; node.y = y;
+                    if (node.parent) {
+                        treeCtx.beginPath();
+                        treeCtx.moveTo(node.parent.x, node.parent.y + 20);
+                        treeCtx.lineTo(x, y - 20);
+                        treeCtx.strokeStyle = 'rgba(0, 243, 255, 0.5)';
+                        treeCtx.lineWidth = 2;
+                        treeCtx.stroke();
+                    }
+                    treeCtx.beginPath();
+                    treeCtx.arc(x, y, 22, 0, Math.PI * 2);
+                    treeCtx.fillStyle = depth === 0 ? 'rgba(255, 0, 255, 0.3)' : 'rgba(0, 243, 255, 0.2)';
+                    treeCtx.fill();
+                    treeCtx.strokeStyle = depth === 0 ? '#ff00ff' : '#00f3ff';
+                    treeCtx.lineWidth = 2;
+                    treeCtx.shadowColor = depth === 0 ? '#ff00ff' : '#00f3ff';
+                    treeCtx.shadowBlur = 10;
+                    treeCtx.stroke();
+                    treeCtx.shadowBlur = 0;
+                    treeCtx.fillStyle = '#fff';
+                    treeCtx.font = 'bold 14px system-ui';
+                    treeCtx.textAlign = 'center';
+                    treeCtx.textBaseline = 'middle';
+                    treeCtx.fillText(node.value, x, y);
+                    treeCtx.fillStyle = '#ff00ff';
+                    treeCtx.font = '10px system-ui';
+                    treeCtx.fillText(`idx:${node.index}`, x, y + 35);
+                });
+            });
+            document.getElementById('rootValue').textContent = cartTree.root ? cartTree.root.value : '-';
+        }
+        function collectNodes(node, arr, depth, parent = null) {
+            arr.push({ value: node.value, index: node.index, depth, parent });
+            if (node.left) collectNodes(node.left, arr, depth + 1, arr[arr.length - 1]);
+            if (node.right) collectNodes(node.right, arr, depth + 1, arr[arr.length - 1]);
+        }
+        function drawArray() {
+            arrayCtx.clearRect(0, 0, arrayCanvas.width, arrayCanvas.height);
+            const w = arrayCanvas.width / arr.length;
+            arr.forEach((val, i) => {
+                const x = i * w + w / 2;
+                const y = arrayCanvas.height / 2;
+                arrayCtx.beginPath();
+                arrayCtx.rect(i * w + 5, 10, w - 10, 40);
+                arrayCtx.fillStyle = 'rgba(0, 243, 255, 0.2)';
+                arrayCtx.fill();
+                arrayCtx.strokeStyle = '#00f3ff';
+                arrayCtx.stroke();
+                arrayCtx.fillStyle = '#fff';
+                arrayCtx.font = 'bold 14px system-ui';
+                arrayCtx.textAlign = 'center';
+                arrayCtx.textBaseline = 'middle';
+                arrayCtx.fillText(val, x, y);
+                arrayCtx.fillStyle = '#ff00ff';
+                arrayCtx.font = '10px system-ui';
+                arrayCtx.fillText(i, x, y + 25);
+            });
+        }
+        function updateValue() {
+            const idx = parseInt(document.getElementById('idxInput').value);
+            const val = parseInt(document.getElementById('valInput').value);
+            if (!isNaN(idx) && !isNaN(val) && idx >= 0 && idx < arr.length) {
+                cartTree.update(idx, val);
+                drawTree();
+                drawArray();
+            }
+        }
+        function randomize() {
+            arr = Array.from({length: 10}, () => Math.floor(Math.random() * 50) + 1);
+            cartTree = new CartesianTree(arr);
+            drawTree();
+            drawArray();
+        }
+        drawTree();
+        drawArray();
+    </script>
+</body>
+</html>

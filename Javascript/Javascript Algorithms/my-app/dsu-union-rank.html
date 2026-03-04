@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSU - Union by Rank & Path Compression</title>
+    <style>
+        :root { --neon-primary: #00f3ff; --neon-secondary: #ff00ff; --bg-dark: #050505; --bg-card: rgba(255,255,255,0.05); --border-neon: 1px solid rgba(0,243,255,0.3); --ease-out: cubic-bezier(0.16,1,0.3,1); }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: system-ui, sans-serif; background: var(--bg-dark); color: #fff; min-height: 100vh; }
+        .l-header { position: sticky; top: 0; z-index: 1000; background: rgba(5,5,5,0.9); backdrop-filter: blur(10px); border-bottom: var(--border-neon); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .header__title { font-size: 1.5rem; color: var(--neon-primary); text-shadow: 0 0 5px var(--neon-primary); }
+        .header__back { color: var(--neon-secondary); text-decoration: none; padding: 0.5rem 1rem; border: var(--border-neon); border-radius: 8px; transition: all 0.3s var(--ease-out); }
+        .header__back:hover { box-shadow: 0 0 10px var(--neon-secondary); }
+        .l-main { display: grid; grid-template-columns: 1fr 350px; gap: 1rem; padding: 1rem; max-width: 1600px; margin: 0 auto; }
+        @media (max-width: 900px) { .l-main { grid-template-columns: 1fr; } }
+        .canvas-container { background: var(--bg-card); border: var(--border-neon); border-radius: 12px; padding: 1rem; backdrop-filter: blur(10px); }
+        #treeCanvas { width: 100%; height: 500px; display: block; }
+        .controls { background: var(--bg-card); border: var(--border-neon); border-radius: 12px; padding: 1.5rem; backdrop-filter: blur(10px); }
+        .controls__section { margin-bottom: 1.5rem; }
+        .controls__title { color: var(--neon-secondary); font-size: 1.1rem; margin-bottom: 1rem; text-shadow: 0 0 5px var(--neon-secondary); }
+        .input-group { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+        .input-group input { flex: 1; padding: 0.8rem; background: rgba(0,0,0,0.3); border: var(--border-neon); border-radius: 8px; color: #fff; font-size: 1rem; caret-color: var(--neon-primary); }
+        .input-group input:focus { outline: none; box-shadow: 0 0 10px var(--neon-primary); }
+        .btn { padding: 0.8rem 1.5rem; background: rgba(0,243,255,0.1); border: var(--border-neon); border-radius: 8px; color: var(--neon-primary); cursor: pointer; font-size: 1rem; transition: all 0.3s var(--ease-out); }
+        .btn:hover { background: rgba(0,243,255,0.2); box-shadow: 0 0 15px var(--neon-primary); }
+        .info-box { background: rgba(0,0,0,0.3); border-radius: 8px; padding: 1rem; margin-top: 1rem; }
+        .info-box p { margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .info-box span { color: var(--neon-primary); }
+        .log-box { background: rgba(0,0,0,0.3); border-radius: 8px; padding: 1rem; max-height: 150px; overflow-y: auto; font-size: 0.85rem; font-family: monospace; }
+        .log-entry { margin-bottom: 0.5rem; padding: 0.3rem; border-left: 2px solid var(--neon-secondary); padding-left: 0.5rem; }
+    </style>
+</head>
+<body>
+    <header class="l-header">
+        <h1 class="header__title">DSU - Union by Rank & Path Compression</h1>
+        <a href="index.html" class="header__back">← Back to Index</a>
+    </header>
+    <main class="l-main">
+        <div class="canvas-container"><canvas id="treeCanvas"></canvas></div>
+        <aside class="controls">
+            <div class="controls__section">
+                <h3 class="controls__title">Union Sets</h3>
+                <div class="input-group">
+                    <input type="number" id="elem1" placeholder="Element 1" min="0" max="15">
+                    <input type="number" id="elem2" placeholder="Element 2" min="0" max="15">
+                    <button class="btn" onclick="unionElems()">Union</button>
+                </div>
+            </div>
+            <div class="controls__section">
+                <h3 class="controls__title">Find with Path Compression</h3>
+                <div class="input-group">
+                    <input type="number" id="findElem" placeholder="Element" min="0" max="15">
+                    <button class="btn" onclick="findElems()">Find</button>
+                </div>
+            </div>
+            <div class="controls__section">
+                <h3 class="controls__title">Info</h3>
+                <div class="info-box">
+                    <p>Sets: <span id="setCount">0</span></p>
+                    <p>Total Ops: <span id="opCount">0</span></p>
+                </div>
+            </div>
+            <div class="controls__section">
+                <h3 class="controls__title">Actions</h3>
+                <button class="btn" onclick="resetDSU()" style="width: 100%;">Reset DSU</button>
+            </div>
+            <div class="controls__section">
+                <h3 class="controls__title">Operation Log</h3>
+                <div class="log-box" id="logBox"></div>
+            </div>
+        </aside>
+    </main>
+    <script>
+        const canvas = document.getElementById('treeCanvas');
+        const ctx = canvas.getContext('2d');
+        function resizeCanvas() { const container = canvas.parentElement; canvas.width = container.clientWidth; canvas.height = 500; }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        class DSU {
+            constructor(n) { this.parent = Array.from({length: n}, (_, i) => i); this.rank = Array(n).fill(0); this.n = n; this.opCount = 0; }
+            find(x, logPath = false) {
+                this.opCount++;
+                const path = [];
+                let curr = x;
+                while (this.parent[curr] !== curr) { path.push(curr); curr = this.parent[curr]; }
+                if (logPath && path.length > 0) log(`  Path: ${path.join(' → ')} → ${curr}`);
+                for (const node of path) this.parent[node] = curr;
+                if (logPath && path.length > 1) log(`  Path compressed!`);
+                return curr;
+            }
+            union(x, y) {
+                this.opCount++;
+                const px = this.find(x), py = this.find(y);
+                if (px === py) return false;
+                log(`  Ranks: rank[${px}]=${this.rank[px]}, rank[${py}]=${this.rank[py]}`);
+                if (this.rank[px] < this.rank[py]) { this.parent[px] = py; log(`  Attaching ${px} under ${py} (lower rank)`); }
+                else if (this.rank[px] > this.rank[py]) { this.parent[py] = px; log(`  Attaching ${py} under ${px} (higher rank)`); }
+                else { this.parent[py] = px; this.rank[px]++; log(`  Same rank, attaching ${py} under ${px}, incrementing rank`); }
+                return true;
+            }
+            getSets() { const sets = {}; for (let i = 0; i < this.n; i++) { const root = this.find(i); if (!sets[root]) sets[root] = []; sets[root].push(i); } return sets; }
+        }
+        const dsu = new DSU(16);
+        function drawDSU() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const sets = dsu.getSets();
+            const roots = Object.keys(sets);
+            const cols = Math.ceil(Math.sqrt(roots.length));
+            const spacingX = canvas.width / Math.max(cols, 1);
+            const spacingY = 80;
+            let col = 0, row = 0;
+            roots.forEach((root, ri) => {
+                const elements = sets[root];
+                const rootX = col * spacingX + spacingX / 2;
+                const rootY = 60 + row * spacingY;
+                ctx.beginPath(); ctx.arc(rootX, rootY, 25, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(0, 243, 255, 0.3)'; ctx.fill();
+                ctx.strokeStyle = '#00f3ff'; ctx.lineWidth = 2;
+                ctx.shadowColor = '#00f3ff'; ctx.shadowBlur = 10; ctx.stroke(); ctx.shadowBlur = 0;
+                ctx.fillStyle = '#fff'; ctx.font = 'bold 14px system-ui'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(root, rootX, rootY);
+                ctx.fillStyle = '#ff00ff'; ctx.font = '10px system-ui'; ctx.fillText(`r:${dsu.rank[root]}`, rootX, rootY + 45);
+                elements.forEach((elem, ei) => {
+                    if (elem == root) return;
+                    const elemX = rootX + (ei - (elements.length-1)/2) * 50;
+                    const elemY = rootY + 70;
+                    ctx.beginPath(); ctx.moveTo(rootX, rootY + 25); ctx.lineTo(elemX, elemY - 20);
+                    ctx.strokeStyle = 'rgba(255, 0, 255, 0.5)'; ctx.lineWidth = 2; ctx.stroke();
+                    ctx.beginPath(); ctx.arc(elemX, elemY, 20, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(255, 0, 255, 0.3)'; ctx.fill();
+                    ctx.strokeStyle = '#ff00ff'; ctx.stroke();
+                    ctx.fillStyle = '#fff'; ctx.fillText(elem, elemX, elemY);
+                    ctx.fillStyle = '#ff00ff'; ctx.font = '10px system-ui'; ctx.fillText(`r:${dsu.rank[elem]}`, elemX, elemY + 30);
+                });
+                col++; if (col >= cols) { col = 0; row++; }
+            });
+            updateInfo();
+        }
+        function updateInfo() { document.getElementById('setCount').textContent = Object.keys(dsu.getSets()).length; document.getElementById('opCount').textContent = dsu.opCount; }
+        function log(msg) { const logBox = document.getElementById('logBox'); const entry = document.createElement('div'); entry.className = 'log-entry'; entry.textContent = msg; logBox.insertBefore(entry, logBox.firstChild); if (logBox.children.length > 15) logBox.removeChild(logBox.lastChild); }
+        function unionElems() {
+            const e1 = parseInt(document.getElementById('elem1').value), e2 = parseInt(document.getElementById('elem2').value);
+            if (!isNaN(e1) && !isNaN(e2) && e1 >= 0 && e2 >= 0 && e1 < 16 && e2 < 16) {
+                log(`Union(${e1}, ${e2})`);
+                if (dsu.union(e1, e2)) log(`  Sets merged!`);
+                else log(`  Already in same set`);
+                drawDSU();
+            }
+        }
+        function findElems() {
+            const e = parseInt(document.getElementById('findElem').value);
+            if (!isNaN(e) && e >= 0 && e < 16) { log(`Find(${e})`); const root = dsu.find(e, true); log(`  Result: ${root}`); drawDSU(); }
+        }
+        function resetDSU() { dsu.parent = Array.from({length: 16}, (_, i) => i); dsu.rank = Array(16).fill(0); dsu.opCount = 0; document.getElementById('logBox').innerHTML = ''; log('DSU reset'); drawDSU(); }
+        drawDSU();
+    </script>
+</body>
+</html>

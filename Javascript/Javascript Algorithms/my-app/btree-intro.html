@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B-Tree - Introduction</title>
+    <style>
+        :root { --neon-primary: #00f3ff; --neon-secondary: #ff00ff; --bg-dark: #050505; --bg-card: rgba(255,255,255,0.05); --border-neon: 1px solid rgba(0,243,255,0.3); --ease-out: cubic-bezier(0.16,1,0.3,1); }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: system-ui, sans-serif; background: var(--bg-dark); color: #fff; min-height: 100vh; }
+        .l-header { position: sticky; top: 0; z-index: 1000; background: rgba(5,5,5,0.9); backdrop-filter: blur(10px); border-bottom: var(--border-neon); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .header__title { font-size: 1.5rem; color: var(--neon-primary); text-shadow: 0 0 5px var(--neon-primary); }
+        .header__back { color: var(--neon-secondary); text-decoration: none; padding: 0.5rem 1rem; border: var(--border-neon); border-radius: 8px; transition: all 0.3s var(--ease-out); }
+        .header__back:hover { box-shadow: 0 0 10px var(--neon-secondary); }
+        .l-main { display: grid; grid-template-columns: 1fr 350px; gap: 1rem; padding: 1rem; max-width: 1600px; margin: 0 auto; }
+        @media (max-width: 900px) { .l-main { grid-template-columns: 1fr; } }
+        .canvas-container { background: var(--bg-card); border: var(--border-neon); border-radius: 12px; padding: 1rem; backdrop-filter: blur(10px); overflow: auto; }
+        #treeCanvas { width: 100%; height: 500px; display: block; }
+        .controls { background: var(--bg-card); border: var(--border-neon); border-radius: 12px; padding: 1.5rem; backdrop-filter: blur(10px); }
+        .controls__section { margin-bottom: 1.5rem; }
+        .controls__title { color: var(--neon-secondary); font-size: 1.1rem; margin-bottom: 1rem; text-shadow: 0 0 5px var(--neon-secondary); }
+        .input-group { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+        .input-group input { flex: 1; padding: 0.8rem; background: rgba(0,0,0,0.3); border: var(--border-neon); border-radius: 8px; color: #fff; font-size: 1rem; caret-color: var(--neon-primary); }
+        .input-group input:focus { outline: none; box-shadow: 0 0 10px var(--neon-primary); }
+        .btn { padding: 0.8rem 1.5rem; background: rgba(0,243,255,0.1); border: var(--border-neon); border-radius: 8px; color: var(--neon-primary); cursor: pointer; font-size: 1rem; transition: all 0.3s var(--ease-out); }
+        .btn:hover { background: rgba(0,243,255,0.2); box-shadow: 0 0 15px var(--neon-primary); }
+        .info-box { background: rgba(0,0,0,0.3); border-radius: 8px; padding: 1rem; margin-top: 1rem; }
+        .info-box p { margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .info-box span { color: var(--neon-primary); }
+    </style>
+</head>
+<body>
+    <header class="l-header">
+        <h1 class="header__title">B-Tree - Introduction</h1>
+        <a href="index.html" class="header__back">← Back to Index</a>
+    </header>
+    <main class="l-main">
+        <div class="canvas-container">
+            <canvas id="treeCanvas"></canvas>
+        </div>
+        <aside class="controls">
+            <div class="controls__section">
+                <h3 class="controls__title">Insert Key</h3>
+                <div class="input-group">
+                    <input type="number" id="insertInput" placeholder="Value" min="1" max="999">
+                    <button class="btn" onclick="insertKey()">Insert</button>
+                </div>
+            </div>
+            <div class="controls__section">
+                <h3 class="controls__title">Tree Info</h3>
+                <div class="info-box">
+                    <p>Order (m): <span id="treeOrder">4</span></p>
+                    <p>Max Keys: <span id="maxKeys">3</span></p>
+                    <p>Height: <span id="treeHeight">0</span></p>
+                    <p>Total Keys: <span id="totalKeys">0</span></p>
+                </div>
+            </div>
+            <div class="controls__section">
+                <h3 class="controls__title">Actions</h3>
+                <button class="btn" onclick="clearTree()" style="width: 100%; margin-bottom: 0.5rem;">Clear Tree</button>
+                <button class="btn" onclick="generateRandom()" style="width: 100%;">Random Keys</button>
+            </div>
+            <div class="controls__section">
+                <h3 class="controls__title">About B-Trees</h3>
+                <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">
+                    B-Trees are self-balancing search trees optimized for disk storage. Each node can have multiple keys and children. Order-4 B-Tree shown (max 3 keys per node).
+                </p>
+            </div>
+        </aside>
+    </main>
+    <script>
+        const canvas = document.getElementById('treeCanvas');
+        const ctx = canvas.getContext('2d');
+        function resizeCanvas() { const container = canvas.parentElement; canvas.width = container.clientWidth; canvas.height = 500; }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        const ORDER = 4;
+        const MAX_KEYS = ORDER - 1;
+        class BTreeNode {
+            constructor(leaf = false) {
+                this.keys = [];
+                this.children = [];
+                this.leaf = leaf;
+            }
+        }
+        class BTree {
+            constructor() { this.root = new BTreeNode(true); }
+            insert(key) {
+                const root = this.root;
+                if (root.keys.length === MAX_KEYS) {
+                    const newRoot = new BTreeNode(false);
+                    newRoot.children.push(root);
+                    this.splitChild(newRoot, 0);
+                    this.root = newRoot;
+                }
+                this.insertNonFull(this.root, key);
+            }
+            splitChild(parent, index) {
+                const node = parent.children[index];
+                const mid = Math.floor(MAX_KEYS / 2);
+                const midKey = node.keys[mid];
+                const right = new BTreeNode(node.leaf);
+                right.keys = node.keys.slice(mid + 1);
+                node.keys = node.keys.slice(0, mid);
+                if (!node.leaf) {
+                    right.children = node.children.slice(mid + 1);
+                    node.children = node.children.slice(0, mid + 1);
+                }
+                parent.keys.splice(index, 0, midKey);
+                parent.children.splice(index + 1, 0, right);
+            }
+            insertNonFull(node, key) {
+                let i = node.keys.length - 1;
+                if (node.leaf) {
+                    while (i >= 0 && key < node.keys[i]) i--;
+                    node.keys.splice(i + 1, 0, key);
+                } else {
+                    while (i >= 0 && key < node.keys[i]) i--;
+                    i++;
+                    if (node.children[i].keys.length === MAX_KEYS) {
+                        this.splitChild(node, i);
+                        if (key > node.keys[i]) i++;
+                    }
+                    this.insertNonFull(node.children[i], key);
+                }
+            }
+            getHeight() { return this.heightRec(this.root, 0); }
+            heightRec(node, h) { return node.leaf ? h : this.heightRec(node.children[0], h + 1); }
+            getTotalKeys() { return this.countRec(this.root); }
+            countRec(node) {
+                let count = node.keys.length;
+                if (!node.leaf) { node.children.forEach(child => { count += this.countRec(child); }); }
+                return count;
+            }
+        }
+        const tree = new BTree();
+        function drawTree() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (tree.root) { drawLevel(tree.root, canvas.width / 2, 30, canvas.width / 4, 0); }
+            updateInfo();
+        }
+        function drawLevel(node, x, y, width, level) {
+            const keyWidth = width / Math.max(node.keys.length, 1);
+            const boxWidth = node.keys.length * keyWidth * 0.8;
+            const boxHeight = 40;
+            const startX = x - boxWidth / 2;
+            ctx.fillStyle = 'rgba(0, 243, 255, 0.1)';
+            ctx.strokeStyle = '#00f3ff';
+            ctx.lineWidth = 2;
+            ctx.shadowColor = '#00f3ff';
+            ctx.shadowBlur = 10;
+            ctx.fillRect(startX, y, boxWidth, boxHeight);
+            ctx.strokeRect(startX, y, boxWidth, boxHeight);
+            ctx.shadowBlur = 0;
+            node.keys.forEach((key, i) => {
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 14px system-ui';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(key, startX + (i + 0.5) * keyWidth * 0.8, y + boxHeight / 2);
+            });
+            if (!node.leaf) {
+                const childWidth = width / 2;
+                node.children.forEach((child, i) => {
+                    const childX = startX + (i + 0.5) * keyWidth * 0.8;
+                    ctx.beginPath();
+                    ctx.moveTo(childX, y + boxHeight);
+                    ctx.lineTo(childX, y + 70);
+                    ctx.strokeStyle = 'rgba(0, 243, 255, 0.5)';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    drawLevel(child, childX, y + 70, childWidth, level + 1);
+                });
+            }
+        }
+        function updateInfo() {
+            document.getElementById('treeHeight').textContent = tree.getHeight();
+            document.getElementById('totalKeys').textContent = tree.getTotalKeys();
+        }
+        function insertKey() {
+            const input = document.getElementById('insertInput');
+            const value = parseInt(input.value);
+            if (!isNaN(value)) { tree.insert(value); input.value = ''; drawTree(); }
+        }
+        function clearTree() { tree.root = new BTreeNode(true); drawTree(); }
+        function generateRandom() {
+            clearTree();
+            for (let i = 0; i < 15; i++) { tree.insert(Math.floor(Math.random() * 100) + 1); }
+            drawTree();
+        }
+        document.getElementById('insertInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') insertKey(); });
+        drawTree();
+    </script>
+</body>
+</html>

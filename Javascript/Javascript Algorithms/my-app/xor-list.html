@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XOR Linked List</title>
+    <style>
+        :root { --neon-primary: #00f3ff; --neon-secondary: #ff00ff; --bg-dark: #050505; --bg-card: rgba(255,255,255,0.05); --border-neon: 1px solid rgba(0,243,255,0.3); --ease-out: cubic-bezier(0.16,1,0.3,1); }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: system-ui, sans-serif; background: var(--bg-dark); color: #fff; min-height: 100vh; }
+        .l-header { position: sticky; top: 0; z-index: 1000; background: rgba(5,5,5,0.9); backdrop-filter: blur(10px); border-bottom: var(--border-neon); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .header__title { font-size: 1.5rem; color: var(--neon-primary); text-shadow: 0 0 5px var(--neon-primary); }
+        .header__back { color: var(--neon-secondary); text-decoration: none; padding: 0.5rem 1rem; border: var(--border-neon); border-radius: 8px; transition: all 0.3s var(--ease-out); }
+        .header__back:hover { box-shadow: 0 0 10px var(--neon-secondary); }
+        .l-main { display: grid; grid-template-columns: 1fr 350px; gap: 1rem; padding: 1rem; max-width: 1400px; margin: 0 auto; }
+        @media (max-width: 900px) { .l-main { grid-template-columns: 1fr; } }
+        .canvas-container { background: var(--bg-card); border: var(--border-neon); border-radius: 12px; padding: 1rem; backdrop-filter: blur(10px); }
+        #listCanvas { width: 100%; height: 300px; display: block; }
+        .controls { background: var(--bg-card); border: var(--border-neon); border-radius: 12px; padding: 1.5rem; backdrop-filter: blur(10px); }
+        .controls__section { margin-bottom: 1.5rem; }
+        .controls__title { color: var(--neon-secondary); font-size: 1.1rem; margin-bottom: 1rem; text-shadow: 0 0 5px var(--neon-secondary); }
+        .input-group { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+        .input-group input { flex: 1; padding: 0.8rem; background: rgba(0,0,0,0.3); border: var(--border-neon); border-radius: 8px; color: #fff; font-size: 1rem; caret-color: var(--neon-primary); }
+        .input-group input:focus { outline: none; box-shadow: 0 0 10px var(--neon-primary); }
+        .btn { padding: 0.8rem 1.5rem; background: rgba(0,243,255,0.1); border: var(--border-neon); border-radius: 8px; color: var(--neon-primary); cursor: pointer; font-size: 1rem; transition: all 0.3s var(--ease-out); }
+        .btn:hover { background: rgba(0,243,255,0.2); box-shadow: 0 0 15px var(--neon-primary); }
+        .info-box { background: rgba(0,0,0,0.3); border-radius: 8px; padding: 1rem; margin-top: 1rem; }
+        .info-box p { margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .info-box span { color: var(--neon-primary); }
+        .memory-view { background: rgba(0,0,0,0.3); border-radius: 8px; padding: 1rem; margin-top: 1rem; font-family: monospace; font-size: 0.85rem; }
+        .memory-row { display: flex; justify-content: space-between; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,243,255,0.2); }
+        .memory-row:last-child { border-bottom: none; }
+        .xor-value { color: var(--neon-secondary); }
+    </style>
+</head>
+<body>
+    <header class="l-header">
+        <h1 class="header__title">XOR Linked List</h1>
+        <a href="index.html" class="header__back">← Back to Index</a>
+    </header>
+    <main class="l-main">
+        <div>
+            <div class="canvas-container"><canvas id="listCanvas"></canvas></div>
+            <div class="controls">
+                <h3 class="controls__title">Memory View (XOR Values)</h3>
+                <div class="memory-view" id="memoryView"></div>
+            </div>
+        </div>
+        <aside class="controls">
+            <div class="controls__section">
+                <h3 class="controls__title">Append Value</h3>
+                <div class="input-group">
+                    <input type="number" id="appendInput" placeholder="Value" min="1" max="999">
+                    <button class="btn" onclick="appendValue()">Append</button>
+                </div>
+            </div>
+            <div class="controls__section">
+                <h3 class="controls__title">Traverse</h3>
+                <div class="input-group">
+                    <button class="btn" onclick="traverseForward()" style="flex: 1;">Forward →</button>
+                    <button class="btn" onclick="traverseBackward()" style="flex: 1;">← Backward</button>
+                </div>
+            </div>
+            <div class="controls__section">
+                <h3 class="controls__title">Info</h3>
+                <div class="info-box">
+                    <p>Elements: <span id="elemCount">0</span></p>
+                    <p>Traversal: <span id="traversalResult">-</span></p>
+                </div>
+            </div>
+            <div class="controls__section">
+                <h3 class="controls__title">Actions</h3>
+                <button class="btn" onclick="clearList()" style="width: 100%; margin-bottom: 0.5rem;">Clear</button>
+                <button class="btn" onclick="randomList()" style="width: 100%;">Random List</button>
+            </div>
+        </aside>
+    </main>
+    <script>
+        const canvas = document.getElementById('listCanvas');
+        const ctx = canvas.getContext('2d');
+        function resizeCanvas() { const container = canvas.parentElement; canvas.width = container.clientWidth; canvas.height = 300; }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        class XORNode {
+            constructor(value, id) {
+                this.value = value;
+                this.id = id;
+                this.xorPtr = null; // Will store XOR of prev and next IDs
+            }
+        }
+        class XORLinkedList {
+            constructor() {
+                this.head = null;
+                this.tail = null;
+                this.nodes = new Map();
+                this.idCounter = 0;
+                this.count = 0;
+            }
+            append(value) {
+                const newNode = new XORNode(value, this.idCounter++);
+                this.nodes.set(newNode.id, newNode);
+                if (!this.head) {
+                    this.head = newNode;
+                    this.tail = newNode;
+                    newNode.xorPtr = null;
+                } else {
+                    newNode.xorPtr = this.tail.id;
+                    if (this.tail) {
+                        const prevTail = this.tail;
+                        const prevPrev = prevTail.xorPtr;
+                        prevTail.xorPtr = this.xor(prevPrev, newNode.id);
+                    }
+                    this.tail = newNode;
+                }
+                this.count++;
+            }
+            xor(a, b) {
+                if (a === null && b === null) return null;
+                if (a === null) return b;
+                if (b === null) return a;
+                return a ^ b;
+            }
+            traverseForward() {
+                const result = [];
+                let prevId = null;
+                let curr = this.head;
+                while (curr) {
+                    result.push(curr.value);
+                    const nextId = this.xor(prevId, curr.xorPtr);
+                    prevId = curr.id;
+                    curr = nextId !== null ? this.nodes.get(nextId) : null;
+                }
+                return result;
+            }
+            traverseBackward() {
+                const result = [];
+                let nextId = null;
+                let curr = this.tail;
+                while (curr) {
+                    result.push(curr.value);
+                    const prevId = this.xor(nextId, curr.xorPtr);
+                    nextId = curr.id;
+                    curr = prevId !== null ? this.nodes.get(prevId) : null;
+                }
+                return result;
+            }
+            getMemoryView() {
+                const rows = [];
+                this.nodes.forEach((node, id) => {
+                    rows.push({ id, value: node.value, xorPtr: node.xorPtr });
+                });
+                return rows;
+            }
+        }
+        const xorList = new XORLinkedList();
+        function drawList() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const nodes = Array.from(xorList.nodes.values());
+            if (nodes.length === 0) return;
+            const spacing = (canvas.width - 100) / Math.max(nodes.length - 1, 1);
+            nodes.forEach((node, i) => {
+                const x = 50 + i * spacing;
+                const y = canvas.height / 2;
+                const isHead = node === xorList.head;
+                const isTail = node === xorList.tail;
+                ctx.beginPath();
+                ctx.roundRect(x - 35, y - 30, 70, 60, 8);
+                ctx.fillStyle = 'rgba(0, 243, 255, 0.15)';
+                ctx.fill();
+                ctx.strokeStyle = isHead ? '#ff00ff' : (isTail ? '#ffff00' : '#00f3ff');
+                ctx.lineWidth = 2;
+                ctx.shadowColor = isHead ? '#ff00ff' : (isTail ? '#ffff00' : '#00f3ff');
+                ctx.shadowBlur = 10;
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 16px system-ui';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(node.value, x, y);
+                ctx.fillStyle = '#ff00ff';
+                ctx.font = '9px system-ui';
+                ctx.fillText(`id:${node.id}`, x, y - 18);
+                const xorLabel = node.xorPtr !== null ? `XOR:${node.xorPtr}` : 'NULL';
+                ctx.fillStyle = 'rgba(255,255,255,0.6)';
+                ctx.font = '8px system-ui';
+                ctx.fillText(xorLabel, x, y + 22);
+                if (i > 0) {
+                    ctx.beginPath();
+                    ctx.moveTo(x - spacing / 2 - 35, y);
+                    ctx.lineTo(x - spacing / 2 + 35, y);
+                    ctx.strokeStyle = 'rgba(0, 243, 255, 0.5)';
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([5, 3]);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+            });
+            if (xorList.head) {
+                ctx.fillStyle = '#ff00ff';
+                ctx.font = 'bold 12px system-ui';
+                ctx.textAlign = 'left';
+                ctx.fillText('HEAD', 55, canvas.height / 2 - 50);
+            }
+            if (xorList.tail) {
+                ctx.fillStyle = '#ffff00';
+                ctx.font = 'bold 12px system-ui';
+                ctx.textAlign = 'right';
+                ctx.fillText('TAIL', canvas.width - 55, canvas.height / 2 - 50);
+            }
+            updateInfo();
+        }
+        function updateMemoryView() {
+            const memory = xorList.getMemoryView();
+            const container = document.getElementById('memoryView');
+            if (memory.length === 0) {
+                container.innerHTML = '<p style="color: rgba(255,255,255,0.5)">No nodes in list</p>';
+                return;
+            }
+            container.innerHTML = memory.map(row => `
+                <div class="memory-row">
+                    <span>Node ${row.id}: <strong>${row.value}</strong></span>
+                    <span class="xor-value">xorPtr = ${row.xorPtr !== null ? row.xorPtr : 'NULL'}</span>
+                </div>
+            `).join('');
+        }
+        function updateInfo() {
+            document.getElementById('elemCount').textContent = xorList.count;
+        }
+        function appendValue() {
+            const input = document.getElementById('appendInput');
+            const value = parseInt(input.value);
+            if (!isNaN(value)) {
+                xorList.append(value);
+                input.value = '';
+                document.getElementById('traversalResult').textContent = '-';
+                drawList();
+                updateMemoryView();
+            }
+        }
+        function traverseForward() {
+            const result = xorList.traverseForward();
+            document.getElementById('traversalResult').textContent = result.join(' → ') || 'Empty';
+        }
+        function traverseBackward() {
+            const result = xorList.traverseBackward();
+            document.getElementById('traversalResult').textContent = result.join(' ← ') || 'Empty';
+        }
+        function clearList() {
+            xorList.head = null;
+            xorList.tail = null;
+            xorList.nodes.clear();
+            xorList.count = 0;
+            document.getElementById('traversalResult').textContent = '-';
+            drawList();
+            updateMemoryView();
+        }
+        function randomList() {
+            clearList();
+            for (let i = 0; i < 5; i++) {
+                xorList.append(Math.floor(Math.random() * 100) + 1);
+            }
+            drawList();
+            updateMemoryView();
+        }
+        drawList();
+        updateMemoryView();
+    </script>
+</body>
+</html>

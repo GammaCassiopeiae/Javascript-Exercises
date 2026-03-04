@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Data Structures & Algorithms Visualizations">
+    <title>DSA Visualizations - Index</title>
+    <style>
+        :root {
+            --neon-primary: #00f3ff;
+            --neon-secondary: #ff00ff;
+            --bg-dark: #050505;
+            --bg-card: rgba(255, 255, 255, 0.05);
+            --text-glow: 0 0 5px var(--neon-primary);
+            --box-glow: 0 0 10px var(--neon-primary), 0 0 20px var(--neon-primary);
+            --border-neon: 1px solid rgba(0, 243, 255, 0.3);
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Sora', system-ui, sans-serif;
+            background: var(--bg-dark);
+            color: #fff;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .l-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(5, 5, 5, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: var(--border-neon);
+            padding: 1.5rem 2rem;
+        }
+
+        .header__title {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, var(--neon-primary), var(--neon-secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: var(--text-glow);
+            text-align: center;
+        }
+
+        .l-main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: clamp(1rem, 5vw, 3rem);
+        }
+
+        .category {
+            margin-bottom: 3rem;
+        }
+
+        .category__title {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            color: var(--neon-secondary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--neon-secondary);
+            text-shadow: 0 0 5px var(--neon-secondary);
+        }
+
+        .grid-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .link-card {
+            background: var(--bg-card);
+            border: var(--border-neon);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-decoration: none;
+            color: #fff;
+            transition: all 0.3s var(--ease-out);
+            backdrop-filter: blur(10px);
+        }
+
+        .link-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--box-glow);
+            border-color: var(--neon-primary);
+        }
+
+        .link-card__title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--neon-primary);
+            margin-bottom: 0.5rem;
+            text-shadow: var(--text-glow);
+        }
+
+        .link-card__desc {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .l-footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: var(--border-neon);
+            margin-top: 3rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .link-card {
+                transition: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="l-header">
+        <h1 class="header__title">DSA Visualizations</h1>
+    </header>
+
+    <main class="l-main">
+        <section class="category">
+            <h2 class="category__title">Self-Balancing BSTs</h2>
+            <div class="grid-links">
+                <a href="avl-intro.html" class="link-card">
+                    <div class="link-card__title">AVL Tree - Introduction</div>
+                    <div class="link-card__desc">Learn AVL tree basics with interactive visualization</div>
+                </a>
+                <a href="avl-insert.html" class="link-card">
+                    <div class="link-card__title">AVL Tree - Insertion</div>
+                    <div class="link-card__desc">Visualize insertions and rotations in AVL trees</div>
+                </a>
+                <a href="avl-delete.html" class="link-card">
+                    <div class="link-card__title">AVL Tree - Deletion</div>
+                    <div class="link-card__desc">See how deletions work with rebalancing</div>
+                </a>
+                <a href="avl-duplicates.html" class="link-card">
+                    <div class="link-card__title">AVL Tree - Duplicate Keys</div>
+                    <div class="link-card__desc">Handle duplicate keys in AVL trees</div>
+                </a>
+                <a href="splay-intro.html" class="link-card">
+                    <div class="link-card__title">Splay Tree - Introduction</div>
+                    <div class="link-card__desc">Understand splay tree structure and splaying</div>
+                </a>
+                <a href="splay-search.html" class="link-card">
+                    <div class="link-card__title">Splay Tree - Search</div>
+                    <div class="link-card__desc">Visualize search operations with splaying</div>
+                </a>
+                <a href="splay-insert.html" class="link-card">
+                    <div class="link-card__title">Splay Tree - Insertion</div>
+                    <div class="link-card__desc">Insert elements into a splay tree</div>
+                </a>
+                <a href="btree-intro.html" class="link-card">
+                    <div class="link-card__title">B-Tree - Introduction</div>
+                    <div class="link-card__desc">Explore B-Tree structure and properties</div>
+                </a>
+                <a href="btree-insert.html" class="link-card">
+                    <div class="link-card__title">B-Tree - Insert</div>
+                    <div class="link-card__desc">Watch node splits and insertions</div>
+                </a>
+                <a href="btree-delete.html" class="link-card">
+                    <div class="link-card__title">B-Tree - Delete</div>
+                    <div class="link-card__desc">Learn deletion with merging and borrowing</div>
+                </a>
+                <a href="rb-intro.html" class="link-card">
+                    <div class="link-card__title">Red-Black Tree - Introduction</div>
+                    <div class="link-card__desc">Understand Red-Black tree properties</div>
+                </a>
+                <a href="rb-insert.html" class="link-card">
+                    <div class="link-card__title">Red-Black Tree - Insertion</div>
+                    <div class="link-card__desc">Visualize insertions with color fixes</div>
+                </a>
+                <a href="rb-delete.html" class="link-card">
+                    <div class="link-card__title">Red-Black Tree - Deletion</div>
+                    <div class="link-card__desc">See deletion with double-black handling</div>
+                </a>
+                <a href="scapegoat-intro.html" class="link-card">
+                    <div class="link-card__title">Scapegoat Tree - Introduction</div>
+                    <div class="link-card__desc">Learn about scapegoat tree balancing</div>
+                </a>
+                <a href="treap-intro.html" class="link-card">
+                    <div class="link-card__title">Treap - Introduction</div>
+                    <div class="link-card__desc">Randomized BST with heap priorities</div>
+                </a>
+            </div>
+        </section>
+
+        <section class="category">
+            <h2 class="category__title">Disjoint Set & Trie</h2>
+            <div class="grid-links">
+                <a href="dsu-intro.html" class="link-card">
+                    <div class="link-card__title">Disjoint Set - Introduction</div>
+                    <div class="link-card__desc">Union-Find data structure basics</div>
+                </a>
+                <a href="dsu-union-rank.html" class="link-card">
+                    <div class="link-card__title">DSU - Union by Rank & Path Compression</div>
+                    <div class="link-card__desc">Optimized union-find operations</div>
+                </a>
+                <a href="trie-intro.html" class="link-card">
+                    <div class="link-card__title">Trie - Introduction</div>
+                    <div class="link-card__desc">Prefix tree structure and operations</div>
+                </a>
+                <a href="trie-insert.html" class="link-card">
+                    <div class="link-card__title">Trie - Insert & Search</div>
+                    <div class="link-card__desc">Add and find words in a trie</div>
+                </a>
+                <a href="trie-applications.html" class="link-card">
+                    <div class="link-card__title">Trie - Applications</div>
+                    <div class="link-card__desc">Phone directory, autocomplete, Boggle</div>
+                </a>
+            </div>
+        </section>
+
+        <section class="category">
+            <h2 class="category__title">Segment Tree & Binary Indexed Tree</h2>
+            <div class="grid-links">
+                <a href="segment-intro.html" class="link-card">
+                    <div class="link-card__title">Segment Tree - Introduction</div>
+                    <div class="link-card__desc">Range query data structure</div>
+                </a>
+                <a href="segment-rmq.html" class="link-card">
+                    <div class="link-card__title">Segment Tree - Range Minimum Query</div>
+                    <div class="link-card__desc">Find minimum in ranges efficiently</div>
+                </a>
+                <a href="segment-lazy.html" class="link-card">
+                    <div class="link-card__title">Segment Tree - Lazy Propagation</div>
+                    <div class="link-card__desc">Range updates with lazy propagation</div>
+                </a>
+                <a href="fenwick-intro.html" class="link-card">
+                    <div class="link-card__title">Binary Indexed Tree - Introduction</div>
+                    <div class="link-card__desc">Fenwick Tree for prefix sums</div>
+                </a>
+                <a href="fenwick-2d.html" class="link-card">
+                    <div class="link-card__title">2D Binary Indexed Tree</div>
+                    <div class="link-card__desc">2D Fenwick Tree visualization</div>
+                </a>
+            </div>
+        </section>
+
+        <section class="category">
+            <h2 class="category__title">Suffix Structures</h2>
+            <div class="grid-links">
+                <a href="suffix-array-intro.html" class="link-card">
+                    <div class="link-card__title">Suffix Array - Introduction</div>
+                    <div class="link-card__desc">Sorted suffix array structure</div>
+                </a>
+                <a href="suffix-tree-intro.html" class="link-card">
+                    <div class="link-card__title">Suffix Tree - Introduction</div>
+                    <div class="link-card__desc">Compressed trie of all suffixes</div>
+                </a>
+                <a href="ukkonen.html" class="link-card">
+                    <div class="link-card__title">Ukkonen's Algorithm</div>
+                    <div class="link-card__title">Linear-time suffix tree construction</div>
+                </a>
+            </div>
+        </section>
+
+        <section class="category">
+            <h2 class="category__title">K-Dimensional & Other Trees</h2>
+            <div class="grid-links">
+                <a href="kd-intro.html" class="link-card">
+                    <div class="link-card__title">K-D Tree - Introduction</div>
+                    <div class="link-card__desc">Multi-dimensional space partitioning</div>
+                </a>
+                <a href="kd-operations.html" class="link-card">
+                    <div class="link-card__title">K-D Tree - Operations</div>
+                    <div class="link-card__desc">Search, insert, delete in K-D trees</div>
+                </a>
+                <a href="palindromic-tree.html" class="link-card">
+                    <div class="link-card__title">Palindromic Tree</div>
+                    <div class="link-card__desc">EERTREE for palindrome processing</div>
+                </a>
+                <a href="ternary-search-tree.html" class="link-card">
+                    <div class="link-card__title">Ternary Search Tree</div>
+                    <div class="link-card__desc">3-way string search structure</div>
+                </a>
+                <a href="interval-tree.html" class="link-card">
+                    <div class="link-card__title">Interval Tree</div>
+                    <div class="link-card__desc">Range overlap queries</div>
+                </a>
+                <a href="cartesian-tree.html" class="link-card">
+                    <div class="link-card__title">Cartesian Tree</div>
+                    <div class="link-card__desc">Heap-ordered binary tree</div>
+                </a>
+            </div>
+        </section>
+
+        <section class="category">
+            <h2 class="category__title">Advanced Lists</h2>
+            <div class="grid-links">
+                <a href="skip-list.html" class="link-card">
+                    <div class="link-card__title">Skip List</div>
+                    <div class="link-card__desc">Probabilistic alternative to BSTs</div>
+                </a>
+                <a href="xor-list.html" class="link-card">
+                    <div class="link-card__title">XOR Linked List</div>
+                    <div class="link-card__desc">Memory-efficient doubly linked list</div>
+                </a>
+                <a href="self-org-list.html" class="link-card">
+                    <div class="link-card__title">Self-Organizing List</div>
+                    <div class="link-card__desc">Move-to-front and transpose heuristics</div>
+                </a>
+                <a href="unrolled-list.html" class="link-card">
+                    <div class="link-card__title">Unrolled Linked List</div>
+                    <div class="link-card__desc">Cache-friendly list structure</div>
+                </a>
+            </div>
+        </section>
+
+        <section class="category">
+            <h2 class="category__title">N-ary Trees</h2>
+            <div class="grid-links">
+                <a href="nary-intro.html" class="link-card">
+                    <div class="link-card__title">N-ary Tree - Introduction</div>
+                    <div class="link-card__desc">General tree with multiple children</div>
+                </a>
+                <a href="nary-traversal.html" class="link-card">
+                    <div class="link-card__title">N-ary Tree - Traversal</div>
+                    <div class="link-card__desc">DFS and level-order traversal</div>
+                </a>
+                <a href="nary-properties.html" class="link-card">
+                    <div class="link-card__title">N-ary Tree - Properties</div>
+                    <div class="link-card__desc">Height, depth, diameter calculations</div>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="l-footer">
+        <p>Data Structures & Algorithms Visualizations | Built with HTML5 Canvas</p>
+    </footer>
+</body>
+</html>

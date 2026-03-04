@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ukkonen's Suffix Tree Algorithm</title>
+    <style>
+        :root { --neon-primary: #00f3ff; --neon-secondary: #ff00ff; --bg-dark: #050505; --bg-card: rgba(255,255,255,0.05); --border-neon: 1px solid rgba(0,243,255,0.3); --ease-out: cubic-bezier(0.16,1,0.3,1); }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: system-ui, sans-serif; background: var(--bg-dark); color: #fff; min-height: 100vh; }
+        .l-header { position: sticky; top: 0; z-index: 1000; background: rgba(5,5,5,0.9); backdrop-filter: blur(10px); border-bottom: var(--border-neon); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .header__title { font-size: 1.5rem; color: var(--neon-primary); text-shadow: 0 0 5px var(--neon-primary); }
+        .header__back { color: var(--neon-secondary); text-decoration: none; padding: 0.5rem 1rem; border: var(--border-neon); border-radius: 8px; transition: all 0.3s var(--ease-out); }
+        .header__back:hover { box-shadow: 0 0 10px var(--neon-secondary); }
+        .l-main { padding: 1rem; max-width: 1200px; margin: 0 auto; }
+        .input-section { background: var(--bg-card); border: var(--border-neon); border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; backdrop-filter: blur(10px); }
+        .input-group { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+        .input-group input { flex: 1; padding: 0.8rem; background: rgba(0,0,0,0.3); border: var(--border-neon); border-radius: 8px; color: #fff; font-size: 1rem; caret-color: var(--neon-primary); }
+        .btn { padding: 0.8rem 1.5rem; background: rgba(0,243,255,0.1); border: var(--border-neon); border-radius: 8px; color: var(--neon-primary); cursor: pointer; font-size: 1rem; transition: all 0.3s var(--ease-out); }
+        .btn:hover { background: rgba(0,243,255,0.2); box-shadow: 0 0 15px var(--neon-primary); }
+        .phase-container { background: var(--bg-card); border: var(--border-neon); border-radius: 12px; padding: 1.5rem; backdrop-filter: blur(10px); margin-top: 1rem; }
+        .phase { margin-bottom: 1rem; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px; border-left: 3px solid var(--neon-primary); }
+        .phase-title { color: var(--neon-secondary); font-weight: bold; margin-bottom: 0.5rem; }
+        .extension { padding: 0.3rem 0; font-family: monospace; font-size: 0.85rem; color: rgba(255,255,255,0.8); }
+        h3 { color: var(--neon-secondary); margin-bottom: 1rem; text-shadow: 0 0 5px var(--neon-secondary); }
+        p { color: rgba(255,255,255,0.7); margin-bottom: 1rem; }
+    </style>
+</head>
+<body>
+    <header class="l-header">
+        <h1 class="header__title">Ukkonen's Algorithm</h1>
+        <a href="index.html" class="header__back">← Back to Index</a>
+    </header>
+    <main class="l-main">
+        <section class="input-section">
+            <h3>Build Suffix Tree with Ukkonen's Algorithm</h3>
+            <p>Ukkonen's algorithm builds a suffix tree in O(n) time. Enter a string to see the step-by-step construction.</p>
+            <div class="input-group">
+                <input type="text" id="stringInput" placeholder="Enter string" value="abcab" maxlength="10">
+                <button class="btn" onclick="buildTree()">Build</button>
+            </div>
+        </section>
+        <section class="phase-container">
+            <h3>Construction Phases</h3>
+            <div id="phasesOutput"></div>
+        </section>
+    </main>
+    <script>
+        class SuffixTree {
+            constructor(text) {
+                this.text = text + '$';
+                this.root = { children: {}, suffixLink: null };
+                this.activeNode = this.root;
+                this.activeEdge = -1;
+                this.activeLength = 0;
+                this.remaining = 0;
+                this.phases = [];
+                this.build();
+            }
+            build() {
+                const n = this.text.length;
+                for (let i = 0; i < n; i++) {
+                    this.phases.push({ phase: i + 1, char: this.text[i], extensions: [] });
+                    this.activeNode = this.root;
+                    this.remaining++;
+                    let lastNewNode = null;
+                    while (this.remaining > 0) {
+                        const ext = this.processExtension(i, lastNewNode);
+                        this.phases[this.phases.length - 1].extensions.push(ext);
+                        if (lastNewNode) {
+                            lastNewNode.suffixLink = this.activeNode;
+                            lastNewNode = null;
+                        }
+                        if (this.activeNode === this.root && this.activeLength > 0) {
+                            this.activeLength--;
+                            this.activeEdge = i - this.remaining + 1;
+                        }
+                    }
+                }
+            }
+            processExtension(pos, lastNewNode) {
+                const char = this.text[pos];
+                let ext = { remaining: this.remaining, action: '' };
+                if (!this.activeNode.children[char]) {
+                    this.activeNode.children[char] = { leaf: true, start: pos - this.activeLength, end: pos };
+                    ext.action = `Created leaf for '${char}'`;
+                    if (lastNewNode) lastNewNode.suffixLink = this.activeNode;
+                    this.remaining--;
+                    return ext;
+                }
+                const next = this.activeNode.children[char];
+                if (next.leaf) {
+                    ext.action = `Rule 3: '${char}' already exists`;
+                    this.remaining--;
+                    return ext;
+                }
+                ext.action = `Traversing edge '${char}'`;
+                this.activeNode = next;
+                this.activeLength = 0;
+                this.remaining--;
+                return ext;
+            }
+        }
+        function buildTree() {
+            const text = document.getElementById('stringInput').value;
+            if (!text) return;
+            const tree = new SuffixTree(text);
+            const container = document.getElementById('phasesOutput');
+            container.innerHTML = tree.phases.map(phase => `
+                <div class="phase">
+                    <div class="phase-title">Phase ${phase.phase}: Add '${phase.char}'</div>
+                    ${phase.extensions.map(ext => `
+                        <div class="extension">Ext ${ext.remaining}: ${ext.action}</div>
+                    `).join('')}
+                </div>
+            `).join('');
+        }
+        buildTree();
+    </script>
+</body>
+</html>

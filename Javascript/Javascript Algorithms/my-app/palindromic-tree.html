@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Palindromic Tree (EERTREE)</title>
+    <style>
+        :root { --neon-primary: #00f3ff; --neon-secondary: #ff00ff; --bg-dark: #050505; --bg-card: rgba(255,255,255,0.05); --border-neon: 1px solid rgba(0,243,255,0.3); --ease-out: cubic-bezier(0.16,1,0.3,1); }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: system-ui, sans-serif; background: var(--bg-dark); color: #fff; min-height: 100vh; }
+        .l-header { position: sticky; top: 0; z-index: 1000; background: rgba(5,5,5,0.9); backdrop-filter: blur(10px); border-bottom: var(--border-neon); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .header__title { font-size: 1.5rem; color: var(--neon-primary); text-shadow: 0 0 5px var(--neon-primary); }
+        .header__back { color: var(--neon-secondary); text-decoration: none; padding: 0.5rem 1rem; border: var(--border-neon); border-radius: 8px; transition: all 0.3s var(--ease-out); }
+        .header__back:hover { box-shadow: 0 0 10px var(--neon-secondary); }
+        .l-main { padding: 1rem; max-width: 1200px; margin: 0 auto; }
+        .input-section { background: var(--bg-card); border: var(--border-neon); border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; backdrop-filter: blur(10px); }
+        .input-group { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+        .input-group input { flex: 1; padding: 0.8rem; background: rgba(0,0,0,0.3); border: var(--border-neon); border-radius: 8px; color: #fff; font-size: 1rem; caret-color: var(--neon-primary); }
+        .btn { padding: 0.8rem 1.5rem; background: rgba(0,243,255,0.1); border: var(--border-neon); border-radius: 8px; color: var(--neon-primary); cursor: pointer; font-size: 1rem; transition: all 0.3s var(--ease-out); }
+        .btn:hover { background: rgba(0,243,255,0.2); box-shadow: 0 0 15px var(--neon-primary); }
+        .result-section { background: var(--bg-card); border: var(--border-neon); border-radius: 12px; padding: 1.5rem; backdrop-filter: blur(10px); }
+        .palindrome-item { display: inline-block; padding: 0.5rem 1rem; margin: 0.3rem; background: rgba(0,243,255,0.1); border: 1px solid var(--neon-primary); border-radius: 8px; color: #fff; }
+        .palindrome-count { color: var(--neon-secondary); font-size: 0.85rem; }
+        h3 { color: var(--neon-secondary); margin-bottom: 1rem; text-shadow: 0 0 5px var(--neon-secondary); }
+        p { color: rgba(255,255,255,0.7); margin-bottom: 1rem; }
+    </style>
+</head>
+<body>
+    <header class="l-header">
+        <h1 class="header__title">Palindromic Tree (EERTREE)</h1>
+        <a href="index.html" class="header__back">← Back to Index</a>
+    </header>
+    <main class="l-main">
+        <section class="input-section">
+            <h3>Find All Palindromic Substrings</h3>
+            <p>Enter a string to find all unique palindromic substrings using the Palindromic Tree data structure.</p>
+            <div class="input-group">
+                <input type="text" id="stringInput" placeholder="Enter string" value="abacaba">
+                <button class="btn" onclick="findPalindromes()">Find</button>
+            </div>
+        </section>
+        <section class="result-section">
+            <h3>Palindromic Substrings</h3>
+            <div id="results"></div>
+        </section>
+    </main>
+    <script>
+        class PalindromicTree {
+            constructor(s) {
+                this.s = s;
+                this.nodes = [{ len: -1, link: 0, next: {} }, { len: 0, link: 0, next: {} }];
+                this.last = 1;
+                this.n = 2;
+                for (let i = 0; i < s.length; i++) this.addLetter(i);
+            }
+            addLetter(i) {
+                let cur = this.last;
+                const char = this.s[i];
+                while (true) {
+                    const pos = i - 1 - this.nodes[cur].len;
+                    if (pos >= 0 && this.s[pos] === char) break;
+                    cur = this.nodes[cur].link;
+                }
+                if (this.nodes[cur].next[char]) {
+                    this.last = this.nodes[cur].next[char];
+                    return;
+                }
+                const newNode = { len: this.nodes[cur].len + 1, link: 0, next: {} };
+                this.nodes.push(newNode);
+                const newId = this.n++;
+                this.nodes[cur].next[char] = newId;
+                if (newNode.len === 1) {
+                    newNode.link = 1;
+                    this.last = newId;
+                    return;
+                }
+                let temp = this.nodes[cur].link;
+                while (true) {
+                    const pos = i - 1 - this.nodes[temp].len;
+                    if (pos >= 0 && this.s[pos] === char) break;
+                    temp = this.nodes[temp].link;
+                }
+                newNode.link = this.nodes[temp].next[char] || 1;
+                this.last = newId;
+            }
+            getPalindromes() {
+                const palindromes = new Set();
+                const visited = new Set();
+                function dfs(nodeId, str) {
+                    if (visited.has(nodeId)) return;
+                    visited.add(nodeId);
+                    if (nodeId > 1) palindromes.add(str);
+                    const node = this.nodes[nodeId];
+                    for (const [char, nextId] of Object.entries(node.next)) {
+                        dfs.call(this, nextId, char + str + char);
+                    }
+                }
+                dfs.call(this, 0, '');
+                dfs.call(this, 1, '');
+                return Array.from(palindromes).sort((a, b) => a.length - b.length || a.localeCompare(b));
+            }
+        }
+        function findPalindromes() {
+            const text = document.getElementById('stringInput').value;
+            if (!text) return;
+            const tree = new PalindromicTree(text);
+            const palindromes = tree.getPalindromes();
+            const container = document.getElementById('results');
+            if (palindromes.length === 0) {
+                container.innerHTML = '<p style="color: rgba(255,255,255,0.5)">No palindromic substrings found.</p>';
+                return;
+            }
+            container.innerHTML = palindromes.map(p => `
+                <div class="palindrome-item">
+                    ${p}
+                    <span class="palindrome-count">(${p.length})</span>
+                </div>
+            `).join('');
+        }
+        findPalindromes();
+    </script>
+</body>
+</html>

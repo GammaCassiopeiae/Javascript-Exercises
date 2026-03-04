@@ -1,54 +1,89 @@
+// Kruskal's Algorithm
+// Time Complexity: O(E log E) or O(E log V)
+// Space Complexity: O(V)
+// Finds Minimum Spanning Tree (MST) of a weighted undirected graph
+// Uses Union-Find (Disjoint Set Union) data structure
+
 class UnionFind {
-  constructor(elements) {
-    this.parent = {};
-    elements.forEach(el => {
-      this.parent[el] = el;
-    });
-  }
+    constructor(vertices) {
+        this.parent = {};
+        this.rank = {};
 
-  find(i) {
-    if (this.parent[i] === i) return i;
-    return this.find(this.parent[i]);
-  }
-
-  union(i, j) {
-    const rootI = this.find(i);
-    const rootJ = this.find(j);
-    if (rootI !== rootJ) {
-      this.parent[rootI] = rootJ;
-      return true;
+        for (const vertex of vertices) {
+            this.parent[vertex] = vertex;
+            this.rank[vertex] = 0;
+        }
     }
-    return false;
-  }
+
+    find(x) {
+        if (this.parent[x] !== x) {
+            this.parent[x] = this.find(this.parent[x]); // Path compression
+        }
+        return this.parent[x];
+    }
+
+    union(x, y) {
+        const rootX = this.find(x);
+        const rootY = this.find(y);
+
+        if (rootX === rootY) return false; // Already in same set
+
+        // Union by rank
+        if (this.rank[rootX] < this.rank[rootY]) {
+            this.parent[rootX] = rootY;
+        } else if (this.rank[rootX] > this.rank[rootY]) {
+            this.parent[rootY] = rootX;
+        } else {
+            this.parent[rootY] = rootX;
+            this.rank[rootX]++;
+        }
+
+        return true;
+    }
 }
 
-function kruskal(nodes, edges) {
-  const mst = [];
-  // 1. Korak: Razvrsti povezave po uteži (naraščajoče)
-  const sortedEdges = [...edges].sort((a, b) => a.weight - b.weight);
-  
-  // 2. Korak: Inicializiraj Union-Find strukturo
-  const uf = new UnionFind(nodes);
+function kruskal(vertices, edges) {
+    const mst = [];
+    let totalWeight = 0;
 
-  for (const edge of sortedEdges) {
-    // 3. Korak: Če povezava ne tvori cikla, jo dodaj v MST
-    if (uf.union(edge.source, edge.target)) {
-      mst.push(edge);
+    // Sort edges by weight
+    const sortedEdges = [...edges].sort((a, b) => a[2] - b[2]);
+
+    // Create Union-Find structure
+    const uf = new UnionFind(vertices);
+
+    // Process edges in order of weight
+    for (const [from, to, weight] of sortedEdges) {
+        if (uf.union(from, to)) {
+            mst.push({ from, to, weight });
+            totalWeight += weight;
+
+            // MST has V-1 edges
+            if (mst.length === vertices.length - 1) {
+                break;
+            }
+        }
     }
-  }
 
-  return mst;
+    return { mst, totalWeight, edgesCount: mst.length };
 }
 
-// Primer uporabe:
-const nodes = ["A", "B", "C", "D"];
+// Example usage
+const vertices = ['A', 'B', 'C', 'D', 'E', 'F'];
 const edges = [
-  { source: "A", target: "B", weight: 1 },
-  { source: "B", target: "C", weight: 3 },
-  { source: "A", target: "C", weight: 4 },
-  { source: "C", target: "D", weight: 2 },
-  { source: "B", target: "D", weight: 5 }
+    ['A', 'B', 4],
+    ['A', 'C', 2],
+    ['B', 'C', 1],
+    ['B', 'D', 5],
+    ['C', 'D', 8],
+    ['C', 'E', 10],
+    ['D', 'E', 2],
+    ['D', 'F', 6],
+    ['E', 'F', 3]
 ];
 
-const result = kruskal(nodes, edges);
-console.log(result);
+const result = kruskal(vertices, edges);
+console.log("Kruskal's Algorithm MST:");
+console.log('Edges:', result.mst);
+console.log('Total Weight:', result.totalWeight);
+console.log('Number of Edges in MST:', result.edgesCount);

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="sl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Linearity of Expectation - Simulacija</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --bg: #f8fafc;
+            --accent: #f59e0b;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px;
+            color: #1e293b;
+        }
+
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .theory {
+            text-align: left;
+            background: #eef2ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .hats-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            min-height: 60px;
+            flex-wrap: wrap;
+        }
+
+        .hat {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-weight: bold;
+            position: relative;
+            background: #fff;
+        }
+
+        .hat.match {
+            border-color: #22c55e;
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .hat .owner {
+            font-size: 0.7rem;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-box {
+            padding: 15px;
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+
+        .val {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: transform 0.1s;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <h2>Linearity of Expectation</h2>
+
+        <div class="theory">
+            <strong>Problem ujemanja:</strong> $n$ ljudi odloži klobuke, nato jih naključno dobijo nazaj. Koliko ljudi bo v povprečju dobilo svoj klobuk?<br>
+            <em>Teoretični odgovor:</em> $E[X] = n \times (1/n) = \mathbf{1}$. Vedno je 1, ne glede na $n$!
+        </div>
+
+        <div class="controls">
+            <label>Število ljudi (n): <input type="number" id="numPeople" value="10" min="2" max="50" style="width: 50px; padding: 5px;"></label>
+            <button onclick="runSimulation()">Premešaj klobuke</button>
+        </div>
+
+        <div id="hatsDisplay" class="hats-container"></div>
+
+        <div class="stats">
+            <div class="stat-box">
+                Trenutno ujemanj:
+                <span id="currentMatches" class="val">0</span>
+            </div>
+            <div class="stat-box">
+                Povprečje (Simulacija):
+                <span id="avgMatches" class="val">0.00</span>
+            </div>
+        </div>
+
+        <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 20px;">Število poskusov: <span id="trialCount">0</span></p>
+    </div>
+
+    <script>
+        let totalMatches = 0;
+        let totalTrials = 0;
+
+        function runSimulation() {
+            const n = parseInt(document.getElementById('numPeople').value);
+            const display = document.getElementById('hatsDisplay');
+
+            // 1. Ustvarimo lastnike (0 do n-1)
+            const owners = Array.from({
+                length: n
+            }, (_, i) => i);
+
+            // 2. Premešamo klobuke (Fisher-Yates)
+            let hats = [...owners];
+            for (let i = n - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [hats[i], hats[j]] = [hats[j], hats[i]];
+            }
+
+            // 3. Preštejemo ujemja (Indikatorska spremenljivka Xi)
+            let matches = 0;
+            display.innerHTML = '';
+
+            hats.forEach((hat, index) => {
+                const isMatch = hat === index;
+                if (isMatch) matches++;
+
+                // DOM API: Ustvarjanje vizualizacije
+                const el = document.createElement('div');
+                el.className = `hat ${isMatch ? 'match' : ''}`;
+                el.innerHTML = `🎓<span class="owner">P:${hat}</span>`;
+                display.appendChild(el);
+            });
+
+            // 4. Posodobitev statistike
+            totalMatches += matches;
+            totalTrials++;
+
+            document.getElementById('currentMatches').innerText = matches;
+            document.getElementById('avgMatches').innerText = (totalMatches / totalTrials).toFixed(3);
+            document.getElementById('trialCount').innerText = totalTrials;
+        }
+
+        // Resetiraj statistiko, če se spremeni n
+        document.getElementById('numPeople').addEventListener('change', () => {
+            totalMatches = 0;
+            totalTrials = 0;
+            document.getElementById('avgMatches').innerText = "0.00";
+            document.getElementById('trialCount').innerText = "0";
+        });
+    </script>
+
+</body>
+
+</html>

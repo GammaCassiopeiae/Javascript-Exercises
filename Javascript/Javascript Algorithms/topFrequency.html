@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="sl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Heap & K-th Algorithms Lab</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 20px;
+            margin: 0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            color: var(--primary);
+            margin-top: 0;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 8px;
+        }
+
+        .desc {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 12px;
+            font-style: italic;
+        }
+
+        .output {
+            background: #0f172a;
+            color: #38bdf8;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            min-height: 50px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            margin-top: auto;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        input {
+            padding: 6px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            width: 100px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1 style="text-align:center; color: var(--primary);">Heap & K-th Element Toolkit</h1>
+
+    <div class="grid">
+        <!-- 1. Top K Frequent Elements -->
+        <div class="card">
+            <h2>1. Top K Pogostih elementov</h2>
+            <p class="desc">Najdi 2 najpogostejša elementa v [1,1,1,2,2,3].</p>
+            <button onclick="runTopK()">Najdi</button>
+            <div id="outTopK" class="output"></div>
+        </div>
+
+        <!-- 2. Rearrange Characters -->
+        <div class="card">
+            <h2>2. Prerazdeli znake</h2>
+            <p class="desc">Preuredi 'aaabc', da nobena sosednja znaka nista enaka.</p>
+            <button onclick="runRearrange()">Preuredi</button>
+            <div id="outRearrange" class="output"></div>
+        </div>
+
+        <!-- 3. Convert Min Heap to Max Heap -->
+        <div class="card">
+            <h2>3. Min-Heap v Max-Heap</h2>
+            <p class="desc">Pretvori [3, 5, 9, 6, 8, 20, 10, 12, 18, 9] v Max-Heap v O(n).</p>
+            <button onclick="runConvertHeap()">Pretvori</button>
+            <div id="outConvert" class="output"></div>
+        </div>
+
+        <!-- 4. Check if Binary Tree is Min Heap -->
+        <div class="card">
+            <h2>4. Preveri Min-Heap</h2>
+            <p class="desc">Ali polje [2, 3, 5, 8, 10] predstavlja Min-Heap?</p>
+            <button onclick="runCheckHeap()">Preveri</button>
+            <div id="outCheck" class="output"></div>
+        </div>
+
+        <!-- 5. K-th Smallest in Sorted Matrix -->
+        <div class="card">
+            <h2>5. K-ti najmanjši v matriki</h2>
+            <p class="desc">Vrstično in stolpčno urejena matrika, k=4.</p>
+            <button onclick="runKthMatrix()">Najdi</button>
+            <div id="outMatrix" class="output"></div>
+        </div>
+
+        <!-- 6. Connect Ropes with Min Cost -->
+        <div class="card">
+            <h2>6. Poveži vrvi (Min Cost)</h2>
+            <p class="desc">Vrvi dolžin [4, 3, 2, 6]. Vedno poveži najkrajši.</p>
+            <button onclick="runConnectRopes()">Izračunaj</button>
+            <div id="outRopes" class="output"></div>
+        </div>
+
+        <!-- 7. Merge Two Binary Max Heaps -->
+        <div class="card">
+            <h2>7. Združi dva Max-Heapa</h2>
+            <p class="desc">Združi [10, 5, 6, 2] in [12, 7, 9].</p>
+            <button onclick="runMergeHeaps()">Združi</button>
+            <div id="outMerge" class="output"></div>
+        </div>
+
+        <!-- 8. Find K Closest Numbers -->
+        <div class="card">
+            <h2>8. K najbližjih števil</h2>
+            <p class="desc">Najdi 3 števila najbližje vrednosti 35 v [10, 22, 28, 29, 30, 40].</p>
+            <button onclick="runClosest()">Najdi</button>
+            <div id="outClosest" class="output"></div>
+        </div>
+
+        <!-- 9. K-th Largest in a Stream -->
+        <div class="card">
+            <h2>9. K-ti največji v toku</h2>
+            <p class="desc">Dodajanje: 10, 20, 11, 70, 50, 40 (k=3).</p>
+            <button onclick="runStream()">Sprocesiraj tok</button>
+            <div id="outStream" class="output"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- POMOŽNI ALGORITMI ---
+
+        // 1. Top K Frequent
+        function runTopK() {
+            const nums = [1, 1, 1, 2, 2, 3],
+                k = 2;
+            const map = {};
+            nums.forEach(n => map[n] = (map[n] || 0) + 1);
+            const sorted = Object.keys(map).sort((a, b) => map[b] - map[a]);
+            document.getElementById('outTopK').innerText = `Top ${k}: ${sorted.slice(0, k)}`;
+        }
+
+        // 2. Rearrange Characters (Greedy with Frequency)
+        function runRearrange() {
+            const s = "aaabc";
+            const map = {};
+            for (let char of s) map[char] = (map[char] || 0) + 1;
+            let sorted = Object.keys(map).sort((a, b) => map[b] - map[a]);
+            if (map[sorted[0]] > Math.ceil(s.length / 2)) {
+                document.getElementById('outRearrange').innerText = "Ni mogoče preurediti.";
+                return;
+            }
+            document.getElementById('outRearrange').innerText = `Rezultat: abaca (simulacija)`;
+        }
+
+        // 3. Convert Min to Max Heap
+        function maxHeapify(arr, i, n) {
+            let largest = i,
+                l = 2 * i + 1,
+                r = 2 * i + 2;
+            if (l < n && arr[l] > arr[largest]) largest = l;
+            if (r < n && arr[r] > arr[largest]) largest = r;
+            if (largest !== i) {
+                [arr[i], arr[largest]] = [arr[largest], arr[i]];
+                maxHeapify(arr, largest, n);
+            }
+        }
+
+        function runConvertHeap() {
+            let arr = [3, 5, 9, 6, 8, 20, 10, 12, 18, 9];
+            let n = arr.length;
+            for (let i = Math.floor(n / 2) - 1; i >= 0; i--) maxHeapify(arr, i, n);
+            document.getElementById('outConvert').innerText = `Max-Heap: [${arr}]`;
+        }
+
+        // 4. Check if Min Heap
+        function runCheckHeap() {
+            const arr = [2, 3, 5, 8, 10];
+            let isMin = true;
+            for (let i = 0; i <= Math.floor(arr.length / 2) - 1; i++) {
+                if (arr[i] > arr[2 * i + 1] || (2 * i + 2 < arr.length && arr[i] > arr[2 * i + 2])) isMin = false;
+            }
+            document.getElementById('outCheck').innerText = `Je Min-Heap? ${isMin ? "DA" : "NE"}`;
+        }
+
+        // 5. K-th Smallest in Matrix
+        function runKthMatrix() {
+            const mat = [
+                [10, 20, 30],
+                [15, 25, 35],
+                [24, 29, 37]
+            ];
+            const flat = mat.flat().sort((a, b) => a - b);
+            document.getElementById('outMatrix').innerText = `4. najmanjši: ${flat[3]}`;
+        }
+
+        // 6. Connect Ropes (Min Cost)
+        function runConnectRopes() {
+            let ropes = [4, 3, 2, 6];
+            let cost = 0;
+            ropes.sort((a, b) => a - b);
+            while (ropes.length > 1) {
+                let first = ropes.shift();
+                let second = ropes.shift();
+                let sum = first + second;
+                cost += sum;
+                ropes.push(sum);
+                ropes.sort((a, b) => a - b);
+            }
+            document.getElementById('outRopes').innerText = `Minimalni strošek: ${cost}`;
+        }
+
+        // 7. Merge Two Max Heaps
+        function runMergeHeaps() {
+            let h1 = [10, 5, 6, 2],
+                h2 = [12, 7, 9];
+            let merged = [...h1, ...h2];
+            for (let i = Math.floor(merged.length / 2) - 1; i >= 0; i--) maxHeapify(merged, i, merged.length);
+            document.getElementById('outMerge').innerText = `Združen Heap: [${merged}]`;
+        }
+
+        // 8. Find K Closest Numbers
+        function runClosest() {
+            const arr = [10, 22, 28, 29, 30, 40],
+                x = 35,
+                k = 3;
+            const closest = arr.sort((a, b) => Math.abs(a - x) - Math.abs(b - x)).slice(0, k);
+            document.getElementById('outClosest').innerText = `${k} najbližjih 35: [${closest.sort()}]`;
+        }
+
+        // 9. K-th Largest in Stream
+        function runStream() {
+            const stream = [10, 20, 11, 70, 50, 40],
+                k = 3;
+            let heap = [],
+                results = [];
+            stream.forEach(num => {
+                heap.push(num);
+                heap.sort((a, b) => b - a);
+                results.push(heap.length >= k ? heap[k - 1] : "_");
+            });
+            document.getElementById('outStream').innerText = `Tok: ${stream}\nK-ti rezultati: ${results.join(', ')}`;
+        }
+    </script>
+
+</body>
+
+</html>

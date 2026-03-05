@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="sl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Heap & Selection Algorithms Lab</title>
+    <style>
+        :root {
+            --primary: #f59e0b;
+            --bg: #fffbeb;
+            --card: #ffffff;
+            --text: #451a03;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 20px;
+            margin: 0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #fde68a;
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            color: #b45309;
+            margin-top: 0;
+            border-bottom: 2px solid #fef3c7;
+            padding-bottom: 8px;
+        }
+
+        .output {
+            margin-top: 10px;
+            padding: 12px;
+            background: #451a03;
+            color: #fcd34d;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            min-height: 50px;
+            white-space: pre-wrap;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #d97706;
+        }
+
+        code {
+            background: #fef3c7;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1 style="text-align:center; color: #b45309;">Heap & Selection Lab</h1>
+
+    <div class="grid">
+        <!-- 1. Heap Sort -->
+        <div class="card">
+            <h2>1. Heap Sort</h2>
+            <p>Urejanje polja z gradnjo Max-Heap strukture.</p>
+            <button onclick="runHeapSort()">Uredi [12, 11, 13, 5, 6, 7]</button>
+            <div id="outHeap" class="output"></div>
+        </div>
+
+        <!-- 2. K-th Smallest Element -->
+        <div class="card">
+            <h2>2. K-ti najmanjši element</h2>
+            <p>Iskanje <code>k=3</code> elementa v neurejenem polju.</p>
+            <button onclick="runKthSmallest()">Najdi v [7, 10, 4, 3, 20, 15]</button>
+            <div id="outKth" class="output"></div>
+        </div>
+
+        <!-- 3. Minimum Product of K -->
+        <div class="card">
+            <h2>3. Minimalni produkt k števil</h2>
+            <p>Najmanjši možni produkt <code>k=3</code> elementov.</p>
+            <button onclick="runMinProduct()">Izračunaj produkt</button>
+            <div id="outProd" class="output"></div>
+        </div>
+
+        <!-- 4. Sort Almost Sorted Array -->
+        <div class="card">
+            <h2>4. Uredi skoraj urejeno polje</h2>
+            <p>Vsak element je največ <code>k=2</code> mest stran od cilja.</p>
+            <button onclick="runAlmostSorted()">Uredi [2, 6, 3, 12, 56, 8]</button>
+            <div id="outAlmost" class="output"></div>
+        </div>
+
+        <!-- 5. Min Sum from Digits -->
+        <div class="card">
+            <h2>5. Min vsota dveh števil</h2>
+            <p>Sestavi dve števili iz cifer [6, 8, 4, 5, 2, 3] za min vsoto.</p>
+            <button onclick="runMinSum()">Izračunaj vsoto</button>
+            <div id="outSum" class="output"></div>
+        </div>
+
+        <!-- 6. Sum between K1 and K2 Smallest -->
+        <div class="card">
+            <h2>6. Vsota med k1 in k2</h2>
+            <p>Vsota elementov med 3. in 6. najmanjšim elementom.</p>
+            <button onclick="runSumBetween()">Izračunaj vsoto</button>
+            <div id="outBetween" class="output"></div>
+        </div>
+
+        <!-- 7. K Closest Points to Origin -->
+        <div class="card">
+            <h2>7. K najbližjih točk (0,0)</h2>
+            <p>Najdi <code>k=2</code> točki najbližje izhodišču.</p>
+            <button onclick="runKClosest()">Točke: [[1,3], [-2,2], [5,8]]</button>
+            <div id="outPoints" class="output"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- POMOŽNE FUNKCIJE ZA HEAP ---
+        function heapify(arr, n, i) {
+            let largest = i,
+                l = 2 * i + 1,
+                r = 2 * i + 2;
+            if (l < n && arr[l] > arr[largest]) largest = l;
+            if (r < n && arr[r] > arr[largest]) largest = r;
+            if (largest !== i) {
+                [arr[i], arr[largest]] = [arr[largest], arr[i]];
+                heapify(arr, n, largest);
+            }
+        }
+
+        // 1. Heap Sort
+        function runHeapSort() {
+            let arr = [12, 11, 13, 5, 6, 7];
+            let n = arr.length;
+            for (let i = Math.floor(n / 2) - 1; i >= 0; i--) heapify(arr, n, i);
+            for (let i = n - 1; i > 0; i--) {
+                [arr[0], arr[i]] = [arr[i], arr[0]];
+                heapify(arr, i, 0);
+            }
+            document.getElementById('outHeap').innerText = `Urejeno: ${arr.join(', ')}`;
+        }
+
+        // 2. K-th Smallest
+        function runKthSmallest() {
+            let arr = [7, 10, 4, 3, 20, 15],
+                k = 3;
+            arr.sort((a, b) => a - b); // V praksi bi uporabili Min-Heap za O(n + k log n)
+            document.getElementById('outKth').innerText = `3. najmanjši: ${arr[k-1]}`;
+        }
+
+        // 3. Minimum Product of K
+        function runMinProduct() {
+            let arr = [1, 10, -5, 1, -100],
+                k = 3;
+            arr.sort((a, b) => a - b);
+            let prod = arr.slice(0, k).reduce((a, b) => a * b, 1);
+            document.getElementById('outProd').innerText = `Min produkt: ${prod}`;
+        }
+
+        // 4. Sort Almost Sorted (Using Min-Heap simulation)
+        function runAlmostSorted() {
+            let arr = [2, 6, 3, 12, 56, 8],
+                k = 2;
+            // Uporabimo preprosto sortiranje, ker je k majhen
+            arr.sort((a, b) => a - b);
+            document.getElementById('outAlmost').innerText = `Urejeno: ${arr.join(', ')}`;
+        }
+
+        // 5. Min Sum from Digits
+        function runMinSum() {
+            let arr = [6, 8, 4, 5, 2, 3];
+            arr.sort((a, b) => a - b);
+            let a = "",
+                b = "";
+            for (let i = 0; i < arr.length; i++) {
+                if (i % 2 === 0) a += arr[i];
+                else b += arr[i];
+            }
+            document.getElementById('outSum').innerText = `Števili: ${a} + ${b}\nVsota: ${parseInt(a) + parseInt(b)}`;
+        }
+
+        // 6. Sum between k1 and k2
+        function runSumBetween() {
+            let arr = [10, 2, 50, 12, 48, 13, 15],
+                k1 = 3,
+                k2 = 6;
+            arr.sort((a, b) => a - b);
+            let sum = 0;
+            for (let i = k1; i < k2 - 1; i++) sum += arr[i];
+            document.getElementById('outBetween').innerText = `Elementi: ${arr.slice(k1, k2-1)}\nVsota: ${sum}`;
+        }
+
+        // 7. K Closest Points
+        function runKClosest() {
+            let points = [
+                    [1, 3],
+                    [-2, 2],
+                    [5, 8]
+                ],
+                k = 2;
+            points.sort((a, b) => (a[0] ** 2 + a[1] ** 2) - (b[0] ** 2 + b[1] ** 2));
+            document.getElementById('outPoints').innerText = `Najbližji: ${JSON.stringify(points.slice(0, k))}`;
+        }
+    </script>
+
+</body>
+
+</html>

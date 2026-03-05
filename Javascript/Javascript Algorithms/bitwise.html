@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="sl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Bitwise Vizualizator</title>
+    <style>
+        :root {
+            --primary: #0ea5e9;
+            --binary: #64748b;
+            --highlight: #f43f5e;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0f172a;
+            color: #e2e8f0;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .card {
+            background: #1e293b;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 550px;
+            border: 1px solid #334155;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        input {
+            background: #0f172a;
+            border: 1px solid #334155;
+            color: #38bdf8;
+            padding: 10px;
+            border-radius: 4px;
+            width: 80px;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        select {
+            background: #334155;
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .bit-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .bit-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .bits {
+            display: flex;
+            gap: 4px;
+        }
+
+        .bit {
+            width: 30px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #334155;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .bit.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        .label {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            width: 40px;
+        }
+
+        .result-row {
+            margin-top: 10px;
+            padding-top: 15px;
+            border-top: 2px dashed #475569;
+        }
+
+        .result-row .bit.active {
+            background: var(--highlight);
+            box-shadow: 0 0 10px var(--highlight);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <h2>Bitwise Algorithm</h2>
+        <div class="input-group">
+            <input type="number" id="numA" value="12" min="0" max="255">
+            <select id="operator">
+                <option value="&">AND (&)</option>
+                <option value="|">OR (|)</option>
+                <option value="^">XOR (^)</option>
+                <option value="~">NOT (~A)</option>
+            </select>
+            <input type="number" id="numB" value="7" min="0" max="255">
+            <button onclick="calculateBits()" style="background: var(--primary); color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer;">Izračunaj</button>
+        </div>
+
+        <div class="bit-container">
+            <div class="bit-row">
+                <span class="label">A:</span>
+                <div id="bitsA" class="bits"></div>
+            </div>
+            <div class="bit-row" id="rowB">
+                <span class="label">B:</span>
+                <div id="bitsB" class="bits"></div>
+            </div>
+            <div class="bit-row result-row">
+                <span class="label">RES:</span>
+                <div id="bitsRes" class="bits"></div>
+            </div>
+        </div>
+        <p id="decimalRes" style="text-align: center; margin-top: 20px; font-weight: bold; color: var(--highlight);"></p>
+    </div>
+
+    <script>
+        function to8BitArray(num) {
+            // Pretvorba v 8-bitno dvojiško polje
+            return (num >>> 0).toString(2).padStart(8, '0').split('').map(Number);
+        }
+
+        function createBitUI(containerId, bitArray) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            bitArray.forEach(bit => {
+                const div = document.createElement('div');
+                div.className = `bit ${bit === 1 ? 'active' : ''}`;
+                div.textContent = bit;
+                container.appendChild(div);
+            });
+        }
+
+        function calculateBits() {
+            const a = parseInt(document.getElementById('numA').value) || 0;
+            const b = parseInt(document.getElementById('numB').value) || 0;
+            const op = document.getElementById('operator').value;
+            const rowB = document.getElementById('rowB');
+
+            let res;
+            if (op === '&') res = a & b;
+            else if (op === '|') res = a | b;
+            else if (op === '^') res = a ^ b;
+            else if (op === '~') {
+                res = ~a & 255; // Omejimo na 8 bitov za vizualizacijo
+                rowB.style.opacity = '0.3';
+            }
+
+            if (op !== '~') rowB.style.opacity = '1';
+
+            // Posodobitev DOM-a
+            createBitUI('bitsA', to8BitArray(a));
+            createBitUI('bitsB', to8BitArray(b));
+            createBitUI('bitsRes', to8BitArray(res));
+
+            document.getElementById('decimalRes').textContent = `Rezultat (Decimalno): ${res}`;
+        }
+
+        // Začetni klic
+        calculateBits();
+    </script>
+
+</body>
+
+</html>

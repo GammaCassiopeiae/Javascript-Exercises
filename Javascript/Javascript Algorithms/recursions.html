@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="sl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Rekurzija: 6 primerov</title>
+    <style>
+        :root {
+            --primary: #8b5cf6;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --code: #1e293b;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: #334;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            color: var(--primary);
+            margin-top: 0;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 8px;
+        }
+
+        .input-group {
+            margin: 10px 0;
+            display: flex;
+            gap: 8px;
+        }
+
+        input {
+            padding: 6px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            width: 60px;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .output {
+            margin-top: 10px;
+            padding: 10px;
+            background: var(--code);
+            color: #38bdf8;
+            border-radius: 6px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            min-height: 40px;
+            white-space: pre-wrap;
+        }
+
+        .desc {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1 style="text-align:center;">Rekurzivni Algoritmi</h1>
+
+        <div class="grid">
+            <!-- 1. Faktoriela -->
+            <div class="card">
+                <h2>1. Faktoriela (n!)</h2>
+                <p class="desc">Baza: 0! = 1. Rekurzija: n * (n-1)!</p>
+                <div class="input-group">
+                    <input type="number" id="factIn" value="5" min="0" max="20">
+                    <button onclick="runFact()">Izračunaj</button>
+                </div>
+                <div id="outFact" class="output"></div>
+            </div>
+
+            <!-- 2. Fibonaccijevo zaporedje -->
+            <div class="card">
+                <h2>2. Fibonacci (n-to število)</h2>
+                <p class="desc">Vsota prejšnjih dveh členov zaporedja.</p>
+                <div class="input-group">
+                    <input type="number" id="fibIn" value="6" min="0" max="30">
+                    <button onclick="runFib()">Izračunaj</button>
+                </div>
+                <div id="outFib" class="output"></div>
+            </div>
+
+            <!-- 3. Vsota cifer števila -->
+            <div class="card">
+                <h2>3. Vsota cifer</h2>
+                <p class="desc">n%10 + vsota(n/10). Razčlenitev števila.</p>
+                <div class="input-group">
+                    <input type="number" id="digitIn" value="1234">
+                    <button onclick="runDigitSum()">Izračunaj</button>
+                </div>
+                <div id="outDigit" class="output"></div>
+            </div>
+
+            <!-- 4. Obrni niz (String Reversal) -->
+            <div class="card">
+                <h2>4. Obrni niz</h2>
+                <p class="desc">Rekurzivno prestavljanje prvega znaka na konec.</p>
+                <div class="input-group">
+                    <input type="text" id="strIn" value="Rekurzija" style="width: 100px;">
+                    <button onclick="runReverse()">Obrni</button>
+                </div>
+                <div id="outStr" class="output"></div>
+            </div>
+
+            <!-- 5. Binarno iskanje -->
+            <div class="card">
+                <h2>5. Binarno iskanje</h2>
+                <p class="desc">Deli in vladaj: iskanje v urejenem polju.</p>
+                <div class="input-group">
+                    <span>Išči 7 v [1..10]:</span>
+                    <button onclick="runBinSearch()">Najdi</button>
+                </div>
+                <div id="outBin" class="output"></div>
+            </div>
+
+            <!-- 6. Potenca (x^n) -->
+            <div class="card">
+                <h2>6. Potenca (Power)</h2>
+                <p class="desc">x * power(x, n-1). Eksponentno množenje.</p>
+                <div class="input-group">
+                    x: <input type="number" id="powX" value="2">
+                    n: <input type="number" id="powN" value="8">
+                    <button onclick="runPower()">Izračunaj</button>
+                </div>
+                <div id="outPow" class="output"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. FAKTORIELA
+        function factorial(n) {
+            if (n <= 1) return 1;
+            return n * factorial(n - 1);
+        }
+
+        function runFact() {
+            const n = parseInt(document.getElementById('factIn').value);
+            document.getElementById('outFact').innerText = `${n}! = ${factorial(n)}`;
+        }
+
+        // 2. FIBONACCI
+        function fib(n) {
+            if (n <= 1) return n;
+            return fib(n - 1) + fib(n - 2);
+        }
+
+        function runFib() {
+            const n = parseInt(document.getElementById('fibIn').value);
+            document.getElementById('outFib').innerText = `Fib(${n}) = ${fib(n)}`;
+        }
+
+        // 3. VSOTA CIFER
+        function sumDigits(n) {
+            if (n === 0) return 0;
+            return (n % 10) + sumDigits(Math.floor(n / 10));
+        }
+
+        function runDigitSum() {
+            const n = Math.abs(parseInt(document.getElementById('digitIn').value));
+            document.getElementById('outDigit').innerText = `Vsota cifer: ${sumDigits(n)}`;
+        }
+
+        // 4. OBRNI NIZ
+        function reverseString(s) {
+            if (s === "") return "";
+            return reverseString(s.substr(1)) + s.charAt(0);
+        }
+
+        function runReverse() {
+            const s = document.getElementById('strIn').value;
+            document.getElementById('outStr').innerText = `Rezultat: ${reverseString(s)}`;
+        }
+
+        // 5. BINARNO ISKANJE
+        function binarySearch(arr, target, low, high) {
+            if (low > high) return -1;
+            let mid = Math.floor((low + high) / 2);
+            if (arr[mid] === target) return mid;
+            if (target < arr[mid]) return binarySearch(arr, target, low, mid - 1);
+            return binarySearch(arr, target, mid + 1, high);
+        }
+
+        function runBinSearch() {
+            const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+            const idx = binarySearch(arr, 7, 0, arr.length - 1);
+            document.getElementById('outBin').innerText = `Indeks števila 7: ${idx}`;
+        }
+
+        // 6. POTENCA
+        function power(x, n) {
+            if (n === 0) return 1;
+            return x * power(x, n - 1);
+        }
+
+        function runPower() {
+            const x = parseInt(document.getElementById('powX').value);
+            const n = parseInt(document.getElementById('powN').value);
+            document.getElementById('outPow').innerText = `${x}^${n} = ${power(x, n)}`;
+        }
+    </script>
+
+</body>
+
+</html>

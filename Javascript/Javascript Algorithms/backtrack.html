@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="sl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Backtracking - N-Kraljic</title>
+    <style>
+        :root {
+            --primary: #7c3aed;
+            --bg: #f5f3ff;
+            --cell: #ffffff;
+            --queen: #f59e0b;
+        }
+
+        body {
+            font-family: system-ui, sans-serif;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .board {
+            display: grid;
+            gap: 2px;
+            background: #ddd;
+            border: 4px solid #333;
+            margin: 20px auto;
+        }
+
+        .cell {
+            width: 50px;
+            height: 50px;
+            background: var(--cell);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: background 0.2s;
+        }
+
+        .cell.dark {
+            background: #e2e8f0;
+        }
+
+        .cell.checking {
+            background: #c084fc;
+        }
+
+        /* Vizualizacija backtrackinga */
+        .queen {
+            color: var(--queen);
+            filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.5));
+        }
+
+        .controls {
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:disabled {
+            background: #ccc;
+        }
+
+        #status {
+            font-weight: bold;
+            color: var(--primary);
+            min-height: 1.5em;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <h2>Backtracking: N-Kraljic</h2>
+        <p>Algoritem postavlja kraljice tako, da se ne napadajo.</p>
+
+        <div class="controls">
+            <label>Velikost (N): <input type="number" id="sizeN" value="4" min="4" max="8" style="width: 50px; padding: 5px;"></label>
+            <button id="startBtn" onclick="initSolve()">Zaženi vizualizacijo</button>
+        </div>
+
+        <div id="status">Pripravljen...</div>
+        <div id="board" class="board"></div>
+    </div>
+
+    <script>
+        let N = 4;
+        let board = [];
+
+        function createBoardUI() {
+            const boardEl = document.getElementById('board');
+            boardEl.style.gridTemplateColumns = `repeat(${N}, 50px)`;
+            boardEl.innerHTML = '';
+            for (let r = 0; r < N; r++) {
+                for (let c = 0; c < N; c++) {
+                    const cell = document.createElement('div');
+                    cell.id = `cell-${r}-${c}`;
+                    cell.className = `cell ${(r + c) % 2 === 1 ? 'dark' : ''}`;
+                    boardEl.appendChild(cell);
+                }
+            }
+        }
+
+        async function isSafe(row, col) {
+            // Preveri isti stolpec zgoraj
+            for (let i = 0; i < row; i++) {
+                if (board[i][col] === 1) return false;
+            }
+            // Preveri levo diagonalo zgoraj
+            for (let i = row, j = col; i >= 0 && j >= 0; i--, j--) {
+                if (board[i][j] === 1) return false;
+            }
+            // Preveri desno diagonalo zgoraj
+            for (let i = row, j = col; i >= 0 && j < N; i--, j++) {
+                if (board[i][j] === 1) return false;
+            }
+            return true;
+        }
+
+        async function solve(row) {
+            if (row >= N) return true; // Vse kraljice so postavljene
+
+            for (let col = 0; col < N; col++) {
+                const cell = document.getElementById(`cell-${row}-${col}`);
+                cell.classList.add('checking');
+                await new Promise(r => setTimeout(r, 300)); // Premor za vizualizacijo
+
+                if (await isSafe(row, col)) {
+                    board[row][col] = 1;
+                    cell.innerHTML = '<span class="queen">♛</span>';
+                    cell.classList.remove('checking');
+
+                    if (await solve(row + 1)) return true;
+
+                    // BACKTRACKING: Če pot ne vodi do rešitve, odstrani kraljico
+                    board[row][col] = 0;
+                    cell.innerHTML = '';
+                    document.getElementById('status').innerText = `Vračanje (backtrack) iz vrstice ${row}...`;
+                }
+                cell.classList.remove('checking');
+            }
+            return false;
+        }
+
+        async function initSolve() {
+            N = parseInt(document.getElementById('sizeN').value);
+            board = Array.from({
+                length: N
+            }, () => Array(N).fill(0));
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('status').innerText = "Iskanje rešitve...";
+            createBoardUI();
+
+            if (await solve(0)) {
+                document.getElementById('status').innerText = "Rešitev najdena!";
+            } else {
+                document.getElementById('status').innerText = "Rešitev ne obstaja.";
+            }
+            document.getElementById('startBtn').disabled = false;
+        }
+
+        createBoardUI(); // Začetni prikaz
+    </script>
+
+</body>
+
+</html>

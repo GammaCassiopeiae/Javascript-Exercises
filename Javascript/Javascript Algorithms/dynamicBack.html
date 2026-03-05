@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="sl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Rekurzivna Funkcija fun(n)</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --bg: #f8fafc;
+            --card: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            padding: 20px;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--card);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-top: 0;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        input {
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            flex: 1;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .output {
+            background: #0f172a;
+            color: #38bdf8;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .highlight {
+            color: #f43f5e;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Izračun fun(n)</h2>
+        <p>Izračun zaporedja na podlagi vsote produktov podtežav.</p>
+
+        <div class="input-group">
+            <input type="number" id="nInput" value="5" min="1" max="15">
+            <button onclick="calculate()">Izračunaj</button>
+        </div>
+
+        <div id="result" class="output">Vnesi n in klikni gumb.</div>
+    </div>
+
+    <script>
+        const memo = {
+            1: 1
+        };
+
+        function fun(n) {
+            // Če je vrednost že izračunana, jo vrni (Memoizacija)
+            if (memo[n] !== undefined) return memo[n];
+
+            let sum = 0;
+            // Formula: 1 + fun(1)*fun(n-1) + fun(2)*fun(n-2) + ...
+            for (let i = 1; i < n; i++) {
+                sum += fun(i) * fun(n - i);
+            }
+
+            memo[n] = 1 + sum;
+            return memo[n];
+        }
+
+        function calculate() {
+            const n = parseInt(document.getElementById('nInput').value);
+            const output = document.getElementById('result');
+
+            // Ponastavi memo in izračunaj vse vmesne korake
+            for (let k in memo)
+                if (k > 1) delete memo[k];
+
+            let log = "";
+            for (let i = 1; i <= n; i++) {
+                const val = fun(i);
+                if (i === 1) {
+                    log += `fun(1) = 1\n`;
+                } else {
+                    log += `fun(${i}) = 1 + ` + formatSteps(i) + ` = ${val}\n`;
+                }
+            }
+
+            output.innerText = log;
+        }
+
+        function formatSteps(n) {
+            let parts = [];
+            for (let i = 1; i < n; i++) {
+                parts.push(`fun(${i})*fun(${n-i})`);
+            }
+            return parts.join(' + ');
+        }
+
+        // Začetni klic
+        calculate();
+    </script>
+
+</body>
+
+</html>

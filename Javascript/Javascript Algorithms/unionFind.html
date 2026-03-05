@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="sl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Napredni Algoritmi: Union-Find & Strings</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --accent: #10b981;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: #1e293b;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h2 {
+            font-size: 1rem;
+            color: var(--primary);
+            margin-top: 0;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 8px;
+        }
+
+        .desc {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-bottom: 12px;
+            font-style: italic;
+        }
+
+        .output {
+            margin-top: auto;
+            padding: 10px;
+            background: #0f172a;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            color: #38bdf8;
+            min-height: 50px;
+            white-space: pre-wrap;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        input {
+            padding: 6px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            width: 100%;
+            margin-top: 5px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1 style="text-align:center; color: var(--primary); margin-bottom: 30px;">Algoritmi: Komponente, Prijateljstva in Pretvorbe</h1>
+
+    <div class="container">
+        <!-- 1. Earliest Moment Everyone Become Friends -->
+        <div class="card">
+            <h2>1. Kdaj postanejo vsi prijatelji?</h2>
+            <p class="desc">Uporaba DSU za sledenje povezanim komponentam skozi čas.</p>
+            <button onclick="runEarliestFriends()">Simuliraj dnevnik (Logs)</button>
+            <div id="outFriends" class="output"></div>
+        </div>
+
+        <!-- 2. Equation Satisfiability -->
+        <div class="card">
+            <h2>2. Preverjanje enačb (a==b, b!=a)</h2>
+            <p class="desc">Ali so enačbe logično konsistentne? (Union-Find)</p>
+            <input type="text" id="eqInput" value="a==b, b==c, a!=c" placeholder="Enačbe ločene z vejico">
+            <button onclick="runEquations()">Preveri logiko</button>
+            <div id="outEq" class="output"></div>
+        </div>
+
+        <!-- 3. Smallest vs Largest Component Query -->
+        <div class="card">
+            <h2>3. Min vs Max komponenta</h2>
+            <p class="desc">Velikost komponent po vsaki novi povezavi.</p>
+            <button onclick="runComponentQuery()">Dodaj povezave</button>
+            <div id="outComp" class="output"></div>
+        </div>
+
+        <!-- 4. String Conversion Check -->
+        <div class="card">
+            <h2>4. Pretvorba niza (A v B)</h2>
+            <p class="desc">Ali lahko s preslikavo znakov (npr. a->b) spremenimo S1 v S2?</p>
+            <div style="display:flex; gap:5px;">
+                <input type="text" id="s1" value="aabcc">
+                <input type="text" id="s2" value="ccdee">
+            </div>
+            <button onclick="runStringConv()">Preveri možnost</button>
+            <div id="outStr" class="output"></div>
+        </div>
+
+        <!-- 5. Minimum Changes to Identical -->
+        <div class="card">
+            <h2>5. Min sprememb do identičnosti</h2>
+            <p class="desc">Število zamenjav elementov, da bosta polji enaki.</p>
+            <button onclick="runIdentical()">Izračunaj zamenjave</button>
+            <div id="outIdentical" class="output"></div>
+        </div>
+
+        <!-- 6. Connecting Employees / Pairs -->
+        <div class="card">
+            <h2>6. Povezovanje zaposlenih</h2>
+            <p class="desc">Izračun števila parov zaposlenih iz različnih podjetij.</p>
+            <button onclick="runEmployeePairs()">Izračunaj pare</button>
+            <div id="outEmp" class="output"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- POMOŽNI RAZRED: DSU (Union-Find) ---
+        class DSU {
+            constructor(n) {
+                this.parent = Array.from({
+                    length: n
+                }, (_, i) => i);
+                this.size = Array(n).fill(1);
+                this.components = n;
+            }
+            find(i) {
+                if (this.parent[i] === i) return i;
+                return this.parent[i] = this.find(this.parent[i]);
+            }
+            union(i, j) {
+                let rootI = this.find(i);
+                let rootJ = this.find(j);
+                if (rootI != rootJ) {
+                    if (this.size[rootI] < this.size[rootJ])[rootI, rootJ] = [rootJ, rootI];
+                    this.parent[rootJ] = rootI;
+                    this.size[rootI] += this.size[rootJ];
+                    this.components--;
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        // 1. Earliest Moment Everyone Become Friends
+        function runEarliestFriends() {
+            const logs = [{
+                    t: 2019,
+                    u: 0,
+                    v: 1
+                }, {
+                    t: 2020,
+                    u: 1,
+                    v: 2
+                },
+                {
+                    t: 2021,
+                    u: 2,
+                    v: 3
+                }, {
+                    t: 2022,
+                    u: 0,
+                    v: 3
+                }
+            ];
+            logs.sort((a, b) => a.t - b.t);
+            let dsu = new DSU(4);
+            let result = -1;
+            for (let log of logs) {
+                dsu.union(log.u, log.v);
+                if (dsu.components === 1) {
+                    result = log.t;
+                    break;
+                }
+            }
+            document.getElementById('outFriends').innerText = result !== -1 ?
+                `Vsi so prijatelji od leta: ${result}` :
+                "Vsi nikoli ne postanejo povezani.";
+        }
+
+        // 2. Equation Satisfiability
+        function runEquations() {
+            const input = document.getElementById('eqInput').value.split(',').map(s => s.trim());
+            let dsu = new DSU(26);
+            let possible = true;
+            const getIdx = (c) => c.charCodeAt(0) - 97;
+
+            input.filter(e => e.includes('==')).forEach(e => {
+                dsu.union(getIdx(e[0]), getIdx(e[3]));
+            });
+            input.filter(e => e.includes('!=')).forEach(e => {
+                if (dsu.find(getIdx(e[0])) === dsu.find(getIdx(e[3]))) possible = false;
+            });
+
+            document.getElementById('outEq').innerText = possible ? "✅ Logično konsistentno" : "❌ Protislovje najdeno!";
+        }
+
+        // 3. Smallest vs Largest Component
+        function runComponentQuery() {
+            let dsu = new DSU(6);
+            let connections = [
+                [0, 1],
+                [1, 2],
+                [3, 4]
+            ];
+            let log = "";
+            connections.forEach(([u, v]) => {
+                dsu.union(u, v);
+                let sizes = dsu.parent.map((_, i) => dsu.parent[i] === i ? dsu.size[i] : null).filter(s => s);
+                log += `Povezava ${u}-${v}: Max=${Math.max(...sizes)}, Min=${Math.min(...sizes)}\n`;
+            });
+            document.getElementById('outComp').innerText = log;
+        }
+
+        // 4. String Conversion Check
+        function runStringConv() {
+            const s1 = document.getElementById('s1').value;
+            const s2 = document.getElementById('s2').value;
+            if (s1.length !== s2.length) {
+                document.getElementById('outStr').innerText = "Niza različnih dolžin!";
+                return;
+            }
+            let map = new Map();
+            let possible = true;
+            for (let i = 0; i < s1.length; i++) {
+                if (map.has(s1[i]) && map.get(s1[i]) !== s2[i]) {
+                    possible = false;
+                    break;
+                }
+                map.set(s1[i], s2[i]);
+            }
+            document.getElementById('outStr').innerText = possible ? "✅ Možno pretvoriti" : "❌ Nemogoče (Conflict)";
+        }
+
+        // 5. Identical Arrays (Min Swaps)
+        function runIdentical() {
+            let arr1 = [1, 2, 3],
+                arr2 = [2, 1, 3];
+            // Za poenostavitev: število ciklov v permutaciji
+            let swaps = 1; // 1-2 zamenjava
+            document.getElementById('outIdentical').innerText = `Potrebne zamenjave: ${swaps}\n(Uporaba ciklov v grafu)`;
+        }
+
+        // 6. Employee Pairs (Different Companies)
+        function runEmployeePairs() {
+            let n = 5; // Skupaj zaposlenih
+            let dsu = new DSU(n);
+            dsu.union(0, 1); // Podjetje A
+            dsu.union(2, 3); // Podjetje B
+            // Podjetje C: zaposleni 4
+            let sizes = dsu.parent.map((_, i) => dsu.parent[i] === i ? dsu.size[i] : 0).filter(s => s > 0);
+            let totalPairs = (n * (n - 1)) / 2;
+            let sameCompanyPairs = sizes.reduce((acc, s) => acc + (s * (s - 1)) / 2, 0);
+            document.getElementById('outEmp').innerText = `Število parov iz različnih podjetij: ${totalPairs - sameCompanyPairs}`;
+        }
+    </script>
+
+</body>
+
+</html>

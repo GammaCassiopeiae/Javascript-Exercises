@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="sl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Deli in vladaj - Merge Sort</title>
+    <style>
+        :root {
+            --primary: #f43f5e;
+            --bg: #fff1f2;
+            --node: #fb7185;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 700px;
+            text-align: center;
+        }
+
+        .array-container {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+            min-height: 50px;
+            flex-wrap: wrap;
+        }
+
+        .element {
+            padding: 10px 15px;
+            background: var(--node);
+            color: white;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .step-log {
+            text-align: left;
+            background: #1e293b;
+            color: #38bdf8;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+        }
+
+        button {
+            padding: 12px 24px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        button:hover {
+            background: #e11d48;
+        }
+
+        .split-view {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <h2>Divide & Conquer: Merge Sort</h2>
+        <p>Algoritem rekurzivno razpolovi polje, ga uredi in nato zlije nazaj.</p>
+
+        <button onclick="startSort()">Zaženi vizualizacijo</button>
+
+        <div id="arrayDisplay" class="array-container"></div>
+        <div id="log" class="step-log">Klikni gumb za začetek...</div>
+    </div>
+
+    <script>
+        const originalArray = [38, 27, 43, 3, 9, 82, 10];
+        const logEl = document.getElementById('log');
+        const displayEl = document.getElementById('arrayDisplay');
+
+        function updateUI(arr, message) {
+            const div = document.createElement('div');
+            div.innerHTML = `<span>> ${message}: [${arr.join(', ')}]</span>`;
+            logEl.appendChild(div);
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        function renderArray(arr) {
+            displayEl.innerHTML = '';
+            arr.forEach(val => {
+                const el = document.createElement('div');
+                el.className = 'element';
+                el.textContent = val;
+                displayEl.appendChild(el);
+            });
+        }
+
+        async function mergeSort(arr) {
+            if (arr.length <= 1) return arr;
+
+            // 1. DELI (Divide)
+            const mid = Math.floor(arr.length / 2);
+            const left = arr.slice(0, mid);
+            const right = arr.slice(mid);
+
+            updateUI(left, "Deli (levo)");
+            updateUI(right, "Deli (desno)");
+            await new Promise(r => setTimeout(r, 600));
+
+            // 2. VLADAJ (Conquer - rekurzija)
+            return await merge(await mergeSort(left), await mergeSort(right));
+        }
+
+        async function merge(left, right) {
+            let result = [];
+            let lIdx = 0,
+                rIdx = 0;
+
+            // 3. ZLIJ (Combine)
+            while (lIdx < left.length && rIdx < right.length) {
+                if (left[lIdx] < right[rIdx]) {
+                    result.push(left[lIdx]);
+                    lIdx++;
+                } else {
+                    result.push(right[rIdx]);
+                    rIdx++;
+                }
+            }
+
+            const final = result.concat(left.slice(lIdx)).concat(right.slice(rIdx));
+            updateUI(final, "Združi");
+            renderArray(final);
+            await new Promise(r => setTimeout(r, 600));
+            return final;
+        }
+
+        async function startSort() {
+            logEl.innerHTML = '';
+            renderArray(originalArray);
+            updateUI(originalArray, "Začetek");
+            const sorted = await mergeSort([...originalArray]);
+            updateUI(sorted, "KONČANO");
+        }
+
+        // Začetni prikaz
+        renderArray(originalArray);
+    </script>
+
+</body>
+
+</html>

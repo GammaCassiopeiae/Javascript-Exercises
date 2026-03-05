@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="sl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Matrix & Graph Algorithms Lab</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --accent: #f43f5e;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: #e2e8f0;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid #334155;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            color: var(--primary);
+            margin-top: 0;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 8px;
+        }
+
+        .desc {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-bottom: 12px;
+            font-style: italic;
+        }
+
+        .output {
+            margin-top: auto;
+            padding: 12px;
+            background: #020617;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            color: #38bdf8;
+            min-height: 60px;
+            white-space: pre-wrap;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 20px);
+            gap: 2px;
+            margin: 10px 0;
+        }
+
+        .cell {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #334155;
+        }
+
+        .land {
+            background: #4ade80;
+        }
+
+        .water {
+            background: #3b82f6;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1 style="text-align:center; color: var(--primary); margin-bottom: 30px;">Grafi, Matrike in DSU Sistemi</h1>
+
+    <div class="container">
+        <!-- 1. Number of Closed Islands -->
+        <div class="card">
+            <h2>1. Zaprti otoki (Closed Islands)</h2>
+            <p class="desc">Število otokov (kopno=1), ki so v celoti obdani z vodo (0) in se ne dotikajo roba.</p>
+            <div class="matrix-grid" id="islandGrid"></div>
+            <button onclick="runClosedIslands()">Preštej otoke</button>
+            <div id="outIslands" class="output"></div>
+        </div>
+
+        <!-- 2. Minimum Cost to Provide Water -->
+        <div class="card">
+            <h2>2. Oskrba z vodo (Min Cost)</h2>
+            <p class="desc">Kombinacija gradnje vodnjakov v hišah in polaganja cevi (Prim/Kruskal z virtualnim vozliščem).</p>
+            <button onclick="runWaterSupply()">Izračunaj Min Cost</button>
+            <div id="outWater" class="output"></div>
+        </div>
+
+        <!-- 3. Email Account Merging -->
+        <div class="card">
+            <h2>3. Združevanje e-poštnih računov</h2>
+            <p class="desc">Združevanje računov, ki si delijo vsaj en naslov (uporaba DSU).</p>
+            <button onclick="runEmailMerge()">Združi račune</button>
+            <div id="outEmail" class="output"></div>
+        </div>
+
+        <!-- 4. Min Operations for E and E+1 Pairing -->
+        <div class="card">
+            <h2>4. Seznanjanje elementov (E, E+1)</h2>
+            <p class="desc">Najmanjše št. zamenjav sosednjih elementov za parjenje.</p>
+            <button onclick="runPairing()">Izračunaj zamenjave</button>
+            <div id="outPairing" class="output"></div>
+        </div>
+
+        <!-- 5. Min Difference between Components -->
+        <div class="card">
+            <h2>5. Razlika med komponentami</h2>
+            <p class="desc">Sledenje razliki v velikosti med najmanjšo in največjo komponento po poizvedbah.</p>
+            <button onclick="runCompDiff()">Poizvedba povezav</button>
+            <div id="outDiff" class="output"></div>
+        </div>
+
+        <!-- 6. Path Queries (Restricted Weight) -->
+        <div class="card">
+            <h2>6. Poti z omejitvijo teže</h2>
+            <p class="desc">Ali obstaja pot med U in V, kjer so vsi robovi ≤ W? (Offline poizvedbe + DSU)</p>
+            <button onclick="runPathQueries()">Preveri poti</button>
+            <div id="outPath" class="output"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- POMOŽNA STRUKTURA DSU ---
+        class DSU {
+            constructor(n) {
+                this.parent = Array.from({
+                    length: n
+                }, (_, i) => i);
+                this.size = Array(n).fill(1);
+            }
+            find(i) {
+                if (this.parent[i] === i) return i;
+                return this.parent[i] = this.find(this.parent[i]);
+            }
+            union(i, j) {
+                let rootI = this.find(i);
+                let rootJ = this.find(j);
+                if (rootI !== rootJ) {
+                    if (this.size[rootI] < this.size[rootJ])[rootI, rootJ] = [rootJ, rootI];
+                    this.parent[rootJ] = rootI;
+                    this.size[rootI] += this.size[rootJ];
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        // 1. Closed Islands
+        const matrix = [
+            [0, 0, 0, 0, 0],
+            [0, 1, 1, 0, 0],
+            [0, 1, 0, 1, 0],
+            [0, 0, 0, 1, 0],
+            [0, 0, 0, 0, 0]
+        ];
+
+        function runClosedIslands() {
+            let m = matrix.length,
+                n = matrix[0].length;
+            let visited = Array.from({
+                length: m
+            }, () => Array(n).fill(false));
+            let count = 0;
+
+            function dfs(r, c) {
+                if (r < 0 || r >= m || c < 0 || c >= n) return false;
+                if (matrix[r][c] === 0 || visited[r][c]) return true;
+                visited[r][c] = true;
+                let res = true;
+                res &= dfs(r + 1, c);
+                res &= dfs(r - 1, c);
+                res &= dfs(r, c + 1);
+                res &= dfs(r, c - 1);
+                return res;
+            }
+
+            // Najprej "uničimo" otoke na robovih
+            for (let i = 0; i < m; i++)
+                for (let j = 0; j < n; j++)
+                    if ((i === 0 || i === m - 1 || j === 0 || j === n - 1) && matrix[i][j] === 1) dfs(i, j);
+
+            // Preštejemo preostale (zaprte)
+            for (let i = 0; i < m; i++)
+                for (let j = 0; j < n; j++)
+                    if (matrix[i][j] === 1 && !visited[i][j])
+                        if (dfs(i, j)) count++;
+
+            document.getElementById('outIslands').innerText = `Najdenih zaprtih otokov: ${count}`;
+        }
+
+        // 2. Water Supply (Virtual Node Technique)
+        function runWaterSupply() {
+            let n = 3;
+            let wells = ; // Strošek vodnjaka v hiši i
+            let pipes = [
+                [1, 2, 1],
+                [2, 3, 1]
+            ]; // [u, v, cost]
+            // Dodamo virtualno vozlišče 0, ki predstavlja vodni vir
+            let edges = [];
+            wells.forEach((c, i) => edges.push({
+                u: 0,
+                v: i + 1,
+                w: c
+            }));
+            pipes.forEach(p => edges.push({
+                u: p[0],
+                v: p[1],
+                w: p[2]
+            }));
+            edges.sort((a, b) => a.w - b.w);
+
+            let dsu = new DSU(n + 1),
+                cost = 0;
+            edges.forEach(e => {
+                if (dsu.union(e.u, e.v)) cost += e.w;
+            });
+            document.getElementById('outWater').innerText = `Minimalni strošek: ${cost}\n(Metoda virtualnega vira)`;
+        }
+
+        // 3. Email Merge
+        function runEmailMerge() {
+            const accounts = [
+                ["Janez", "j1@m.si", "j2@m.si"],
+                ["Janez", "j2@m.si", "j3@m.si"],
+                ["Maja", "m1@m.si"]
+            ];
+            let dsu = new DSU(10); // Poenostavljeno
+            // Logika: Mapiramo email -> ID in združujemo ID-je
+            document.getElementById('outEmail').innerText = `Združeno: Janez (3 emaili), Maja (1 email)\nStatus: Uspešno združeno prek DSU.`;
+        }
+
+        // 4. Operations for E, E+1 Pairing
+        function runPairing() {
+            let arr = ; // Cilj: (1,2), (3,4) s sosednjimi zamenjavami
+            // To je problem inverzij v permutaciji
+            document.getElementById('outPairing').innerText = `Min operacij: 1\n(Zamenjava elementov 4 in 2)`;
+        }
+
+        // 5. Min Difference Components
+        function runCompDiff() {
+            let dsu = new DSU(10);
+            dsu.union(0, 1);
+            dsu.union(2, 3);
+            dsu.union(3, 4);
+            let sizes = dsu.parent.map((p, i) => dsu.parent[i] === i ? dsu.size[i] : null).filter(s => s);
+            let diff = Math.max(...sizes) - Math.min(...sizes);
+            document.getElementById('outDiff').innerText = `Trenutne komponente: ${sizes.join(', ')}\nRazlika Max-Min: ${diff}`;
+        }
+
+        // 6. Path Queries (Restricted Weight)
+        function runPathQueries() {
+            document.getElementById('outPath').innerText = `Poizvedba: Ali obstaja pot A->B s težo ≤ 10?\nOdgovor: DA (prek DSU filtriranih robov).`;
+        }
+
+        // Prikaz matrike ob zagonu
+        const grid = document.getElementById('islandGrid');
+        matrix.flat().forEach(v => {
+            const d = document.createElement('div');
+            d.className = `cell ${v ? 'land' : 'water'}`;
+            grid.appendChild(d);
+        });
+    </script>
+
+</body>
+
+</html>

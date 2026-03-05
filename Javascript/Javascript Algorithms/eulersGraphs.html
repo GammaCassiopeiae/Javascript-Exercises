@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="sl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Eulerjevi Grafi: 4 primeri</title>
+    <style>
+        :root {
+            --primary: #10b981;
+            --bg: #f0fdf4;
+            --card: #ffffff;
+            --node: #059669;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            padding: 20px;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #d1fae5;
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            color: var(--node);
+            margin-top: 0;
+            border-bottom: 2px solid #ecfdf5;
+            padding-bottom: 8px;
+        }
+
+        .desc {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 15px;
+            height: 40px;
+        }
+
+        canvas {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            width: 100%;
+            height: 250px;
+        }
+
+        .status {
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .is-euler {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .not-euler {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        button {
+            background: var(--node);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1 style="text-align:center;">Eulerjeve Poti in Cikli</h1>
+        <p style="text-align:center;">Graf ima Eulerjev cikel, če so vsa vozlišča sode stopnje (parno število povezav).</p>
+
+        <div class="grid">
+            <!-- 1. Eulerjev Cikel (Popoln) -->
+            <div class="card">
+                <h2>1. Eulerjev Cikel (Vsa sode stopnje)</h2>
+                <p class="desc">Vsako vozlišče ima stopnjo 2 ali 4. Lahko se vrnemo v izhodišče.</p>
+                <canvas id="canvas1"></canvas>
+                <div class="status is-euler">EULERJEV CIKEL</div>
+            </div>
+
+            <!-- 2. Eulerjeva Pot (Semi-Eulerian) -->
+            <div class="card">
+                <h2>2. Eulerjeva Pot (2 lihi stopnji)</h2>
+                <p class="desc">Dve vozlišči imata liho stopnjo. Pot se začne v enem in konča v drugem.</p>
+                <canvas id="canvas2"></canvas>
+                <div class="status is-euler" style="background: #fef9c3; color: #854d0e;">EULERJEVA POT</div>
+            </div>
+
+            <!-- 3. Ni Eulerjev (Več kot 2 lihi) -->
+            <div class="card">
+                <h2>3. Ni Eulerjev (4 lihe stopnje)</h2>
+                <p class="desc">K4 graf (popoln graf s 4 vozlišči). Vsa vozlišča imajo stopnjo 3.</p>
+                <canvas id="canvas3"></canvas>
+                <div class="status not-euler">NI EULERJEV</div>
+            </div>
+
+            <!-- 4. Hišica (Klasičen problem) -->
+            <div class="card">
+                <h2>4. "Hišica" (Eulerjeva Pot)</h2>
+                <p class="desc">Znan problem risanja brez dviga pisala. Spodnja vozlišča so liha.</p>
+                <canvas id="canvas4"></canvas>
+                <div class="status is-euler" style="background: #fef9c3; color: #854d0e;">EULERJEVA POT</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function drawGraph(id, nodes, edges) {
+            const canvas = document.getElementById(id);
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width = canvas.offsetWidth;
+            const h = canvas.height = canvas.offsetHeight;
+
+            // Izris povezav
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 2;
+            edges.forEach(edge => {
+                ctx.beginPath();
+                ctx.moveTo(nodes[edge[0]].x, nodes[edge[0]].y);
+                ctx.lineTo(nodes[edge[1]].x, nodes[edge[1]].y);
+                ctx.stroke();
+            });
+
+            // Izris vozlišč
+            nodes.forEach((node, i) => {
+                ctx.fillStyle = '#059669';
+                ctx.beginPath();
+                ctx.arc(node.x, node.y, 8, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Izračun stopnje (degree)
+                const degree = edges.filter(e => e[0] === i || e[1] === i).length;
+                ctx.fillStyle = 'white';
+                ctx.font = '10px Arial';
+                ctx.fillText(degree, node.x - 3, node.y + 4);
+            });
+        }
+
+        // 1. CIKEL (Heksagon s sredino)
+        drawGraph('canvas1',
+            [{
+                x: 150,
+                y: 50
+            }, {
+                x: 250,
+                y: 100
+            }, {
+                x: 250,
+                y: 200
+            }, {
+                x: 150,
+                y: 250
+            }, {
+                x: 50,
+                y: 200
+            }, {
+                x: 50,
+                y: 100
+            }],
+            [
+                [0, 1],
+                [1, 2],
+                [2, 3],
+                [3, 4],
+                [4, 5],
+                [5, 0]
+            ]
+        );
+
+        // 2. POT (Pravokotnik z diagonalama, ki se ne sekata v vozlišču)
+        drawGraph('canvas2',
+            [{
+                x: 50,
+                y: 50
+            }, {
+                x: 250,
+                y: 50
+            }, {
+                x: 250,
+                y: 200
+            }, {
+                x: 50,
+                y: 200
+            }],
+            [
+                [0, 1],
+                [1, 2],
+                [2, 3],
+                [3, 0],
+                [0, 2]
+            ]
+        );
+
+        // 3. NI EULERJEV (K4)
+        drawGraph('canvas3',
+            [{
+                x: 150,
+                y: 50
+            }, {
+                x: 250,
+                y: 200
+            }, {
+                x: 50,
+                y: 200
+            }, {
+                x: 150,
+                y: 130
+            }],
+            [
+                [0, 1],
+                [1, 2],
+                [2, 0],
+                [0, 3],
+                [1, 3],
+                [2, 3]
+            ]
+        );
+
+        // 4. HIŠICA
+        drawGraph('canvas4',
+            [{
+                x: 150,
+                y: 50
+            }, {
+                x: 50,
+                y: 120
+            }, {
+                x: 250,
+                y: 120
+            }, {
+                x: 50,
+                y: 230
+            }, {
+                x: 250,
+                y: 230
+            }],
+            [
+                [0, 1],
+                [0, 2],
+                [1, 2],
+                [1, 3],
+                [2, 4],
+                [3, 4],
+                [1, 4],
+                [2, 3]
+            ]
+        );
+    </script>
+
+</body>
+
+</html>

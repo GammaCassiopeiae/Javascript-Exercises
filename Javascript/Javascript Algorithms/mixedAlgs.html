@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="sl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Graph & Scheduling Algorithms Lab</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --accent: #f43f5e;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: #1e293b;
+            padding: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            color: var(--primary);
+            margin: 0 0 10px 0;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 8px;
+        }
+
+        .output {
+            background: #0f172a;
+            color: #38bdf8;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            min-height: 80px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 10px 0;
+            transition: transform 0.1s;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .theory {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 12px;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1 style="text-align:center; color: var(--primary);">Grafovski in Razporeditveni Algoritmi</h1>
+
+    <div class="grid">
+        <!-- 1. Kruskal's MST -->
+        <div class="card">
+            <h2>1. Kruskalov MST (Min. vpeto drevo)</h2>
+            <p class="theory">Požrešni algoritem: ureja robove po teži in preprečuje cikle z Union-Find.</p>
+            <button onclick="runKruskal()">Najdi MST</button>
+            <div id="outKruskal" class="output"></div>
+        </div>
+
+        <!-- 2. Job Sequencing Problem -->
+        <div class="card">
+            <h2>2. Job Sequencing (Razvrščanje del)</h2>
+            <p class="theory">Max profit z omejenimi roki (deadlines). Požrešni pristop.</p>
+            <button onclick="runJobSequencing()">Maksimiraj profit</button>
+            <div id="outJobs" class="output"></div>
+        </div>
+
+        <!-- 3. Cycle Detection -->
+        <div class="card">
+            <h2>3. Iskanje ciklov (DFS)</h2>
+            <p class="theory">Preverjanje, ali usmerjen graf vsebuje povratne robove (back-edges).</p>
+            <button onclick="runCycleDetection()">Preveri graf</button>
+            <div id="outCycle" class="output"></div>
+        </div>
+
+        <!-- 4. Nodes between two vertices in Acyclic Graph -->
+        <div class="card">
+            <h2>4. Vozlišča na poti (DAG)</h2>
+            <p class="theory">Iskanje vseh vmesnih vozlišč med virom in ponorom v acikličnem grafu.</p>
+            <button onclick="runNodesBetween()">Najdi poti</button>
+            <div id="outPath" class="output"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. Kruskal's MST Implementation ---
+        function runKruskal() {
+            const edges = [{
+                    u: 'A',
+                    v: 'B',
+                    w: 4
+                }, {
+                    u: 'A',
+                    v: 'C',
+                    w: 3
+                }, {
+                    u: 'B',
+                    v: 'C',
+                    w: 1
+                },
+                {
+                    u: 'B',
+                    v: 'D',
+                    w: 2
+                }, {
+                    u: 'C',
+                    v: 'D',
+                    w: 4
+                }
+            ];
+            edges.sort((a, b) => a.w - b.w);
+
+            let parent = {
+                A: 'A',
+                B: 'B',
+                C: 'C',
+                D: 'D'
+            };
+
+            function find(i) {
+                return parent[i] === i ? i : find(parent[i]);
+            }
+
+            function union(i, j) {
+                parent[find(i)] = find(j);
+            }
+
+            let mst = [];
+            edges.forEach(e => {
+                if (find(e.u) !== find(e.v)) {
+                    mst.push(e);
+                    union(e.u, e.v);
+                }
+            });
+
+            document.getElementById('outKruskal').innerText =
+                `Izbrani robovi za MST:\n` + mst.map(e => `${e.u}-${e.v} (${e.w})`).join('\n');
+        }
+
+        // --- 2. Job Sequencing Problem ---
+        function runJobSequencing() {
+            const jobs = [{
+                    id: 'J1',
+                    d: 2,
+                    p: 100
+                }, {
+                    id: 'J2',
+                    d: 1,
+                    p: 19
+                }, {
+                    id: 'J3',
+                    d: 2,
+                    p: 27
+                },
+                {
+                    id: 'J4',
+                    d: 1,
+                    p: 25
+                }, {
+                    id: 'J5',
+                    d: 3,
+                    p: 15
+                }
+            ];
+            jobs.sort((a, b) => b.p - a.p);
+
+            let result = new Array(3).fill(null); // Max deadline je 3
+            let totalProfit = 0;
+
+            jobs.forEach(job => {
+                for (let j = Math.min(3, job.d) - 1; j >= 0; j--) {
+                    if (result[j] === null) {
+                        result[j] = job.id;
+                        totalProfit += job.p;
+                        break;
+                    }
+                }
+            });
+
+            document.getElementById('outJobs').innerText =
+                `Zaporedje del: ${result.filter(x => x).join(' -> ')}\nSkupni profit: ${totalProfit}`;
+        }
+
+        // --- 3. Cycle Detection (Directed Graph) ---
+        function runCycleDetection() {
+            const adj = {
+                0: [1, 2],
+                1: [2],
+                2: [0, 3],
+                3: [3]
+            };
+            let visited = {},
+                recStack = {};
+
+            function hasCycle(v) {
+                visited[v] = true;
+                recStack[v] = true;
+                for (let neighbor of (adj[v] || [])) {
+                    if (!visited[neighbor] && hasCycle(neighbor)) return true;
+                    else if (recStack[neighbor]) return true;
+                }
+                recStack[v] = false;
+                return false;
+            }
+
+            const cycleFound = hasCycle(0);
+            document.getElementById('outCycle').innerText =
+                `Graf: 0->1, 1->2, 2->0, 2->3, 3->3\nCikel najden: ${cycleFound ? 'DA' : 'NE'}`;
+        }
+
+        // --- 4. Nodes between two vertices ---
+        function runNodesBetween() {
+            const adj = {
+                'A': ['B', 'C'],
+                'B': ['D'],
+                'C': ['D'],
+                'D': []
+            };
+            let paths = [];
+
+            function findPaths(curr, target, path) {
+                if (curr === target) {
+                    paths.push([...path]);
+                    return;
+                }
+                for (let next of adj[curr]) {
+                    path.push(next);
+                    findPaths(next, target, path);
+                    path.pop();
+                }
+            }
+
+            findPaths('A', 'D', ['A']);
+            let allNodes = new Set(paths.flat());
+            document.getElementById('outPath').innerText =
+                `Poti od A do D:\n${paths.map(p => p.join('->')).join('\n')}\n` +
+                `Vključena vozlišča: ${Array.from(allNodes).join(', ')}`;
+        }
+
+        // --- Opomba za Tarjan's Off-line LCA ---
+        // Tarjanov LCA zahteva Union-Find in DFS obisk hkrati. 
+        // Konceptualno se uporablja za odgovarjanje na več poizvedb LCA hkrati.
+    </script>
+
+</body>
+
+</html>

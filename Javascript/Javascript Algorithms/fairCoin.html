@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="sl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Randomized Algorithms Toolkit Vol. 2</title>
+    <style>
+        :root {
+            --primary: #0ea5e9;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid #334155;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h2 {
+            font-size: 1rem;
+            color: var(--primary);
+            margin-top: 0;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 8px;
+        }
+
+        .output {
+            margin-top: auto;
+            padding: 10px;
+            background: #0f172a;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: #38bdf8;
+            min-height: 40px;
+            overflow-x: auto;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+
+        input {
+            background: #0f172a;
+            border: 1px solid #334155;
+            color: white;
+            padding: 5px;
+            border-radius: 4px;
+            width: 60px;
+        }
+
+        code {
+            color: #f43f5e;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1 style="text-align:center;">Algoritmi in Randomizacija</h1>
+
+    <div class="container">
+        <!-- 1. Fair Coin from Biased Coin (Von Neumann Trick) -->
+        <div class="card">
+            <h2>1. Pravičen kovanec iz pristranskega</h2>
+            <p>Pristranskost (P(Glava)): <input type="number" id="bias" value="0.8" step="0.1" min="0.1" max="0.9"></p>
+            <button onclick="runFairCoin()">Vrzi kovanec</button>
+            <div id="outFair" class="output"></div>
+        </div>
+
+        <!-- 2. Fisher-Yates Shuffle -->
+        <div class="card">
+            <h2>2. Fisher–Yates Shuffle</h2>
+            <p>Polje: <code>[1, 2, 3, 4, 5, 6, 7, 8, 9]</code></p>
+            <button onclick="runShuffle()">Premešaj</button>
+            <div id="outShuffle" class="output"></div>
+        </div>
+
+        <!-- 3. Expected Trials until Success -->
+        <div class="card">
+            <h2>3. Št. poskusov do uspeha (E)</h2>
+            <p>Verjetnost uspeha (p): <input type="number" id="probSuccess" value="0.2" step="0.1"></p>
+            <button onclick="runExpectedTrials()">Izračunaj E = 1/p</button>
+            <div id="outExpected" class="output"></div>
+        </div>
+
+        <!-- 4. Strong Password Suggester -->
+        <div class="card">
+            <h2>4. Močno geslo</h2>
+            <button onclick="runPassword()">Generiraj geslo</button>
+            <div id="outPass" class="output" style="font-size: 1.1rem; letter-spacing: 1px;"></div>
+        </div>
+
+        <!-- 5. Randomized QuickSort -->
+        <div class="card">
+            <h2>5. QuickSort (Random Pivot)</h2>
+            <button onclick="runQuickSort()">Uredi [34, 7, 23, 32, 5, 62]</button>
+            <div id="outQS" class="output"></div>
+        </div>
+
+        <!-- 6. Sparse Matrix Operations -->
+        <div class="card">
+            <h2>6. Redke matrike (Sparse)</h2>
+            <button onclick="runSparse()">Prikaži stisnjeno obliko (CSR)</button>
+            <div id="outSparse" class="output"></div>
+        </div>
+
+        <!-- 7. Monte Carlo Pi -->
+        <div class="card">
+            <h2>7. Monte Carlo Pi</h2>
+            <button onclick="runMonteCarlo()">10.000 vzorcev</button>
+            <div id="outPi" class="output"></div>
+        </div>
+
+        <!-- 8. rand12() using rand6() -->
+        <div class="card">
+            <h2>8. rand12() s pomočjo rand6()</h2>
+            <code>(rand6() - 1) * 2 + rand2()</code>
+            <button onclick="runRand12()">Generiraj (1-12)</button>
+            <div id="outRand12" class="output"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. Fair Coin from Biased Coin ---
+        function biasedCoin(p) {
+            return Math.random() < p ? 'G' : 'C';
+        }
+
+        function runFairCoin() {
+            const p = parseFloat(document.getElementById('bias').value);
+            let result = "";
+            while (true) {
+                let t1 = biasedCoin(p),
+                    t2 = biasedCoin(p);
+                if (t1 !== t2) {
+                    result = t1;
+                    break;
+                } // GC -> G, CG -> C
+            }
+            document.getElementById('outFair').innerText = `Rezultat: ${result === 'G' ? 'Glava' : 'Cifra'}`;
+        }
+
+        // --- 2. Fisher-Yates Shuffle ---
+        function runShuffle() {
+            let arr = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+            for (let i = arr.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            document.getElementById('outShuffle').innerText = JSON.stringify(arr);
+        }
+
+        // --- 3. Expected Trials ---
+        function runExpectedTrials() {
+            const p = parseFloat(document.getElementById('probSuccess').value);
+            document.getElementById('outExpected').innerText = `Pričakovano št. poskusov: ${1/p}`;
+        }
+
+        // --- 4. Password Suggester ---
+        function runPassword() {
+            const charset = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789!@#$%^&*";
+            let pass = Array.from({
+                length: 14
+            }, () => charset[Math.floor(Math.random() * charset.length)]).join('');
+            document.getElementById('outPass').innerText = pass;
+        }
+
+        // --- 5. Randomized QuickSort ---
+        function quickSort(arr) {
+            if (arr.length <= 1) return arr;
+            let pivotIdx = Math.floor(Math.random() * arr.length);
+            let pivot = arr[pivotIdx];
+            let left = arr.filter((x, i) => x <= pivot && i !== pivotIdx);
+            let right = arr.filter(x => x > pivot);
+            return [...quickSort(left), pivot, ...quickSort(right)];
+        }
+
+        function runQuickSort() {
+            const sorted = quickSort([34, 7, 23, 32, 5, 62]);
+            document.getElementById('outQS').innerText = sorted.join(', ');
+        }
+
+        // --- 6. Sparse Matrix (CSR representation) ---
+        function runSparse() {
+            const matrix = [
+                [5, 0, 0],
+                [0, 8, 0],
+                [0, 0, 3]
+            ];
+            let values = [],
+                colIdx = [],
+                rowPtr = [0];
+            matrix.forEach(row => {
+                let count = 0;
+                row.forEach((val, c) => {
+                    if (val !== 0) {
+                        values.push(val);
+                        colIdx.push(c);
+                        count++;
+                    }
+                });
+                rowPtr.push(rowPtr[rowPtr.length - 1] + count);
+            });
+            document.getElementById('outSparse').innerText = `V: [${values}]\nC: [${colIdx}]\nR: [${rowPtr}]`;
+        }
+
+        // --- 7. Monte Carlo Pi ---
+        function runMonteCarlo() {
+            let inside = 0,
+                total = 10000;
+            for (let i = 0; i < total; i++) {
+                if (Math.hypot(Math.random(), Math.random()) <= 1) inside++;
+            }
+            document.getElementById('outPi').innerText = `PI ≈ ${(4 * inside / total).toFixed(4)}`;
+        }
+
+        // --- 8. rand12() in one line logic ---
+        const rand6 = () => Math.floor(Math.random() * 6) + 1;
+        const rand2 = () => Math.floor(Math.random() * 2);
+
+        function runRand12() {
+            // Logika: 6 skupin po 2 vrednosti
+            const res = (rand6() - 1) * 2 + rand2() + 1;
+            document.getElementById('outRand12').innerText = `Rezultat: ${res}`;
+        }
+    </script>
+
+</body>
+
+</html>

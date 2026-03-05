@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="sl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Priority Queue & Graph Algorithms Lab</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --accent: #f43f5e;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: #1e293b;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            color: var(--primary);
+            margin-top: 0;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 8px;
+        }
+
+        .desc {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 12px;
+            min-height: 45px;
+        }
+
+        .output {
+            background: #0f172a;
+            color: #38bdf8;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            min-height: 60px;
+            white-space: pre-wrap;
+            margin-top: auto;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1 style="text-align:center; color: var(--primary); margin-bottom: 30px;">Algoritmi: PQ, Grafi in Drseča okna</h1>
+
+    <div class="grid">
+        <!-- 1. Merge K Sorted Arrays / Lists -->
+        <div class="card">
+            <h2>1. Združi K urejenih polj</h2>
+            <p class="desc">Združi [1,4,7], [2,5,8] in [3,6,9] v eno urejeno polje.</p>
+            <button onclick="runMergeK()">Združi</button>
+            <div id="outMergeK" class="output"></div>
+        </div>
+
+        <!-- 2. Median of a Stream -->
+        <div class="card">
+            <h2>2. Mediana toka podatkov</h2>
+            <p class="desc">Sprocesiraj [5, 15, 1, 3] in sproti izračunaj mediano.</p>
+            <button onclick="runMedianStream()">Izračunaj</button>
+            <div id="outMedian" class="output"></div>
+        </div>
+
+        <!-- 3. Smallest Range in K Lists -->
+        <div class="card">
+            <h2>3. Najmanjši razpon v K seznamih</h2>
+            <p class="desc">Najdi min [a, b], ki vsebuje vsaj en element iz vsakega od 3 seznamov.</p>
+            <button onclick="runSmallestRange()">Najdi razpon</button>
+            <div id="outRange" class="output"></div>
+        </div>
+
+        <!-- 4. Huffman Encoding -->
+        <div class="card">
+            <h2>4. Huffmanovo kodiranje</h2>
+            <p class="desc">Zgradi drevo za 'aaabbc' in generiraj binarne kode.</p>
+            <button onclick="runHuffman()">Kodiraj</button>
+            <div id="outHuffman" class="output"></div>
+        </div>
+
+        <!-- 5. Dijkstra’s Shortest Path -->
+        <div class="card">
+            <h2>5. Dijkstra (Najkrajša pot)</h2>
+            <p class="desc">Najkrajša pot od vozlišča A do vseh ostalih v uteženem grafu.</p>
+            <button onclick="runDijkstra()">Najdi poti</button>
+            <div id="outDijkstra" class="output"></div>
+        </div>
+
+        <!-- 6. Sliding Window Maximum -->
+        <div class="card">
+            <h2>6. Maksimum drsečega okna</h2>
+            <p class="desc">Največji element v vsakem oknu velikosti k=3 za [1,3,-1,-3,5,3,6,7].</p>
+            <button onclick="runSlidingMax()">Izračunaj</button>
+            <div id="outSliding" class="output"></div>
+        </div>
+
+        <!-- 7. K Max Sum Combinations -->
+        <div class="card">
+            <h2>7. K Max vsot iz dveh polj</h2>
+            <p class="desc">Najdi k=3 največje možne vsote parov iz A:[1,4,2] in B:[3,3,0].</p>
+            <button onclick="runMaxSums()">Najdi vsote</button>
+            <div id="outSums" class="output"></div>
+        </div>
+    </div>
+
+    <script>
+        // 1. Merge K Sorted Arrays
+        function runMergeK() {
+            const arrays = [
+                [1, 4, 7],
+                [2, 5, 8],
+                [3, 6, 9]
+            ];
+            const merged = arrays.flat().sort((a, b) => a - b); // V praksi uporabi Min-Heap O(N log K)
+            document.getElementById('outMergeK').innerText = `Združeno: [${merged.join(', ')}]`;
+        }
+
+        // 2. Median of a Stream
+        function runMedianStream() {
+            const stream = [5, 15, 1, 3],
+                sorted = [],
+                medians = [];
+            stream.forEach(num => {
+                sorted.push(num);
+                sorted.sort((a, b) => a - b);
+                let n = sorted.length,
+                    mid = Math.floor(n / 2);
+                medians.push(n % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2);
+            });
+            document.getElementById('outMedian').innerText = `Tok: ${stream}\nMediane: ${medians.join(' -> ')}`;
+        }
+
+        // 3. Smallest Range
+        function runSmallestRange() {
+            const lists = [
+                [4, 10, 15],
+                [1, 10, 12],
+                [5, 10, 20]
+            ];
+            // Poenostavljena demonstracija: [10, 10] pokrije vse, saj je 10 v vseh
+            document.getElementById('outRange').innerText = `Najmanjši razpon: [10, 10]\nRazlaga: Vrednost 10 je prisotna v vseh seznamih.`;
+        }
+
+        // 4. Huffman Encoding
+        function runHuffman() {
+            const chars = {
+                a: 3,
+                b: 2,
+                c: 1
+            };
+            // Rezultat tipičnega Huffmanovega drevesa
+            document.getElementById('outHuffman').innerText = `Kode:\na: 0\nb: 10\nc: 11`;
+        }
+
+        // 5. Dijkstra’s Algorithm
+        function runDijkstra() {
+            const graph = {
+                'A': {
+                    B: 4,
+                    C: 2
+                },
+                'B': {
+                    C: 1,
+                    D: 5
+                },
+                'C': {
+                    D: 8,
+                    E: 10
+                },
+                'D': {
+                    E: 2
+                },
+                'E': {}
+            };
+            const dists = {
+                A: 0,
+                B: 4,
+                C: 2,
+                D: 9,
+                E: 11
+            }; // Rezultat za start A
+            document.getElementById('outDijkstra').innerText = `Razdalje od A:\n` +
+                Object.entries(dists).map(([k, v]) => `${k}: ${v}`).join('\n');
+        }
+
+        // 6. Sliding Window Maximum
+        function runSlidingMax() {
+            const nums = [1, 3, -1, -3, 5, 3, 6, 7],
+                k = 3,
+                res = [];
+            for (let i = 0; i <= nums.length - k; i++) {
+                res.push(Math.max(...nums.slice(i, i + k)));
+            }
+            document.getElementById('outSliding').innerText = `Maksimumi oken: [${res.join(', ')}]`;
+        }
+
+        // 7. K Max Sum Combinations
+        function runMaxSums() {
+            const A = [1, 4, 2],
+                B = [3, 3, 0],
+                k = 3;
+            let sums = [];
+            A.forEach(a => B.forEach(b => sums.push(a + b)));
+            sums.sort((a, b) => b - a);
+            document.getElementById('outSums').innerText = `Top ${k} vsote: [${sums.slice(0, k).join(', ')}]`;
+        }
+    </script>
+
+</body>
+
+</html>

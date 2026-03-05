@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="sl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Randomized Algorithms Toolkit</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --bg: #f8fafc;
+            --card: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            padding: 20px;
+            color: #1e293b;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            margin-top: 0;
+            color: var(--primary);
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 8px;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .output {
+            margin-top: 12px;
+            padding: 10px;
+            background: #f1f5f9;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            min-height: 40px;
+            word-break: break-all;
+        }
+
+        input {
+            padding: 6px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            width: 60px;
+        }
+
+        .captcha {
+            font-weight: bold;
+            font-size: 1.2rem;
+            letter-spacing: 4px;
+            background: #334155;
+            color: #38bdf8;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1 style="text-align:center;">Randomized Algorithms Lab</h1>
+
+    <div class="grid">
+        <!-- 1. 25% / 75% Probability -->
+        <div class="card">
+            <h2>1. 25/75 Verjetnost (0/1)</h2>
+            <p>Generira 0 (25%) ali 1 (75%).</p>
+            <button onclick="runProb()">Generiraj 100x</button>
+            <div id="outProb" class="output"></div>
+        </div>
+
+        <!-- 2. rand3() using rand2() -->
+        <div class="card">
+            <h2>2. rand3() s pomočjo rand2()</h2>
+            <p>Uporaba zavračanja (Rejection Sampling).</p>
+            <button onclick="runRand3()">Generiraj število (0-2)</button>
+            <div id="outRand3" class="output"></div>
+        </div>
+
+        <!-- 3. Birthday Paradox -->
+        <div class="card">
+            <h2>3. Rojstnodnevni paradoks</h2>
+            <p>Verjetnost sovpadanja za <input type="number" id="bpPeople" value="23"> ljudi.</p>
+            <button onclick="runBirthday()">Izračunaj</button>
+            <div id="outBirthday" class="output"></div>
+        </div>
+
+        <!-- 4. Expected Value -->
+        <div class="card">
+            <h2>4. Pričakovana vrednost polja</h2>
+            <p>Polje: [10, 20, 30, 40, 50]</p>
+            <button onclick="runExpectedValue()">Izračunaj E[X]</button>
+            <div id="outEV" class="output"></div>
+        </div>
+
+        <!-- 5. Shuffle Deck -->
+        <div class="card">
+            <h2>5. Mešanje kart (Fisher-Yates)</h2>
+            <button onclick="runShuffle()">Premešaj 52 kart</button>
+            <div id="outShuffle" class="output"></div>
+        </div>
+
+        <!-- 6. CAPTCHA -->
+        <div class="card">
+            <h2>6. CAPTCHA Generacija</h2>
+            <div id="captchaCode" class="captcha">----</div>
+            <div style="margin-top:10px;">
+                <input type="text" id="captchaInput" placeholder="Vnesi">
+                <button onclick="verifyCaptcha()">Preveri</button>
+            </div>
+            <div id="outCaptcha" class="output"></div>
+        </div>
+
+        <!-- 7. Index of Max Occurring -->
+        <div class="card">
+            <h2>7. Indeks Max elementa</h2>
+            <p>Polje: [1, 5, 2, 5, 3, 5]</p>
+            <button onclick="runMaxOccur()">Najdi naključno 5-ko</button>
+            <div id="outMaxOccur" class="output"></div>
+        </div>
+
+        <!-- 8. Randomized Binary Search -->
+        <div class="card">
+            <h2>8. Random Binary Search</h2>
+            <p>Išči 42 v urejenem polju 0-100.</p>
+            <button onclick="runRandomBS()">Išči</button>
+            <div id="outRBS" class="output"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. 25% / 75% Probability ---
+        function runProb() {
+            let counts = {
+                0: 0,
+                1: 0
+            };
+            for (let i = 0; i < 100; i++) {
+                let val = Math.random() < 0.25 ? 0 : 1;
+                counts[val]++;
+            }
+            document.getElementById('outProb').innerText = `Rezultat: 0: ${counts[0]}x, 1: ${counts[1]}x`;
+        }
+
+        // --- 2. rand3() using rand2() ---
+        function rand2() {
+            return Math.floor(Math.random() * 2);
+        }
+
+        function runRand3() {
+            let res;
+            do {
+                // Generiramo 0-3 (2 bita), če dobimo 3, ponovimo (zavrnemo)
+                res = 2 * rand2() + rand2();
+            } while (res === 3);
+            document.getElementById('outRand3').innerText = `Dobljeno število: ${res}`;
+        }
+
+        // --- 3. Birthday Paradox ---
+        function runBirthday() {
+            let n = parseInt(document.getElementById('bpPeople').value);
+            let probNoMatch = 1;
+            for (let i = 0; i < n; i++) {
+                probNoMatch *= (365 - i) / 365;
+            }
+            let probMatch = (1 - probNoMatch) * 100;
+            document.getElementById('outBirthday').innerText = `Verjetnost sovpadanja: ${probMatch.toFixed(2)}%`;
+        }
+
+        // --- 4. Expected Value ---
+        function runExpectedValue() {
+            const arr = [10, 20, 30, 40, 50];
+            // E[X] = suma(x * P(x)). Pri enakomerni porazdelitvi je to povprečje.
+            let ev = arr.reduce((a, b) => a + b, 0) / arr.length;
+            document.getElementById('outEV').innerText = `E[X] = ${ev}`;
+        }
+
+        // --- 5. Shuffle Deck (Fisher-Yates) ---
+        function runShuffle() {
+            let cards = Array.from({
+                length: 52
+            }, (_, i) => i + 1);
+            for (let i = cards.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                [cards[i], cards[j]] = [cards[j], cards[i]];
+            }
+            document.getElementById('outShuffle').innerText = cards.slice(0, 15).join(', ') + "...";
+        }
+
+        // --- 6. CAPTCHA ---
+        let currentCaptcha = "";
+
+        function genCaptcha() {
+            const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+            currentCaptcha = "";
+            for (let i = 0; i < 6; i++) currentCaptcha += chars.charAt(Math.floor(Math.random() * chars.length));
+            document.getElementById('captchaCode').innerText = currentCaptcha;
+        }
+
+        function verifyCaptcha() {
+            const input = document.getElementById('captchaInput').value.toUpperCase();
+            const out = document.getElementById('outCaptcha');
+            out.innerText = (input === currentCaptcha) ? "✅ Pravilno!" : "❌ Napačno, poskusi znova.";
+            genCaptcha();
+        }
+
+        // --- 7. Index of Max Occurring ---
+        function runMaxOccur() {
+            const arr = [1, 5, 2, 5, 3, 5];
+            let max = Math.max(...arr);
+            let indices = [];
+            arr.forEach((v, i) => {
+                if (v === max) indices.push(i);
+            });
+            // Izberemo naključni indeks izmed vseh, ki imajo max vrednost
+            let randomIndex = indices[Math.floor(Math.random() * indices.length)];
+            document.getElementById('outMaxOccur').innerText = `Izbran indeks: ${randomIndex} (Vrednost: ${max})`;
+        }
+
+        // --- 8. Randomized Binary Search ---
+        async function runRandomBS() {
+            const arr = Array.from({
+                length: 101
+            }, (_, i) => i);
+            const target = 42;
+            let left = 0,
+                right = arr.length - 1;
+            let steps = [];
+
+            while (left <= right) {
+                // Namesto (left + right) / 2 vzamemo naključno točko v razponu
+                let pivot = left + Math.floor(Math.random() * (right - left + 1));
+                steps.push(pivot);
+                if (arr[pivot] === target) break;
+                if (arr[pivot] < target) left = pivot + 1;
+                else right = pivot - 1;
+            }
+            document.getElementById('outRBS').innerText = `Poti iskanja: ${steps.join(' -> ')} (Najdeno!)`;
+        }
+
+        // Init
+        genCaptcha();
+    </script>
+
+</body>
+
+</html>

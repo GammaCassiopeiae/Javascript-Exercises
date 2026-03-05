@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="sl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>2D Prefix Sum (Matrix)</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --bg: #f8fafc;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .grid-container {
+            display: grid;
+            gap: 8px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+
+        .cell {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .cell.highlight {
+            background: #dcfce7;
+            border-color: #22c55e;
+            color: #166534;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            grid-column: span 2;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background: #4f46e5;
+        }
+
+        .result {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <h2>2D Matrix Prefix Sum</h2>
+        <p>Algoritem predizračuna vsote za hitro poizvedovanje podmatrik.</p>
+
+        <div class="controls">
+            <label>Vrstic: <input type="number" id="rows" value="4" min="2" max="6"></label>
+            <label>Stolpcev: <input type="number" id="cols" value="4" min="2" max="6"></label>
+            <button onclick="generateAndProcess()">Generiraj in izračunaj</button>
+        </div>
+
+        <div id="matrixDisplay" class="grid-container"></div>
+
+        <div class="result">
+            <strong>Prefix Sum Matrika (P):</strong>
+            <pre id="prefixResult"></pre>
+            <small>Formula: P[i][j] = val + P[i-1][j] + P[i][j-1] - P[i-1][j-1]</small>
+        </div>
+    </div>
+
+    <script>
+        function generateAndProcess() {
+            const R = parseInt(document.getElementById('rows').value);
+            const C = parseInt(document.getElementById('cols').value);
+            const display = document.getElementById('matrixDisplay');
+            const prefixPre = document.getElementById('prefixResult');
+
+            // 1. Generiranje naključne matrike
+            const matrix = Array.from({
+                    length: R
+                }, () =>
+                Array.from({
+                    length: C
+                }, () => Math.floor(Math.random() * 10))
+            );
+
+            // 2. Izračun 2D Prefix Sum matrike
+            // Ustvarimo matriko (R+1)x(C+1) polno ničel za lažje računanje robov
+            const prefix = Array.from({
+                length: R + 1
+            }, () => Array(C + 1).fill(0));
+
+            for (let i = 1; i <= R; i++) {
+                for (let j = 1; j <= C; j++) {
+                    prefix[i][j] = matrix[i - 1][j - 1] +
+                        prefix[i - 1][j] +
+                        prefix[i][j - 1] -
+                        prefix[i - 1][j - 1];
+                }
+            }
+
+            // 3. DOM API: Prikaz originalne matrike v mreži
+            display.style.gridTemplateColumns = `repeat(${C}, 50px)`;
+            display.innerHTML = '';
+            matrix.forEach(row => {
+                row.forEach(val => {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell highlight';
+                    cell.textContent = val;
+                    display.appendChild(cell);
+                });
+            });
+
+            // 4. DOM API: Izpis prefix matrike
+            prefixPre.textContent = prefix.slice(1)
+                .map(row => row.slice(1).map(n => String(n).padStart(3, ' ')).join(' | '))
+                .join('\n');
+        }
+
+        // Začetni klic
+        generateAndProcess();
+    </script>
+
+</body>
+
+</html>

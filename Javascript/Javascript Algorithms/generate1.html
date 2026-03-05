@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="sl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Advanced Randomized Algorithms</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --accent: #22c55e;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: #f1f5f9;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 20px;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid #334155;
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            color: var(--primary);
+            margin-top: 0;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 8px;
+        }
+
+        .output {
+            margin-top: 15px;
+            padding: 12px;
+            background: #020617;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: #38bdf8;
+            min-height: 40px;
+            white-space: pre-wrap;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 5px 0;
+        }
+
+        button:hover {
+            filter: brightness(1.1);
+        }
+
+        .maze-container {
+            display: grid;
+            gap: 1px;
+            background: #444;
+            margin-top: 10px;
+            width: fit-content;
+            border: 2px solid #666;
+        }
+
+        .m-cell {
+            width: 15px;
+            height: 15px;
+            background: #1e293b;
+        }
+
+        .m-wall {
+            background: #000;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1 style="text-align:center; color: var(--primary);">Advanced Randomized Algorithms Lab</h1>
+
+    <div class="grid">
+        <!-- 1. Rand(1-7) & Rand(0-6) from Rand(0-1) -->
+        <div class="card">
+            <h2>1. Bitno vzorčenje (Rand 1-7 & 0-6)</h2>
+            <p>Generiranje večjega razpona iz <code>rand01()</code>.</p>
+            <button onclick="runRandGen()">Generiraj</button>
+            <div id="outRand" class="output"></div>
+        </div>
+
+        <!-- 2. Reservoir Sampling & Stream Sampling -->
+        <div class="card">
+            <h2>2. Reservoir Sampling (O(1) prostor)</h2>
+            <p>Izbira 3 vzorcev iz neznano dolgega toka podatkov.</p>
+            <button onclick="runReservoir()">Vzorči tok</button>
+            <div id="outRes" class="output"></div>
+        </div>
+
+        <!-- 3. Arbitrary Probability Distribution -->
+        <div class="card">
+            <h2>3. Poljubna porazdelitev</h2>
+            <p>A: 10%, B: 60%, C: 30%</p>
+            <button onclick="runDist()">Sproži 1000x</button>
+            <div id="outDist" class="output"></div>
+        </div>
+
+        <!-- 4. Karger's Algorithm (Min Cut) -->
+        <div class="card">
+            <h2>4. Kargerjev algoritem (Min Cut)</h2>
+            <p>Iskanje najmanjšega prereza grafa (kontrakcija robov).</p>
+            <button onclick="runKarger()">Najdi Min Cut</button>
+            <div id="outKarger" class="output"></div>
+        </div>
+
+        <!-- 5. Random Node (Linked List & Tree) -->
+        <div class="card">
+            <h2>5. Naključno vozlišče (Seznam/Drevo)</h2>
+            <button onclick="runRandomNode()">Izberi iz obeh</button>
+            <div id="outNode" class="output"></div>
+        </div>
+
+        <!-- 6. Freivald's Algorithm -->
+        <div class="card">
+            <h2>6. Freivaldov algoritem</h2>
+            <p>Preverjanje: A × B = C v času O(n²).</p>
+            <button onclick="runFreivald()">Preveri matriko</button>
+            <div id="outFreivald" class="output"></div>
+        </div>
+
+        <!-- 7. Maze Generator (Recursive Backtracker) -->
+        <div class="card" style="grid-column: span 1;">
+            <h2>7. Naključni Maze (Acyclic)</h2>
+            <button onclick="runMaze()">Ustvari labirint</button>
+            <div id="mazeOut" class="maze-container"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. Rand(0-6) and Rand(1-7) ---
+        const rand01 = () => Math.random() > 0.5 ? 1 : 0;
+
+        function runRandGen() {
+            let r06;
+            do { // Rand 0-7 z bitnim premikom
+                r06 = (rand01() << 2) | (rand01() << 1) | rand01();
+            } while (r06 === 7); // Zavrni 7, da dobiš 0-6
+            document.getElementById('outRand').innerText = `Rand(0-6): ${r06}\nRand(1-7): ${r06 + 1}`;
+        }
+
+        // --- 2. Reservoir Sampling (O(k) space, k=3) ---
+        function runReservoir() {
+            const stream = Array.from({
+                length: 20
+            }, (_, i) => `Enota_${i}`);
+            let k = 3;
+            let reservoir = stream.slice(0, k);
+            for (let i = k; i < stream.length; i++) {
+                let j = Math.floor(Math.random() * (i + 1));
+                if (j < k) reservoir[j] = stream[i];
+            }
+            document.getElementById('outRes').innerText = `Izbrani vzorci: ${reservoir.join(', ')}`;
+        }
+
+        // --- 3. Arbitrary Probability Distribution ---
+        function runDist() {
+            const items = ['A', 'B', 'C'];
+            const weights = [0.1, 0.7, 1.0]; // Kumulativno: 0.1, 0.6, 0.3
+            let counts = {
+                A: 0,
+                B: 0,
+                C: 0
+            };
+            for (let i = 0; i < 1000; i++) {
+                let r = Math.random();
+                if (r < weights[0]) counts.A++;
+                else if (r < weights[1]) counts.B++;
+                else counts.C++;
+            }
+            document.getElementById('outDist').innerText = `Rezultati: A:${counts.A}, B:${counts.B}, C:${counts.C}`;
+        }
+
+        // --- 4. Karger's Algorithm (Simplificiran) ---
+        function runKarger() {
+            // Graf: [u, v] robovi
+            let edges = [
+                [0, 1],
+                [0, 2],
+                [0, 3],
+                [1, 3],
+                [2, 3]
+            ];
+            let vertices = 4;
+
+            while (vertices > 2) {
+                let i = Math.floor(Math.random() * edges.length);
+                let [u, v] = edges[i];
+                // Kontrakcija: u postane v
+                edges = edges.filter(e => !((e[0] === u && e[1] === v) || (e[0] === v && e[1] === u)));
+                edges = edges.map(e => [e[0] === v ? u : e[0], e[1] === v ? u : e[1]]);
+                vertices--;
+            }
+            document.getElementById('outKarger').innerText = `Najmanjši prerez (število robov): ${edges.length}`;
+        }
+
+        // --- 5. Random Node (Linked List & Tree) ---
+        function runRandomNode() {
+            // List: Reservoir sampling na listu
+            let list = {
+                val: 1,
+                next: {
+                    val: 2,
+                    next: {
+                        val: 3,
+                        next: null
+                    }
+                }
+            };
+            let res = list.val,
+                count = 0,
+                curr = list;
+            while (curr) {
+                if (Math.random() < 1 / ++count) res = curr.val;
+                curr = curr.next;
+            }
+            // Tree: Preprost DFS pick (v praksi bi shranjevali velikost poddreves)
+            document.getElementById('outNode').innerText = `Naključno (Seznam): ${res}\nNaključno (Drevo): ${Math.floor(Math.random()*100)} (simulirano)`;
+        }
+
+        // --- 6. Freivald's Algorithm ---
+        function runFreivald() {
+            const A = [
+                    [2, 3],
+                    [3, 4]
+                ],
+                B = [
+                    [1, 0],
+                    [1, 2]
+                ],
+                C = [
+                    [5, 6],
+                    [7, 8]
+                ];
+            const n = 2;
+            const x = Array.from({
+                length: n
+            }, () => Math.round(Math.random())); // Naključni 0/1 vektor
+
+            // Preveri: A * (B * x) == C * x
+            const Bx = [B[0][0] * x[0] + B[0][1] * x[1], B[1][0] * x[0] + B[1][1] * x[1]];
+            const ABx = [A[0][0] * Bx[0] + A[0][1] * Bx[1], A[1][0] * Bx[0] + A[1][1] * Bx[1]];
+            const Cx = [C[0][0] * x[0] + C[0][1] * x[1], C[1][0] * x[0] + C[1][1] * x[1]];
+
+            const match = ABx.every((v, i) => v === Cx[i]);
+            document.getElementById('outFreivald').innerText = match ? "Verjetno pravilno (A*B=C)" : "Zagotovo napačno";
+        }
+
+        // --- 7. Maze Generator (Recursive Backtracker) ---
+        function runMaze() {
+            const size = 15;
+            const grid = Array.from({
+                length: size
+            }, () => Array(size).fill(1));
+            const out = document.getElementById('mazeOut');
+            out.style.gridTemplateColumns = `repeat(${size}, 15px)`;
+
+            function walk(x, y) {
+                grid[y][x] = 0;
+                const dirs = [
+                    [0, 2],
+                    [0, -2],
+                    [2, 0],
+                    [-2, 0]
+                ].sort(() => Math.random() - 0.5);
+                for (let [dx, dy] of dirs) {
+                    let nx = x + dx,
+                        ny = y + dy;
+                    if (nx >= 0 && nx < size && ny >= 0 && ny < size && grid[ny][nx] === 1) {
+                        grid[y + dy / 2][x + dx / 2] = 0;
+                        walk(nx, ny);
+                    }
+                }
+            }
+            walk(0, 0);
+            out.innerHTML = grid.flat().map(v => `<div class="m-cell ${v ? 'm-wall' : ''}"></div>`).join('');
+        }
+
+        // Initialize
+        runMaze();
+    </script>
+
+</body>
+
+</html>

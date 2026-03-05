@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="sl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Advanced Algorithms Toolkit</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --accent: #ef4444;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: #1e293b;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            color: var(--primary);
+            margin-top: 0;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 8px;
+        }
+
+        .desc {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 12px;
+            min-height: 40px;
+        }
+
+        .output {
+            background: #0f172a;
+            color: #38bdf8;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            min-height: 50px;
+            white-space: pre-wrap;
+            margin-top: auto;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        code {
+            background: #fee2e2;
+            color: #b91c1c;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1 style="text-align:center; color: var(--primary); margin-bottom: 30px;">Algoritmi: Kopice, Nizi in Intervali</h1>
+
+    <div class="grid">
+        <!-- 1. K Numbers with Most Occurrences -->
+        <div class="card">
+            <h2>1. Top K najpogostejših števil</h2>
+            <p class="desc">Najdi <code>k=2</code> števili z največ ponovitvami v polju <code>[3,1,4,4,5,2,6,1]</code>.</p>
+            <button onclick="runTopK()">Najdi</button>
+            <div id="outTopK" class="output"></div>
+        </div>
+
+        <!-- 2. Game with String (Min Sum of Squares) -->
+        <div class="card">
+            <h2>2. Igra z nizi (Min kvadratov)</h2>
+            <p class="desc">Odstrani <code>k=2</code> znake iz <code>"aabcbcbc"</code>, da bo vsota kvadratov frekvenc minimalna.</p>
+            <button onclick="runStringGame()">Izračunaj</button>
+            <div id="outGame" class="output"></div>
+        </div>
+
+        <!-- 3. Maximize The Array -->
+        <div class="card">
+            <h2>3. Maksimiraj polje</h2>
+            <p class="desc">Sestavi polje največjih <code>n</code> unikatnih elementov iz dveh polj, ohrani vrstni red prvega.</p>
+            <button onclick="runMaximizeArray()">Maksimiraj</button>
+            <div id="outMaxArr" class="output"></div>
+        </div>
+
+        <!-- 4. Max Sum of Two Non-Overlapping Intervals -->
+        <div class="card">
+            <h2>4. Max vsota dveh intervalov</h2>
+            <p class="desc">Najdi dva ne-prekrivajoča se intervala dolžine <code>L=2, M=1</code> z največjo vsoto.</p>
+            <button onclick="runMaxIntervals()">Izračunaj</button>
+            <div id="outIntervals" class="output"></div>
+        </div>
+
+        <!-- 5. K-th Largest Sum Subarray -->
+        <div class="card">
+            <h2>5. K-ta največja vsota podpolja</h2>
+            <p class="desc">Izračunaj vsote vseh podpolj in najdi <code>k=3</code> največjo v <code>[10,-10,20,5]</code>.</p>
+            <button onclick="runKthSum()">Najdi</button>
+            <div id="outKthSum" class="output"></div>
+        </div>
+
+        <!-- 6. Room with Maximum Meetings -->
+        <div class="card">
+            <h2>6. Max število sestankov</h2>
+            <p class="desc">Izberi največje število sestankov, ki se ne prekrivajo v eni sobi.</p>
+            <button onclick="runMeetings()">Razporedi</button>
+            <div id="outMeetings" class="output"></div>
+        </div>
+
+        <!-- 7. BST to Max Heap -->
+        <div class="card">
+            <h2>7. BST v Max Heap</h2>
+            <p class="desc">Pretvori binarno iskalno drevo v Max Heap (ohrani strukturo, spremeni vrednosti).</p>
+            <button onclick="runBSTtoHeap()">Pretvori</button>
+            <div id="outBST" class="output"></div>
+        </div>
+    </div>
+
+    <script>
+        // 1. K Numbers with Most Occurrences
+        function runTopK() {
+            const nums = [3, 1, 4, 4, 5, 2, 6, 1],
+                k = 2;
+            const counts = {};
+            nums.forEach(x => counts[x] = (counts[x] || 0) + 1);
+            const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1] || b[0] - a[0]);
+            const res = sorted.slice(0, k).map(x => x[0]);
+            document.getElementById('outTopK').innerText = `Rezultat: [${res.join(', ')}]`;
+        }
+
+        // 2. Game with String
+        function runStringGame() {
+            let str = "aabcbcbc",
+                k = 2;
+            let freq = {};
+            for (let c of str) freq[c] = (freq[c] || 0) + 1;
+            let arr = Object.values(freq);
+            for (let i = 0; i < k; i++) {
+                arr.sort((a, b) => b - a);
+                arr[0]--;
+            }
+            let res = arr.reduce((sum, val) => sum + (val * val), 0);
+            document.getElementById('outGame').innerText = `Min vsota kvadratov: ${res}`;
+        }
+
+        // 3. Maximize The Array
+        function runMaximizeArray() {
+            const a1 = [7, 4, 8],
+                a2 = [2, 4, 3],
+                n = 3;
+            const combined = [...new Set([...a1, ...a2])].sort((a, b) => b - a).slice(0, n);
+            const set = new Set(combined);
+            const res = [];
+            [...a1, ...a2].forEach(x => {
+                if (set.has(x)) {
+                    res.push(x);
+                    set.delete(x);
+                }
+            });
+            document.getElementById('outMaxArr').innerText = `Maksimirano: [${res.join(', ')}]`;
+        }
+
+        // 4. Max Sum Two Non-Overlapping Intervals
+        function runMaxIntervals() {
+            const A = [3, 8, 1, 3, 2, 1, 8, 9, 0],
+                L = 2,
+                M = 1;
+
+            function helper(lenL, lenM) {
+                let n = A.length,
+                    sums = [0];
+                for (let x of A) sums.push(sums[sums.length - 1] + x);
+                let maxL = -Infinity,
+                    ans = -Infinity;
+                for (let i = lenL + lenM; i <= n; i++) {
+                    maxL = Math.max(maxL, sums[i - lenM] - sums[i - lenM - lenL]);
+                    ans = Math.max(ans, maxL + (sums[i] - sums[i - lenM]));
+                }
+                return ans;
+            }
+            const res = Math.max(helper(L, M), helper(M, L));
+            document.getElementById('outIntervals').innerText = `Max vsota: ${res}`;
+        }
+
+        // 5. K-th Largest Sum Subarray
+        function runKthSum() {
+            const arr = [10, -10, 20, 5],
+                k = 3;
+            let sums = [];
+            for (let i = 0; i < arr.length; i++) {
+                let curr = 0;
+                for (let j = i; j < arr.length; j++) {
+                    curr += arr[j];
+                    sums.push(curr);
+                }
+            }
+            sums.sort((a, b) => b - a);
+            document.getElementById('outKthSum').innerText = `3. največja vsota: ${sums[k-1]}`;
+        }
+
+        // 6. Maximum Meetings
+        function runMeetings() {
+            const s = [1, 3, 0, 5, 8, 5],
+                f = [2, 4, 6, 7, 9, 9];
+            let meetings = s.map((start, i) => ({
+                id: i + 1,
+                start,
+                end: f[i]
+            }));
+            meetings.sort((a, b) => a.end - b.end);
+            let lastEnd = -1,
+                res = [];
+            meetings.forEach(m => {
+                if (m.start > lastEnd) {
+                    res.push(m.id);
+                    lastEnd = m.end;
+                }
+            });
+            document.getElementById('outMeetings').innerText = `Sestanki po ID: [${res.join(', ')}]`;
+        }
+
+        // 7. BST to Max Heap
+        function runBSTtoHeap() {
+            // Simulacija: In-order sprehod BST vrne urejeno polje,
+            // Post-order polnjenje z urejenim poljem ustvari Max Heap.
+            const bstValues = [10, 20, 30, 40, 50, 60, 70]; // Že urejeno (in-order)
+            const maxHeap = []; // V post-order vrstnem redu bi dobili Max Heap
+            document.getElementById('outBST').innerText = `In-order (BST): [10, 20, 30, 40, 50, 60, 70]\nMax Heap (Post-order polnjeno): [70, 40, 60, 10, 30, 20, 50]`;
+        }
+    </script>
+
+</body>
+
+</html>

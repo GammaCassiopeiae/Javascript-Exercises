@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="sl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Suffix Structures Lab</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --bg: #f8fafc;
+            --accent: #f43f5e;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: #1e293b;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-top: 0;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 8px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-family: monospace;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .suffix-list {
+            list-style: none;
+            padding: 0;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .suffix-item {
+            padding: 4px 8px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .suffix-item:hover {
+            background: #fef2f2;
+        }
+
+        .tree-view {
+            background: #1e293b;
+            color: #38bdf8;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        .match-found {
+            color: #22c55e;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .theory {
+            font-size: 0.85rem;
+            color: #64748b;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Suffix Array & Suffix Tree</h1>
+
+        <!-- 1. Suffix Array Introduction -->
+        <div class="card">
+            <h2>1. Suffix Array (Tabela pripon)</h2>
+            <p class="theory">Leksikografsko urejen seznam vseh pripon niza. Uporabno za binarno iskanje podnizov.</p>
+            <div class="controls">
+                <input type="text" id="stringInput" value="banana" placeholder="Vnesi niz...">
+                <button onclick="processSuffixes()">Generiraj</button>
+            </div>
+            <div class="grid">
+                <div>
+                    <strong>Urejene pripone:</strong>
+                    <ul id="suffixArrayOutput" class="suffix-list"></ul>
+                </div>
+                <div class="theory">
+                    <strong>Ukkonen’s Algorithm (Part 1):</strong><br>
+                    Ukkonenov algoritem gradi Suffix Tree v času <strong>O(n)</strong> z uporabo "online" pristopa (dodaja znak po znak). Ključni so "suffix links", ki omogočajo hiter preskok med vejami.
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Suffix Tree Application (Substring Check) -->
+        <div class="card">
+            <h2>2. Iskanje podniza (Tree Application)</h2>
+            <div class="controls">
+                <input type="text" id="queryInput" placeholder="Išči podniz (npr. 'ana')...">
+                <button onclick="checkSubstring()" style="background: var(--accent);">Preveri</button>
+            </div>
+            <div id="substringResult" class="match-found"></div>
+            <div class="theory" style="margin-top:15px;">
+                <strong>Generalized Suffix Tree:</strong><br>
+                Če združimo več nizov (npr. <code>S1#</code> in <code>S2$</code>), dobimo posplošeno drevo, ki omogoča iskanje najdaljšega skupnega podniza med dvema dokumentoma.
+            </div>
+        </div>
+
+        <!-- 3. Tree Structure View -->
+        <div class="card">
+            <h2>3. Hierarhični prikaz (Abstrakcija)</h2>
+            <div id="treeDisplay" class="tree-view">Klikni 'Generiraj' za ogled drevesa.</div>
+        </div>
+    </div>
+
+    <script>
+        let currentSuffixes = [];
+
+        function processSuffixes() {
+            const text = document.getElementById('stringInput').value;
+            const listEl = document.getElementById('suffixArrayOutput');
+            const treeEl = document.getElementById('treeDisplay');
+
+            // Suffix Array gradnja: O(n^2 log n) za demonstracijo
+            let suffixes = [];
+            for (let i = 0; i < text.length; i++) {
+                suffixes.push({
+                    index: i,
+                    text: text.substring(i)
+                });
+            }
+
+            suffixes.sort((a, b) => a.text.localeCompare(b.text));
+            currentSuffixes = suffixes;
+
+            // DOM izris tabele
+            listEl.innerHTML = suffixes.map(s => `
+            <li class="suffix-item">
+                <span>[${s.index}] ${s.text}</span>
+            </li>
+        `).join('');
+
+            // Preprosta vizualizacija drevesa (Abstrakcija struktur)
+            treeEl.innerText = buildSimpleTreeLog(text);
+        }
+
+        function buildSimpleTreeLog(text) {
+            let log = "ROOT\n";
+            currentSuffixes.forEach(s => {
+                log += ` |-- ${s.text}$\n`;
+            });
+            return log;
+        }
+
+        function checkSubstring() {
+            const query = document.getElementById('queryInput').value;
+            const text = document.getElementById('stringInput').value;
+            const resultEl = document.getElementById('substringResult');
+
+            if (!query) return;
+
+            // Simulacija iskanja po Suffix Arrayu (Binarno iskanje)
+            // V praksi Suffix Tree preveri podniz v O(m) času, kjer je m dolžina vzorca
+            let low = 0,
+                high = currentSuffixes.length - 1;
+            let found = false;
+
+            while (low <= high) {
+                let mid = Math.floor((low + high) / 2);
+                let sub = currentSuffixes[mid].text.substring(0, query.length);
+
+                if (sub === query) {
+                    found = true;
+                    break;
+                }
+                if (sub < query) low = mid + 1;
+                else high = mid - 1;
+            }
+
+            resultEl.style.color = found ? "#22c55e" : "#f43f5e";
+            resultEl.innerText = found ?
+                `✅ Podniz "${query}" OBSTAJA v nizu.` :
+                `❌ Podniz "${query}" NI NAJDEN.`;
+        }
+
+        // Začetni klic
+        processSuffixes();
+    </script>
+
+</body>
+
+</html>

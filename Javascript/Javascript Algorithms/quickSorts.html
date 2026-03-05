@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="sl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>QuickSort: 3 načini</title>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --bg: #f8fafc;
+            --card: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            padding: 20px;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            color: var(--primary);
+            margin-top: 0;
+        }
+
+        .desc {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 15px;
+            min-height: 45px;
+        }
+
+        .array-box {
+            background: #0f172a;
+            color: #38bdf8;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            word-break: break-all;
+            margin-bottom: 10px;
+        }
+
+        button {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .stats {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1 style="text-align:center;">QuickSort Vizualizator</h1>
+        <p style="text-align:center;">Isto naključno polje uredi na 3 načine izbire pivota.</p>
+
+        <div style="text-align:center; margin-bottom: 30px;">
+            <button onclick="generateAndSort()" style="width: auto; padding: 12px 30px;">Generiraj in uredi vse</button>
+        </div>
+
+        <div class="grid">
+            <!-- 1. Zadnji element kot pivot -->
+            <div class="card">
+                <h2>1. Zadnji element</h2>
+                <p class="desc">Lomuto particija: pivot je vedno zadnji element v trenutnem podpolju.</p>
+                <div id="outLast" class="array-box">Pripravljen...</div>
+                <div id="statLast" class="stats"></div>
+            </div>
+
+            <!-- 2. Sredinski element kot pivot -->
+            <div class="card">
+                <h2>2. Sredinski element</h2>
+                <p class="desc">Hoare particija: pivot je sredinski element. Običajno hitrejša v praksi.</p>
+                <div id="outMid" class="array-box">Pripravljen...</div>
+                <div id="statMid" class="stats"></div>
+            </div>
+
+            <!-- 3. Naključni element kot pivot -->
+            <div class="card">
+                <h2>3. Naključni pivot</h2>
+                <p class="desc">Preprečuje najslabši scenarij O(n²) pri že urejenih podatkih.</p>
+                <div id="outRand" class="array-box">Pripravljen...</div>
+                <div id="statRand" class="stats"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let comparisons = 0;
+
+        // --- POMOŽNE FUNKCIJE ---
+        function swap(arr, i, j) {
+            let temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+
+        // --- 1. QUICK SORT: ZADNJI ELEMENT (Lomuto) ---
+        function partitionLast(arr, low, high) {
+            let pivot = arr[high];
+            let i = low - 1;
+            for (let j = low; j < high; j++) {
+                comparisons++;
+                if (arr[j] < pivot) {
+                    i++;
+                    swap(arr, i, j);
+                }
+            }
+            swap(arr, i + 1, high);
+            return i + 1;
+        }
+
+        function quickSortLast(arr, low, high) {
+            if (low < high) {
+                let pi = partitionLast(arr, low, high);
+                quickSortLast(arr, low, pi - 1);
+                quickSortLast(arr, low + 1, high); // Popravljeno za pravilno rekurzijo
+            }
+        }
+
+        // --- 2. QUICK SORT: SREDINSKI ELEMENT (Hoare) ---
+        function quickSortMid(arr, low, high) {
+            let i = low,
+                j = high;
+            let pivot = arr[Math.floor((low + high) / 2)];
+            while (i <= j) {
+                while (arr[i] < pivot) {
+                    i++;
+                    comparisons++;
+                }
+                while (arr[j] > pivot) {
+                    j--;
+                    comparisons++;
+                }
+                if (i <= j) {
+                    swap(arr, i, j);
+                    i++;
+                    j--;
+                }
+            }
+            if (low < j) quickSortMid(arr, low, j);
+            if (i < high) quickSortMid(arr, i, high);
+        }
+
+        // --- 3. QUICK SORT: NAKLJUČNI ELEMENT ---
+        function partitionRand(arr, low, high) {
+            let randIdx = Math.floor(Math.random() * (high - low + 1)) + low;
+            swap(arr, randIdx, high);
+            return partitionLast(arr, low, high);
+        }
+
+        function quickSortRand(arr, low, high) {
+            if (low < high) {
+                let pi = partitionRand(arr, low, high);
+                quickSortRand(arr, low, pi - 1);
+                quickSortRand(arr, pi + 1, high);
+            }
+        }
+
+        // --- GLAVNA LOGIKA ---
+        function generateAndSort() {
+            const size = 15;
+            const original = Array.from({
+                length: size
+            }, () => Math.floor(Math.random() * 100));
+
+            // 1. Zadnji
+            let arr1 = [...original];
+            comparisons = 0;
+            quickSortLast(arr1, 0, arr1.length - 1);
+            document.getElementById('outLast').innerText = arr1.join(', ');
+            document.getElementById('statLast').innerText = `Primerjav: ${comparisons}`;
+
+            // 2. Sredinski
+            let arr2 = [...original];
+            comparisons = 0;
+            quickSortMid(arr2, 0, arr2.length - 1);
+            document.getElementById('outMid').innerText = arr2.join(', ');
+            document.getElementById('statMid').innerText = `Primerjav: ${comparisons}`;
+
+            // 3. Naključni
+            let arr3 = [...original];
+            comparisons = 0;
+            quickSortRand(arr3, 0, arr3.length - 1);
+            document.getElementById('outRand').innerText = arr3.join(', ');
+            document.getElementById('statRand').innerText = `Primerjav: ${comparisons}`;
+        }
+    </script>
+
+</body>
+
+</html>

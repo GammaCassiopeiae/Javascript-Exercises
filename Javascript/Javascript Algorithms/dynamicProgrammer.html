@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="sl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>DP Lab: 6 algoritmov</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --bg: #f8fafc;
+            --card: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: #1e293b;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            color: var(--primary);
+            margin-top: 0;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 8px;
+        }
+
+        .desc {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 10px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        input {
+            padding: 6px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            width: 70px;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .output {
+            padding: 10px;
+            background: #0f172a;
+            color: #38bdf8;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            min-height: 40px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1 style="text-align:center;">6 primerov Dinamičnega Programiranja</h1>
+
+        <div class="grid">
+            <!-- 1. Fibonacci s Tabulacijo -->
+            <div class="card">
+                <h2>1. Fibonacci (Tabulacija)</h2>
+                <p class="desc">Izračun n-tega števila v O(n) času z uporabo spodnjega pristopa.</p>
+                <div class="controls">
+                    <input type="number" id="fibIn" value="40" min="0">
+                    <button onclick="runFib()">Izračunaj</button>
+                </div>
+                <div id="outFib" class="output"></div>
+            </div>
+
+            <!-- 2. Coin Change (Min kovancev) -->
+            <div class="card">
+                <h2>2. Coin Change (Min)</h2>
+                <p class="desc">Najmanjše št. kovancev {1, 5, 10} za vsoto:</p>
+                <div class="controls">
+                    <input type="number" id="coinIn" value="18">
+                    <button onclick="runCoin()">Najdi min</button>
+                </div>
+                <div id="outCoin" class="output"></div>
+            </div>
+
+            <!-- 3. Longest Common Subsequence (LCS) -->
+            <div class="card">
+                <h2>3. LCS (Dolžina)</h2>
+                <p class="desc">Najdaljše skupno podzaporedje dveh nizov.</p>
+                <div class="controls">
+                    <input type="text" id="lcs1" value="ABCDE" style="width: 80px;">
+                    <input type="text" id="lcs2" value="ACE" style="width: 80px;">
+                    <button onclick="runLCS()">Preveri</button>
+                </div>
+                <div id="outLCS" class="output"></div>
+            </div>
+
+            <!-- 4. 0/1 Knapsack (Problem nahrbtnika) -->
+            <div class="card">
+                <h2>4. Nahrbtnik (Knapsack)</h2>
+                <p class="desc">Max vrednost za kapaciteto 5 (teže: 1, 2, 3 | vred.: 6, 10, 12).</p>
+                <button onclick="runKnapsack()">Izračunaj</button>
+                <div id="outKnap" class="output"></div>
+            </div>
+
+            <!-- 5. Climbing Stairs -->
+            <div class="card">
+                <h2>5. Vzpon po stopnicah</h2>
+                <p class="desc">Število načinov za n stopnic (lahko 1 ali 2 hkrati).</p>
+                <div class="controls">
+                    <input type="number" id="stairsIn" value="10">
+                    <button onclick="runStairs()">Izračunaj</button>
+                </div>
+                <div id="outStairs" class="output"></div>
+            </div>
+
+            <!-- 6. Edit Distance (Levenshtein) -->
+            <div class="card">
+                <h2>6. Edit Distance</h2>
+                <p class="desc">Min operacij za pretvorbo niza A v B.</p>
+                <div class="controls">
+                    <input type="text" id="ed1" value="kitten" style="width: 80px;">
+                    <input type="text" id="ed2" value="sitting" style="width: 80px;">
+                    <button onclick="runED()">Izračunaj</button>
+                </div>
+                <div id="outED" class="output"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. FIBONACCI (Tabulation)
+        function runFib() {
+            const n = parseInt(document.getElementById('fibIn').value);
+            if (n < 2) {
+                document.getElementById('outFib').innerText = n;
+                return;
+            }
+            let dp = [0, 1];
+            for (let i = 2; i <= n; i++) dp[i] = dp[i - 1] + dp[i - 2];
+            document.getElementById('outFib').innerText = `Rezultat: ${dp[n]}`;
+        }
+
+        // 2. COIN CHANGE (Min Coins)
+        function runCoin() {
+            const amount = parseInt(document.getElementById('coinIn').value);
+            const coins = [1, 5, 10];
+            let dp = Array(amount + 1).fill(Infinity);
+            dp[0] = 0;
+            for (let i = 1; i <= amount; i++) {
+                for (let coin of coins) {
+                    if (i >= coin) dp[i] = Math.min(dp[i], dp[i - coin] + 1);
+                }
+            }
+            document.getElementById('outCoin').innerText = `Min kovancev: ${dp[amount] === Infinity ? 'Ni mogoče' : dp[amount]}`;
+        }
+
+        // 3. LONGEST COMMON SUBSEQUENCE
+        function runLCS() {
+            const s1 = document.getElementById('lcs1').value;
+            const s2 = document.getElementById('lcs2').value;
+            let dp = Array.from({
+                length: s1.length + 1
+            }, () => Array(s2.length + 1).fill(0));
+            for (let i = 1; i <= s1.length; i++) {
+                for (let j = 1; j <= s2.length; j++) {
+                    if (s1[i - 1] === s2[j - 1]) dp[i][j] = 1 + dp[i - 1][j - 1];
+                    else dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                }
+            }
+            document.getElementById('outLCS').innerText = `Dolžina LCS: ${dp[s1.length][s2.length]}`;
+        }
+
+        // 4. 0/1 KNAPSACK
+        function runKnapsack() {
+            const W = 5,
+                wt = [1, 2, 3],
+                val = [6, 10, 12],
+                n = 3;
+            let dp = Array.from({
+                length: n + 1
+            }, () => Array(W + 1).fill(0));
+            for (let i = 1; i <= n; i++) {
+                for (let w = 1; w <= W; w++) {
+                    if (wt[i - 1] <= w) dp[i][w] = Math.max(val[i - 1] + dp[i - 1][w - wt[i - 1]], dp[i - 1][w]);
+                    else dp[i][w] = dp[i - 1][w];
+                }
+            }
+            document.getElementById('outKnap').innerText = `Max vrednost: ${dp[n][W]}`;
+        }
+
+        // 5. CLIMBING STAIRS
+        function runStairs() {
+            const n = parseInt(document.getElementById('stairsIn').value);
+            if (n <= 2) {
+                document.getElementById('outStairs').innerText = n;
+                return;
+            }
+            let dp = [0, 1, 2];
+            for (let i = 3; i <= n; i++) dp[i] = dp[i - 1] + dp[i - 2];
+            document.getElementById('outStairs').innerText = `Št. načinov: ${dp[n]}`;
+        }
+
+        // 6. EDIT DISTANCE
+        function runED() {
+            const s1 = document.getElementById('ed1').value;
+            const s2 = document.getElementById('ed2').value;
+            let dp = Array.from({
+                length: s1.length + 1
+            }, () => Array(s2.length + 1).fill(0));
+            for (let i = 0; i <= s1.length; i++) dp[i][0] = i;
+            for (let j = 0; j <= s2.length; j++) dp[0][j] = j;
+
+            for (let i = 1; i <= s1.length; i++) {
+                for (let j = 1; j <= s2.length; j++) {
+                    if (s1[i - 1] === s2[j - 1]) dp[i][j] = dp[i - 1][j - 1];
+                    else dp[i][j] = 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
+                }
+            }
+            document.getElementById('outED').innerText = `Razdalja: ${dp[s1.length][s2.length]}`;
+        }
+    </script>
+
+</body>
+
+</html>

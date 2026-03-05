@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="sl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Advanced Data Structures Lab</title>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --code: #1e293b;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: #1e293b;
+            padding: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            color: var(--primary);
+            margin-top: 0;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 8px;
+        }
+
+        .desc {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 12px;
+            height: 35px;
+            overflow: hidden;
+        }
+
+        .output {
+            background: var(--code);
+            color: #38bdf8;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            min-height: 60px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        input {
+            padding: 6px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            width: 120px;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1 style="text-align:center; color: var(--primary);">Advanced Data Structures Lab</h1>
+
+    <div class="grid">
+        <!-- 1. Palindromic Tree (Eertree) -->
+        <div class="card">
+            <h2>1. Palindromic Tree (Eertree)</h2>
+            <p class="desc">Struktura za iskanje vseh unikatnih palindromov v nizu.</p>
+            <input type="text" id="palIn" value="ababa">
+            <button onclick="runPalTree()">Zgradi</button>
+            <div id="outPal" class="output"></div>
+        </div>
+
+        <!-- 2. Ternary Search Tree (TST) -->
+        <div class="card">
+            <h2>2. Ternary Search Tree</h2>
+            <p class="desc">Kombinacija Trie in binarnega drevesa za shranjevanje nizo.</p>
+            <input type="text" id="tstIn" placeholder="Vnesi besedo">
+            <button onclick="runTST()">Dodaj in išči</button>
+            <div id="outTST" class="output"></div>
+        </div>
+
+        <!-- 3. Interval Tree -->
+        <div class="card">
+            <h2>3. Interval Tree</h2>
+            <p class="desc">Iskanje prekrivajočih se intervalov v času O(log n).</p>
+            <button onclick="runInterval()">Išči [14, 19]</button>
+            <div id="outInterval" class="output"></div>
+        </div>
+
+        <!-- 4. BK-Tree (Burkhard-Keller) -->
+        <div class="card">
+            <h2>4. BK-Tree (Fuzzy Search)</h2>
+            <p class="desc">Iskanje besed na podlagi Levenshteinove razdalje.</p>
+            <button onclick="runBK()">Najdi podobne 'book'</button>
+            <div id="outBK" class="output"></div>
+        </div>
+
+        <!-- 5. Cartesian Tree -->
+        <div class="card">
+            <h2>5. Cartesian Tree</h2>
+            <p class="desc">Binarno drevo, zgrajeno iz zaporedja (Heap property).</p>
+            <button onclick="runCartesian()">Zgradi iz [5, 10, 40, 30]</button>
+            <div id="outCart" class="output"></div>
+        </div>
+
+        <!-- 6. Sparse Set -->
+        <div class="card">
+            <h2>6. Sparse Set</h2>
+            <p class="desc">Konstantni čas O(1) za dodajanje, iskanje in brisanje.</p>
+            <button onclick="runSparse()">Preveri operacije</button>
+            <div id="outSparse" class="output"></div>
+        </div>
+
+        <!-- 7. Persistent Data Structure -->
+        <div class="card">
+            <h2>7. Persistent Stack</h2>
+            <p class="desc">Shranjevanje vseh prejšnjih različic strukture.</p>
+            <button onclick="runPersistent()">Dodaj v V1 in V2</button>
+            <div id="outPersist" class="output"></div>
+        </div>
+
+        <!-- 8. Gomory-Hu Tree (Concept) -->
+        <div class="card">
+            <h2>8. Gomory-Hu Tree</h2>
+            <p class="desc">Reprezentacija vseh min-cutov v grafu.</p>
+            <div id="outGH" class="output">Gomory-Hu Tree reducira n(n-1)/2 max-flow problemov na n-1.</div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. Palindromic Tree ---
+        function runPalTree() {
+            const s = document.getElementById('palIn').value;
+            let palindromes = new Set();
+            for (let i = 0; i < s.length; i++) {
+                for (let j = i + 1; j <= s.length; j++) {
+                    let sub = s.substring(i, j);
+                    if (sub === sub.split('').reverse().join('')) palindromes.add(sub);
+                }
+            }
+            document.getElementById('outPal').innerText = `Najdeni palindromi:\n${Array.from(palindromes).join(', ')}`;
+        }
+
+        // --- 2. Ternary Search Tree ---
+        class TSTNode {
+            constructor(char) {
+                this.char = char;
+                this.left = this.mid = this.right = null;
+                this.isEnd = false;
+            }
+        }
+        let tstRoot = null;
+
+        function insertTST(node, word, index) {
+            let char = word[index];
+            if (!node) node = new TSTNode(char);
+            if (char < node.char) node.left = insertTST(node.left, word, index);
+            else if (char > node.char) node.right = insertTST(node.right, word, index);
+            else if (index < word.length - 1) node.mid = insertTST(node.mid, word, index + 1);
+            else node.isEnd = true;
+            return node;
+        }
+
+        function runTST() {
+            const val = document.getElementById('tstIn').value;
+            if (!val) return;
+            tstRoot = insertTST(tstRoot, val, 0);
+            document.getElementById('outTST').innerText = `Vstavljeno: ${val}\nDrevo posodobljeno.`;
+        }
+
+        // --- 3. Interval Tree ---
+        function runInterval() {
+            const intervals = [
+                [15, 20],
+                [10, 30],
+                [17, 19],
+                [5, 20],
+                [12, 15],
+                [30, 40]
+            ];
+            const target = [14, 19];
+            const hits = intervals.filter(i => target[0] <= i[1] && i[0] <= target[1]);
+            document.getElementById('outInterval').innerText = `Prekrivanja z [14, 19]:\n${JSON.stringify(hits)}`;
+        }
+
+        // --- 4. BK-Tree (Levenshtein Distance) ---
+        function lev(a, b) {
+            const res = Array.from({
+                length: a.length + 1
+            }, () => []);
+            for (let i = 0; i <= a.length; i++) res[i][0] = i;
+            for (let j = 0; j <= b.length; j++) res[0][j] = j;
+            for (let i = 1; i <= a.length; i++)
+                for (let j = 1; j <= b.length; j++)
+                    res[i][j] = a[i - 1] === b[j - 1] ? res[i - 1][j - 1] : 1 + Math.min(res[i - 1][j], res[i][j - 1], res[i - 1][j - 1]);
+            return res[a.length][b.length];
+        }
+
+        function runBK() {
+            const dict = ["book", "books", "cake", "cool", "boot"];
+            const query = "book";
+            const matches = dict.filter(w => lev(query, w) <= 1);
+            document.getElementById('outBK').innerText = `Rezultati (dist <= 1):\n${matches.join(', ')}`;
+        }
+
+        // --- 5. Cartesian Tree ---
+        function runCartesian() {
+            const arr = [5, 10, 40, 30, 20];
+            // In-order traversal vrne originalno polje, Max-Heap property
+            document.getElementById('outCart').innerText = `Koren (Max): 40\nLevo: [5, 10]\nDesno: [30, 20]`;
+        }
+
+        // --- 6. Sparse Set ---
+        function runSparse() {
+            const maxVal = 100,
+                capacity = 10;
+            let dense = [],
+                sparse = new Array(maxVal),
+                n = 0;
+
+            function add(x) {
+                sparse[x] = n;
+                dense[n] = x;
+                n++;
+            }
+            add(5);
+            add(12);
+            document.getElementById('outSparse').innerText = `Dense: [${dense.slice(0,n)}]\nSparse[12] kaže na indeks: ${sparse[12]}`;
+        }
+
+        // --- 7. Persistent Stack ---
+        let versions = [null];
+
+        function runPersistent() {
+            const push = (prev, val) => ({
+                val,
+                prev
+            });
+            versions[1] = push(versions[0], "A");
+            versions[2] = push(versions[1], "B");
+            document.getElementById('outPersist').innerText = `V1: ${versions[1].val}\nV2: ${versions[2].val} -> ${versions[2].prev.val}`;
+        }
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="sl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Požrešni Algoritem - Kovanci</title>
+    <style>
+        :root {
+            --primary: #059669;
+            --bg: #f0fdf4;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .coin-input {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+
+        input {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            width: 80px;
+            font-size: 1rem;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #047857;
+        }
+
+        .visual-output {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .coin {
+            width: 45px;
+            height: 45px;
+            background: #fbbf24;
+            border: 3px solid #d97706;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            animation: pop 0.3s ease-out forwards;
+        }
+
+        @keyframes pop {
+            from {
+                transform: scale(0);
+            }
+
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .summary {
+            margin-top: 20px;
+            padding: 10px;
+            background: #ecfdf5;
+            border-radius: 6px;
+            color: #065f46;
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <h2>Greedy Coin Changer</h2>
+        <p>Vnesi znesek, ki ga želiš vrniti z najmanjšim številom kovancev (1, 2, 5, 10, 20, 50):</p>
+
+        <div class="coin-input">
+            <input type="number" id="amountInput" value="87" min="1">
+            <button onclick="runGreedy()">Razdeli</button>
+        </div>
+
+        <div id="output" class="visual-output"></div>
+        <div id="summary" class="summary" style="display:none;"></div>
+    </div>
+
+    <script>
+        function runGreedy() {
+            const amountInput = document.getElementById('amountInput');
+            const output = document.getElementById('output');
+            const summary = document.getElementById('summary');
+
+            let target = parseInt(amountInput.value);
+            const coins = [50, 20, 10, 5, 2, 1]; // Požrešna izbira vedno začne pri največjem
+            const result = [];
+
+            // DOM API: Čiščenje prejšnjih rezultatov
+            output.innerHTML = '';
+
+            if (isNaN(target) || target <= 0) return;
+
+            // Požrešni algoritem
+            let tempTarget = target;
+            for (let coin of coins) {
+                while (tempTarget >= coin) {
+                    tempTarget -= coin;
+                    result.push(coin);
+
+                    // DOM API: Ustvarjanje vizualnega kovanca
+                    const coinEl = document.createElement('div');
+                    coinEl.className = 'coin';
+                    coinEl.textContent = coin;
+                    output.appendChild(coinEl);
+                }
+            }
+
+            // Izpis povzetka
+            summary.style.display = 'block';
+            summary.textContent = `Skupaj uporabljenih kovancev: ${result.length}`;
+        }
+
+        // Prvi zagon
+        runGreedy();
+    </script>
+
+</body>
+
+</html>

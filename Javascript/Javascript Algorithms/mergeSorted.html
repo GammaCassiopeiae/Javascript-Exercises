@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge Sort Lab</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --bg: #f8fafc;
+            --text: #1e293b;
+        }
+
+        body {
+            font-family: system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .result-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f1f5f9;
+            border-radius: 6px;
+            word-break: break-all;
+        }
+
+        .label {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #64748b;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Merge Sort</h2>
+        <p>Enter numbers separated by commas:</p>
+        <input type="text" id="userInput" placeholder="e.g., 38, 27, 43, 3, 9, 82, 10">
+        <button onclick="handleSort()">Sort Array</button>
+
+        <div class="result-box">
+            <div class="label">Sorted Result:</div>
+            <div id="output">--</div>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * The Core Merge Sort Logic
+         * Time Complexity: O(n log n)
+         */
+        function mergeSort(arr) {
+            if (arr.length <= 1) return arr;
+
+            const mid = Math.floor(arr.length / 2);
+            const left = arr.slice(0, mid);
+            const right = arr.slice(mid);
+
+            return merge(mergeSort(left), mergeSort(right));
+        }
+
+        function merge(left, right) {
+            let result = [];
+            let leftIdx = 0;
+            let rightIdx = 0;
+
+            while (leftIdx < left.length && rightIdx < right.length) {
+                if (left[leftIdx] < right[rightIdx]) {
+                    result.push(left[leftIdx]);
+                    leftIdx++;
+                } else {
+                    result.push(right[rightIdx]);
+                    rightIdx++;
+                }
+            }
+
+            // Concatenate remaining elements
+            return result.concat(left.slice(leftIdx)).concat(right.slice(rightIdx));
+        }
+
+        /**
+         * DOM Manipulation
+         */
+        function handleSort() {
+            const inputElement = document.getElementById('userInput');
+            const outputElement = document.getElementById('output');
+
+            // Convert string input to array of numbers
+            const rawValue = inputElement.value;
+            const numberArray = rawValue.split(',')
+                .map(num => parseFloat(num.trim()))
+                .filter(num => !isNaN(num));
+
+            if (numberArray.length === 0) {
+                outputElement.innerText = "Please enter valid numbers.";
+                return;
+            }
+
+            const sorted = mergeSort(numberArray);
+            outputElement.innerText = sorted.join(', ');
+
+            console.log("Original:", numberArray);
+            console.log("Sorted:", sorted);
+        }
+    </script>
+
+</body>
+
+</html>

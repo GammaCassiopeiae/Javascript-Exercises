@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="sl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Randomized Algorithm - Monte Carlo Pi</title>
+    <style>
+        :root {
+            --primary: #8b5cf6;
+            --bg: #0f172a;
+            --accent: #10b981;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: white;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .card {
+            background: #1e293b;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        canvas {
+            background: white;
+            border-radius: 8px;
+            margin: 20px 0;
+            max-width: 100%;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+            font-family: monospace;
+        }
+
+        .stat-box {
+            background: #334155;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .highlight {
+            color: var(--accent);
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <h2>Monte Carlo: Ocena $\pi$</h2>
+        <p>Naključne točke znotraj kvadrata. Razmerje točk v krogu nam poda približek za $\pi$.</p>
+
+        <canvas id="mcCanvas" width="300" height="300"></canvas>
+
+        <div class="stats">
+            <div class="stat-box">Vseh točk: <br><span id="totalPts">0</span></div>
+            <div class="stat-box">V krogu: <br><span id="insidePts" style="color: #f43f5e;">0</span></div>
+            <div class="stat-box" style="grid-column: span 2;">
+                Ocenjen PI: <br><span id="piVal" class="highlight">0.0000</span>
+            </div>
+        </div>
+
+        <button onclick="toggleSimulation()" id="startBtn">Zaženi simulacijo</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('mcCanvas');
+        const ctx = canvas.getContext('2d');
+        const size = canvas.width;
+        const center = size / 2;
+
+        let total = 0;
+        let inside = 0;
+        let running = false;
+        let animationId;
+
+        function drawBase() {
+            ctx.clearRect(0, 0, size, size);
+            ctx.strokeStyle = '#ddd';
+            ctx.beginPath();
+            ctx.arc(center, center, center, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+
+        function addPoints() {
+            if (!running) return;
+
+            // V vsakem okvirju dodamo 50 naključnih točk za hitrost
+            for (let i = 0; i < 50; i++) {
+                const x = Math.random() * size;
+                const y = Math.random() * size;
+
+                // Preverimo, če je točka znotraj kroga (pitagorov izrek)
+                const dx = x - center;
+                const dy = y - center;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance <= center) {
+                    inside++;
+                    ctx.fillStyle = '#f43f5e'; // rdeča (v krogu)
+                } else {
+                    ctx.fillStyle = '#64748b'; // siva (zunaj)
+                }
+
+                total++;
+                ctx.fillRect(x, y, 2, 2);
+            }
+
+            // DOM API posodobitve
+            document.getElementById('totalPts').textContent = total;
+            document.getElementById('insidePts').textContent = inside;
+            const piEstimate = (4 * (inside / total)).toFixed(4);
+            document.getElementById('piVal').textContent = piEstimate;
+
+            animationId = requestAnimationFrame(addPoints);
+        }
+
+        function toggleSimulation() {
+            running = !running;
+            const btn = document.getElementById('startBtn');
+            if (running) {
+                btn.textContent = "Ustavi";
+                btn.style.background = "#ef4444";
+                addPoints();
+            } else {
+                btn.textContent = "Nadaljuj";
+                btn.style.background = "var(--primary)";
+                cancelAnimationFrame(animationId);
+            }
+        }
+
+        drawBase();
+    </script>
+
+</body>
+
+</html>

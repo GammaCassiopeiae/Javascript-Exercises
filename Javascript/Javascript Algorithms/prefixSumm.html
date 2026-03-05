@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="sl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Prefix Sum Algoritem</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            background: #f4f4f9;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e9ecef;
+            border-left: 5px solid #007bff;
+        }
+
+        code {
+            font-weight: bold;
+            color: #d63384;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Prefix Sum Vizualizator</h2>
+        <p>Vnesi števila, ločena z vejico:</p>
+        <input type="text" id="numsInput" placeholder="npr. 1, 2, 3, 4" value="1, 2, 3, 4">
+        <button onclick="calculatePrefixSum()">Izračunaj</button>
+
+        <div id="output" class="result" style="display:none;">
+            <div>Vhod: <code id="origArray"></code></div>
+            <div>Prefix Sum: <code id="prefixArray"></code></div>
+        </div>
+    </div>
+
+    <script>
+        function calculatePrefixSum() {
+            // DOM API: Pridobivanje vrednosti
+            const input = document.getElementById('numsInput').value;
+            const outputDiv = document.getElementById('output');
+
+            // Pretvorba niza v polje števil
+            const nums = input.split(',').map(n => parseFloat(n.trim())).filter(n => !isNaN(n));
+
+            if (nums.length === 0) return;
+
+            // Prefix Sum Algoritem
+            const prefixSum = [];
+            let currentSum = 0;
+            for (let i = 0; i < nums.length; i++) {
+                currentSum += nums[i];
+                prefixSum.push(currentSum);
+            }
+
+            // DOM API: Prikaz rezultatov
+            document.getElementById('origArray').innerText = JSON.stringify(nums);
+            document.getElementById('prefixArray').innerText = JSON.stringify(prefixSum);
+            outputDiv.style.display = 'block';
+        }
+    </script>
+
+</body>
+
+</html>

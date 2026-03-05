@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Fibonacci & Tribonacci Master</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f4f9; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
+        input, button { padding: 10px; margin: 5px 0; border-radius: 4px; border: 1px solid #ccc; width: 100%; box-sizing: border-box; }
+        button { background: #007bff; color: white; cursor: pointer; font-weight: bold; border: none; }
+        button:hover { background: #0056b3; }
+        .results { margin-top: 20px; border-top: 2px solid #eee; padding-top: 10px; }
+        .res-item { margin-bottom: 8px; font-size: 0.9em; }
+        b { color: #d63384; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Matematično zaporedje</h2>
+    <input type="number" id="numInput" placeholder="Vnesi število n (npr. 10)" min="0">
+    <button onclick="calculate()">Izračunaj vse metode</button>
+
+    <div class="results" id="results">
+        <!-- Rezultati se bodo prikazali tukaj -->
+    </div>
+</div>
+
+<script>
+    // --- FIBONACCI ALGORITMI ---
+    const fib = {
+        // Rekurzivno (O(2^n)) - Počasno za n > 40
+        recursive: (n) => {
+            if (n <= 1) return n;
+            return fib.recursive(n - 1) + fib.recursive(n - 2);
+        },
+        // Iterativno (O(n)) - Prostorsko varčno
+        iterative: (n) => {
+            let a = 0, b = 1;
+            for (let i = 0; i < n; i++) [a, b] = [b, a + b];
+            return a;
+        },
+        // Dinamično (O(n)) - Z memoizacijo
+        memo: (n, cache = {}) => {
+            if (n in cache) return cache[n];
+            if (n <= 1) return n;
+            return cache[n] = fib.memo(n - 1, cache) + fib.memo(n - 2, cache);
+        }
+    };
+
+    // --- TRIBONACCI ALGORITMI (0, 0, 1, 1, 2, 4, 7...) ---
+    const tri = {
+        recursive: (n) => {
+            if (n === 0) return 0;
+            if (n === 1 || n === 2) return 1;
+            return tri.recursive(n - 1) + tri.recursive(n - 2) + tri.recursive(n - 3);
+        },
+        iterative: (n) => {
+            let [a, b, c] = [0, 1, 1];
+            if (n === 0) return 0;
+            for (let i = 0; i < n - 1; i++) [a, b, c] = [b, c, a + b + c];
+            return a;
+        },
+        dynamic: (n) => {
+            let res = [0, 1, 1];
+            for (let i = 3; i <= n; i++) res[i] = res[i-1] + res[i-2] + res[i-3];
+            return n === 0 ? 0 : res[n-1] || res[n];
+        }
+    };
+
+    // --- DOM MANIPULACIJA ---
+    function calculate() {
+        const n = parseInt(document.getElementById('numInput').value);
+        const display = document.getElementById('results');
+        
+        if (isNaN(n) || n < 0) {
+            display.innerHTML = "Prosim vnesi veljavno pozitivno število.";
+            return;
+        }
+
+        // Opozorilo za rekurzijo
+        const fibRec = n > 35 ? "Preskočeno (prepočasno)" : fib.recursive(n);
+        const triRec = n > 25 ? "Preskočeno (prepočasno)" : tri.recursive(n);
+
+        display.innerHTML = `
+            <div class="res-item"><b>Fibonacci (Iterativno):</b> ${fib.iterative(n)}</div>
+            <div class="res-item"><b>Fibonacci (Dinamično):</b> ${fib.memo(n)}</div>
+            <div class="res-item"><b>Fibonacci (Rekurzivno):</b> ${fibRec}</div>
+            <hr>
+            <div class="res-item"><b>Tribonacci (Iterativno):</b> ${tri.iterative(n)}</div>
+            <div class="res-item"><b>Tribonacci (Dinamično):</b> ${tri.dynamic(n)}</div>
+            <div class="res-item"><b>Tribonacci (Rekurzivno):</b> ${triRec}</div>
+        `;
+    }
+</script>
+
+</body>
+</html>

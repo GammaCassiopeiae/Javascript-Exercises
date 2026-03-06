@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="sl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interaktivni Kvantni Kalkulator</title>
+    <style>
+        :root {
+            --p: #818cf8;
+            --bg: #0f172a;
+            --c: #1e293b;
+            --t: #f8fafc;
+        }
+
+        body {
+            font-family: sans-serif;
+            background: var(--bg);
+            color: var(--t);
+            padding: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 15px;
+        }
+
+        .card {
+            background: var(--c);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #334155;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--p);
+        }
+
+        .math {
+            font-family: monospace;
+            color: #22d3ee;
+            display: block;
+            margin: 10px 0;
+            font-size: 1.1rem;
+        }
+
+        input {
+            background: #334155;
+            border: 1px solid var(--p);
+            color: white;
+            padding: 5px;
+            border-radius: 4px;
+            width: 80px;
+        }
+
+        .res {
+            font-weight: bold;
+            color: #fbbf24;
+            margin-left: 10px;
+        }
+
+        label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>⚛️ Kvantni Fizikalni Izračuni</h1>
+    <div id="app" class="grid"></div>
+
+    <script>
+        // Konstante
+        const h = 6.626e-34; // Planckova konstanta (J·s)
+        const h_bar = h / (2 * Math.PI);
+        const c = 3e8; // Hitrost svetlobe (m/s)
+
+        // Matematične funkcije za formule
+        const QuantumPhysics = {
+            planckEnergy: (f) => h * f,
+            deBroglie: (p) => h / p,
+            uncertaintyX: (dp) => h_bar / (2 * dp),
+            bohrEnergy: (n) => -13.6 / Math.pow(n, 2),
+            photoelectric: (f, phi) => (h * f) - (phi * 1.6e-19) // phi v eV pretvorimo v Joule
+        };
+
+        // Podatki za generiranje vmesnika
+        const tools = [{
+                name: "Planckova energija",
+                formula: "E = h * f",
+                func: "planckEnergy",
+                inputs: [{
+                    label: "Frekvenca (Hz)",
+                    id: "f"
+                }],
+                unit: "J"
+            },
+            {
+                name: "De Broglieva valovna dolžina",
+                formula: "λ = h / p",
+                func: "deBroglie",
+                inputs: [{
+                    label: "Gibalna kol. (kg·m/s)",
+                    id: "p"
+                }],
+                unit: "m"
+            },
+            {
+                name: "Heisenbergova nedoločenost (Δx)",
+                formula: "Δx ≥ ℏ / (2·Δp)",
+                func: "uncertaintyX",
+                inputs: [{
+                    label: "Δp (gibalna kol.)",
+                    id: "dp"
+                }],
+                unit: "m"
+            },
+            {
+                name: "Bohrov energijski nivo",
+                formula: "Eₙ = -13.6 / n²",
+                func: "bohrEnergy",
+                inputs: [{
+                    label: "Kvantno št. (n)",
+                    id: "n"
+                }],
+                unit: "eV"
+            }
+        ];
+
+        const container = document.getElementById('app');
+
+        // DOM API za gradnjo kartic
+        tools.forEach(tool => {
+            const card = document.createElement('div');
+            card.className = 'card';
+
+            let inputsHtml = tool.inputs.map(i =>
+                `<label>${i.label}:</label> <input type="number" id="${tool.func}-${i.id}" value="1" oninput="calculate('${tool.func}')">`
+            ).join('<br>');
+
+            card.innerHTML = `
+                <div style="font-weight:bold">${tool.name}</div>
+                <code class="math">${tool.formula}</code>
+                ${inputsHtml}
+                <div style="margin-top:10px">Rezultat: <span id="res-${tool.func}" class="res">0</span> ${tool.unit}</div>
+            `;
+            container.appendChild(card);
+        });
+
+        // Logika za preračunavanje v realnem času
+        window.calculate = function(funcName) {
+            const inputs = tools.find(t => t.func === funcName).inputs;
+            const values = inputs.map(i => parseFloat(document.getElementById(`${funcName}-${i.id}`).value) || 0);
+
+            const result = QuantumPhysics[funcName](...values);
+
+            // Formatiranje izpisa (znanstvena notacija za zelo majhne številke)
+            document.getElementById(`res-${funcName}`).innerText =
+                Math.abs(result) < 0.01 || Math.abs(result) > 1000 ? result.toExponential(3) : result.toFixed(3);
+        };
+
+        // Začetni izračun
+        tools.forEach(t => calculate(t.func));
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bubble Sort</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+        }
+        .array-container {
+            display: flex;
+            gap: 10px;
+        }
+        .bar {
+            width: 20px;
+            background-color: #4caf50;
+        }
+    </style>
+</head>
+<body>
+    <h1>Bubble Sort Algorithm</h1>
+    <button id="sort-button">Sort Array</button>
+    <div class="array-container" id="array-container"></div>
+
+    <script>
+        const array = [34, 203, 3, 746, 200, 984, 198, 764, 9, 55, 77, 2, 1, 0];
+        const arrayContainer = document.getElementById('array-container');
+
+        function createBars(array) {
+            array.forEach(value => {
+                const bar = document.createElement('div');
+                bar.classList.add('bar');
+                bar.style.height = `${value}px`;
+                arrayContainer.appendChild(bar);
+            });
+        }
+
+        function bubbleSort(array) {
+            let len = array.length;
+            for (let i = len - 1; i >= 0; i--) {
+                for (let j = 1; j <= i; j++) {
+                    if (array[j - 1] > array[j]) {
+                        let temp = array[j - 1];
+                        array[j - 1] = array[j];
+                        array[j] = temp;
+                    }
+                }
+            }
+        }
+
+        function updateBars(array) {
+            const bars = document.querySelectorAll('.bar');
+            bars.forEach((bar, index) => {
+                bar.style.height = `${array[index]}px`;
+            });
+        }
+
+        const sortButton = document.getElementById('sort-button');
+
+        sortButton.addEventListener('click', () => {
+            bubbleSort(array);
+            updateBars(array);
+        });
+
+        createBars(array);
+    </script>
+</body>
+</html>

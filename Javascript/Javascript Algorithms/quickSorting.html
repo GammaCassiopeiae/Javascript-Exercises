@@ -1,62 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quicksort with DOM</title>
+    <title>Quicksort Visualization</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            color: lime;
-            margin: 20px;
-            background-color: black;
-
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            padding: 20px;
         }
-
-        #output {
+        canvas {
+            border: 2px solid black;
             margin-top: 20px;
+        }
+        input[type="text"] {
+            width: 80%;
+            max-width: 600px;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
-
 <body>
-    <h1>Quicksort Algorithm in JavaScript</h1>
-    <a>Array: [3, 6, 8, 10, 1, 2, 1];</a>
-    <br><br>
-    <button onclick="sortArray()">Sort Array</button>
-    <div id="output"></div>
+    <h1>Quicksort Visualization</h1>
+    <input type="text" id="numberInput" placeholder="Enter numbers separated by commas (e.g., 3,1,4,1,5)" />
+    <button onclick="startSort()">Sort</button>
+
+    <canvas id="quicksortCanvas" width="800" height="400"></canvas>
 
     <script>
-        // Function to perform Quicksort
-        function quicksort(arr) {
-            if (arr.length <= 1) return arr;
-            const pivot = arr[Math.floor(arr.length / 2)];
-            const left = [];
-            const right = [];
+        const canvas = document.getElementById('quicksortCanvas');
+        const ctx = canvas.getContext('2d');
 
+        function drawArray(arr, colors) {
+            const barWidth = canvas.width / arr.length;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
             for (let i = 0; i < arr.length; i++) {
-                if (i === Math.floor(arr.length / 2)) continue; // Skip the pivot
-                if (arr[i] < pivot) left.push(arr[i]);
-                else right.push(arr[i]);
+                ctx.fillStyle = colors[i];
+                ctx.fillRect(i * barWidth, canvas.height - arr[i], barWidth, arr[i]);
+            }
+        }
+
+        function* quickSort(arr, low = 0, high = arr.length - 1) {
+            if (low < high) {
+                const pivotIndex = yield* partition(arr, low, high);
+                yield;
+                yield* quickSort(arr, low, pivotIndex - 1);
+                yield;
+                yield* quickSort(arr, pivotIndex + 1, high);
+            }
+        }
+
+        function* partition(arr, low, high) {
+            const colors = Array(arr.length).fill('blue');
+            colors[high] = 'red';
+            let i = low - 1;
+            
+            for (let j = low; j < high; j++) {
+                if (arr[j] <= arr[high]) {
+                    i++;
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                    colors[i] = 'green';
+                    yield { array: [...arr], colors };
+                }
+            }
+            [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
+            colors[i + 1] = 'green';
+            colors[high] = 'blue';
+            yield { array: [...arr], colors };
+            return i + 1;
+        }
+
+        function visualizeQuicksort(arr) {
+            const generator = quickSort([...arr]);
+
+            function step() {
+                const result = generator.next();
+                if (!result.done) {
+                    drawArray(result.value.array, result.value.colors);
+                    setTimeout(step, 200);
+                } else {
+                    const colors = Array(arr.length).fill('green');
+                    drawArray(arr, colors);
+                }
             }
 
-            return [...quicksort(left), pivot, ...quicksort(right)];
+            step();
         }
 
-        // Function to display array in DOM
-        function displayArray(array) {
-            const outputDiv = document.getElementById('output');
-            outputDiv.innerHTML = `<p>Sorted Array: ${array.join(', ')}</p>`;
+        function startSort() {
+            const input = document.getElementById('numberInput').value;
+            const arrayToSort = input.split(',').map(Number).filter(num => !isNaN(num));
+            if (arrayToSort.length === 0) {
+                alert("Please enter valid numbers separated by commas.");
+                return;
+            }
+            visualizeQuicksort(arrayToSort);
         }
 
-        // Function to sort the array and display it
-        function sortArray() {
-            const arr = [3, 6, 8, 10, 1, 2, 1];
-            const sortedArray = quicksort(arr);
-            displayArray(sortedArray);
-        }
+        // Initial random sort for demonstration
+        const initialArray = Array.from({ length: 50 }, () => Math.floor(Math.random() * 400) + 1);
+        visualizeQuicksort(initialArray);
     </script>
 </body>
-
 </html>

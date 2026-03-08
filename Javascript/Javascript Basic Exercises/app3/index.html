@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Neon-Grid Algorithm Terminal">
+    <title>Neon-Grid | 12_ALGO_TERMINAL</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="l-body">
+
+    <header class="c-header l-header">
+        <nav class="c-nav">
+            <div class="c-nav__brand">NEON_CORE // ALGO_MANIFESTO</div>
+            <div class="c-nav__status">STATUS: <span class="u-lime">ONLINE</span></div>
+        </nav>
+    </header>
+
+    <main class="l-main l-grid-12-rows">
+        <!-- 12 ALGORITMOV V 12 VRSTICAH -->
+        <article class="c-algo-row">
+            <span class="c-algo-row__meta">01_BOGO</span>
+            <code class="c-algo-row__code">while(!isSorted(a)) shuffle(a);</code>
+            <div class="c-algo-row__result" id="res-bogo">RES: [WAITING]</div>
+        </article>
+
+        <article class="c-algo-row">
+            <span class="c-algo-row__meta">02_GNOME</span>
+            <code class="c-algo-row__code">if(i==0 || a[i]>=a[i-1]) i++; else swap();</code>
+            <div class="c-algo-row__result" id="res-gnome">RES: [WAITING]</div>
+        </article>
+
+        <article class="c-algo-row">
+            <span class="c-algo-row__meta">03_BUBBLE</span>
+            <code class="c-algo-row__code">for(i=0; i&lt;n; i++) if(a[j]>a[j+1]) swap();</code>
+            <div class="c-algo-row__result" id="res-bubble">RES: [WAITING]</div>
+        </article>
+
+        <article class="c-algo-row">
+            <span class="c-algo-row__meta">04_INSERTION</span>
+            <code class="c-algo-row__code">while(j>=0 && a[j]>key) a[j+1]=a[j];</code>
+            <div class="c-algo-row__result" id="res-insertion">RES: [WAITING]</div>
+        </article>
+
+        <article class="c-algo-row">
+            <span class="c-algo-row__meta">05_SELECTION</span>
+            <code class="c-algo-row__code">min=i; for(j=i+1; j&lt;n; j++) if(a[j]&lt;a[min]) min=j;</code>
+            <div class="c-algo-row__result" id="res-selection">RES: [WAITING]</div>
+        </article>
+
+        <article class="c-algo-row">
+            <span class="c-algo-row__meta">06_MERGE</span>
+            <code class="c-algo-row__code">merge(left, right) => [...res, ...left, ...right];</code>
+            <div class="c-algo-row__result" id="res-merge">RES: [WAITING]</div>
+        </article>
+
+        <article class="c-algo-row">
+            <span class="c-algo-row__meta">07_SORT()</span>
+            <code class="c-algo-row__code">array.sort((a, b) => a - b); // NATIVE_V8</code>
+            <div class="c-algo-row__result" id="res-native">RES: [WAITING]</div>
+        </article>
+
+        <article class="c-algo-row">
+            <span class="c-algo-row__meta">08_BUCKET</span>
+            <code class="c-algo-row__code">buckets[Math.floor(a[i]/size)].push(a[i]);</code>
+            <div class="c-algo-row__result" id="res-bucket">RES: [WAITING]</div>
+        </article>
+
+        <article class="c-algo-row">
+            <span class="c-algo-row__meta">09_MATRIX</span>
+            <code class="c-algo-row__code">matrix.flat().sort().reshape(r, c);</code>
+            <div class="c-algo-row__result" id="res-matrix">RES: [WAITING]</div>
+        </article>
+
+        <article class="c-algo-row">
+            <span class="c-algo-row__meta">10_QUICK</span>
+            <code class="c-algo-row__code">partition(a, low, high) => pivotIndex;</code>
+            <div class="c-algo-row__result" id="res-quick">RES: [WAITING]</div>
+        </article>
+
+        <article class="c-algo-row">
+            <span class="c-algo-row__meta">11_LINEAR</span>
+            <code class="c-algo-row__code">for(i=0; i&lt;n; i++) if(a[i]===t) return i;</code>
+            <div class="c-algo-row__result" id="res-linear">RES: [WAITING]</div>
+        </article>
+
+        <article class="c-algo-row">
+            <span class="c-algo-row__meta">12_BINARY</span>
+            <code class="c-algo-row__code">while(l&lt;=r) { m=l+(r-l)/2; if(a[m]==t) return m; }</code>
+            <div class="c-algo-row__result" id="res-binary">RES: [WAITING]</div>
+        </article>
+    </main>
+
+    <aside class="l-aside">
+        <div class="c-terminal">
+            <h3>TERMINAL_INFO</h3>
+            <p>GRID_ROWS: 12</p>
+            <p>LIME: CODE_BLOCKS</p>
+            <p>VIOLET: OUTPUT_STREAM</p>
+        </div>
+        <button type="button" class="c-button u-width-100" id="run-all">EXECUTE_ALL</button>
+    </aside>
+
+    <footer class="l-footer">
+        <p>NEON-GRID ARCHITECT &copy; <time datetime="2024">2024</time></p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

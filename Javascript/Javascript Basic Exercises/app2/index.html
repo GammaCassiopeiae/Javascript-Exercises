@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon-Grid | Algorithm Terminal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="l-body">
+    <header class="c-header l-header">
+        <nav class="c-nav">
+            <div class="c-nav__brand">ALGO_TERMINAL_V2</div>
+        </nav>
+    </header>
+
+    <main class="l-main l-grid-12-rows">
+        <!-- 1. Bogo Sort -->
+        <section class="c-algo-row">
+            <h2 class="c-algo-row__title">01_BOGO_SORT</h2>
+            <pre class="c-algo-row__code">while (!isSorted(arr)) shuffle(arr);</pre>
+            <div class="c-algo-row__result" id="res-bogo">RESULT: [1, 2, 3, 5, 8]</div>
+        </section>
+
+        <!-- 2. Gnome Sort -->
+        <section class="c-algo-row">
+            <h2 class="c-algo-row__title">02_GNOME_SORT</h2>
+            <pre class="c-algo-row__code">if (i == 0 || a[i] >= a[i-1]) i++; else { swap(a[i], a[i-1]); i--; }</pre>
+            <div class="c-algo-row__result" id="res-gnome">RESULT: [1, 2, 3, 5, 8]</div>
+        </section>
+
+        <!-- 3. Bubble Sort -->
+        <section class="c-algo-row">
+            <h2 class="c-algo-row__title">03_BUBBLE_SORT</h2>
+            <pre class="c-algo-row__code">for(i=0; i<n; i++) for(j=0; j<n-i-1; j++) if(a[j]>a[j+1]) swap();</pre>
+            <div class="c-algo-row__result" id="res-bubble">RESULT: [Sorted_Stream]</div>
+        </section>
+
+        <!-- 4. Insertion Sort -->
+        <section class="c-algo-row">
+            <h2 class="c-algo-row__title">04_INSERTION_SORT</h2>
+            <pre class="c-algo-row__code">for(i=1; i<n; i++) { key=a[i]; j=i-1; while(j>=0 && a[j]>key) ... }</pre>
+            <div class="c-algo-row__result" id="res-insertion">RESULT: [Sequential_Fix]</div>
+        </section>
+
+        <!-- 5. Selection Sort -->
+        <section class="c-algo-row">
+            <h2 class="c-algo-row__title">05_SELECTION_SORT</h2>
+            <pre class="c-algo-row__code">findMinIdx(); swap(minIdx, currentIdx);</pre>
+            <div class="c-algo-row__result" id="res-selection">RESULT: [Min_Selected]</div>
+        </section>
+
+        <!-- 6. Merge Sort -->
+        <section class="c-algo-row">
+            <h2 class="c-algo-row__title">06_MERGE_SORT</h2>
+            <pre class="c-algo-row__code">divide(arr); merge(left, right); // O(n log n)</pre>
+            <div class="c-algo-row__result" id="res-merge">RESULT: [Recursive_Success]</div>
+        </section>
+
+        <!-- 7. Sort() (Native) -->
+        <section class="c-algo-row">
+            <h2 class="c-algo-row__title">07_NATIVE_SORT</h2>
+            <pre class="c-algo-row__code">array.sort((a, b) => a - b);</pre>
+            <div class="c-algo-row__result" id="res-native">RESULT: [Engine_Optimized]</div>
+        </section>
+
+        <!-- 8. Bucket Sort -->
+        <section class="c-algo-row">
+            <h2 class="c-algo-row__title">08_BUCKET_SORT</h2>
+            <pre class="c-algo-row__code">distributeToBuckets(arr); sortBuckets(); gather();</pre>
+            <div class="c-algo-row__result" id="res-bucket">RESULT: [Distributed_Flow]</div>
+        </section>
+
+        <!-- 9. Matrix Sort -->
+        <section class="c-algo-row">
+            <h2 class="c-algo-row__title">09_MATRIX_SORT</h2>
+            <pre class="c-algo-row__code">flattenMatrix(); sort(); reshape(rows, cols);</pre>
+            <div class="c-algo-row__result" id="res-matrix">RESULT: [Dimensional_Order]</div>
+        </section>
+
+        <!-- 10. Quick Sort -->
+        <section class="c-algo-row">
+            <h2 class="c-algo-row__title">10_QUICK_SORT</h2>
+            <pre class="c-algo-row__code">pivot = a[high]; partition(); quickSort(low, pivot-1);</pre>
+            <div class="c-algo-row__result" id="res-quick">RESULT: [Pivot_Achieved]</div>
+        </section>
+
+        <!-- 11. Linear Search -->
+        <section class="c-algo-row">
+            <h2 class="c-algo-row__title">11_LINEAR_SEARCH</h2>
+            <pre class="c-algo-row__code">for(item of arr) if(item === target) return index;</pre>
+            <div class="c-algo-row__result" id="res-linear">RESULT: FOUND_AT_INDEX_7</div>
+        </section>
+
+        <!-- 12. Binary Search -->
+        <section class="c-algo-row">
+            <h2 class="c-algo-row__title">12_BINARY_SEARCH</h2>
+            <pre class="c-algo-row__code">while(l<=r) { m=l+(r-l)/2; if(a[m]==t) return m; ... }</pre>
+            <div class="c-algo-row__result" id="res-binary">RESULT: FOUND_AT_INDEX_42</div>
+        </section>
+    </main>
+
+    <aside class="l-aside">
+        <div class="c-status">SYSTEM_STABLE: 100%</div>
+    </aside>
+
+    <footer class="l-footer">
+        <p>NEON_GRID_MANIFESTO_COMPLIANT</p>
+    </footer>
+</body>
+</html>

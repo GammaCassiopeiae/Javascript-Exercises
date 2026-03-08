@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon-Grid | Game_Dev_Masterclass</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="l-body">
+    <header class="c-header l-header">
+        <nav class="c-nav">
+            <div class="c-nav__brand">NEON_ARCHITECT // GAME_LOGIC_V3</div>
+            <div class="u-lime">SYSTEM_LOADED: 100%</div>
+        </nav>
+    </header>
+
+    <main class="l-main l-grid-12-rows">
+        <!-- 01_AABB Collision -->
+        <section class="c-algo-block">
+            <h2 class="u-cyan">01_AABB_COLLISION</h2>
+            <div class="c-algo-block__content">
+                <pre class="c-algo-block__code">function checkAABB(a, b) {
+  return a.x < b.x + b.w &&
+         a.x + a.w > b.x &&
+         a.y < b.y + b.h &&
+         a.y + a.h > b.y;
+}</pre>
+                <div class="c-algo-block__desc">
+                    <p class="u-violet">L1: Funkcija preveri prekrivanje dveh pravokotnikov.</p>
+                    <p class="u-violet">L2-5: Če so vsi štirje robovi znotraj meja drugega, vrne true (TRK).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 02_LERP -->
+        <section class="c-algo-block">
+            <h2 class="u-cyan">02_LINEAR_INTERPOLATION</h2>
+            <div class="c-algo-block__content">
+                <pre class="c-algo-block__code">function lerp(v0, v1, t) {
+  return v0 + t * (v1 - v0);
+}
+// Smooth move: pos += (target - pos) * 0.1;</pre>
+                <div class="c-algo-block__desc">
+                    <p class="u-violet">L1-3: Izračuna vmesno vrednost med v0 in v1 glede na t (0-1).</p>
+                    <p class="u-violet">L4: Uporabno za gladko premikanje kamere ali likov.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 03_DELTA_TIME -->
+        <section class="c-algo-block">
+            <h2 class="u-cyan">03_DELTA_TIME_SYNC</h2>
+            <div class="c-algo-block__content">
+                <pre class="c-algo-block__code">let last = performance.now();
+function loop(now) {
+  let dt = (now - last) / 1000;
+  player.x += speed * dt;
+  last = now;
+  requestAnimationFrame(loop);
+}</pre>
+                <div class="c-algo-block__desc">
+                    <p class="u-violet">L3: Izračuna časovni zamik med snímki v sekundah.</p>
+                    <p class="u-violet">L4: Zagotavlja, da se igralec premika enako hitro pri 30 ali 144 FPS.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 04_RAYCASTING -->
+        <section class="c-algo-block">
+            <h2 class="u-cyan">04_RAY_HIT_DETECTION</h2>
+            <div class="c-algo-block__content">
+                <pre class="c-algo-block__code">function getRayHit(x, y, angle, dist) {
+  for(let i=0; i < dist; i++) {
+    let px = x + Math.cos(angle) * i;
+    let py = y + Math.sin(angle) * i;
+    if(isWall(px, py)) return {px, py};
+  }
+  return null;
+}</pre>
+                <div class="c-algo-block__desc">
+                    <p class="u-violet">L2-5: Žarek "koraka" naprej v smeri kota in preverja trk s steno.</p>
+                    <p class="u-violet">L7: Vrne koordinate prvega zadetka ali nič (null).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 05_MINIMAX -->
+        <section class="c-algo-block">
+            <h2 class="u-cyan">05_MINIMAX_LOGIC</h2>
+            <div class="c-algo-block__content">
+                <pre class="c-algo-block__code">function minimax(depth, isMax) {
+  if(depth === 0) return eval();
+  if(isMax) return Math.max(...moves.map(m => minimax(d-1, false)));
+  return Math.min(...moves.map(m => minimax(d-1, true)));
+}</pre>
+                <div class="c-algo-block__desc">
+                    <p class="u-violet">L2-4: Rekurzivno išče najboljšo (MAX) in najslabšo (MIN) potezo.</p>
+                    <p class="u-violet">L3: Osnova za AI v igrah kot so šah ali križci-krožci.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 06_FSM -->
+        <section class="c-algo-block">
+            <h2 class="u-cyan">06_FINITE_STATE_MACHINE</h2>
+            <div class="c-algo-block__content">
+                <pre class="c-algo-block__code">const states = {
+  IDLE: () => { if(seePlayer) state = 'CHASE'; },
+  CHASE: () => { move(); if(inRange) state = 'ATTACK'; },
+  ATTACK: () => { hit(); }
+};
+states[state]();</pre>
+                <div class="c-algo-block__desc">
+                    <p class="u-violet">L1-5: Definira stanja in pogoje za prehod med njimi.</p>
+                    <p class="u-violet">L6: Vsak frame izvrši samo logiko trenutnega stanja NPC-ja.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 07_VECTOR_NORM -->
+        <section class="c-algo-block">
+            <h2 class="u-cyan">07_VECTOR_NORMALIZATION</h2>
+            <div class="c-algo-block__content">
+                <pre class="c-algo-block__code">function normalize(v) {
+  let mag = Math.sqrt(v.x*v.x + v.y*v.y);
+  return {x: v.x / mag, y: v.y / mag};
+}
+// Usage: Bullet direction vector.</pre>
+                <div class="c-algo-block__desc">
+                    <p class="u-violet">L2: Izračuna dolžino (magnitudo) vektorja s Pitagorovim izrekom.</p>
+                    <p class="u-violet">L3: Skalira vektor na dolžino 1 (smer brez hitrosti).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 08_CIRC_COLLISION -->
+        <section class="c-algo-block">
+            <h2 class="u-cyan">08_CIRCLE_COLLISION</h2>
+            <div class="c-algo-block__content">
+                <pre class="c-algo-block__code">function checkCircle(c1, c2) {
+  let dx = c1.x - c2.x;
+  let dy = c1.y - c2.y;
+  let dist = Math.sqrt(dx*dx + dy*dy);
+  return dist < c1.r + c2.r;
+}</pre>
+                <div class="c-algo-block__desc">
+                    <p class="u-violet">L2-4: Izračuna dejansko razdaljo med središči dveh krogov.</p>
+                    <p class="u-violet">L5: Če je razdalja manjša od vsote radijev, sta kroga v stiku.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 09_PERLIN_SIMP -->
+        <section class="c-algo-block">
+            <h2 class="u-cyan">09_PROCEDURAL_NOISE</h2>
+            <div class="c-algo-block__content">
+                <pre class="c-algo-block__code">function noise(x, y) {
+  let n = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
+  return n - Math.floor(n);
+}
+// Terrain: y = noise(x * 0.1, 0) * amplitude;</pre>
+                <div class="c-algo-block__desc">
+                    <p class="u-violet">L2: Determinirano psevdo-naključno število (hash).</p>
+                    <p class="u-violet">L4: Osnova za generiranje neskončnih svetov in gora.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 10_OBJ_POOLING -->
+        <section class="c-algo-block">
+            <h2 class="u-cyan">10_OBJECT_POOLING</h2>
+            <div class="c-algo-block__content">
+                <pre class="c-algo-block__code">function getBullet() {
+  let b = pool.find(i => !i.active);
+  if(b) b.active = true;
+  return b;
+}
+// recycle: bullet.active = false;</pre>
+                <div class="c-algo-block__desc">
+                    <p class="u-violet">L2: Namesto ustvarjanja novih objektov (metkov), uporabi neaktivnega.</p>
+                    <p class="u-violet">L5: Preprečuje "Lag" zaradi Garbage Collectorja med igro.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 11_ANG_TO_VEC -->
+        <section class="c-algo-block">
+            <h2 class="u-cyan">11_ANGLE_TO_VECTOR</h2>
+            <div class="c-algo-block__content">
+                <pre class="c-algo-block__code">function angleToVec(angle) {
+  return {
+    x: Math.cos(angle * Math.PI / 180),
+    y: Math.sin(angle * Math.PI / 180)
+  };
+}</pre>
+                <div class="c-algo-block__desc">
+                    <p class="u-violet">L3-4: Pretvori stopinje v radiane in nato v X/Y smer.</p>
+                    <p class="u-violet">L1: Ključno za premikanje ladij ali rotacijo orožja.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 12_QUAKE_INV_SQRT -->
+        <section class="c-algo-block">
+            <h2 class="u-cyan">12_FAST_INV_SQRT_(LEGACY)</h2>
+            <div class="c-algo-block__content">
+                <pre class="c-algo-block__code">function invSqrt(n) {
+  let buf = new Float32Array(1);
+  buf[0] = n;
+  let i = new Int32Array(buf.buffer)[0];
+  i = 0x5f3759df - (i >> 1); // Magic number
+  return i;</pre>
+                <div class="c-algo-block__desc">
+                    <p class="u-violet">L4: Legendarni "Quake III" trik za hitro normalizacijo svetlobe.</p>
+                    <p class="u-violet">L1: Optimizacija, ki je spremenila 3D grafiko za vedno.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="l-footer">
+        <p>NEON_GRID_ACADEMY // ALL_ALGORITHMS_LOCKED</p>
+    </footer>
+</body>
+</html>

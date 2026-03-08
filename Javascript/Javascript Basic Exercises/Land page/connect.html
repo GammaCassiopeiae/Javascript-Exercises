@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VertiShop // Connect</title>
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --neon-primary: #00f3ff;
+            --neon-secondary: #ff00ff;
+            --text-main: #ffffff;
+            --glass-bg: rgba(0, 0, 0, 0.4);
+            --border-glow: rgba(0, 243, 255, 0.2);
+            --font-header: 'Rajdhani', sans-serif;
+            --radius-lg: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            display: grid;
+            grid-template-areas: "header" "main" "footer";
+            grid-template-rows: auto 1fr auto;
+            min-height: 100vh;
+        }
+
+        .header {
+            grid-area: header;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-glow);
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(10px);
+        }
+
+        .header__nav {
+            display: flex;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header__logo {
+            color: var(--neon-primary);
+            text-decoration: none;
+            font-family: var(--font-header);
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .nav__list { display: flex; gap: 2rem; list-style: none; }
+        .nav__link { 
+            color: var(--text-main); 
+            text-decoration: none; 
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        .main-content {
+            grid-area: main;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem 2rem;
+        }
+
+        /* Neon Form System (Directives 151, 164, 20) */
+        .c-form {
+            width: 100%;
+            max-width: 500px;
+            padding: 3rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--border-glow);
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.05);
+        }
+
+        .c-form__title {
+            font-family: var(--font-header);
+            font-size: 2rem;
+            text-transform: uppercase;
+            color: var(--neon-primary);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .c-form__field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .c-form__label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--neon-primary);
+        }
+
+        .c-form__input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-glow);
+            padding: 0.8rem 1.2rem;
+            color: var(--text-main);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            caret-color: var(--neon-primary);
+        }
+
+        .c-form__input:focus {
+            outline: none;
+            border-color: var(--neon-primary);
+            box-shadow: 0 0 10px var(--neon-primary);
+            background: rgba(0, 243, 255, 0.05);
+        }
+
+        .c-form__submit {
+            background: var(--neon-primary);
+            color: var(--bg-dark);
+            border: none;
+            padding: 1rem;
+            font-family: var(--font-header);
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px var(--neon-primary);
+            margin-top: 1rem;
+        }
+
+        .c-form__submit:hover {
+            filter: brightness(1.2);
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px var(--neon-primary);
+        }
+
+        .footer {
+            grid-area: footer;
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border-glow);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="header__nav">
+            <a href="index.html" class="header__logo">VertiShop</a>
+            <ul class="nav__list">
+                <li><a href="vision.html" class="nav__link">Vision</a></li>
+                <li><a href="services.html" class="nav__link">Modules</a></li>
+                <li><a href="connect.html" class="nav__link">Connect</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <form class="c-form" id="contactForm">
+            <h1 class="c-form__title">Interface Connection</h1>
+            
+            <div class="c-form__field">
+                <label class="c-form__label" for="userId">Network Identifier</label>
+                <input class="c-form__input" type="text" id="userId" placeholder="Enter name" required>
+            </div>
+
+            <div class="c-form__field">
+                <label class="c-form__label" for="userEmail">Signal Frequency (Email)</label>
+                <input class="c-form__input" type="email" id="userEmail" placeholder="user@grid.com" required>
+            </div>
+
+            <div class="c-form__field">
+                <label class="c-form__label" for="userMessage">Data Packet</label>
+                <textarea class="c-form__input" id="userMessage" rows="4" placeholder="Transmission details..."></textarea>
+            </div>
+
+            <button class="c-form__submit" type="submit">Transmit Data</button>
+        </form>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 VERTISHOP // CONNECTION INTERFACE</p>
+    </footer>
+
+    <script>
+        // DOM API: Connection sequence simulation
+        document.getElementById('contactForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const submitBtn = e.target.querySelector('.c-form__submit');
+            submitBtn.textContent = 'Transmitting...';
+            submitBtn.style.background = 'var(--neon-secondary)';
+            submitBtn.style.boxShadow = '0 0 25px var(--neon-secondary)';
+            
+            setTimeout(() => {
+                alert('Transmission Successful. Synchronization Complete.');
+                submitBtn.textContent = 'Transmit Data';
+                submitBtn.style.background = 'var(--neon-primary)';
+                submitBtn.style.boxShadow = '0 0 15px var(--neon-primary)';
+                e.target.reset();
+            }, 1500);
+        });
+    </script>
+</body>
+</html>

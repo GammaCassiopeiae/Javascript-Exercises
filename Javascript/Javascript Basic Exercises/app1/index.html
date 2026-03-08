@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Profesionalni Neon-Grid vmesnik za futuristično arhitekturo.">
+    <title>Neon-Grid | Arhitekturni Manifesto</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="l-body">
+
+    <header class="c-header l-header">
+        <nav class="c-nav">
+            <div class="c-nav__brand">NEON_ARCH</div>
+            <ul class="c-nav__list u-list-reset">
+                <li class="c-nav__item"><a href="#hero" class="c-nav__link">Domov</a></li>
+                <li class="c-nav__item"><a href="#grid" class="c-nav__link">Mreža</a></li>
+                <li class="c-nav__item"><a href="#status" class="c-nav__link">Status</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="l-main u-snap-container">
+        <!-- Hero Section -->
+        <section id="hero" class="c-section-snap">
+            <div class="c-hero">
+                <h1 class="c-hero__title u-text-center">NEON_GRID ARCHITECT</h1>
+                <p class="c-hero__subtitle u-text-center">Implementacija manifesta skozi digitalno strukturo.</p>
+                <button type="button" class="c-button c-button--primary" data-action="glow">INITIALIZE_SYSTEM</button>
+            </div>
+        </section>
+
+        <!-- 12-Column Grid Section -->
+        <section id="grid" class="c-section-snap l-container">
+            <h2 class="u-text-center u-margin-bottom-xl">GRID_SPECIFICATIONS</h2>
+            
+            <div class="l-grid-12">
+                <article class="c-card c-card--featured">
+                    <h3 class="c-card__title">Primary_Node [8-COL]</h3>
+                    <p class="c-card__body">Glavno vozlišče zavzema 8 stolpcev na namizju. Uporablja <code>grid-column: span 8</code> za vizualno hierarhijo po načelih manifesta.</p>
+                </article>
+
+                <article class="c-card c-card--secondary">
+                    <h3 class="c-card__title">Data_Feed [4-COL]</h3>
+                    <p class="c-card__body">Sekundarni podatkovni tok, sinhroniziran z glavno mrežo.</p>
+                </article>
+
+                <article class="c-card">
+                    <h4 class="c-card__title">Sub_01</h4>
+                    <p class="c-card__body">Avtomatska poravnava [4-COL].</p>
+                </article>
+                <article class="c-card">
+                    <h4 class="c-card__title">Sub_02</h4>
+                    <p class="c-card__body">Avtomatska poravnava [4-COL].</p>
+                </article>
+                <article class="c-card">
+                    <h4 class="c-card__title">Sub_03</h4>
+                    <p class="c-card__body">Avtomatska poravnava [4-COL].</p>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <aside id="status" class="l-aside">
+        <div class="c-sidebar">
+            <h4 class="c-sidebar__title">SYSTEM_STATUS</h4>
+            <ul class="u-list-reset">
+                <li class="c-sidebar__item">Grid: <span class="u-neon-text">ACTIVE</span></li>
+                <li class="c-sidebar__item">Neon: <span class="u-neon-text">CHARGED</span></li>
+                <li class="c-sidebar__item">Snap: <span class="u-neon-text">LOCKED</span></li>
+            </ul>
+        </div>
+    </aside>
+
+    <footer class="l-footer">
+        <address class="c-footer__info">
+            Email: <a href="mailto:sys@neon.arch" class="u-neon-text">sys@neon.arch</a>
+        </address>
+        <p class="u-text-center">&copy; <time datetime="2024">2024</time> NEON_GRID ARCHITECTS</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

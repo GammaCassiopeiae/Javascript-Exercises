@@ -1,0 +1,146 @@
+/* ==========================================================================
+   THE NEON-GRID ARCHITECT MANIFESTO: CORE STYLES
+   ========================================================================== */
+
+:root {
+    /* Colors */
+    --color-bg: #0a0a0c;
+    --color-neon-primary: #00f3ff;
+    --color-neon-secondary: #ff00ff;
+    --color-text: #e0e0e0;
+    
+    /* Spacing & Fluidity */
+    --space-base: clamp(1rem, 2vw, 2rem);
+    --font-size-h1: clamp(2.5rem, 8vw, 5rem);
+    
+    /* Z-Index Scale */
+    --z-sticky: 100;
+    --z-modal: 1000;
+}
+
+/* 1. Reset & Global Box Model */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: 'Inter', system-ui, sans-serif;
+    line-height: 1.5;
+    min-height: 100svh;
+}
+
+/* 2. Layout (Holy Trinity) */
+.l-body {
+    display: grid;
+    grid-template-areas: 
+        "header"
+        "main"
+        "aside"
+        "footer";
+    grid-template-columns: 1fr;
+}
+
+@media (min-width: 1024px) {
+    .l-body {
+        grid-template-areas: 
+            "header header"
+            "main aside"
+            "footer footer";
+        grid-template-columns: 1fr 300px;
+    }
+}
+
+.l-header { grid-area: header; position: sticky; top: 0; z-index: var(--z-sticky); }
+.l-main   { grid-area: main; padding: var(--space-base); }
+.l-aside  { grid-area: aside; padding: var(--space-base); }
+.l-footer { grid-area: footer; margin-top: auto; padding: var(--space-base); border-top: 1px solid var(--color-neon-primary); }
+
+.l-grid-12 {
+    display: grid;
+    gap: var(--space-base);
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+/* 3. Components */
+.c-header {
+    background: rgba(10, 10, 12, 0.8);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--color-neon-primary);
+}
+
+.c-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem var(--space-base);
+}
+
+.c-nav__list {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+}
+
+.c-nav__link {
+    color: var(--color-text);
+    text-decoration: none;
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.c-nav__link:hover {
+    color: var(--color-neon-primary);
+    text-shadow: 0 0 8px var(--color-neon-primary);
+}
+
+.c-hero {
+    display: flex;
+    flex-direction: column;
+    place-content: center;
+    min-height: 60svh;
+}
+
+.c-hero__title {
+    font-size: var(--font-size-h1);
+    color: var(--color-neon-primary);
+    text-shadow: 0 0 20px var(--color-neon-primary);
+    margin-bottom: 1rem;
+}
+
+.c-card {
+    border: 1px solid var(--color-neon-secondary);
+    padding: 2rem;
+    background: rgba(255, 0, 255, 0.05);
+    transition: transform 0.3s ease;
+}
+
+.c-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 15px var(--color-neon-secondary);
+}
+
+.c-button {
+    background: transparent;
+    border: 2px solid var(--color-neon-primary);
+    color: var(--color-neon-primary);
+    padding: 1rem 2rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 2rem auto;
+    transition: all 0.3s ease;
+}
+
+.c-button:hover {
+    background: var(--color-neon-primary);
+    color: var(--color-bg);
+    box-shadow: 0 0 20px var(--color-neon-primary);
+}
+
+/* 4. Utilities */
+.u-text-center { text-align: center; }
+.u-list-reset { list-style: none; }

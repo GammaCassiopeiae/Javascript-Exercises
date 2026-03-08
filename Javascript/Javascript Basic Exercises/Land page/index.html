@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="VertiShop Nexus - The Neon-Grid Architecture Hub">
+    <title>VertiShop // Nexus</title>
+    <style>
+        /* I. Core Reset & Variables (Directives 5, 6, 26, 27) */
+        :root {
+            --bg-dark: #050505;
+            --neon-primary: #00f3ff;
+            --neon-secondary: #ff00ff;
+            --text-main: #ffffff;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --border-glow: rgba(0, 243, 255, 0.2);
+            
+            --gap-main: clamp(1rem, 5vw, 2rem);
+            --radius-lg: 12px;
+            --z-sticky: 1000;
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+            
+            --font-header: 'Rajdhani', sans-serif;
+            --font-body: 'Inter', system-ui, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* II. Base Layout (Directives 1, 8, 11, 51, 92) */
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100dvh;
+        }
+
+        .l-grid-main {
+            display: grid;
+            grid-template-areas: 
+                "header"
+                "main"
+                "footer";
+            grid-template-rows: auto 1fr auto;
+            gap: var(--gap-main);
+        }
+
+        /* III. Header & Nav (Directives 31, 57, 61, 65) */
+        .header {
+            grid-area: header;
+            position: sticky;
+            top: 0;
+            z-index: var(--z-sticky);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-glow);
+            padding: 1rem 2rem;
+        }
+
+        .header__nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header__logo {
+            font-family: var(--font-header);
+            font-size: clamp(1.2rem, 4vw, 1.8rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--neon-primary);
+            text-shadow: 0 0 10px var(--neon-primary);
+            text-decoration: none;
+        }
+
+        .nav__list {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+        }
+
+        .nav__link {
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.3s var(--ease-out);
+            position: relative;
+        }
+
+        .nav__link:hover {
+            color: var(--neon-primary);
+            text-shadow: 0 0 8px var(--neon-primary);
+        }
+
+        /* IV. Main Hero (Directives 99, 104, 108) */
+        .main-content {
+            grid-area: main;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--gap-main);
+            width: 100%;
+        }
+
+        .c-hero {
+            height: 70dvh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 1.5rem;
+        }
+
+        .c-hero__title {
+            font-family: var(--font-header);
+            font-size: clamp(2.5rem, 10vw, 5rem);
+            line-height: 0.9;
+            text-transform: uppercase;
+            background: linear-gradient(to right, var(--neon-primary), var(--neon-secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .c-hero__tagline {
+            font-size: clamp(1rem, 3vw, 1.25rem);
+            max-width: 600px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .c-button {
+            padding: 1rem 2.5rem;
+            background: transparent;
+            border: 1px solid var(--neon-primary);
+            color: var(--neon-primary);
+            font-family: var(--font-header);
+            text-transform: uppercase;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s var(--ease-out);
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+        }
+
+        .c-button:hover {
+            background: var(--neon-primary);
+            color: var(--bg-dark);
+            box-shadow: 0 0 30px var(--neon-primary);
+            transform: translateY(-4px);
+        }
+
+        /* V. Footer (Directives 30, 66) */
+        .footer {
+            grid-area: footer;
+            padding: 2rem;
+            border-top: 1px solid var(--border-glow);
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer__text {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 0.1em;
+        }
+
+        /* Mobile First adjustments */
+        @media (min-width: 768px) {
+            .l-grid-main {
+                grid-template-areas: 
+                    "header header"
+                    "main main"
+                    "footer footer";
+            }
+        }
+    </style>
+</head>
+<body class="l-body">
+    <header class="header">
+        <nav class="header__nav">
+            <a href="index.html" class="header__logo">VertiShop</a>
+            <ul class="nav__list">
+                <li><a href="vision.html" class="nav__link">Vision</a></li>
+                <li><a href="services.html" class="nav__link">Modules</a></li>
+                <li><a href="connect.html" class="nav__link">Connect</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <section class="c-hero">
+            <h1 class="c-hero__title" id="heroTitle">Architectural<br>Sovereignty</h1>
+            <p class="c-hero__tagline">Deploying high-vibrancy interfaces for the next iteration of the digital grid. Clean code, neon soul.</p>
+            <div class="u-mt-2">
+                <a href="services.html" class="c-button">Initiate Protocol</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <address class="footer__text">
+            &copy; 2026 VERTISHOP // NEON-NOIR DESIGN SYSTEM
+        </address>
+    </footer>
+
+    <script>
+        /**
+         * DOM API Integration (Directive 32)
+         * Subtle pulse effect on hero title using data attributes
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            const heroTitle = document.getElementById('heroTitle');
+            
+            // Simple interactive glow toggle
+            heroTitle.addEventListener('mouseenter', () => {
+                heroTitle.style.filter = 'drop-shadow(0 0 15px var(--neon-primary))';
+                heroTitle.style.transition = 'filter 0.5s ease';
+            });
+
+            heroTitle.addEventListener('mouseleave', () => {
+                heroTitle.style.filter = 'none';
+            });
+        });
+    </script>
+</body>
+</html>

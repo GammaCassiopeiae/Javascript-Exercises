@@ -1,0 +1,165 @@
+/* ==========================================================================
+   THE NEON-GRID ARCHITECT MANIFESTO
+   ========================================================================== */
+
+:root {
+    /* Barve */
+    --color-bg: #050505;
+    --color-surface: #0f0f12;
+    --color-neon-primary: #00f3ff;
+    --color-neon-secondary: #ff00ff;
+    --color-text: #e0e0e0;
+    
+    /* Fluidne mere */
+    --space-base: clamp(1rem, 3vw, 2.5rem);
+    --font-h1: clamp(2.5rem, 10vw, 5.5rem);
+    --font-h2: clamp(1.8rem, 6vw, 3rem);
+    
+    /* Z-Index */
+    --z-sticky: 100;
+    --z-overlay: 1000;
+}
+
+/* 1. Globalni Reset */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* 2. Layout (Holy Trinity) */
+.l-body {
+    display: grid;
+    grid-template-areas: 
+        "header"
+        "main"
+        "aside"
+        "footer";
+    grid-template-columns: 1fr;
+}
+
+@media (min-width: 1024px) {
+    .l-body {
+        grid-template-areas: 
+            "header header"
+            "main aside"
+            "footer footer";
+        grid-template-columns: 1fr 320px;
+    }
+}
+
+.l-header { grid-area: header; position: sticky; top: 0; z-index: var(--z-sticky); }
+.l-main   { grid-area: main; }
+.l-aside  { grid-area: aside; padding: var(--space-base); background: #080808; }
+.l-footer { grid-area: footer; padding: 2rem var(--space-base); border-top: 1px solid #222; }
+
+/* 3. Grid & Snap Sistem */
+.u-snap-container {
+    height: 100svh;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+}
+
+.c-section-snap {
+    min-height: 100svh;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: var(--space-base);
+}
+
+.l-grid-12 {
+    display: grid;
+    gap: var(--space-base);
+    grid-template-columns: 1fr; /* Mobile-first */
+}
+
+@media (min-width: 1024px) {
+    .l-grid-12 {
+        grid-template-columns: repeat(12, 1fr);
+    }
+    .c-card--featured { grid-column: span 8; }
+    .c-card--secondary { grid-column: span 4; }
+    .c-card:not([class*="--"]) { grid-column: span 4; }
+}
+
+/* 4. Komponente */
+.c-header {
+    background: rgba(5, 5, 5, 0.9);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--color-neon-primary);
+}
+
+.c-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem var(--space-base);
+}
+
+.c-nav__brand {
+    font-weight: 900;
+    letter-spacing: 3px;
+    color: var(--color-neon-primary);
+}
+
+.c-nav__list { display: flex; gap: 2rem; }
+.c-nav__link { 
+    color: var(--text); text-decoration: none; 
+    font-size: 0.9rem; text-transform: uppercase; 
+    transition: color 0.3s;
+}
+.c-nav__link:hover { color: var(--color-neon-primary); }
+
+.c-hero__title {
+    font-size: var(--font-h1);
+    text-shadow: 0 0 30px var(--color-neon-primary);
+    color: var(--color-neon-primary);
+    margin-bottom: 1rem;
+}
+
+.c-card {
+    background: var(--color-surface);
+    border: 1px solid #333;
+    padding: 2rem;
+    transition: all 0.4s ease;
+}
+
+.c-card:hover {
+    border-color: var(--color-neon-secondary);
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.2);
+    transform: translateY(-5px);
+}
+
+.c-button {
+    display: block;
+    margin: 2rem auto;
+    padding: 1rem 3rem;
+    background: transparent;
+    border: 2px solid var(--color-neon-primary);
+    color: var(--color-neon-primary);
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.c-button:hover {
+    background: var(--color-neon-primary);
+    color: var(--color-bg);
+    box-shadow: 0 0 30px var(--color-neon-primary);
+}
+
+/* 5. Utility razredi */
+.u-text-center { text-align: center; }
+.u-list-reset { list-style: none; }
+.u-neon-text { color: var(--color-neon-primary); text-shadow: 0 0 5px var(--color-neon-primary); }
+.u-margin-bottom-xl { margin-bottom: 4rem; }

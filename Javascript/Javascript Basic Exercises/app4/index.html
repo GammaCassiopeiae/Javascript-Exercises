@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon-Grid | Game_Dev_Algos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="l-body">
+    <header class="c-header l-header">
+        <nav class="c-nav">
+            <div class="c-nav__brand">GAME_ENGINE_CORE_v2.0</div>
+            <div class="u-lime">TERMINAL_ACTIVE</div>
+        </nav>
+    </header>
+
+    <main class="l-main l-grid-12-rows">
+        <!-- 01_A* Pathfinding -->
+        <section class="c-algo-row">
+            <span class="c-algo-row__id">01</span>
+            <div class="c-algo-row__info">
+                <h3 class="u-cyan">A*_PATHFINDING</h3>
+                <p class="u-violet">Izračuna najkrajšo pot med vozlišči z uporabo hevristike f(n) = g(n) + h(n).</p>
+            </div>
+            <code class="c-algo-row__code">f = g + h; openList.push(start);</code>
+            <div class="c-algo-row__explain">Line 1: Izračun prioritete. Line 2: Inicializacija iskanja.</div>
+        </section>
+
+        <!-- 02_Minimax -->
+        <section class="c-algo-row">
+            <span class="c-algo-row__id">02</span>
+            <div class="c-algo-row__info">
+                <h3 class="u-cyan">MINIMAX_AI</h3>
+                <p class="u-violet">Odločevalni algoritem za igre z ničelno vsoto (npr. šah), ki minimizira izgubo.</p>
+            </div>
+            <code class="c-algo-row__code">bestVal = Math.max(bestVal, minimax(depth+1, !isMax));</code>
+            <div class="c-algo-row__explain">L1: Rekurzivno iskanje najboljše poteze za igralca.</div>
+        </section>
+
+        <!-- 03_AABB Collision -->
+        <section class="c-algo-row">
+            <span class="c-algo-row__id">03</span>
+            <div class="c-algo-row__info">
+                <h3 class="u-cyan">AABB_COLLISION</h3>
+                <p class="u-violet">Najhitrejša metoda za detekcijo trkov med ne-rotiranimi pravokotniki.</p>
+            </div>
+            <code class="c-algo-row__code">if(rect1.x < rect2.x + rect2.w && rect1.x + rect1.w > rect2.x) ...</code>
+            <div class="c-algo-row__explain">L1: Preverjanje prekrivanja na X in Y osi hkrati.</div>
+        </section>
+
+        <!-- 04_Delta Time -->
+        <section class="c-algo-row">
+            <span class="c-algo-row__id">04</span>
+            <div class="c-algo-row__info">
+                <h3 class="u-cyan">DELTA_TIME_SYNC</h3>
+                <p class="u-violet">Sinhronizacija hitrosti igre glede na FPS (Frame Per Second).</p>
+            </div>
+            <code class="c-algo-row__code">pos.x += speed * deltaTime;</code>
+            <div class="c-algo-row__explain">L1: Premik neodvisen od hitrosti procesorja.</div>
+        </section>
+
+        <!-- 05_Lerp -->
+        <section class="c-algo-row">
+            <span class="c-algo-row__id">05</span>
+            <div class="c-algo-row__info">
+                <h3 class="u-cyan">LERP (Linear Interpolation)</h3>
+                <p class="u-violet">Gladko prehajanje med dvema vrednostma (npr. premik kamere).</p>
+            </div>
+            <code class="c-algo-row__code">value = (1 - t) * start + t * end;</code>
+            <div class="c-algo-row__explain">L1: Izračun vmesne točke glede na faktor t (0-1).</div>
+        </section>
+
+        <!-- 06_Raycasting -->
+        <section class="c-algo-row">
+            <span class="c-algo-row__id">06</span>
+            <div class="c-algo-row__info">
+                <h3 class="u-cyan">RAYCASTING</h3>
+                <p class="u-violet">Simulacija vidnega polja ali streljanja z "žarkom".</p>
+            </div>
+            <code class="c-algo-row__code">while(!hit) { rayPos += dir * step; checkWall(); }</code>
+            <div class="c-algo-row__explain">L1: Iteracija žarka skozi prostor do zadetka.</div>
+        </section>
+
+        <!-- 07_Perlin Noise -->
+        <section class="c-algo-row">
+            <span class="c-algo-row__id">07</span>
+            <div class="c-algo-row__info">
+                <h3 class="u-cyan">PERLIN_NOISE</h3>
+                <p class="u-violet">Proceduralno generiranje terena (gore, doline).</p>
+            </div>
+            <code class="c-algo-row__code">height = noise.generate(x * scale, y * scale);</code>
+            <div class="c-algo-row__explain">L1: Generiranje zveznega naključnega šuma.</div>
+        </section>
+
+        <!-- 08_Frustum Culling -->
+        <section class="c-algo-row">
+            <span class="c-algo-row__id">08</span>
+            <div class="c-algo-row__info">
+                <h3 class="u-cyan">FRUSTUM_CULLING</h3>
+                <p class="u-violet">Optimizacija: renderiraj samo tisto, kar vidi kamera.</p>
+            </div>
+            <code class="c-algo-row__code">if (!camera.canSee(object)) object.render = false;</code>
+            <div class="c-algo-row__explain">L1: Izločitev objektov izven vidnega polja.</div>
+        </section>
+
+        <!-- 09_Spatial Partitioning -->
+        <section class="c-algo-row">
+            <span class="c-algo-row__id">09</span>
+            <div class="c-algo-row__info">
+                <h3 class="u-cyan">QUAD_TREE</h3>
+                <p class="u-violet">Delitev prostora na kvadrate za hitrejšo detekcijo trkov.</p>
+            </div>
+            <code class="c-algo-row__code">if(points.length > MAX) node.split();</code>
+            <div class="c-algo-row__explain">L1: Dinamična delitev sektorja pri veliki gostoti.</div>
+        </section>
+
+        <!-- 10_State Machine -->
+        <section class="c-algo-row">
+            <span class="c-algo-row__id">10</span>
+            <div class="c-algo-row__info">
+                <h3 class="u-cyan">FSM (Finite State Machine)</h3>
+                <p class="u-violet">Logika za NPC obnašanje (IDLE -> CHASE -> ATTACK).</p>
+            </div>
+            <code class="c-algo-row__code">switch(state) { case 'ATTACK': performAction(); }</code>
+            <div class="c-algo-row__explain">L1: Upravljanje stanj umetne inteligence.</div>
+        </section>
+
+        <!-- Footer Systems -->
+        <div class="c-algo-row u-system-row">
+            <span class="u-lime">SYSTEM_LOG: ALL_ALGORITHMS_INITIALIZED_SUCCESSFULLY</span>
+        </div>
+        <div class="c-algo-row u-system-row">
+            <span class="u-violet">CORE_TEMP: 32C // VOLTAGE: 1.2V</span>
+        </div>
+    </main>
+
+    <aside class="l-aside">
+        <div class="c-panel">
+            <h4 class="u-cyan">PROGRAMMER_TOOLKIT</h4>
+            <ul class="u-list-reset">
+                <li>Language: <span class="u-lime">JavaScript</span></li>
+                <li>Focus: <span class="u-lime">Game Physics</span></li>
+            </ul>
+            <button class="c-button" onclick="alert('Compiling...')">COMPILE_ALL</button>
+        </div>
+    </aside>
+
+    <footer class="l-footer">
+        <address>TERMINAL: 127.0.0.1 // DEV_PORT: 8080</address>
+    </footer>
+</body>
+</html>

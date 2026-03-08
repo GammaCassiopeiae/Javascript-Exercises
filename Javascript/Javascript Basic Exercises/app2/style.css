@@ -1,0 +1,77 @@
+:root {
+    --color-bg: #020202;
+    --color-lime: #32ff00;   /* Lime Green for Code */
+    --color-violet: #bc00ff; /* Violet for Result */
+    --color-cyan: #00f3ff;
+    --space-grid: 1px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; }
+
+body {
+    background-color: var(--color-bg);
+    color: #fff;
+    font-family: 'Courier New', monospace;
+}
+
+/* Holy Trinity Layout */
+.l-body {
+    display: grid;
+    grid-template-areas: 
+        "header"
+        "main"
+        "aside"
+        "footer";
+}
+
+@media (min-width: 1024px) {
+    .l-body {
+        grid-template-areas: 
+            "header header"
+            "main aside"
+            "footer footer";
+        grid-template-columns: 1fr 250px;
+    }
+}
+
+/* 12-Row Grid for Algorithms */
+.l-grid-12-rows {
+    display: grid;
+    grid-template-rows: repeat(12, min-content);
+    gap: var(--space-grid);
+    background: #111; /* Grid lines effect */
+}
+
+/* Component: Algorithm Row */
+.c-algo-row {
+    background: var(--color-bg);
+    padding: 1.5rem;
+    border-left: 3px solid var(--color-cyan);
+    display: grid;
+    grid-template-columns: 200px 1fr 200px;
+    align-items: center;
+    gap: 1rem;
+}
+
+.c-algo-row__title {
+    font-size: 0.8rem;
+    color: var(--color-cyan);
+}
+
+.c-algo-row__code {
+    color: var(--color-lime);
+    text-shadow: 0 0 5px var(--color-lime);
+    font-size: 0.9rem;
+    overflow-x: auto;
+}
+
+.c-algo-row__result {
+    color: var(--color-violet);
+    text-shadow: 0 0 8px var(--color-violet);
+    font-weight: bold;
+    text-align: right;
+    text-transform: uppercase;
+}
+
+.l-header { grid-area: header; border-bottom: 2px solid var(--color-cyan); padding: 1rem; }
+.l-footer { grid-area: footer; padding: 1rem; text-align: center; font-size: 0.7rem; opacity: 0.5; }

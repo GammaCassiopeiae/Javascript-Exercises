@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VertiShop // Vision</title>
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --neon-primary: #00f3ff;
+            --neon-secondary: #ff00ff;
+            --text-main: #ffffff;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --border-glow: rgba(255, 0, 255, 0.2);
+            --gap-main: 2rem;
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+            --font-header: 'Rajdhani', sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            display: grid;
+            grid-template-areas: "header" "main" "footer";
+            grid-template-rows: auto 1fr auto;
+            min-height: 100vh;
+        }
+
+        /* Scrollbar Neon (Directive 126) */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { 
+            background: linear-gradient(var(--neon-primary), var(--neon-secondary));
+            border-radius: 10px;
+        }
+
+        .header {
+            grid-area: header;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-glow);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header__nav {
+            display: flex;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header__logo {
+            color: var(--neon-secondary);
+            text-decoration: none;
+            font-family: var(--font-header);
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .nav__list { display: flex; gap: 2rem; list-style: none; }
+        .nav__link { 
+            color: var(--text-main); 
+            text-decoration: none; 
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+        }
+
+        .main-content {
+            grid-area: main;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .c-article__title {
+            font-family: var(--font-header);
+            font-size: clamp(2rem, 8vw, 3.5rem);
+            color: var(--neon-secondary);
+            text-shadow: 0 0 10px var(--neon-secondary);
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+        }
+
+        .c-article__section {
+            margin-bottom: 3rem;
+            border-left: 2px solid var(--neon-primary);
+            padding-left: 1.5rem;
+        }
+
+        .c-article__subtitle {
+            font-family: var(--font-header);
+            color: var(--neon-primary);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .c-article__text {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+
+        .footer {
+            grid-area: footer;
+            padding: 2rem;
+            border-top: 1px solid var(--border-glow);
+            text-align: center;
+            font-size: 0.7rem;
+            color: #444;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="header__nav">
+            <a href="index.html" class="header__logo">VertiShop</a>
+            <ul class="nav__list">
+                <li><a href="vision.html" class="nav__link">Vision</a></li>
+                <li><a href="services.html" class="nav__link">Modules</a></li>
+                <li><a href="connect.html" class="nav__link">Connect</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <article class="c-article">
+            <h1 class="c-article__title">The Directive</h1>
+            
+            <section class="c-article__section">
+                <h2 class="c-article__subtitle">01 // Architectural Purity</h2>
+                <p class="c-article__text">
+                    We believe in the supremacy of semantic HTML. A document should describe its own intent, free from the noise of over-nested abstractions.
+                </p>
+            </section>
+
+            <section class="c-article__section">
+                <h2 class="c-article__subtitle">02 // The Neon Pulse</h2>
+                <p class="c-article__text">
+                    Design is not just aesthetic; it is energy. By utilizing the Neon-Noir system, we bridge the gap between technical precision and human emotion.
+                </p>
+            </section>
+        </article>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 VERTISHOP // VISION MODULE</p>
+    </footer>
+
+    <script>
+        // DOM API: Scroll progress tracker (Directive 147)
+        document.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            console.log('Grid Synchronization:', scrolled.toFixed(2) + '%');
+        });
+    </script>
+</body>
+</html>

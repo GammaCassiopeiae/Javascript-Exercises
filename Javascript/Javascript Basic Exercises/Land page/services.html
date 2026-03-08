@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VertiShop // Modules</title>
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --neon-primary: #00f3ff;
+            --neon-secondary: #ff00ff;
+            --text-main: #ffffff;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --border-glow: rgba(0, 243, 255, 0.15);
+            --font-header: 'Rajdhani', sans-serif;
+            --radius-lg: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            display: grid;
+            grid-template-areas: "header" "main" "footer";
+            grid-template-rows: auto 1fr auto;
+            min-height: 100vh;
+        }
+
+        .header {
+            grid-area: header;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-glow);
+            backdrop-filter: blur(10px);
+            background: var(--glass-bg);
+        }
+
+        .header__nav {
+            display: flex;
+            justify-content: space-between;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header__logo {
+            color: var(--neon-primary);
+            text-decoration: none;
+            font-family: var(--font-header);
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .nav__list { display: flex; gap: 2rem; list-style: none; }
+        .nav__link { 
+            color: var(--text-main); 
+            text-decoration: none; 
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        .main-content {
+            grid-area: main;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            width: 100%;
+        }
+
+        .l-grid-modules {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        /* Glassmorphism Card (Directive 106, 123) */
+        .c-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-glow);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .c-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--neon-primary);
+            box-shadow: 0 10px 30px rgba(0, 243, 255, 0.1);
+        }
+
+        .c-card__icon {
+            font-size: 2rem;
+            color: var(--neon-primary);
+            margin-bottom: 1rem;
+        }
+
+        .c-card__title {
+            font-family: var(--font-header);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--neon-primary);
+        }
+
+        .c-card__text {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.6;
+        }
+
+        .footer {
+            grid-area: footer;
+            padding: 2rem;
+            border-top: 1px solid var(--border-glow);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="header__nav">
+            <a href="index.html" class="header__logo">VertiShop</a>
+            <ul class="nav__list">
+                <li><a href="vision.html" class="nav__link">Vision</a></li>
+                <li><a href="services.html" class="nav__link">Modules</a></li>
+                <li><a href="connect.html" class="nav__link">Connect</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <h1 class="u-mb-2" style="font-family: var(--font-header); margin-bottom: 3rem; text-transform: uppercase; letter-spacing: 0.2em;">Active Modules</h1>
+        
+        <div class="l-grid-modules">
+            <section class="c-card" data-module="01">
+                <div class="c-card__icon">01</div>
+                <h2 class="c-card__title">Core Nexus</h2>
+                <p class="c-card__text">The primary interface for system-wide coordination and data flow management.</p>
+            </section>
+
+            <section class="c-card" data-module="02">
+                <div class="c-card__icon">02</div>
+                <h2 class="c-card__title">Neon Weaver</h2>
+                <p class="c-card__text">Advanced CSS generation module specialized in high-saturation visual layouts.</p>
+            </section>
+
+            <section class="c-card" data-module="03">
+                <div class="c-card__icon">03</div>
+                <h2 class="c-card__title">Grid Splicer</h2>
+                <p class="c-card__text">Dynamic grid reconfiguration tool for responsive fluid environments.</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 VERTISHOP // MODULE REGISTRY</p>
+    </footer>
+
+    <script>
+        // DOM API: Interactive card highlight
+        document.querySelectorAll('.c-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const module = card.getAttribute('data-module');
+                alert(`Initializing Module ${module}... Protocol active.`);
+            });
+        });
+    </script>
+</body>
+</html>

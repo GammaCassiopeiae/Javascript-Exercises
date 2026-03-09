@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dynamic Programming Classics</title>
+    <style>body { font-family: sans-serif; padding: 20px; } .box { background: #f9f9f9; padding: 15px; border-radius: 5px; margin-bottom: 20px; }</style>
+</head>
+<body>
+    <h1>Dynamic Programming</h1>
+
+    <div class="box">
+        <h3>Edit Distance (Levenshtein)</h3>
+        <input type="text" id="s1" value="kitten">
+        <input type="text" id="s2" value="sitting">
+        <button onclick="runEdit()">Calc Distance</button>
+        <p id="editRes"></p>
+    </div>
+
+    <div class="box">
+        <h3>Fibonacci (DP)</h3>
+        <input type="number" id="fibN" value="10">
+        <button onclick="runFib()">Get Nth</button>
+        <p id="fibRes"></p>
+    </div>
+
+    <script>
+        function editDistance(s1, s2) {
+            const m = s1.length, n = s2.length;
+            const dp = Array.from({length: m+1}, () => Array(n+1).fill(0));
+            for(let i=0; i<=m; i++) dp[i][0] = i;
+            for(let j=0; j<=n; j++) dp[0][j] = j;
+            for(let i=1; i<=m; i++) {
+                for(let j=1; j<=n; j++) {
+                    if(s1[i-1] === s2[j-1]) dp[i][j] = dp[i-1][j-1];
+                    else dp[i][j] = 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+                }
+            }
+            return dp[m][n];
+        }
+
+        function runEdit() {
+            const res = editDistance(document.getElementById('s1').value, document.getElementById('s2').value);
+            document.getElementById('editRes').innerText = `Operations needed: ${res}`;
+        }
+
+        function runFib() {
+            const n = parseInt(document.getElementById('fibN').value);
+            let a = 0n, b = 1n;
+            for(let i=0; i<n; i++) [a, b] = [b, a + b];
+            document.getElementById('fibRes').innerText = `Fib(${n}): ${a}`;
+        }
+    </script>
+</body>
+</html>

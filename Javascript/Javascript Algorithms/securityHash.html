@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Security & Hashes</title>
+    <style>body { font-family: monospace; padding: 20px; background: #222; color: #0f0; }</style>
+</head>
+<body>
+    <h1>Security Algorithms</h1>
+
+    <div style="border: 1px solid #0f0; padding: 10px; margin-bottom: 20px;">
+        <h3>SHA-256 (Native API)</h3>
+        <input type="text" id="hashInput" placeholder="Text to hash">
+        <button onclick="runHash()">Hash</button>
+        <p id="hashRes"></p>
+    </div>
+
+    <div style="border: 1px solid #0f0; padding: 10px; margin-bottom: 20px;">
+        <h3>Caesar Cipher</h3>
+        <input type="text" id="caesarText" value="HELLO">
+        Shift: <input type="number" id="caesarShift" value="3" style="width: 40px;">
+        <button onclick="runCaesar()">Encrypt</button>
+        <p id="caesarRes"></p>
+    </div>
+
+    <div style="border: 1px solid #0f0; padding: 10px;">
+        <h3>Parity Check (Checksum)</h3>
+        <input type="text" id="parityInput" value="1011001">
+        <button onclick="runParity()">Check Even Parity</button>
+        <p id="parityRes"></p>
+    </div>
+
+    <script>
+        // SHA-256 using Browser Web Crypto API
+        async function runHash() {
+            const msg = document.getElementById('hashInput').value;
+            const msgBuffer = new TextEncoder().encode(msg);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            document.getElementById('hashRes').innerText = hashHex;
+        }
+
+        // Caesar Cipher
+        function runCaesar() {
+            const str = document.getElementById('caesarText').value;
+            const shift = parseInt(document.getElementById('caesarShift').value);
+            const res = str.replace(/[a-z]/gi, (char) => {
+                const code = char.charCodeAt(0);
+                const base = (code >= 65 && code <= 90) ? 65 : 97;
+                return String.fromCharCode(((code - base + shift) % 26) + base);
+            });
+            document.getElementById('caesarRes').innerText = res;
+        }
+
+        // Simple Parity Check
+        function runParity() {
+            const bin = document.getElementById('parityInput').value;
+            const ones = bin.split('').filter(x => x === '1').length;
+            document.getElementById('parityRes').innerText = 
+                ones % 2 === 0 ? "Parity OK (Even)" : "Parity Error / Odd";
+        }
+    </script>
+</body>
+</html>

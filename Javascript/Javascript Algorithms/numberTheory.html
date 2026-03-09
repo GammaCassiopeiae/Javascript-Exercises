@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Number Theory Algorithms</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; line-height: 1.6; }
+        .box { border: 1px solid #ccc; padding: 15px; margin-bottom: 10px; border-radius: 8px; }
+        input { margin: 5px; padding: 5px; }
+        button { cursor: pointer; padding: 5px 15px; background: #007bff; color: white; border: none; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>Number Theory</h1>
+
+    <div class="box">
+        <h3>Euclidean GCD</h3>
+        <input type="number" id="gcdA" placeholder="Num A">
+        <input type="number" id="gcdB" placeholder="Num B">
+        <button onclick="runGCD()">Calculate</button>
+        <p id="gcdRes"></p>
+    </div>
+
+    <div class="box">
+        <h3>Prime Factorization</h3>
+        <input type="number" id="pfInput" placeholder="Enter number">
+        <button onclick="runPF()">Factorize</button>
+        <p id="pfRes"></p>
+    </div>
+
+    <div class="box">
+        <h3>Sieve of Eratosthenes (Primes up to N)</h3>
+        <input type="number" id="sieveInput" placeholder="Max N">
+        <button onclick="runSieve()">Run Sieve</button>
+        <p id="sieveRes" style="word-break: break-all;"></p>
+    </div>
+
+    <script>
+        // GCD
+        const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
+        function runGCD() {
+            const a = Math.abs(document.getElementById('gcdA').value);
+            const b = Math.abs(document.getElementById('gcdB').value);
+            document.getElementById('gcdRes').innerText = `GCD: ${gcd(a, b)}`;
+        }
+
+        // Prime Factorization
+        function primeFactorization(n) {
+            let factors = [];
+            let d = 2;
+            while (n > 1) {
+                while (n % d === 0) {
+                    factors.push(d);
+                    n /= d;
+                }
+                d++;
+                if (d*d > n && n > 1) { factors.push(n); break; }
+            }
+            return factors;
+        }
+        function runPF() {
+            const n = parseInt(document.getElementById('pfInput').value);
+            document.getElementById('pfRes').innerText = `Factors: ${primeFactorization(n).join(', ')}`;
+        }
+
+        // Sieve
+        function sieve(n) {
+            let primes = new Array(n + 1).fill(true);
+            primes[0] = primes[1] = false;
+            for (let p = 2; p * p <= n; p++) {
+                if (primes[p]) {
+                    for (let i = p * p; i <= n; i += p) primes[i] = false;
+                }
+            }
+            return primes.map((p, i) => p ? i : null).filter(n => n !== null);
+        }
+        function runSieve() {
+            const n = parseInt(document.getElementById('sieveInput').value);
+            document.getElementById('sieveRes').innerText = `Primes: ${sieve(n).join(', ')}`;
+        }
+    </script>
+</body>
+</html>

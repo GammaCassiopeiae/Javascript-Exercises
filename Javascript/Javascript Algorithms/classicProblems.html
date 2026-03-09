@@ -1,10 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Dynamic Programming Classics</title>
-    <style>body { font-family: sans-serif; padding: 20px; } .box { background: #f9f9f9; padding: 15px; border-radius: 5px; margin-bottom: 20px; }</style>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+        }
+
+        .box {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
+
 <body>
     <h1>Dynamic Programming</h1>
 
@@ -25,14 +39,17 @@
 
     <script>
         function editDistance(s1, s2) {
-            const m = s1.length, n = s2.length;
-            const dp = Array.from({length: m+1}, () => Array(n+1).fill(0));
-            for(let i=0; i<=m; i++) dp[i][0] = i;
-            for(let j=0; j<=n; j++) dp[0][j] = j;
-            for(let i=1; i<=m; i++) {
-                for(let j=1; j<=n; j++) {
-                    if(s1[i-1] === s2[j-1]) dp[i][j] = dp[i-1][j-1];
-                    else dp[i][j] = 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+            const m = s1.length,
+                n = s2.length;
+            const dp = Array.from({
+                length: m + 1
+            }, () => Array(n + 1).fill(0));
+            for (let i = 0; i <= m; i++) dp[i][0] = i;
+            for (let j = 0; j <= n; j++) dp[0][j] = j;
+            for (let i = 1; i <= m; i++) {
+                for (let j = 1; j <= n; j++) {
+                    if (s1[i - 1] === s2[j - 1]) dp[i][j] = dp[i - 1][j - 1];
+                    else dp[i][j] = 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
                 }
             }
             return dp[m][n];
@@ -45,10 +62,12 @@
 
         function runFib() {
             const n = parseInt(document.getElementById('fibN').value);
-            let a = 0n, b = 1n;
-            for(let i=0; i<n; i++) [a, b] = [b, a + b];
+            let a = 0n,
+                b = 1n;
+            for (let i = 0; i < n; i++)[a, b] = [b, a + b];
             document.getElementById('fibRes').innerText = `Fib(${n}): ${a}`;
         }
     </script>
 </body>
+
 </html>

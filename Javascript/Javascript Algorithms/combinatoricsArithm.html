@@ -1,13 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Combinatorics & Arithmetic</title>
     <style>
-        body { font-family: sans-serif; padding: 20px; }
-        .box { border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; }
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+        }
+
+        .box {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
+
 <body>
     <h1>Combinatorics & Arithmetic</h1>
 
@@ -20,8 +30,8 @@
 
     <div class="box">
         <h3>Fast Exponentiation (a^b mod m)</h3>
-        base: <input type="number" id="expBase"> 
-        exp: <input type="number" id="expPow"> 
+        base: <input type="number" id="expBase">
+        exp: <input type="number" id="expPow">
         mod: <input type="number" id="expMod" value="1000000007">
         <button onclick="runExp()">Power</button>
         <p id="expRes"></p>
@@ -33,16 +43,16 @@
         function calcComb() {
             const n = parseInt(document.getElementById('nVal').value);
             const r = parseInt(document.getElementById('rVal').value);
-            if(r > n) return alert("r cannot be greater than n");
-            
+            if (r > n) return alert("r cannot be greater than n");
+
             const nFact = fact(n);
             const rFact = fact(r);
             const nrFact = fact(n - r);
-            
+
             const nPr = nFact / nrFact;
             const nCr = nPr / rFact;
-            
-            document.getElementById('combRes').innerHTML = 
+
+            document.getElementById('combRes').innerHTML =
                 `n!: ${nFact}<br>nPr: ${nPr}<br>nCr: ${nCr}`;
         }
 
@@ -66,4 +76,5 @@
         }
     </script>
 </body>
+
 </html>

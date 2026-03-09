@@ -1,10 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Security & Hashes</title>
-    <style>body { font-family: monospace; padding: 20px; background: #222; color: #0f0; }</style>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #222;
+            color: #0f0;
+        }
+    </style>
 </head>
+
 <body>
     <h1>Security Algorithms</h1>
 
@@ -57,9 +66,10 @@
         function runParity() {
             const bin = document.getElementById('parityInput').value;
             const ones = bin.split('').filter(x => x === '1').length;
-            document.getElementById('parityRes').innerText = 
+            document.getElementById('parityRes').innerText =
                 ones % 2 === 0 ? "Parity OK (Even)" : "Parity Error / Odd";
         }
     </script>
 </body>
+
 </html>

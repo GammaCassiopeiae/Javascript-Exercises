@@ -1,189 +1,357 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Specialized Game Algorithms Lab</title>
     <style>
-        :root { --bg: #08080a; --card: #121215; --accent: #00ffcc; --hit: #ff3366; --ui: #1a1a1f; }
-        body { margin: 0; background: var(--bg); color: #eee; font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 20px; padding: 20px; width: 95%; max-width: 1400px; }
-        .card { background: var(--card); border: 1px solid #2d2d35; border-radius: 12px; padding: 15px; position: relative; }
-        canvas { background: #000; border: 1px solid #333; border-radius: 8px; width: 100%; height: 320px; cursor: crosshair; }
-        h2 { color: var(--accent); margin: 0 0 8px 0; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; }
-        .desc { font-size: 0.8rem; color: #888; margin-bottom: 12px; height: 3em; line-height: 1.4; }
-        .controls { margin-top: 10px; display: flex; gap: 8px; }
-        button { background: var(--ui); color: var(--accent); border: 1px solid var(--accent); padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; transition: 0.2s; }
-        button:hover { background: var(--accent); color: #000; }
+        :root {
+            --bg: #08080a;
+            --card: #121215;
+            --accent: #00ffcc;
+            --hit: #ff3366;
+            --ui: #1a1a1f;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: #eee;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            width: 95%;
+            max-width: 1400px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid #2d2d35;
+            border-radius: 12px;
+            padding: 15px;
+            position: relative;
+        }
+
+        canvas {
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 8px;
+            width: 100%;
+            height: 320px;
+            cursor: crosshair;
+        }
+
+        h2 {
+            color: var(--accent);
+            margin: 0 0 8px 0;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .desc {
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: 12px;
+            height: 3em;
+            line-height: 1.4;
+        }
+
+        .controls {
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+        }
+
+        button {
+            background: var(--ui);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: var(--accent);
+            color: #000;
+        }
     </style>
 </head>
+
 <body>
 
-<h1 style="margin-top: 25px; letter-spacing: 3px; font-weight: 300;">SPECIALIZED GAME ALGORITHMS</h1>
+    <h1 style="margin-top: 25px; letter-spacing: 3px; font-weight: 300;">SPECIALIZED GAME ALGORITHMS</h1>
 
-<div class="grid">
-    <!-- 1. FIELD OF VIEW (Shadow Casting) -->
-    <div class="card">
-        <h2>1. Field of View (Vision Cone)</h2>
-        <div class="desc">Izračun vidnega polja AI agenta. Žarki se ustavijo ob ovirah, kar ustvari realistične sence in "stealth" cone.</div>
-        <canvas id="cFOV"></canvas>
+    <div class="grid">
+        <!-- 1. FIELD OF VIEW (Shadow Casting) -->
+        <div class="card">
+            <h2>1. Field of View (Vision Cone)</h2>
+            <div class="desc">Izračun vidnega polja AI agenta. Žarki se ustavijo ob ovirah, kar ustvari realistične sence in "stealth" cone.</div>
+            <canvas id="cFOV"></canvas>
+        </div>
+
+        <!-- 2. FLOOD FILL / REGION GROWING -->
+        <div class="card">
+            <h2>2. Flood Fill (Paint/Territory)</h2>
+            <div class="desc">Rekurzivno zapolnjevanje sklenjenih območij. Uporabno za širjenje vode, barve ali nadzor ozemlja.</div>
+            <canvas id="cFlood"></canvas>
+            <div class="controls"><button onclick="resetFlood()">Ponastavi mrežo</button></div>
+        </div>
+
+        <!-- 3. CONVEX DECOMPOSITION -->
+        <div class="card">
+            <h2>3. Convex Decomposition (Physics)</h2>
+            <div class="desc">Razbijanje konkavnih oblik na konveksne dele. Fizikalni motorji potrebujejo konveksne dele za hitre izračune.</div>
+            <canvas id="cDecomp"></canvas>
+        </div>
+
+        <!-- 4. POLYGON CLIPPING (Sutherland-Hodgman) -->
+        <div class="card">
+            <h2>4. Polygon Clipping</h2>
+            <div class="desc">Obrezovanje poligonov glede na vidno okno ali drug poligon. Osnova za upodabljanje v 3D cevovodih.</div>
+            <canvas id="cClipping"></canvas>
+        </div>
     </div>
 
-    <!-- 2. FLOOD FILL / REGION GROWING -->
-    <div class="card">
-        <h2>2. Flood Fill (Paint/Territory)</h2>
-        <div class="desc">Rekurzivno zapolnjevanje sklenjenih območij. Uporabno za širjenje vode, barve ali nadzor ozemlja.</div>
-        <canvas id="cFlood"></canvas>
-        <div class="controls"><button onclick="resetFlood()">Ponastavi mrežo</button></div>
-    </div>
+    <script>
+        const mouse = {
+            x: 0,
+            y: 0
+        };
+        window.onmousemove = e => {
+            const rect = e.target.getBoundingClientRect?.();
+            if (rect) {
+                mouse.x = e.clientX - rect.left;
+                mouse.y = e.clientY - rect.top;
+            }
+        };
 
-    <!-- 3. CONVEX DECOMPOSITION -->
-    <div class="card">
-        <h2>3. Convex Decomposition (Physics)</h2>
-        <div class="desc">Razbijanje konkavnih oblik na konveksne dele. Fizikalni motorji potrebujejo konveksne dele za hitre izračune.</div>
-        <canvas id="cDecomp"></canvas>
-    </div>
+        // --- 1. FOV / SHADOW CASTING ---
+        const canvasFOV = document.getElementById('cFOV');
+        const ctxFOV = canvasFOV.getContext('2d');
+        const walls = [{
+                x1: 100,
+                y1: 50,
+                x2: 100,
+                y2: 250
+            },
+            {
+                x1: 250,
+                y1: 100,
+                x2: 350,
+                y2: 100
+            },
+            {
+                x1: 200,
+                y1: 200,
+                x2: 300,
+                y2: 250
+            }
+        ];
 
-    <!-- 4. POLYGON CLIPPING (Sutherland-Hodgman) -->
-    <div class="card">
-        <h2>4. Polygon Clipping</h2>
-        <div class="desc">Obrezovanje poligonov glede na vidno okno ali drug poligon. Osnova za upodabljanje v 3D cevovodih.</div>
-        <canvas id="cClipping"></canvas>
-    </div>
-</div>
+        function drawFOV() {
+            canvasFOV.width = canvasFOV.offsetWidth;
+            canvasFOV.height = 320;
+            ctxFOV.clearRect(0, 0, 800, 400);
 
-<script>
-const mouse = { x: 0, y: 0 };
-window.onmousemove = e => {
-    const rect = e.target.getBoundingClientRect?.();
-    if(rect) { mouse.x = e.clientX - rect.left; mouse.y = e.clientY - rect.top; }
-};
+            // Nariši stene
+            ctxFOV.strokeStyle = "#444";
+            ctxFOV.lineWidth = 3;
+            walls.forEach(w => {
+                ctxFOV.beginPath();
+                ctxFOV.moveTo(w.x1, w.y1);
+                ctxFOV.lineTo(w.x2, w.y2);
+                ctxFOV.stroke();
+            });
 
-// --- 1. FOV / SHADOW CASTING ---
-const canvasFOV = document.getElementById('cFOV');
-const ctxFOV = canvasFOV.getContext('2d');
-const walls = [
-    {x1: 100, y1: 50, x2: 100, y2: 250},
-    {x1: 250, y1: 100, x2: 350, y2: 100},
-    {x1: 200, y1: 200, x2: 300, y2: 250}
-];
+            // Cast žarkov v vse smeri (360 stopinj)
+            ctxFOV.fillStyle = "rgba(0, 255, 204, 0.2)";
+            ctxFOV.beginPath();
+            ctxFOV.moveTo(mouse.x, mouse.y);
+            for (let a = 0; a < Math.PI * 2; a += 0.05) {
+                let rayX = Math.cos(a),
+                    rayY = Math.sin(a);
+                let closest = 400;
+                walls.forEach(w => {
+                    const den = (w.x1 - w.x2) * (-rayY) - (w.y1 - w.y2) * (-rayX);
+                    if (den == 0) return;
+                    const t = ((w.x1 - mouse.x) * (-rayY) - (w.y1 - mouse.y) * (-rayX)) / den;
+                    const u = -((w.x1 - w.x2) * (w.y1 - mouse.y) - (w.y1 - w.y2) * (w.x1 - mouse.x)) / den;
+                    if (t > 0 && t < 1 && u > 0) closest = Math.min(closest, u);
+                });
+                ctxFOV.lineTo(mouse.x + rayX * closest, mouse.y + rayY * closest);
+            }
+            ctxFOV.closePath();
+            ctxFOV.fill();
+            ctxFOV.fillStyle = "var(--accent)";
+            ctxFOV.beginPath();
+            ctxFOV.arc(mouse.x, mouse.y, 5, 0, Math.PI * 2);
+            ctxFOV.fill();
+            requestAnimationFrame(drawFOV);
+        }
 
-function drawFOV() {
-    canvasFOV.width = canvasFOV.offsetWidth; canvasFOV.height = 320;
-    ctxFOV.clearRect(0,0,800,400);
-    
-    // Nariši stene
-    ctxFOV.strokeStyle = "#444"; ctxFOV.lineWidth = 3;
-    walls.forEach(w => { ctxFOV.beginPath(); ctxFOV.moveTo(w.x1, w.y1); ctxFOV.lineTo(w.x2, w.y2); ctxFOV.stroke(); });
+        // --- 2. FLOOD FILL ---
+        const canvasFlood = document.getElementById('cFlood');
+        const ctxFlood = canvasFlood.getContext('2d');
+        let grid = [];
+        const rows = 20,
+            cols = 30;
 
-    // Cast žarkov v vse smeri (360 stopinj)
-    ctxFOV.fillStyle = "rgba(0, 255, 204, 0.2)";
-    ctxFOV.beginPath();
-    ctxFOV.moveTo(mouse.x, mouse.y);
-    for(let a=0; a<Math.PI*2; a+=0.05) {
-        let rayX = Math.cos(a), rayY = Math.sin(a);
-        let closest = 400;
-        walls.forEach(w => {
-            const den = (w.x1-w.x2)*(-rayY) - (w.y1-w.y2)*(-rayX);
-            if(den == 0) return;
-            const t = ((w.x1-mouse.x)*(-rayY) - (w.y1-mouse.y)*(-rayX)) / den;
-            const u = -((w.x1-w.x2)*(w.y1-mouse.y) - (w.y1-w.y2)*(w.x1-mouse.x)) / den;
-            if(t > 0 && t < 1 && u > 0) closest = Math.min(closest, u);
-        });
-        ctxFOV.lineTo(mouse.x + rayX * closest, mouse.y + rayY * closest);
-    }
-    ctxFOV.closePath(); ctxFOV.fill();
-    ctxFOV.fillStyle = "var(--accent)"; ctxFOV.beginPath(); ctxFOV.arc(mouse.x, mouse.y, 5, 0, Math.PI*2); ctxFOV.fill();
-    requestAnimationFrame(drawFOV);
-}
+        function resetFlood() {
+            grid = Array.from({
+                length: rows
+            }, () => Array(cols).fill(0));
+            // Naključne ovire
+            for (let i = 0; i < 60; i++) grid[Math.floor(Math.random() * rows)][Math.floor(Math.random() * cols)] = 1;
+        }
 
-// --- 2. FLOOD FILL ---
-const canvasFlood = document.getElementById('cFlood');
-const ctxFlood = canvasFlood.getContext('2d');
-let grid = [];
-const rows = 20, cols = 30;
+        function floodFill(r, c) {
+            if (r < 0 || r >= rows || c < 0 || c >= cols || grid[r][c] !== 0) return;
+            grid[r][c] = 2; // Napolni
+            setTimeout(() => {
+                floodFill(r + 1, c);
+                floodFill(r - 1, c);
+                floodFill(r, c + 1);
+                floodFill(r, c - 1);
+            }, 30);
+        }
 
-function resetFlood() {
-    grid = Array.from({length: rows}, () => Array(cols).fill(0));
-    // Naključne ovire
-    for(let i=0; i<60; i++) grid[Math.floor(Math.random()*rows)][Math.floor(Math.random()*cols)] = 1;
-}
+        canvasFlood.onclick = () => {
+            const r = Math.floor(mouse.y / (320 / rows)),
+                c = Math.floor(mouse.x / (canvasFlood.width / cols));
+            floodFill(r, c);
+        };
 
-function floodFill(r, c) {
-    if(r<0 || r>=rows || c<0 || c>=cols || grid[r][c] !== 0) return;
-    grid[r][c] = 2; // Napolni
-    setTimeout(() => { floodFill(r+1, c); floodFill(r-1, c); floodFill(r, c+1); floodFill(r, c-1); }, 30);
-}
+        function drawFlood() {
+            canvasFlood.width = canvasFlood.offsetWidth;
+            canvasFlood.height = 320;
+            const w = canvasFlood.width / cols,
+                h = 320 / rows;
+            grid.forEach((row, r) => row.forEach((val, c) => {
+                ctxFlood.fillStyle = val === 1 ? "#333" : val === 2 ? "var(--accent)" : "#000";
+                ctxFlood.fillRect(c * w, r * h, w - 1, h - 1);
+            }));
+            requestAnimationFrame(drawFlood);
+        }
 
-canvasFlood.onclick = () => {
-    const r = Math.floor(mouse.y / (320/rows)), c = Math.floor(mouse.x / (canvasFlood.width/cols));
-    floodFill(r, c);
-};
+        // --- 3. CONVEX DECOMPOSITION ---
+        const canvasDecomp = document.getElementById('cDecomp');
+        const ctxDecomp = canvasDecomp.getContext('2d');
 
-function drawFlood() {
-    canvasFlood.width = canvasFlood.offsetWidth; canvasFlood.height = 320;
-    const w = canvasFlood.width/cols, h = 320/rows;
-    grid.forEach((row, r) => row.forEach((val, c) => {
-        ctxFlood.fillStyle = val === 1 ? "#333" : val === 2 ? "var(--accent)" : "#000";
-        ctxFlood.fillRect(c*w, r*h, w-1, h-1);
-    }));
-    requestAnimationFrame(drawFlood);
-}
+        function drawDecomp() {
+            canvasDecomp.width = canvasDecomp.offsetWidth;
+            canvasDecomp.height = 320;
+            ctxDecomp.clearRect(0, 0, 800, 400);
 
-// --- 3. CONVEX DECOMPOSITION ---
-const canvasDecomp = document.getElementById('cDecomp');
-const ctxDecomp = canvasDecomp.getContext('2d');
+            // Konkavna oblika (L-lik)
+            const points = [{
+                x: 100,
+                y: 100
+            }, {
+                x: 300,
+                y: 100
+            }, {
+                x: 300,
+                y: 150
+            }, {
+                x: 150,
+                y: 150
+            }, {
+                x: 150,
+                y: 250
+            }, {
+                x: 100,
+                y: 250
+            }];
 
-function drawDecomp() {
-    canvasDecomp.width = canvasDecomp.offsetWidth; canvasDecomp.height = 320;
-    ctxDecomp.clearRect(0,0,800,400);
-    
-    // Konkavna oblika (L-lik)
-    const points = [{x:100,y:100}, {x:300,y:100}, {x:300,y:150}, {x:150,y:150}, {x:150,y:250}, {x:100,y:250}];
-    
-    // Vizualizacija dekompozicije na dva pravokotnika
-    ctxDecomp.strokeStyle = "var(--hit)"; ctxDecomp.setLineDash([5, 5]);
-    ctxDecomp.strokeRect(100, 100, 200, 50); // Del 1
-    ctxDecomp.strokeRect(100, 150, 50, 100); // Del 2
-    
-    ctxDecomp.setLineDash([]); ctxDecomp.strokeStyle = "var(--accent)"; ctxDecomp.lineWidth = 2;
-    ctxDecomp.beginPath(); ctxDecomp.moveTo(points[0].x, points[0].y);
-    points.forEach(p => ctxDecomp.lineTo(p.x, p.y)); ctxDecomp.closePath(); ctxDecomp.stroke();
-    requestAnimationFrame(drawDecomp);
-}
+            // Vizualizacija dekompozicije na dva pravokotnika
+            ctxDecomp.strokeStyle = "var(--hit)";
+            ctxDecomp.setLineDash([5, 5]);
+            ctxDecomp.strokeRect(100, 100, 200, 50); // Del 1
+            ctxDecomp.strokeRect(100, 150, 50, 100); // Del 2
 
-// --- 4. POLYGON CLIPPING (Sutherland-Hodgman) ---
-const canvasClip = document.getElementById('cClipping');
-const ctxClip = canvasClip.getContext('2d');
+            ctxDecomp.setLineDash([]);
+            ctxDecomp.strokeStyle = "var(--accent)";
+            ctxDecomp.lineWidth = 2;
+            ctxDecomp.beginPath();
+            ctxDecomp.moveTo(points[0].x, points[0].y);
+            points.forEach(p => ctxDecomp.lineTo(p.x, p.y));
+            ctxDecomp.closePath();
+            ctxDecomp.stroke();
+            requestAnimationFrame(drawDecomp);
+        }
 
-function drawClipping() {
-    canvasClip.width = canvasClip.offsetWidth; canvasClip.height = 320;
-    const clipRect = {x: 100, y: 100, w: 200, h: 120};
-    const poly = [{x: 50, y: 150}, {x: 250, y: 50}, {x: 350, y: 250}];
+        // --- 4. POLYGON CLIPPING (Sutherland-Hodgman) ---
+        const canvasClip = document.getElementById('cClipping');
+        const ctxClip = canvasClip.getContext('2d');
 
-    ctxClip.clearRect(0,0,800,400);
-    // Clipping Area
-    ctxClip.strokeStyle = "#444"; ctxClip.strokeRect(clipRect.x, clipRect.y, clipRect.w, clipRect.h);
-    
-    // Originalni poligon
-    ctxClip.strokeStyle = "rgba(255, 255, 255, 0.1)";
-    ctxClip.beginPath(); ctxClip.moveTo(poly[0].x, poly[0].y);
-    poly.forEach(p => ctxClip.lineTo(p.x, p.y)); ctxClip.closePath(); ctxClip.stroke();
+        function drawClipping() {
+            canvasClip.width = canvasClip.offsetWidth;
+            canvasClip.height = 320;
+            const clipRect = {
+                x: 100,
+                y: 100,
+                w: 200,
+                h: 120
+            };
+            const poly = [{
+                x: 50,
+                y: 150
+            }, {
+                x: 250,
+                y: 50
+            }, {
+                x: 350,
+                y: 250
+            }];
 
-    // Obrezan poligon (simulacija)
-    ctxClip.fillStyle = "rgba(0, 255, 204, 0.3)";
-    ctxClip.beginPath();
-    ctxClip.rect(clipRect.x, clipRect.y, clipRect.w, clipRect.h);
-    ctxClip.clip();
-    
-    ctxClip.fillStyle = "var(--accent)";
-    ctxClip.beginPath(); ctxClip.moveTo(poly[0].x, poly[0].y);
-    poly.forEach(p => ctxClip.lineTo(p.x, p.y)); ctxClip.closePath(); ctxClip.fill();
-    
-    requestAnimationFrame(drawClipping);
-}
+            ctxClip.clearRect(0, 0, 800, 400);
+            // Clipping Area
+            ctxClip.strokeStyle = "#444";
+            ctxClip.strokeRect(clipRect.x, clipRect.y, clipRect.w, clipRect.h);
 
-// Init
-resetFlood(); drawFOV(); drawFlood(); drawDecomp(); drawClipping();
-</script>
+            // Originalni poligon
+            ctxClip.strokeStyle = "rgba(255, 255, 255, 0.1)";
+            ctxClip.beginPath();
+            ctxClip.moveTo(poly[0].x, poly[0].y);
+            poly.forEach(p => ctxClip.lineTo(p.x, p.y));
+            ctxClip.closePath();
+            ctxClip.stroke();
+
+            // Obrezan poligon (simulacija)
+            ctxClip.fillStyle = "rgba(0, 255, 204, 0.3)";
+            ctxClip.beginPath();
+            ctxClip.rect(clipRect.x, clipRect.y, clipRect.w, clipRect.h);
+            ctxClip.clip();
+
+            ctxClip.fillStyle = "var(--accent)";
+            ctxClip.beginPath();
+            ctxClip.moveTo(poly[0].x, poly[0].y);
+            poly.forEach(p => ctxClip.lineTo(p.x, p.y));
+            ctxClip.closePath();
+            ctxClip.fill();
+
+            requestAnimationFrame(drawClipping);
+        }
+
+        // Init
+        resetFlood();
+        drawFOV();
+        drawFlood();
+        drawDecomp();
+        drawClipping();
+    </script>
 </body>
+
 </html>

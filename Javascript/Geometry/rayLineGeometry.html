@@ -1,167 +1,343 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Ray & Line Geometry Lab</title>
     <style>
-        :root { --bg: #0a0a0c; --card: #16161a; --accent: #00f2ff; --hit: #ff3e3e; --text: #e0e0e0; }
-        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 20px; padding: 20px; width: 95%; max-width: 1400px; }
-        .card { background: var(--card); border: 1px solid #333; border-radius: 12px; padding: 15px; }
-        canvas { background: #000; border: 1px solid #222; border-radius: 8px; width: 100%; height: 300px; cursor: crosshair; }
-        h2 { color: var(--accent); margin: 0 0 10px 0; font-size: 1.1rem; text-transform: uppercase; }
-        .desc { font-size: 0.85rem; color: #999; margin-bottom: 10px; min-height: 3em; }
-        .math { font-family: monospace; font-size: 0.8rem; color: #777; background: #000; padding: 5px; border-radius: 4px; }
+        :root {
+            --bg: #0a0a0c;
+            --card: #16161a;
+            --accent: #00f2ff;
+            --hit: #ff3e3e;
+            --text: #e0e0e0;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            width: 95%;
+            max-width: 1400px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 15px;
+        }
+
+        canvas {
+            background: #000;
+            border: 1px solid #222;
+            border-radius: 8px;
+            width: 100%;
+            height: 300px;
+            cursor: crosshair;
+        }
+
+        h2 {
+            color: var(--accent);
+            margin: 0 0 10px 0;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+        }
+
+        .desc {
+            font-size: 0.85rem;
+            color: #999;
+            margin-bottom: 10px;
+            min-height: 3em;
+        }
+
+        .math {
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: #777;
+            background: #000;
+            padding: 5px;
+            border-radius: 4px;
+        }
     </style>
 </head>
+
 <body>
 
-<h1 style="margin-top: 20px; letter-spacing: 2px;">RAY & LINE GEOMETRY</h1>
+    <h1 style="margin-top: 20px; letter-spacing: 2px;">RAY & LINE GEOMETRY</h1>
 
-<div class="grid">
-    <!-- 1. LINE INTERSECTION -->
-    <div class="card">
-        <h2>1. Line Segment Intersection</h2>
-        <div class="desc">Detekcija križanja dveh daljic. Ključno za vidno polje (Line of Sight) in laserske naboje.</div>
-        <canvas id="cIntersect"></canvas>
+    <div class="grid">
+        <!-- 1. LINE INTERSECTION -->
+        <div class="card">
+            <h2>1. Line Segment Intersection</h2>
+            <div class="desc">Detekcija križanja dveh daljic. Ključno za vidno polje (Line of Sight) in laserske naboje.</div>
+            <canvas id="cIntersect"></canvas>
+        </div>
+
+        <!-- 2. POINT-IN-POLYGON -->
+        <div class="card">
+            <h2>2. Point-in-Polygon (Ray Casting)</h2>
+            <div class="desc">Ali je točka znotraj območja? Algoritem šteje, kolikokrat žarek iz točke prečka robove.</div>
+            <canvas id="cPIP"></canvas>
+        </div>
+
+        <!-- 3. CLOSEST POINT ON LINE -->
+        <div class="card">
+            <h2>3. Closest Point (Snapping)</h2>
+            <div class="desc">Projekcija točke na premico. Uporabno za AI sledenje poti ali "lepljenje" na robove.</div>
+            <canvas id="cClosest"></canvas>
+        </div>
+
+        <!-- 4. BÉZIER CURVE EVALUATION -->
+        <div class="card">
+            <h2>4. Quadratic Bézier Curve</h2>
+            <div class="desc">Glajenje poti za kamero ali projektile z uporabo kontrolne točke.</div>
+            <canvas id="cBezier"></canvas>
+        </div>
     </div>
 
-    <!-- 2. POINT-IN-POLYGON -->
-    <div class="card">
-        <h2>2. Point-in-Polygon (Ray Casting)</h2>
-        <div class="desc">Ali je točka znotraj območja? Algoritem šteje, kolikokrat žarek iz točke prečka robove.</div>
-        <canvas id="cPIP"></canvas>
-    </div>
+    <script>
+        const mouse = {
+            x: 0,
+            y: 0
+        };
+        window.onmousemove = e => {
+            const rect = e.target.getBoundingClientRect?.();
+            if (rect) {
+                mouse.x = e.clientX - rect.left;
+                mouse.y = e.clientY - rect.top;
+            }
+        };
 
-    <!-- 3. CLOSEST POINT ON LINE -->
-    <div class="card">
-        <h2>3. Closest Point (Snapping)</h2>
-        <div class="desc">Projekcija točke na premico. Uporabno za AI sledenje poti ali "lepljenje" na robove.</div>
-        <canvas id="cClosest"></canvas>
-    </div>
+        // --- 1. LINE INTERSECTION ---
+        const canvasInt = document.getElementById('cIntersect');
+        const ctxInt = canvasInt.getContext('2d');
 
-    <!-- 4. BÉZIER CURVE EVALUATION -->
-    <div class="card">
-        <h2>4. Quadratic Bézier Curve</h2>
-        <div class="desc">Glajenje poti za kamero ali projektile z uporabo kontrolne točke.</div>
-        <canvas id="cBezier"></canvas>
-    </div>
-</div>
+        function checkIntersection(p0, p1, p2, p3) {
+            const s1_x = p1.x - p0.x,
+                s1_y = p1.y - p0.y;
+            const s2_x = p3.x - p2.x,
+                s2_y = p3.y - p2.y;
+            const s = (-s1_y * (p0.x - p2.x) + s1_x * (p0.y - p2.y)) / (-s2_x * s1_y + s1_x * s2_y);
+            const t = (s2_x * (p0.y - p2.y) - s2_y * (p0.x - p2.x)) / (-s2_x * s1_y + s1_x * s2_y);
+            return (s >= 0 && s <= 1 && t >= 0 && t <= 1) ? {
+                x: p0.x + (t * s1_x),
+                y: p0.y + (t * s1_y)
+            } : null;
+        }
 
-<script>
-const mouse = { x: 0, y: 0 };
-window.onmousemove = e => {
-    const rect = e.target.getBoundingClientRect?.();
-    if(rect) { mouse.x = e.clientX - rect.left; mouse.y = e.clientY - rect.top; }
-};
+        function drawIntersect() {
+            canvasInt.width = canvasInt.offsetWidth;
+            canvasInt.height = 300;
+            const p0 = {
+                    x: 50,
+                    y: 50
+                },
+                p1 = {
+                    x: 350,
+                    y: 250
+                };
+            const p2 = {
+                    x: 50,
+                    y: 250
+                },
+                p3 = {
+                    x: mouse.x,
+                    y: mouse.y
+                };
+            const hit = checkIntersection(p0, p1, p2, p3);
 
-// --- 1. LINE INTERSECTION ---
-const canvasInt = document.getElementById('cIntersect');
-const ctxInt = canvasInt.getContext('2d');
+            ctxInt.clearRect(0, 0, 800, 300);
+            ctxInt.strokeStyle = "#444";
+            ctxInt.beginPath();
+            ctxInt.moveTo(p0.x, p0.y);
+            ctxInt.lineTo(p1.x, p1.y);
+            ctxInt.stroke();
+            ctxInt.strokeStyle = hit ? "var(--hit)" : "var(--accent)";
+            ctxInt.beginPath();
+            ctxInt.moveTo(p2.x, p2.y);
+            ctxInt.lineTo(p3.x, p3.y);
+            ctxInt.stroke();
+            if (hit) {
+                ctxInt.fillStyle = "white";
+                ctxInt.beginPath();
+                ctxInt.arc(hit.x, hit.y, 5, 0, Math.PI * 2);
+                ctxInt.fill();
+            }
+            requestAnimationFrame(drawIntersect);
+        }
 
-function checkIntersection(p0, p1, p2, p3) {
-    const s1_x = p1.x - p0.x, s1_y = p1.y - p0.y;
-    const s2_x = p3.x - p2.x, s2_y = p3.y - p2.y;
-    const s = (-s1_y * (p0.x - p2.x) + s1_x * (p0.y - p2.y)) / (-s2_x * s1_y + s1_x * s2_y);
-    const t = ( s2_x * (p0.y - p2.y) - s2_y * (p0.x - p2.x)) / (-s2_x * s1_y + s1_x * s2_y);
-    return (s >= 0 && s <= 1 && t >= 0 && t <= 1) ? {x: p0.x + (t * s1_x), y: p0.y + (t * s1_y)} : null;
-}
+        // --- 2. POINT IN POLYGON ---
+        const canvasPIP = document.getElementById('cPIP');
+        const ctxPIP = canvasPIP.getContext('2d');
+        const poly = [{
+            x: 100,
+            y: 50
+        }, {
+            x: 300,
+            y: 80
+        }, {
+            x: 350,
+            y: 200
+        }, {
+            x: 200,
+            y: 250
+        }, {
+            x: 50,
+            y: 180
+        }];
 
-function drawIntersect() {
-    canvasInt.width = canvasInt.offsetWidth; canvasInt.height = 300;
-    const p0 = {x: 50, y: 50}, p1 = {x: 350, y: 250};
-    const p2 = {x: 50, y: 250}, p3 = {x: mouse.x, y: mouse.y};
-    const hit = checkIntersection(p0, p1, p2, p3);
+        function isPointInPoly(p, polygon) {
+            let inside = false;
+            for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+                const xi = polygon[i].x,
+                    yi = polygon[i].y;
+                const xj = polygon[j].x,
+                    yj = polygon[j].y;
+                const intersect = ((yi > p.y) !== (yj > p.y)) && (p.x < (xj - xi) * (p.y - yi) / (yj - yi) + xi);
+                if (intersect) inside = !inside;
+            }
+            return inside;
+        }
 
-    ctxInt.clearRect(0,0,800,300);
-    ctxInt.strokeStyle = "#444"; ctxInt.beginPath(); ctxInt.moveTo(p0.x, p0.y); ctxInt.lineTo(p1.x, p1.y); ctxInt.stroke();
-    ctxInt.strokeStyle = hit ? "var(--hit)" : "var(--accent)";
-    ctxInt.beginPath(); ctxInt.moveTo(p2.x, p2.y); ctxInt.lineTo(p3.x, p3.y); ctxInt.stroke();
-    if(hit) { ctxInt.fillStyle = "white"; ctxInt.beginPath(); ctxInt.arc(hit.x, hit.y, 5, 0, Math.PI*2); ctxInt.fill(); }
-    requestAnimationFrame(drawIntersect);
-}
+        function drawPIP() {
+            canvasPIP.width = canvasPIP.offsetWidth;
+            canvasPIP.height = 300;
+            const hit = isPointInPoly(mouse, poly);
+            ctxPIP.clearRect(0, 0, 800, 300);
+            ctxPIP.fillStyle = hit ? "rgba(255, 62, 62, 0.3)" : "rgba(0, 242, 255, 0.1)";
+            ctxPIP.strokeStyle = hit ? "var(--hit)" : "var(--accent)";
+            ctxPIP.beginPath();
+            ctxPIP.moveTo(poly[0].x, poly[0].y);
+            poly.forEach(pt => ctxPIP.lineTo(pt.x, pt.y));
+            ctxPIP.closePath();
+            ctxPIP.fill();
+            ctxPIP.stroke();
+            ctxPIP.fillStyle = "white";
+            ctxPIP.beginPath();
+            ctxPIP.arc(mouse.x, mouse.y, 4, 0, Math.PI * 2);
+            ctxPIP.fill();
+            requestAnimationFrame(drawPIP);
+        }
 
-// --- 2. POINT IN POLYGON ---
-const canvasPIP = document.getElementById('cPIP');
-const ctxPIP = canvasPIP.getContext('2d');
-const poly = [{x:100,y:50}, {x:300,y:80}, {x:350,y:200}, {x:200,y:250}, {x:50,y:180}];
+        // --- 3. CLOSEST POINT ON LINE ---
+        const canvasCP = document.getElementById('cClosest');
+        const ctxCP = canvasCP.getContext('2d');
 
-function isPointInPoly(p, polygon) {
-    let inside = false;
-    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-        const xi = polygon[i].x, yi = polygon[i].y;
-        const xj = polygon[j].x, yj = polygon[j].y;
-        const intersect = ((yi > p.y) !== (yj > p.y)) && (p.x < (xj - xi) * (p.y - yi) / (yj - yi) + xi);
-        if (intersect) inside = !inside;
-    }
-    return inside;
-}
+        function getClosestPoint(p, a, b) {
+            const atob = {
+                x: b.x - a.x,
+                y: b.y - a.y
+            };
+            const atop = {
+                x: p.x - a.x,
+                y: p.y - a.y
+            };
+            const lenSq = atob.x ** 2 + atob.y ** 2;
+            let t = (atop.x * atob.x + atop.y * atob.y) / lenSq;
+            t = Math.max(0, Math.min(1, t)); // Omeji na daljico
+            return {
+                x: a.x + t * atob.x,
+                y: a.y + t * atob.y
+            };
+        }
 
-function drawPIP() {
-    canvasPIP.width = canvasPIP.offsetWidth; canvasPIP.height = 300;
-    const hit = isPointInPoly(mouse, poly);
-    ctxPIP.clearRect(0,0,800,300);
-    ctxPIP.fillStyle = hit ? "rgba(255, 62, 62, 0.3)" : "rgba(0, 242, 255, 0.1)";
-    ctxPIP.strokeStyle = hit ? "var(--hit)" : "var(--accent)";
-    ctxPIP.beginPath(); ctxPIP.moveTo(poly[0].x, poly[0].y);
-    poly.forEach(pt => ctxPIP.lineTo(pt.x, pt.y)); ctxPIP.closePath(); ctxPIP.fill(); ctxPIP.stroke();
-    ctxPIP.fillStyle = "white"; ctxPIP.beginPath(); ctxPIP.arc(mouse.x, mouse.y, 4, 0, Math.PI*2); ctxPIP.fill();
-    requestAnimationFrame(drawPIP);
-}
+        function drawClosest() {
+            canvasCP.width = canvasCP.offsetWidth;
+            canvasCP.height = 300;
+            const a = {
+                    x: 50,
+                    y: 150
+                },
+                b = {
+                    x: 350,
+                    y: 150
+                };
+            const closest = getClosestPoint(mouse, a, b);
 
-// --- 3. CLOSEST POINT ON LINE ---
-const canvasCP = document.getElementById('cClosest');
-const ctxCP = canvasCP.getContext('2d');
+            ctxCP.clearRect(0, 0, 800, 300);
+            ctxCP.strokeStyle = "#444";
+            ctxCP.beginPath();
+            ctxCP.moveTo(a.x, a.y);
+            ctxCP.lineTo(b.x, b.y);
+            ctxCP.stroke();
+            ctxCP.setLineDash([5, 5]);
+            ctxCP.beginPath();
+            ctxCP.moveTo(mouse.x, mouse.y);
+            ctxCP.lineTo(closest.x, closest.y);
+            ctxCP.stroke();
+            ctxCP.setLineDash([]);
+            ctxCP.fillStyle = "var(--accent)";
+            ctxCP.beginPath();
+            ctxCP.arc(closest.x, closest.y, 6, 0, Math.PI * 2);
+            ctxCP.fill();
+            requestAnimationFrame(drawClosest);
+        }
 
-function getClosestPoint(p, a, b) {
-    const atob = { x: b.x - a.x, y: b.y - a.y };
-    const atop = { x: p.x - a.x, y: p.y - a.y };
-    const lenSq = atob.x**2 + atob.y**2;
-    let t = (atop.x * atob.x + atop.y * atob.y) / lenSq;
-    t = Math.max(0, Math.min(1, t)); // Omeji na daljico
-    return { x: a.x + t * atob.x, y: a.y + t * atob.y };
-}
+        // --- 4. BÉZIER CURVE ---
+        const canvasBez = document.getElementById('cBezier');
+        const ctxBez = canvasBez.getContext('2d');
 
-function drawClosest() {
-    canvasCP.width = canvasCP.offsetWidth; canvasCP.height = 300;
-    const a = {x: 50, y: 150}, b = {x: 350, y: 150};
-    const closest = getClosestPoint(mouse, a, b);
+        function drawBezier() {
+            canvasBez.width = canvasBez.offsetWidth;
+            canvasBez.height = 300;
+            const p0 = {
+                    x: 50,
+                    y: 250
+                },
+                p1 = {
+                    x: mouse.x,
+                    y: mouse.y
+                },
+                p2 = {
+                    x: 350,
+                    y: 250
+                };
 
-    ctxCP.clearRect(0,0,800,300);
-    ctxCP.strokeStyle = "#444"; ctxCP.beginPath(); ctxCP.moveTo(a.x, a.y); ctxCP.lineTo(b.x, b.y); ctxCP.stroke();
-    ctxCP.setLineDash([5, 5]); ctxCP.beginPath(); ctxCP.moveTo(mouse.x, mouse.y); ctxCP.lineTo(closest.x, closest.y); ctxCP.stroke();
-    ctxCP.setLineDash([]);
-    ctxCP.fillStyle = "var(--accent)"; ctxCP.beginPath(); ctxCP.arc(closest.x, closest.y, 6, 0, Math.PI*2); ctxCP.fill();
-    requestAnimationFrame(drawClosest);
-}
+            ctxBez.clearRect(0, 0, 800, 300);
+            // Kontrolne linije
+            ctxBez.strokeStyle = "#222";
+            ctxBez.beginPath();
+            ctxBez.moveTo(p0.x, p0.y);
+            ctxBez.lineTo(p1.x, p1.y);
+            ctxBez.lineTo(p2.x, p2.y);
+            ctxBez.stroke();
 
-// --- 4. BÉZIER CURVE ---
-const canvasBez = document.getElementById('cBezier');
-const ctxBez = canvasBez.getContext('2d');
+            // Krivulja
+            ctxBez.strokeStyle = "var(--accent)";
+            ctxBez.lineWidth = 3;
+            ctxBez.beginPath();
+            ctxBez.moveTo(p0.x, p0.y);
+            for (let t = 0; t <= 1; t += 0.02) {
+                const x = (1 - t) ** 2 * p0.x + 2 * (1 - t) * t * p1.x + t ** 2 * p2.x;
+                const y = (1 - t) ** 2 * p0.y + 2 * (1 - t) * t * p1.y + t ** 2 * p2.y;
+                ctxBez.lineTo(x, y);
+            }
+            ctxBez.stroke();
+            ctxBez.fillStyle = "var(--hit)";
+            ctxBez.beginPath();
+            ctxBez.arc(p1.x, p1.y, 5, 0, Math.PI * 2);
+            ctxBez.fill();
+            requestAnimationFrame(drawBezier);
+        }
 
-function drawBezier() {
-    canvasBez.width = canvasBez.offsetWidth; canvasBez.height = 300;
-    const p0 = {x: 50, y: 250}, p1 = {x: mouse.x, y: mouse.y}, p2 = {x: 350, y: 250};
-
-    ctxBez.clearRect(0,0,800,300);
-    // Kontrolne linije
-    ctxBez.strokeStyle = "#222"; ctxBez.beginPath(); ctxBez.moveTo(p0.x, p0.y); ctxBez.lineTo(p1.x, p1.y); ctxBez.lineTo(p2.x, p2.y); ctxBez.stroke();
-    
-    // Krivulja
-    ctxBez.strokeStyle = "var(--accent)"; ctxBez.lineWidth = 3;
-    ctxBez.beginPath(); ctxBez.moveTo(p0.x, p0.y);
-    for(let t=0; t<=1; t+=0.02) {
-        const x = (1-t)**2 * p0.x + 2*(1-t)*t * p1.x + t**2 * p2.x;
-        const y = (1-t)**2 * p0.y + 2*(1-t)*t * p1.y + t**2 * p2.y;
-        ctxBez.lineTo(x, y);
-    }
-    ctxBez.stroke();
-    ctxBez.fillStyle = "var(--hit)"; ctxBez.beginPath(); ctxBez.arc(p1.x, p1.y, 5, 0, Math.PI*2); ctxBez.fill();
-    requestAnimationFrame(drawBezier);
-}
-
-// Init
-drawIntersect(); drawPIP(); drawClosest(); drawBezier();
-</script>
+        // Init
+        drawIntersect();
+        drawPIP();
+        drawClosest();
+        drawBezier();
+    </script>
 </body>
+
 </html>

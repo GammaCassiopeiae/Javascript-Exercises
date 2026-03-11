@@ -1,231 +1,509 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Collision Detection Laboratory</title>
     <style>
-        :root { --bg: #0a0a0c; --card: #16161a; --accent: #00f2ff; --hit: #ff3e3e; --text: #e0e0e0; }
-        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; }
-        h1 { margin-top: 20px; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; padding: 20px; width: 95%; max-width: 1400px; }
-        .card { background: var(--card); border: 1px solid #333; border-radius: 12px; padding: 15px; position: relative; }
-        canvas { background: #000; border: 1px solid #222; border-radius: 8px; width: 100%; height: 280px; cursor: crosshair; }
-        .info { margin-top: 10px; }
-        .name { font-weight: bold; color: var(--accent); font-size: 1.1rem; }
-        .desc { font-size: 0.85rem; color: #999; margin: 4px 0; }
-        .status { font-family: monospace; font-size: 0.9rem; padding: 4px 8px; border-radius: 4px; display: inline-block; }
-        .collision { background: rgba(255, 62, 62, 0.2); color: var(--hit); }
-        .no-collision { background: rgba(0, 242, 255, 0.1); color: var(--accent); }
+        :root {
+            --bg: #0a0a0c;
+            --card: #16161a;
+            --accent: #00f2ff;
+            --hit: #ff3e3e;
+            --text: #e0e0e0;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            margin-top: 20px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            width: 95%;
+            max-width: 1400px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 15px;
+            position: relative;
+        }
+
+        canvas {
+            background: #000;
+            border: 1px solid #222;
+            border-radius: 8px;
+            width: 100%;
+            height: 280px;
+            cursor: crosshair;
+        }
+
+        .info {
+            margin-top: 10px;
+        }
+
+        .name {
+            font-weight: bold;
+            color: var(--accent);
+            font-size: 1.1rem;
+        }
+
+        .desc {
+            font-size: 0.85rem;
+            color: #999;
+            margin: 4px 0;
+        }
+
+        .status {
+            font-family: monospace;
+            font-size: 0.9rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .collision {
+            background: rgba(255, 62, 62, 0.2);
+            color: var(--hit);
+        }
+
+        .no-collision {
+            background: rgba(0, 242, 255, 0.1);
+            color: var(--accent);
+        }
     </style>
 </head>
+
 <body>
 
-<h1>Collision Algorithms</h1>
+    <h1>Collision Algorithms</h1>
 
-<div class="grid">
-    <!-- SPHERE / CIRCLE -->
-    <div class="card">
-        <div class="name">Sphere / Circle</div>
-        <p class="desc">Preveri, če je razdalja med središči manjša od vsote polmerov.</p>
-        <canvas id="cCircle"></canvas>
-        <div id="sCircle" class="status no-collision">Brez trka</div>
+    <div class="grid">
+        <!-- SPHERE / CIRCLE -->
+        <div class="card">
+            <div class="name">Sphere / Circle</div>
+            <p class="desc">Preveri, če je razdalja med središči manjša od vsote polmerov.</p>
+            <canvas id="cCircle"></canvas>
+            <div id="sCircle" class="status no-collision">Brez trka</div>
+        </div>
+
+        <!-- AABB -->
+        <div class="card">
+            <div class="name">AABB (Axis-Aligned Bounding Box)</div>
+            <p class="desc">Najhitrejši test za pravokotnike, ki niso rotirani.</p>
+            <canvas id="cAABB"></canvas>
+            <div id="sAABB" class="status no-collision">Brez trka</div>
+        </div>
+
+        <!-- SAT -->
+        <div class="card">
+            <div class="name">SAT (Separating Axis Theorem)</div>
+            <p class="desc">Poligona se ne prekrivata, če obstaja os, kjer se njuni projekciji ne dotikata.</p>
+            <canvas id="cSAT"></canvas>
+            <div id="sSAT" class="status no-collision">Brez trka</div>
+        </div>
+
+        <!-- OBB -->
+        <div class="card">
+            <div class="name">OBB (Oriented Bounding Box)</div>
+            <p class="desc">AABB z rotacijo. Uporablja SAT logiko na lokalnih oseh objekta.</p>
+            <canvas id="cOBB"></canvas>
+            <div id="sOBB" class="status no-collision">Brez trka</div>
+        </div>
+
+        <!-- GJK -->
+        <div class="card" style="grid-column: span 2;">
+            <div class="name">GJK (Gilbert-Johnson-Keerthi)</div>
+            <p class="desc">Preverja, če Minkowski razlika dveh konveksnih oblik vsebuje koordinatno izhodišče (0,0).</p>
+            <canvas id="cGJK"></canvas>
+            <div id="sGJK" class="status no-collision">Brez trka</div>
+        </div>
     </div>
 
-    <!-- AABB -->
-    <div class="card">
-        <div class="name">AABB (Axis-Aligned Bounding Box)</div>
-        <p class="desc">Najhitrejši test za pravokotnike, ki niso rotirani.</p>
-        <canvas id="cAABB"></canvas>
-        <div id="sAABB" class="status no-collision">Brez trka</div>
-    </div>
+    <script>
+        // --- UTILS ---
+        const mouse = {
+            x: 0,
+            y: 0
+        };
+        window.onmousemove = e => {
+            const rect = e.target.getBoundingClientRect?.();
+            if (rect) {
+                mouse.x = e.clientX - rect.left;
+                mouse.y = e.clientY - rect.top;
+            }
+        };
 
-    <!-- SAT -->
-    <div class="card">
-        <div class="name">SAT (Separating Axis Theorem)</div>
-        <p class="desc">Poligona se ne prekrivata, če obstaja os, kjer se njuni projekciji ne dotikata.</p>
-        <canvas id="cSAT"></canvas>
-        <div id="sSAT" class="status no-collision">Brez trka</div>
-    </div>
+        function updateUI(id, isHit) {
+            const el = document.getElementById(id);
+            el.innerText = isHit ? "TRK DETEKTIRAN" : "Brez trka";
+            el.className = "status " + (isHit ? "collision" : "no-collision");
+        }
 
-    <!-- OBB -->
-    <div class="card">
-        <div class="name">OBB (Oriented Bounding Box)</div>
-        <p class="desc">AABB z rotacijo. Uporablja SAT logiko na lokalnih oseh objekta.</p>
-        <canvas id="cOBB"></canvas>
-        <div id="sOBB" class="status no-collision">Brez trka</div>
-    </div>
+        // --- 1. CIRCLE COLLISION ---
+        const ctxCircle = document.getElementById('cCircle').getContext('2d');
 
-    <!-- GJK -->
-    <div class="card" style="grid-column: span 2;">
-        <div class="name">GJK (Gilbert-Johnson-Keerthi)</div>
-        <p class="desc">Preverja, če Minkowski razlika dveh konveksnih oblik vsebuje koordinatno izhodišče (0,0).</p>
-        <canvas id="cGJK"></canvas>
-        <div id="sGJK" class="status no-collision">Brez trka</div>
-    </div>
-</div>
+        function runCircle() {
+            const c1 = {
+                x: 100,
+                y: 140,
+                r: 50
+            };
+            const c2 = {
+                x: mouse.x,
+                y: mouse.y,
+                r: 35
+            };
+            const dist = Math.hypot(c1.x - c2.x, c1.y - c2.y);
+            const hit = dist < (c1.r + c2.r);
 
-<script>
-// --- UTILS ---
-const mouse = { x: 0, y: 0 };
-window.onmousemove = e => {
-    const rect = e.target.getBoundingClientRect?.();
-    if(rect) { mouse.x = e.clientX - rect.left; mouse.y = e.clientY - rect.top; }
-};
+            ctxCircle.clearRect(0, 0, 800, 400);
+            ctxCircle.fillStyle = hit ? 'rgba(255, 62, 62, 0.4)' : 'rgba(0, 242, 255, 0.2)';
+            ctxCircle.strokeStyle = hit ? '#ff3e3e' : '#00f2ff';
+            [c1, c2].forEach(c => {
+                ctxCircle.beginPath();
+                ctxCircle.arc(c.x, c.y, c.r, 0, Math.PI * 2);
+                ctxCircle.fill();
+                ctxCircle.stroke();
+            });
+            updateUI('sCircle', hit);
+            requestAnimationFrame(runCircle);
+        }
 
-function updateUI(id, isHit) {
-    const el = document.getElementById(id);
-    el.innerText = isHit ? "TRK DETEKTIRAN" : "Brez trka";
-    el.className = "status " + (isHit ? "collision" : "no-collision");
-}
+        // --- 2. AABB COLLISION ---
+        const ctxAABB = document.getElementById('cAABB').getContext('2d');
 
-// --- 1. CIRCLE COLLISION ---
-const ctxCircle = document.getElementById('cCircle').getContext('2d');
-function runCircle() {
-    const c1 = { x: 100, y: 140, r: 50 };
-    const c2 = { x: mouse.x, y: mouse.y, r: 35 };
-    const dist = Math.hypot(c1.x - c2.x, c1.y - c2.y);
-    const hit = dist < (c1.r + c2.r);
+        function runAABB() {
+            const b1 = {
+                x: 100,
+                y: 80,
+                w: 120,
+                h: 120
+            };
+            const b2 = {
+                x: mouse.x - 40,
+                y: mouse.y - 40,
+                w: 80,
+                h: 80
+            };
+            const hit = b1.x < b2.x + b2.w && b1.x + b1.w > b2.x && b1.y < b2.y + b2.h && b1.y + b1.h > b2.y;
 
-    ctxCircle.clearRect(0,0,800,400);
-    ctxCircle.fillStyle = hit ? 'rgba(255, 62, 62, 0.4)' : 'rgba(0, 242, 255, 0.2)';
-    ctxCircle.strokeStyle = hit ? '#ff3e3e' : '#00f2ff';
-    [c1, c2].forEach(c => {
-        ctxCircle.beginPath(); ctxCircle.arc(c.x, c.y, c.r, 0, Math.PI*2); ctxCircle.fill(); ctxCircle.stroke();
-    });
-    updateUI('sCircle', hit);
-    requestAnimationFrame(runCircle);
-}
+            ctxAABB.clearRect(0, 0, 800, 400);
+            ctxAABB.fillStyle = hit ? 'rgba(255, 62, 62, 0.4)' : 'rgba(0, 242, 255, 0.2)';
+            ctxAABB.fillRect(b1.x, b1.y, b1.w, b1.h);
+            ctxAABB.fillRect(b2.x, b2.y, b2.w, b2.h);
+            updateUI('sAABB', hit);
+            requestAnimationFrame(runAABB);
+        }
 
-// --- 2. AABB COLLISION ---
-const ctxAABB = document.getElementById('cAABB').getContext('2d');
-function runAABB() {
-    const b1 = { x: 100, y: 80, w: 120, h: 120 };
-    const b2 = { x: mouse.x - 40, y: mouse.y - 40, w: 80, h: 80 };
-    const hit = b1.x < b2.x + b2.w && b1.x + b1.w > b2.x && b1.y < b2.y + b2.h && b1.y + b1.h > b2.y;
+        // --- 3. SAT (Separating Axis Theorem) ---
+        const ctxSAT = document.getElementById('cSAT').getContext('2d');
 
-    ctxAABB.clearRect(0,0,800,400);
-    ctxAABB.fillStyle = hit ? 'rgba(255, 62, 62, 0.4)' : 'rgba(0, 242, 255, 0.2)';
-    ctxAABB.fillRect(b1.x, b1.y, b1.w, b1.h);
-    ctxAABB.fillRect(b2.x, b2.y, b2.w, b2.h);
-    updateUI('sAABB', hit);
-    requestAnimationFrame(runAABB);
-}
+        function getAxes(poly) {
+            let axes = [];
+            for (let i = 0; i < poly.length; i++) {
+                let p1 = poly[i],
+                    p2 = poly[(i + 1) % poly.length];
+                let edge = {
+                    x: p1.x - p2.x,
+                    y: p1.y - p2.y
+                };
+                axes.push({
+                    x: -edge.y,
+                    y: edge.x
+                }); // Normala
+            }
+            return axes;
+        }
 
-// --- 3. SAT (Separating Axis Theorem) ---
-const ctxSAT = document.getElementById('cSAT').getContext('2d');
-function getAxes(poly) {
-    let axes = [];
-    for (let i = 0; i < poly.length; i++) {
-        let p1 = poly[i], p2 = poly[(i + 1) % poly.length];
-        let edge = { x: p1.x - p2.x, y: p1.y - p2.y };
-        axes.push({ x: -edge.y, y: edge.x }); // Normala
-    }
-    return axes;
-}
-function project(poly, axis) {
-    let min = Infinity, max = -Infinity;
-    for (let p of poly) {
-        let dot = p.x * axis.x + p.y * axis.y;
-        min = Math.min(min, dot); max = Math.max(max, dot);
-    }
-    return { min, max };
-}
-function checkSAT(p1, p2) {
-    let axes = [...getAxes(p1), ...getAxes(p2)];
-    for (let axis of axes) {
-        let proj1 = project(p1, axis), proj2 = project(p2, axis);
-        if (proj1.max < proj2.min || proj2.max < proj1.min) return false;
-    }
-    return true;
-}
-function runSAT() {
-    const p1 = [{x:150,y:50}, {x:250,y:150}, {x:100,y:230}];
-    const p2 = [{x:mouse.x, y:mouse.y-50}, {x:mouse.x+60, y:mouse.y+30}, {x:mouse.x-60, y:mouse.y+30}];
-    const hit = checkSAT(p1, p2);
+        function project(poly, axis) {
+            let min = Infinity,
+                max = -Infinity;
+            for (let p of poly) {
+                let dot = p.x * axis.x + p.y * axis.y;
+                min = Math.min(min, dot);
+                max = Math.max(max, dot);
+            }
+            return {
+                min,
+                max
+            };
+        }
 
-    ctxSAT.clearRect(0,0,800,400);
-    ctxSAT.fillStyle = hit ? 'rgba(255, 62, 62, 0.4)' : 'rgba(0, 242, 255, 0.2)';
-    [p1, p2].forEach(p => {
-        ctxSAT.beginPath(); ctxSAT.moveTo(p[0].x, p[0].y);
-        p.forEach(pt => ctxSAT.lineTo(pt.x, pt.y)); ctxSAT.closePath(); ctxSAT.fill(); ctxSAT.stroke();
-    });
-    updateUI('sSAT', hit);
-    requestAnimationFrame(runSAT);
-}
+        function checkSAT(p1, p2) {
+            let axes = [...getAxes(p1), ...getAxes(p2)];
+            for (let axis of axes) {
+                let proj1 = project(p1, axis),
+                    proj2 = project(p2, axis);
+                if (proj1.max < proj2.min || proj2.max < proj1.min) return false;
+            }
+            return true;
+        }
 
-// --- 4. OBB (Oriented Bounding Box) ---
-const ctxOBB = document.getElementById('cOBB').getContext('2d');
-function rotate(px, py, ox, oy, angle) {
-    let s = Math.sin(angle), c = Math.cos(angle);
-    return { x: c*(px-ox)-s*(py-oy)+ox, y: s*(px-ox)+c*(py-oy)+oy };
-}
-function runOBB() {
-    let angle = Date.now() * 0.001;
-    let b1 = [ {x:120,y:80}, {x:280,y:80}, {x:280,y:180}, {x:120,y:180} ].map(p => rotate(p.x, p.y, 200, 130, angle));
-    let b2 = [ {x:mouse.x-40,y:mouse.y-40}, {x:mouse.x+40,y:mouse.y-40}, {x:mouse.x+40,y:mouse.y+40}, {x:mouse.x-40,y:mouse.y+40} ];
-    const hit = checkSAT(b1, b2);
+        function runSAT() {
+            const p1 = [{
+                x: 150,
+                y: 50
+            }, {
+                x: 250,
+                y: 150
+            }, {
+                x: 100,
+                y: 230
+            }];
+            const p2 = [{
+                x: mouse.x,
+                y: mouse.y - 50
+            }, {
+                x: mouse.x + 60,
+                y: mouse.y + 30
+            }, {
+                x: mouse.x - 60,
+                y: mouse.y + 30
+            }];
+            const hit = checkSAT(p1, p2);
 
-    ctxOBB.clearRect(0,0,800,400);
-    ctxOBB.fillStyle = hit ? 'rgba(255, 62, 62, 0.4)' : 'rgba(0, 242, 255, 0.2)';
-    [b1, b2].forEach(p => {
-        ctxOBB.beginPath(); ctxOBB.moveTo(p[0].x, p[0].y);
-        p.forEach(pt => ctxOBB.lineTo(pt.x, pt.y)); ctxOBB.closePath(); ctxOBB.fill(); ctxOBB.stroke();
-    });
-    updateUI('sOBB', hit);
-    requestAnimationFrame(runOBB);
-}
+            ctxSAT.clearRect(0, 0, 800, 400);
+            ctxSAT.fillStyle = hit ? 'rgba(255, 62, 62, 0.4)' : 'rgba(0, 242, 255, 0.2)';
+            [p1, p2].forEach(p => {
+                ctxSAT.beginPath();
+                ctxSAT.moveTo(p[0].x, p[0].y);
+                p.forEach(pt => ctxSAT.lineTo(pt.x, pt.y));
+                ctxSAT.closePath();
+                ctxSAT.fill();
+                ctxSAT.stroke();
+            });
+            updateUI('sSAT', hit);
+            requestAnimationFrame(runSAT);
+        }
 
-// --- 5. GJK ALGORITHM ---
-const ctxGJK = document.getElementById('cGJK').getContext('2d');
-function support(p1, p2, d) {
-    const getFarthest = (p, d) => p.reduce((max, pt) => (pt.x*d.x + pt.y*d.y > max.dot) ? {dot: pt.x*d.x + pt.y*d.y, pt} : max, {dot: -Infinity}).pt;
-    const s1 = getFarthest(p1, d);
-    const s2 = getFarthest(p2, {x: -d.x, y: -d.y});
-    return { x: s1.x - s2.x, y: s1.y - s2.y };
-}
-function checkGJK(p1, p2) {
-    let d = {x: 1, y: 0}, simplex = [support(p1, p2, d)];
-    d = {x: -simplex[0].x, y: -simplex[0].y};
-    for (let i = 0; i < 30; i++) {
-        let A = support(p1, p2, d);
-        if (A.x*d.x + A.y*d.y < 0) return false;
-        simplex.push(A);
-        if (handleSimplex(simplex, d)) return true;
-    }
-    return false;
-}
-function handleSimplex(s, d) {
-    if (s.length === 2) {
-        let B = s[0], A = s[1], AB = {x: B.x-A.x, y: B.y-A.y}, AO = {x: -A.x, y: -A.y};
-        let perp = {x: -AB.y, y: AB.x};
-        if (perp.x*AO.x + perp.y*AO.y < 0) perp = {x: -perp.x, y: -perp.y};
-        d.x = perp.x; d.y = perp.y;
-    } else {
-        let C = s[0], B = s[1], A = s[2], AB = {x: B.x-A.x, y: B.y-A.y}, AC = {x: C.x-A.x, y: C.y-A.y}, AO = {x: -A.x, y: -A.y};
-        let ABp = {x: -AB.y, y: AB.x}; if (ABp.x*AC.x + ABp.y*AC.y > 0) ABp = {x: -ABp.x, y: -ABp.y};
-        let ACp = {x: -AC.y, y: AC.x}; if (ACp.x*AB.x + ACp.y*AB.y > 0) ACp = {x: -ACp.x, y: -ACp.y};
-        if (ABp.x*AO.x + ABp.y*AO.y > 0) { s.splice(0,1); d.x = ABp.x; d.y = ABp.y; }
-        else if (ACp.x*AO.x + ACp.y*AO.y > 0) { s.splice(1,1); d.x = ACp.x; d.y = ACp.y; }
-        else return true;
-    }
-    return false;
-}
-function runGJK() {
-    const p1 = [{x:350,y:80}, {x:500,y:120}, {x:450,y:250}, {x:300,y:200}];
-    const p2 = [{x:mouse.x-30,y:mouse.y-50}, {x:mouse.x+50,y:mouse.y}, {x:mouse.x,y:mouse.y+50}];
-    const hit = checkGJK(p1, p2);
-    ctxGJK.clearRect(0,0,1200,400);
-    ctxGJK.fillStyle = hit ? 'rgba(255, 62, 62, 0.4)' : 'rgba(0, 242, 255, 0.2)';
-    [p1, p2].forEach(p => {
-        ctxGJK.beginPath(); ctxGJK.moveTo(p[0].x, p[0].y);
-        p.forEach(pt => ctxGJK.lineTo(pt.x, pt.y)); ctxGJK.closePath(); ctxGJK.fill(); ctxGJK.stroke();
-    });
-    updateUI('sGJK', hit);
-    requestAnimationFrame(runGJK);
-}
+        // --- 4. OBB (Oriented Bounding Box) ---
+        const ctxOBB = document.getElementById('cOBB').getContext('2d');
 
-runCircle(); runAABB(); runSAT(); runOBB(); runGJK();
-</script>
+        function rotate(px, py, ox, oy, angle) {
+            let s = Math.sin(angle),
+                c = Math.cos(angle);
+            return {
+                x: c * (px - ox) - s * (py - oy) + ox,
+                y: s * (px - ox) + c * (py - oy) + oy
+            };
+        }
+
+        function runOBB() {
+            let angle = Date.now() * 0.001;
+            let b1 = [{
+                x: 120,
+                y: 80
+            }, {
+                x: 280,
+                y: 80
+            }, {
+                x: 280,
+                y: 180
+            }, {
+                x: 120,
+                y: 180
+            }].map(p => rotate(p.x, p.y, 200, 130, angle));
+            let b2 = [{
+                x: mouse.x - 40,
+                y: mouse.y - 40
+            }, {
+                x: mouse.x + 40,
+                y: mouse.y - 40
+            }, {
+                x: mouse.x + 40,
+                y: mouse.y + 40
+            }, {
+                x: mouse.x - 40,
+                y: mouse.y + 40
+            }];
+            const hit = checkSAT(b1, b2);
+
+            ctxOBB.clearRect(0, 0, 800, 400);
+            ctxOBB.fillStyle = hit ? 'rgba(255, 62, 62, 0.4)' : 'rgba(0, 242, 255, 0.2)';
+            [b1, b2].forEach(p => {
+                ctxOBB.beginPath();
+                ctxOBB.moveTo(p[0].x, p[0].y);
+                p.forEach(pt => ctxOBB.lineTo(pt.x, pt.y));
+                ctxOBB.closePath();
+                ctxOBB.fill();
+                ctxOBB.stroke();
+            });
+            updateUI('sOBB', hit);
+            requestAnimationFrame(runOBB);
+        }
+
+        // --- 5. GJK ALGORITHM ---
+        const ctxGJK = document.getElementById('cGJK').getContext('2d');
+
+        function support(p1, p2, d) {
+            const getFarthest = (p, d) => p.reduce((max, pt) => (pt.x * d.x + pt.y * d.y > max.dot) ? {
+                dot: pt.x * d.x + pt.y * d.y,
+                pt
+            } : max, {
+                dot: -Infinity
+            }).pt;
+            const s1 = getFarthest(p1, d);
+            const s2 = getFarthest(p2, {
+                x: -d.x,
+                y: -d.y
+            });
+            return {
+                x: s1.x - s2.x,
+                y: s1.y - s2.y
+            };
+        }
+
+        function checkGJK(p1, p2) {
+            let d = {
+                    x: 1,
+                    y: 0
+                },
+                simplex = [support(p1, p2, d)];
+            d = {
+                x: -simplex[0].x,
+                y: -simplex[0].y
+            };
+            for (let i = 0; i < 30; i++) {
+                let A = support(p1, p2, d);
+                if (A.x * d.x + A.y * d.y < 0) return false;
+                simplex.push(A);
+                if (handleSimplex(simplex, d)) return true;
+            }
+            return false;
+        }
+
+        function handleSimplex(s, d) {
+            if (s.length === 2) {
+                let B = s[0],
+                    A = s[1],
+                    AB = {
+                        x: B.x - A.x,
+                        y: B.y - A.y
+                    },
+                    AO = {
+                        x: -A.x,
+                        y: -A.y
+                    };
+                let perp = {
+                    x: -AB.y,
+                    y: AB.x
+                };
+                if (perp.x * AO.x + perp.y * AO.y < 0) perp = {
+                    x: -perp.x,
+                    y: -perp.y
+                };
+                d.x = perp.x;
+                d.y = perp.y;
+            } else {
+                let C = s[0],
+                    B = s[1],
+                    A = s[2],
+                    AB = {
+                        x: B.x - A.x,
+                        y: B.y - A.y
+                    },
+                    AC = {
+                        x: C.x - A.x,
+                        y: C.y - A.y
+                    },
+                    AO = {
+                        x: -A.x,
+                        y: -A.y
+                    };
+                let ABp = {
+                    x: -AB.y,
+                    y: AB.x
+                };
+                if (ABp.x * AC.x + ABp.y * AC.y > 0) ABp = {
+                    x: -ABp.x,
+                    y: -ABp.y
+                };
+                let ACp = {
+                    x: -AC.y,
+                    y: AC.x
+                };
+                if (ACp.x * AB.x + ACp.y * AB.y > 0) ACp = {
+                    x: -ACp.x,
+                    y: -ACp.y
+                };
+                if (ABp.x * AO.x + ABp.y * AO.y > 0) {
+                    s.splice(0, 1);
+                    d.x = ABp.x;
+                    d.y = ABp.y;
+                } else if (ACp.x * AO.x + ACp.y * AO.y > 0) {
+                    s.splice(1, 1);
+                    d.x = ACp.x;
+                    d.y = ACp.y;
+                } else return true;
+            }
+            return false;
+        }
+
+        function runGJK() {
+            const p1 = [{
+                x: 350,
+                y: 80
+            }, {
+                x: 500,
+                y: 120
+            }, {
+                x: 450,
+                y: 250
+            }, {
+                x: 300,
+                y: 200
+            }];
+            const p2 = [{
+                x: mouse.x - 30,
+                y: mouse.y - 50
+            }, {
+                x: mouse.x + 50,
+                y: mouse.y
+            }, {
+                x: mouse.x,
+                y: mouse.y + 50
+            }];
+            const hit = checkGJK(p1, p2);
+            ctxGJK.clearRect(0, 0, 1200, 400);
+            ctxGJK.fillStyle = hit ? 'rgba(255, 62, 62, 0.4)' : 'rgba(0, 242, 255, 0.2)';
+            [p1, p2].forEach(p => {
+                ctxGJK.beginPath();
+                ctxGJK.moveTo(p[0].x, p[0].y);
+                p.forEach(pt => ctxGJK.lineTo(pt.x, pt.y));
+                ctxGJK.closePath();
+                ctxGJK.fill();
+                ctxGJK.stroke();
+            });
+            updateUI('sGJK', hit);
+            requestAnimationFrame(runGJK);
+        }
+
+        runCircle();
+        runAABB();
+        runSAT();
+        runOBB();
+        runGJK();
+    </script>
 </body>
+
 </html>

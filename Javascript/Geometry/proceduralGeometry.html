@@ -1,201 +1,295 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Procedural Geometry Laboratory</title>
     <style>
-        :root { --bg: #0a0a0a; --panel: #161616; --accent: #00ffcc; --text: #eee; }
-        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; }
-        .container { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 20px; padding: 20px; width: 95%; max-width: 1400px; }
-        .card { background: var(--panel); border: 1px solid #333; border-radius: 12px; padding: 15px; display: flex; flex-direction: column; }
-        canvas { background: #000; border-radius: 8px; width: 100%; height: 350px; cursor: crosshair; }
-        h2 { color: var(--accent); margin: 0 0 10px 0; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; }
-        .desc { font-size: 0.85rem; color: #888; margin-bottom: 12px; min-height: 40px; }
-        .controls { margin-top: 10px; display: flex; gap: 10px; }
-        button { background: var(--accent); color: #000; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.8rem; }
-        button:hover { filter: brightness(1.2); }
+        :root {
+            --bg: #0a0a0a;
+            --panel: #161616;
+            --accent: #00ffcc;
+            --text: #eee;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            width: 95%;
+            max-width: 1400px;
+        }
+
+        .card {
+            background: var(--panel);
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        canvas {
+            background: #000;
+            border-radius: 8px;
+            width: 100%;
+            height: 350px;
+            cursor: crosshair;
+        }
+
+        h2 {
+            color: var(--accent);
+            margin: 0 0 10px 0;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .desc {
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 12px;
+            min-height: 40px;
+        }
+
+        .controls {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        button:hover {
+            filter: brightness(1.2);
+        }
     </style>
 </head>
+
 <body>
 
-<h1 style="margin-top: 30px; letter-spacing: 2px;">PROCEDURAL GEOMETRY</h1>
+    <h1 style="margin-top: 30px; letter-spacing: 2px;">PROCEDURAL GEOMETRY</h1>
 
-<div class="container">
-    <!-- 1. PERLIN NOISE TERRAIN -->
-    <div class="card">
-        <h2>Perlin Noise (Teren)</h2>
-        <div class="desc">Generiranje naravnih, gladkih naključnih vrednosti za simulacijo reliefa ali tekstur.</div>
-        <canvas id="cPerlin"></canvas>
+    <div class="container">
+        <!-- 1. PERLIN NOISE TERRAIN -->
+        <div class="card">
+            <h2>Perlin Noise (Teren)</h2>
+            <div class="desc">Generiranje naravnih, gladkih naključnih vrednosti za simulacijo reliefa ali tekstur.</div>
+            <canvas id="cPerlin"></canvas>
+        </div>
+
+        <!-- 2. L-SYSTEMS (Fractal Trees) -->
+        <div class="card">
+            <h2>L-Systems (Rastline)</h2>
+            <div class="desc">Fraktalna pravila za generiranje kompleksnih struktur, kot so drevesa in grmovnice.</div>
+            <canvas id="cLSystem"></canvas>
+            <div class="controls"><button onclick="growTree()">Novo drevo</button></div>
+        </div>
+
+        <!-- 3. VOXELIZATION -->
+        <div class="card">
+            <h2>Voxelization (3D Mreža)</h2>
+            <div class="desc">Pretvorba geometrije v mrežo kock (vokslov) za uničljivo okolje ali terrain editing.</div>
+            <canvas id="cVoxel"></canvas>
+        </div>
+
+        <!-- 4. DUAL CONTOURING (Sharp Features) -->
+        <div class="card">
+            <h2>Dual Contouring (Ostri robovi)</h2>
+            <div class="desc">Alternativa Marching Cubes, ki bolje ohranja ostre robove in kote pri ekstrakciji površin.</div>
+            <canvas id="cDual"></canvas>
+        </div>
     </div>
 
-    <!-- 2. L-SYSTEMS (Fractal Trees) -->
-    <div class="card">
-        <h2>L-Systems (Rastline)</h2>
-        <div class="desc">Fraktalna pravila za generiranje kompleksnih struktur, kot so drevesa in grmovnice.</div>
-        <canvas id="cLSystem"></canvas>
-        <div class="controls"><button onclick="growTree()">Novo drevo</button></div>
-    </div>
+    <script>
+        // --- UTILS: PERLIN NOISE IMPLEMENTATION ---
+        const Perlin = new(function() {
+            this.p = new Uint8Array(512);
+            const p = new Uint8Array(256);
+            for (let i = 0; i < 256; i++) p[i] = i;
+            for (let i = 255; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [p[i], p[j]] = [p[j], p[i]];
+            }
+            for (let i = 0; i < 512; i++) this.p[i] = p[i & 255];
 
-    <!-- 3. VOXELIZATION -->
-    <div class="card">
-        <h2>Voxelization (3D Mreža)</h2>
-        <div class="desc">Pretvorba geometrije v mrežo kock (vokslov) za uničljivo okolje ali terrain editing.</div>
-        <canvas id="cVoxel"></canvas>
-    </div>
+            this.noise = function(x, y) {
+                const X = Math.floor(x) & 255,
+                    Y = Math.floor(y) & 255;
+                x -= Math.floor(x);
+                y -= Math.floor(y);
+                const u = x * x * x * (x * (x * 6 - 15) + 10),
+                    v = y * y * y * (y * (y * 6 - 15) + 10);
+                const a = this.p[X] + Y,
+                    b = this.p[X + 1] + Y;
+                const lerp = (t, a, b) => a + t * (b - a);
+                const grad = (hash, x, y) => {
+                    const h = hash & 15;
+                    return ((h < 8 ? x : y) * (h & 1 ? -1 : 1) + (h < 4 ? y : h == 12 || h == 14 ? x : 0) * (h & 2 ? -1 : 1));
+                };
+                return lerp(v, lerp(u, grad(this.p[a], x, y), grad(this.p[b], x - 1, y)),
+                    lerp(u, grad(this.p[a + 1], x, y - 1), grad(this.p[b + 1], x - 1, y - 1)));
+            };
+        })();
 
-    <!-- 4. DUAL CONTOURING (Sharp Features) -->
-    <div class="card">
-        <h2>Dual Contouring (Ostri robovi)</h2>
-        <div class="desc">Alternativa Marching Cubes, ki bolje ohranja ostre robove in kote pri ekstrakciji površin.</div>
-        <canvas id="cDual"></canvas>
-    </div>
-</div>
+        // --- 1. PERLIN TERRAIN DRAW ---
+        const canvasPerlin = document.getElementById('cPerlin');
+        const ctxPerlin = canvasPerlin.getContext('2d');
+        let time = 0;
 
-<script>
-// --- UTILS: PERLIN NOISE IMPLEMENTATION ---
-const Perlin = new (function() {
-    this.p = new Uint8Array(512);
-    const p = new Uint8Array(256);
-    for(let i=0; i<256; i++) p[i] = i;
-    for(let i=255; i>0; i--) { const j = Math.floor(Math.random()*(i+1)); [p[i], p[j]] = [p[j], p[i]]; }
-    for(let i=0; i<512; i++) this.p[i] = p[i & 255];
+        function drawPerlin() {
+            canvasPerlin.width = canvasPerlin.offsetWidth;
+            canvasPerlin.height = 350;
+            ctxPerlin.clearRect(0, 0, 800, 400);
+            ctxPerlin.fillStyle = '#00ffcc';
+            const step = 4;
+            for (let x = 0; x < canvasPerlin.width; x += step) {
+                const h = Perlin.noise(x * 0.01 + time, time) * 100 + 200;
+                ctxPerlin.fillRect(x, h, step, canvasPerlin.height - h);
+            }
+            time += 0.01;
+            requestAnimationFrame(drawPerlin);
+        }
 
-    this.noise = function(x, y) {
-        const X = Math.floor(x) & 255, Y = Math.floor(y) & 255;
-        x -= Math.floor(x); y -= Math.floor(y);
-        const u = x*x*x*(x*(x*6-15)+10), v = y*y*y*(y*(y*6-15)+10);
-        const a = this.p[X]+Y, b = this.p[X+1]+Y;
-        const lerp = (t, a, b) => a + t * (b - a);
-        const grad = (hash, x, y) => {
-            const h = hash & 15;
-            return ((h<8?x:y) * (h&1?-1:1) + (h<4?y:h==12||h==14?x:0) * (h&2?-1:1));
-        };
-        return lerp(v, lerp(u, grad(this.p[a], x, y), grad(this.p[b], x-1, y)), 
-                       lerp(u, grad(this.p[a+1], x, y-1), grad(this.p[b+1], x-1, y-1)));
-    };
-})();
+        // --- 2. L-SYSTEMS ---
+        const canvasLS = document.getElementById('cLSystem');
+        const ctxLS = canvasLS.getContext('2d');
 
-// --- 1. PERLIN TERRAIN DRAW ---
-const canvasPerlin = document.getElementById('cPerlin');
-const ctxPerlin = canvasPerlin.getContext('2d');
-let time = 0;
-
-function drawPerlin() {
-    canvasPerlin.width = canvasPerlin.offsetWidth; canvasPerlin.height = 350;
-    ctxPerlin.clearRect(0,0,800,400);
-    ctxPerlin.fillStyle = '#00ffcc';
-    const step = 4;
-    for(let x=0; x<canvasPerlin.width; x+=step) {
-        const h = Perlin.noise(x*0.01 + time, time) * 100 + 200;
-        ctxPerlin.fillRect(x, h, step, canvasPerlin.height - h);
-    }
-    time += 0.01;
-    requestAnimationFrame(drawPerlin);
-}
-
-// --- 2. L-SYSTEMS ---
-const canvasLS = document.getElementById('cLSystem');
-const ctxLS = canvasLS.getContext('2d');
-
-function drawLSystem(sentence, len) {
-    ctxLS.resetTransform();
-    ctxLS.clearRect(0,0,800,400);
-    ctxLS.translate(canvasLS.width/2, canvasLS.height);
-    ctxLS.strokeStyle = '#00ffcc';
-    ctxLS.lineWidth = 2;
-    for (let char of sentence) {
-        if (char === "F") {
-            ctxLS.beginPath(); ctxLS.moveTo(0,0); ctxLS.lineTo(0, -len); ctxLS.stroke();
-            ctxLS.translate(0, -len);
-        } else if (char === "+") { ctxLS.rotate(Math.PI/6); }
-        else if (char === "-") { ctxLS.rotate(-Math.PI/6); }
-        else if (char === "[") { ctxLS.save(); }
-        else if (char === "]") { ctxLS.restore(); }
-    }
-}
-
-function growTree() {
-    canvasLS.width = canvasLS.offsetWidth; canvasLS.height = 350;
-    let sentence = "F";
-    const rules = { "F": "FF+[+F-F-F]-[-F+F+F]" };
-    for (let i=0; i<3; i++) {
-        let next = "";
-        for (let c of sentence) next += rules[c] || c;
-        sentence = next;
-    }
-    drawLSystem(sentence, 15);
-}
-
-// --- 3. VOXELIZATION (2D Projection) ---
-const canvasVoxel = document.getElementById('cVoxel');
-const ctxVoxel = canvasVoxel.getContext('2d');
-
-function drawVoxel() {
-    canvasVoxel.width = canvasVoxel.offsetWidth; canvasVoxel.height = 350;
-    ctxVoxel.clearRect(0,0,800,400);
-    const gridSize = 20;
-    ctxVoxel.fillStyle = '#00ffcc';
-    
-    for(let x=20; x<canvasVoxel.width-20; x+=gridSize) {
-        for(let y=20; y<canvasVoxel.height-20; y+=gridSize) {
-            // Krožna voxel maska
-            const dx = x - canvasVoxel.width/2;
-            const dy = y - canvasVoxel.height/2;
-            const dist = Math.sqrt(dx*dx + dy*dy);
-            const noise = Perlin.noise(x*0.05, y*0.05) * 40;
-            
-            if (dist < 100 + noise) {
-                ctxVoxel.globalAlpha = 0.8;
-                ctxVoxel.fillRect(x+1, y+1, gridSize-2, gridSize-2);
-                ctxVoxel.strokeStyle = '#000';
-                ctxVoxel.strokeRect(x+1, y+1, gridSize-2, gridSize-2);
+        function drawLSystem(sentence, len) {
+            ctxLS.resetTransform();
+            ctxLS.clearRect(0, 0, 800, 400);
+            ctxLS.translate(canvasLS.width / 2, canvasLS.height);
+            ctxLS.strokeStyle = '#00ffcc';
+            ctxLS.lineWidth = 2;
+            for (let char of sentence) {
+                if (char === "F") {
+                    ctxLS.beginPath();
+                    ctxLS.moveTo(0, 0);
+                    ctxLS.lineTo(0, -len);
+                    ctxLS.stroke();
+                    ctxLS.translate(0, -len);
+                } else if (char === "+") {
+                    ctxLS.rotate(Math.PI / 6);
+                } else if (char === "-") {
+                    ctxLS.rotate(-Math.PI / 6);
+                } else if (char === "[") {
+                    ctxLS.save();
+                } else if (char === "]") {
+                    ctxLS.restore();
+                }
             }
         }
-    }
-    requestAnimationFrame(drawVoxel);
-}
 
-// --- 4. DUAL CONTOURING (Simplified 2D) ---
-const canvasDual = document.getElementById('cDual');
-const ctxDual = canvasDual.getContext('2d');
-
-function drawDual() {
-    canvasDual.width = canvasDual.offsetWidth; canvasDual.height = 350;
-    ctxDual.clearRect(0,0,800,400);
-    const step = 40;
-    
-    // Narišemo mrežo in "sharp" točke v celicah
-    for(let x=0; x<canvasDual.width; x+=step) {
-        for(let y=0; y<canvasDual.height; y+=step) {
-            ctxDual.strokeStyle = '#222';
-            ctxDual.strokeRect(x, y, step, step);
-            
-            // Hevristika za Dual Contouring točko (minimizing Quadratic Error Function)
-            // Tukaj simulirano z noise-om za vizualizacijo postavitve
-            const px = x + step/2 + Perlin.noise(x*0.1, y*0.1) * 30;
-            const py = y + step/2 + Perlin.noise(y*0.1, x*0.1) * 30;
-            
-            ctxDual.fillStyle = '#ff3366';
-            ctxDual.beginPath(); ctxDual.arc(px, py, 3, 0, Math.PI*2); ctxDual.fill();
-            
-            // Povezovanje točk za ustvarjanje površine
-            ctxDual.strokeStyle = '#00ffcc';
-            ctxDual.beginPath();
-            ctxDual.moveTo(px, py);
-            const nextX = x + step + step/2 + Perlin.noise((x+step)*0.1, y*0.1) * 30;
-            const nextY = y + step/2 + Perlin.noise(y*0.1, (x+step)*0.1) * 30;
-            ctxDual.lineTo(nextX, nextY);
-            ctxDual.stroke();
+        function growTree() {
+            canvasLS.width = canvasLS.offsetWidth;
+            canvasLS.height = 350;
+            let sentence = "F";
+            const rules = {
+                "F": "FF+[+F-F-F]-[-F+F+F]"
+            };
+            for (let i = 0; i < 3; i++) {
+                let next = "";
+                for (let c of sentence) next += rules[c] || c;
+                sentence = next;
+            }
+            drawLSystem(sentence, 15);
         }
-    }
-    requestAnimationFrame(drawDual);
-}
 
-// Init
-drawPerlin();
-growTree();
-drawVoxel();
-drawDual();
-</script>
+        // --- 3. VOXELIZATION (2D Projection) ---
+        const canvasVoxel = document.getElementById('cVoxel');
+        const ctxVoxel = canvasVoxel.getContext('2d');
+
+        function drawVoxel() {
+            canvasVoxel.width = canvasVoxel.offsetWidth;
+            canvasVoxel.height = 350;
+            ctxVoxel.clearRect(0, 0, 800, 400);
+            const gridSize = 20;
+            ctxVoxel.fillStyle = '#00ffcc';
+
+            for (let x = 20; x < canvasVoxel.width - 20; x += gridSize) {
+                for (let y = 20; y < canvasVoxel.height - 20; y += gridSize) {
+                    // Krožna voxel maska
+                    const dx = x - canvasVoxel.width / 2;
+                    const dy = y - canvasVoxel.height / 2;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    const noise = Perlin.noise(x * 0.05, y * 0.05) * 40;
+
+                    if (dist < 100 + noise) {
+                        ctxVoxel.globalAlpha = 0.8;
+                        ctxVoxel.fillRect(x + 1, y + 1, gridSize - 2, gridSize - 2);
+                        ctxVoxel.strokeStyle = '#000';
+                        ctxVoxel.strokeRect(x + 1, y + 1, gridSize - 2, gridSize - 2);
+                    }
+                }
+            }
+            requestAnimationFrame(drawVoxel);
+        }
+
+        // --- 4. DUAL CONTOURING (Simplified 2D) ---
+        const canvasDual = document.getElementById('cDual');
+        const ctxDual = canvasDual.getContext('2d');
+
+        function drawDual() {
+            canvasDual.width = canvasDual.offsetWidth;
+            canvasDual.height = 350;
+            ctxDual.clearRect(0, 0, 800, 400);
+            const step = 40;
+
+            // Narišemo mrežo in "sharp" točke v celicah
+            for (let x = 0; x < canvasDual.width; x += step) {
+                for (let y = 0; y < canvasDual.height; y += step) {
+                    ctxDual.strokeStyle = '#222';
+                    ctxDual.strokeRect(x, y, step, step);
+
+                    // Hevristika za Dual Contouring točko (minimizing Quadratic Error Function)
+                    // Tukaj simulirano z noise-om za vizualizacijo postavitve
+                    const px = x + step / 2 + Perlin.noise(x * 0.1, y * 0.1) * 30;
+                    const py = y + step / 2 + Perlin.noise(y * 0.1, x * 0.1) * 30;
+
+                    ctxDual.fillStyle = '#ff3366';
+                    ctxDual.beginPath();
+                    ctxDual.arc(px, py, 3, 0, Math.PI * 2);
+                    ctxDual.fill();
+
+                    // Povezovanje točk za ustvarjanje površine
+                    ctxDual.strokeStyle = '#00ffcc';
+                    ctxDual.beginPath();
+                    ctxDual.moveTo(px, py);
+                    const nextX = x + step + step / 2 + Perlin.noise((x + step) * 0.1, y * 0.1) * 30;
+                    const nextY = y + step / 2 + Perlin.noise(y * 0.1, (x + step) * 0.1) * 30;
+                    ctxDual.lineTo(nextX, nextY);
+                    ctxDual.stroke();
+                }
+            }
+            requestAnimationFrame(drawDual);
+        }
+
+        // Init
+        drawPerlin();
+        growTree();
+        drawVoxel();
+        drawDual();
+    </script>
 </body>
+
 </html>

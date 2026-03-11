@@ -1,210 +1,343 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Rendering & Geometry Lab</title>
     <style>
-        body { margin: 0; background: #0a0a0a; color: #eee; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(480px, 1fr)); gap: 15px; padding: 20px; }
-        .card { background: #161616; border: 1px solid #333; border-radius: 12px; padding: 15px; position: relative; }
-        canvas { background: #000; border: 1px solid #444; border-radius: 8px; width: 100%; height: 300px; cursor: crosshair; }
-        h2 { color: #00ffcc; margin: 0 0 10px 0; font-size: 1.1rem; }
-        .label { position: absolute; top: 70px; left: 30px; background: rgba(0,0,0,0.7); padding: 5px 10px; border-radius: 4px; font-size: 0.8rem; pointer-events: none; }
-        b { color: #00ffcc; }
+        body {
+            margin: 0;
+            background: #0a0a0a;
+            color: #eee;
+            font-family: 'Segoe UI', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .card {
+            background: #161616;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 15px;
+            position: relative;
+        }
+
+        canvas {
+            background: #000;
+            border: 1px solid #444;
+            border-radius: 8px;
+            width: 100%;
+            height: 300px;
+            cursor: crosshair;
+        }
+
+        h2 {
+            color: #00ffcc;
+            margin: 0 0 10px 0;
+            font-size: 1.1rem;
+        }
+
+        .label {
+            position: absolute;
+            top: 70px;
+            left: 30px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            pointer-events: none;
+        }
+
+        b {
+            color: #00ffcc;
+        }
     </style>
 </head>
+
 <body>
 
-<div style="text-align: center; padding: 20px;">
-    <h1>Rendering & Geometry Algorithms</h1>
-    <p>Premikaj miško čez platna za interakcijo z algoritmi.</p>
-</div>
-
-<div class="grid">
-    <!-- 1. POLYGON TRIANGULATION -->
-    <div class="card">
-        <h2>1. Polygon Triangulation (Ear Clipping)</h2>
-        <canvas id="cTri"></canvas>
-        <div class="label">Razrez kompleksnega poligona na trikotnike (za GPU)</div>
+    <div style="text-align: center; padding: 20px;">
+        <h1>Rendering & Geometry Algorithms</h1>
+        <p>Premikaj miško čez platna za interakcijo z algoritmi.</p>
     </div>
 
-    <!-- 2. FRUSTUM CULLING -->
-    <div class="card">
-        <h2>2. Frustum Culling (Vidno polje)</h2>
-        <canvas id="cCull"></canvas>
-        <div class="label">Renderiraj samo objekte znotraj <b>vidnega stožca</b></div>
+    <div class="grid">
+        <!-- 1. POLYGON TRIANGULATION -->
+        <div class="card">
+            <h2>1. Polygon Triangulation (Ear Clipping)</h2>
+            <canvas id="cTri"></canvas>
+            <div class="label">Razrez kompleksnega poligona na trikotnike (za GPU)</div>
+        </div>
+
+        <!-- 2. FRUSTUM CULLING -->
+        <div class="card">
+            <h2>2. Frustum Culling (Vidno polje)</h2>
+            <canvas id="cCull"></canvas>
+            <div class="label">Renderiraj samo objekte znotraj <b>vidnega stožca</b></div>
+        </div>
+
+        <!-- 3. RAY MARCHING / CASTING -->
+        <div class="card">
+            <h2>3. Ray Marching (SDF - Signed Distance Fields)</h2>
+            <canvas id="cRay"></canvas>
+            <div class="label">Žarek se "približuje" objektu glede na razdaljo</div>
+        </div>
+
+        <!-- 4. BACKFACE CULLING -->
+        <div class="card">
+            <h2>4. Backface Culling (Normal Checking)</h2>
+            <canvas id="cBack"></canvas>
+            <div class="label">Skrij stranice, ki gledajo <b>stran od kamere</b></div>
+        </div>
     </div>
 
-    <!-- 3. RAY MARCHING / CASTING -->
-    <div class="card">
-        <h2>3. Ray Marching (SDF - Signed Distance Fields)</h2>
-        <canvas id="cRay"></canvas>
-        <div class="label">Žarek se "približuje" objektu glede na razdaljo</div>
-    </div>
+    <script>
+        const mouse = {
+            x: 0,
+            y: 0
+        };
+        window.onmousemove = e => {
+            const rect = e.target.getBoundingClientRect?.();
+            if (rect) {
+                mouse.x = e.clientX - rect.left;
+                mouse.y = e.clientY - rect.top;
+            }
+        };
 
-    <!-- 4. BACKFACE CULLING -->
-    <div class="card">
-        <h2>4. Backface Culling (Normal Checking)</h2>
-        <canvas id="cBack"></canvas>
-        <div class="label">Skrij stranice, ki gledajo <b>stran od kamere</b></div>
-    </div>
-</div>
+        // --- 1. TRIANGULATION (Ear Clipping Lite) ---
+        const canvasTri = document.getElementById('cTri');
+        const ctxTri = canvasTri.getContext('2d');
+        let polyPoints = [{
+            x: 50,
+            y: 150
+        }, {
+            x: 150,
+            y: 50
+        }, {
+            x: 350,
+            y: 100
+        }, {
+            x: 400,
+            y: 250
+        }, {
+            x: 250,
+            y: 180
+        }, {
+            x: 100,
+            y: 280
+        }];
 
-<script>
-const mouse = { x: 0, y: 0 };
-window.onmousemove = e => {
-    const rect = e.target.getBoundingClientRect?.();
-    if(rect) { mouse.x = e.clientX - rect.left; mouse.y = e.clientY - rect.top; }
-};
+        function drawTriangulation() {
+            canvasTri.width = canvasTri.offsetWidth;
+            canvasTri.height = 300;
+            ctxTri.clearRect(0, 0, 800, 300);
 
-// --- 1. TRIANGULATION (Ear Clipping Lite) ---
-const canvasTri = document.getElementById('cTri');
-const ctxTri = canvasTri.getContext('2d');
-let polyPoints = [{x:50,y:150}, {x:150,y:50}, {x:350,y:100}, {x:400,y:250}, {x:250,y:180}, {x:100,y:280}];
+            // Premikanje točke z miško
+            polyPoints[2].x = mouse.x;
+            polyPoints[2].y = mouse.y;
 
-function drawTriangulation() {
-    canvasTri.width = canvasTri.offsetWidth; canvasTri.height = 300;
-    ctxTri.clearRect(0,0,800,300);
-    
-    // Premikanje točke z miško
-    polyPoints[2].x = mouse.x; polyPoints[2].y = mouse.y;
+            ctxTri.strokeStyle = '#00ffcc';
+            ctxTri.lineWidth = 2;
 
-    ctxTri.strokeStyle = '#00ffcc';
-    ctxTri.lineWidth = 2;
-    
-    // Enostavna triangulacija (Fan method za demo)
-    ctxTri.beginPath();
-    for(let i=1; i < polyPoints.length - 1; i++) {
-        ctxTri.moveTo(polyPoints[0].x, polyPoints[0].y);
-        ctxTri.lineTo(polyPoints[i].x, polyPoints[i].y);
-        ctxTri.lineTo(polyPoints[i+1].x, polyPoints[i+1].y);
-        ctxTri.closePath();
-    }
-    ctxTri.stroke();
-    ctxTri.fillStyle = 'rgba(0, 255, 204, 0.1)';
-    ctxTri.fill();
-    
-    requestAnimationFrame(drawTriangulation);
-}
+            // Enostavna triangulacija (Fan method za demo)
+            ctxTri.beginPath();
+            for (let i = 1; i < polyPoints.length - 1; i++) {
+                ctxTri.moveTo(polyPoints[0].x, polyPoints[0].y);
+                ctxTri.lineTo(polyPoints[i].x, polyPoints[i].y);
+                ctxTri.lineTo(polyPoints[i + 1].x, polyPoints[i + 1].y);
+                ctxTri.closePath();
+            }
+            ctxTri.stroke();
+            ctxTri.fillStyle = 'rgba(0, 255, 204, 0.1)';
+            ctxTri.fill();
 
-// --- 2. FRUSTUM CULLING ---
-const canvasCull = document.getElementById('cCull');
-const ctxCull = canvasCull.getContext('2d');
-const objects = Array.from({length: 20}, () => ({x: Math.random()*500, y: Math.random()*300, r: 10}));
-
-function drawCulling() {
-    canvasCull.width = canvasCull.offsetWidth; canvasCull.height = 300;
-    ctxCull.clearRect(0,0,800,300);
-
-    // Vidni stožec (Frustum)
-    const cam = {x: 50, y: 150};
-    const angle = Math.atan2(mouse.y - cam.y, mouse.x - cam.x);
-    const fov = 0.6; // ~35 stopinj
-
-    ctxCull.fillStyle = 'rgba(255, 255, 255, 0.05)';
-    ctxCull.beginPath();
-    ctxCull.moveTo(cam.x, cam.y);
-    ctxCull.arc(cam.x, cam.y, 400, angle - fov, angle + fov);
-    ctxCull.fill();
-
-    objects.forEach(obj => {
-        const objAngle = Math.atan2(obj.y - cam.y, obj.x - cam.x);
-        let diff = objAngle - angle;
-        while (diff < -Math.PI) diff += Math.PI*2;
-        while (diff > Math.PI) diff -= Math.PI*2;
-
-        const isVisible = Math.abs(diff) < fov;
-        ctxCull.fillStyle = isVisible ? '#00ffcc' : '#333';
-        ctxCull.beginPath(); ctxCull.arc(obj.x, obj.y, obj.r, 0, Math.PI*2); ctxCull.fill();
-    });
-    requestAnimationFrame(drawCulling);
-}
-
-// --- 3. RAY MARCHING ---
-const canvasRay = document.getElementById('cRay');
-const ctxRay = canvasRay.getContext('2d');
-
-function drawRayMarching() {
-    canvasRay.width = canvasRay.offsetWidth; canvasRay.height = 300;
-    ctxRay.clearRect(0,0,800,300);
-
-    const start = {x: 50, y: 150};
-    const target = {x: mouse.x, y: mouse.y};
-    const dir = {x: target.x - start.x, y: target.y - start.y};
-    const len = Math.hypot(dir.x, dir.y);
-    dir.x /= len; dir.y /= len;
-
-    const circle = {x: 300, y: 150, r: 60};
-    let current = {x: start.x, y: start.y};
-
-    // Draw Obstacle
-    ctxRay.strokeStyle = '#fff';
-    ctxRay.beginPath(); ctxRay.arc(circle.x, circle.y, circle.r, 0, Math.PI*2); ctxRay.stroke();
-
-    for(let i=0; i<10; i++) {
-        const dist = Math.hypot(current.x - circle.x, current.y - circle.y) - circle.r;
-        
-        ctxRay.strokeStyle = 'rgba(0, 255, 204, 0.3)';
-        ctxRay.beginPath(); ctxRay.arc(current.x, current.y, dist, 0, Math.PI*2); ctxRay.stroke();
-        
-        if(dist < 0.1 || dist > 500) break;
-        
-        current.x += dir.x * dist;
-        current.y += dir.y * dist;
-    }
-    
-    ctxRay.fillStyle = '#ff4444';
-    ctxRay.beginPath(); ctxRay.arc(current.x, current.y, 4, 0, Math.PI*2); ctxRay.fill();
-    requestAnimationFrame(drawRayMarching);
-}
-
-// --- 4. BACKFACE CULLING ---
-const canvasBack = document.getElementById('cBack');
-const ctxBack = canvasBack.getContext('2d');
-
-function drawBackface() {
-    canvasBack.width = canvasBack.offsetWidth; canvasBack.height = 300;
-    ctxBack.clearRect(0,0,800,300);
-    const center = {x: 200, y: 150};
-    const time = Date.now() * 0.001;
-    
-    // Točke kocke (v 2D projekciji)
-    const points = [];
-    for(let i=0; i<4; i++) {
-        const a = time + i * (Math.PI/2);
-        points.push({
-            x: center.x + Math.cos(a) * 80,
-            y: center.y + Math.sin(a) * 30,
-            nx: Math.cos(a), ny: Math.sin(a) // Normala
-        });
-    }
-
-    // Kamera je na (200, 300) - gleda "navzgor"
-    const camDir = {x: 0, y: -1};
-
-    points.forEach((p, i) => {
-        const p2 = points[(i+1)%4];
-        // Izračun normale stranice
-        const edge = {x: p2.x - p.x, y: p2.y - p.y};
-        const normal = {x: -edge.y, y: edge.x};
-        const dot = normal.x * 0 + normal.y * 1; // Dot product s kamero
-
-        if(dot > 0) { // Backface Culling: če normala gleda stran, ne riši
-            ctxBack.strokeStyle = '#00ffcc';
-            ctxBack.lineWidth = 3;
-            ctxBack.beginPath(); ctxBack.moveTo(p.x, p.y); ctxBack.lineTo(p2.x, p2.y); ctxBack.stroke();
-        } else {
-            ctxBack.strokeStyle = '#333';
-            ctxBack.setLineDash([5, 5]);
-            ctxBack.beginPath(); ctxBack.moveTo(p.x, p.y); ctxBack.lineTo(p2.x, p2.y); ctxBack.stroke();
-            ctxBack.setLineDash([]);
+            requestAnimationFrame(drawTriangulation);
         }
-    });
-    requestAnimationFrame(drawBackface);
-}
 
-// Init
-drawTriangulation(); drawCulling(); drawRayMarching(); drawBackface();
-</script>
+        // --- 2. FRUSTUM CULLING ---
+        const canvasCull = document.getElementById('cCull');
+        const ctxCull = canvasCull.getContext('2d');
+        const objects = Array.from({
+            length: 20
+        }, () => ({
+            x: Math.random() * 500,
+            y: Math.random() * 300,
+            r: 10
+        }));
+
+        function drawCulling() {
+            canvasCull.width = canvasCull.offsetWidth;
+            canvasCull.height = 300;
+            ctxCull.clearRect(0, 0, 800, 300);
+
+            // Vidni stožec (Frustum)
+            const cam = {
+                x: 50,
+                y: 150
+            };
+            const angle = Math.atan2(mouse.y - cam.y, mouse.x - cam.x);
+            const fov = 0.6; // ~35 stopinj
+
+            ctxCull.fillStyle = 'rgba(255, 255, 255, 0.05)';
+            ctxCull.beginPath();
+            ctxCull.moveTo(cam.x, cam.y);
+            ctxCull.arc(cam.x, cam.y, 400, angle - fov, angle + fov);
+            ctxCull.fill();
+
+            objects.forEach(obj => {
+                const objAngle = Math.atan2(obj.y - cam.y, obj.x - cam.x);
+                let diff = objAngle - angle;
+                while (diff < -Math.PI) diff += Math.PI * 2;
+                while (diff > Math.PI) diff -= Math.PI * 2;
+
+                const isVisible = Math.abs(diff) < fov;
+                ctxCull.fillStyle = isVisible ? '#00ffcc' : '#333';
+                ctxCull.beginPath();
+                ctxCull.arc(obj.x, obj.y, obj.r, 0, Math.PI * 2);
+                ctxCull.fill();
+            });
+            requestAnimationFrame(drawCulling);
+        }
+
+        // --- 3. RAY MARCHING ---
+        const canvasRay = document.getElementById('cRay');
+        const ctxRay = canvasRay.getContext('2d');
+
+        function drawRayMarching() {
+            canvasRay.width = canvasRay.offsetWidth;
+            canvasRay.height = 300;
+            ctxRay.clearRect(0, 0, 800, 300);
+
+            const start = {
+                x: 50,
+                y: 150
+            };
+            const target = {
+                x: mouse.x,
+                y: mouse.y
+            };
+            const dir = {
+                x: target.x - start.x,
+                y: target.y - start.y
+            };
+            const len = Math.hypot(dir.x, dir.y);
+            dir.x /= len;
+            dir.y /= len;
+
+            const circle = {
+                x: 300,
+                y: 150,
+                r: 60
+            };
+            let current = {
+                x: start.x,
+                y: start.y
+            };
+
+            // Draw Obstacle
+            ctxRay.strokeStyle = '#fff';
+            ctxRay.beginPath();
+            ctxRay.arc(circle.x, circle.y, circle.r, 0, Math.PI * 2);
+            ctxRay.stroke();
+
+            for (let i = 0; i < 10; i++) {
+                const dist = Math.hypot(current.x - circle.x, current.y - circle.y) - circle.r;
+
+                ctxRay.strokeStyle = 'rgba(0, 255, 204, 0.3)';
+                ctxRay.beginPath();
+                ctxRay.arc(current.x, current.y, dist, 0, Math.PI * 2);
+                ctxRay.stroke();
+
+                if (dist < 0.1 || dist > 500) break;
+
+                current.x += dir.x * dist;
+                current.y += dir.y * dist;
+            }
+
+            ctxRay.fillStyle = '#ff4444';
+            ctxRay.beginPath();
+            ctxRay.arc(current.x, current.y, 4, 0, Math.PI * 2);
+            ctxRay.fill();
+            requestAnimationFrame(drawRayMarching);
+        }
+
+        // --- 4. BACKFACE CULLING ---
+        const canvasBack = document.getElementById('cBack');
+        const ctxBack = canvasBack.getContext('2d');
+
+        function drawBackface() {
+            canvasBack.width = canvasBack.offsetWidth;
+            canvasBack.height = 300;
+            ctxBack.clearRect(0, 0, 800, 300);
+            const center = {
+                x: 200,
+                y: 150
+            };
+            const time = Date.now() * 0.001;
+
+            // Točke kocke (v 2D projekciji)
+            const points = [];
+            for (let i = 0; i < 4; i++) {
+                const a = time + i * (Math.PI / 2);
+                points.push({
+                    x: center.x + Math.cos(a) * 80,
+                    y: center.y + Math.sin(a) * 30,
+                    nx: Math.cos(a),
+                    ny: Math.sin(a) // Normala
+                });
+            }
+
+            // Kamera je na (200, 300) - gleda "navzgor"
+            const camDir = {
+                x: 0,
+                y: -1
+            };
+
+            points.forEach((p, i) => {
+                const p2 = points[(i + 1) % 4];
+                // Izračun normale stranice
+                const edge = {
+                    x: p2.x - p.x,
+                    y: p2.y - p.y
+                };
+                const normal = {
+                    x: -edge.y,
+                    y: edge.x
+                };
+                const dot = normal.x * 0 + normal.y * 1; // Dot product s kamero
+
+                if (dot > 0) { // Backface Culling: če normala gleda stran, ne riši
+                    ctxBack.strokeStyle = '#00ffcc';
+                    ctxBack.lineWidth = 3;
+                    ctxBack.beginPath();
+                    ctxBack.moveTo(p.x, p.y);
+                    ctxBack.lineTo(p2.x, p2.y);
+                    ctxBack.stroke();
+                } else {
+                    ctxBack.strokeStyle = '#333';
+                    ctxBack.setLineDash([5, 5]);
+                    ctxBack.beginPath();
+                    ctxBack.moveTo(p.x, p.y);
+                    ctxBack.lineTo(p2.x, p2.y);
+                    ctxBack.stroke();
+                    ctxBack.setLineDash([]);
+                }
+            });
+            requestAnimationFrame(drawBackface);
+        }
+
+        // Init
+        drawTriangulation();
+        drawCulling();
+        drawRayMarching();
+        drawBackface();
+    </script>
 </body>
+
 </html>

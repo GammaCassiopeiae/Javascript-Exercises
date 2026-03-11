@@ -1,18 +1,56 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Backtracking - N-Queens</title>
     <style>
-        body { font-family: Arial; display: flex; flex-direction: column; align-items: center; background: #2c3e50; color: white; }
-        #board { display: grid; grid-template-columns: repeat(8, 50px); gap: 0; border: 2px solid #333; }
-        .square { width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; position: relative; }
-        .white { background-color: #f0d9b5; }
-        .black { background-color: #b58863; }
+        body {
+            font-family: Arial;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #2c3e50;
+            color: white;
+        }
+
+        #board {
+            display: grid;
+            grid-template-columns: repeat(8, 50px);
+            gap: 0;
+            border: 2px solid #333;
+        }
+
+        .square {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .white {
+            background-color: #f0d9b5;
+        }
+
+        .black {
+            background-color: #b58863;
+        }
+
         /* Fixed: Changed absolute to relative-friendly sizing */
-        .queen::after { content: '♛'; font-size: 35px; color: #2c3e50; }
-        .queen { background: #f1c40f !important; transition: background 0.3s; }
+        .queen::after {
+            content: '♛';
+            font-size: 35px;
+            color: #2c3e50;
+        }
+
+        .queen {
+            background: #f1c40f !important;
+            transition: background 0.3s;
+        }
     </style>
 </head>
+
 <body>
     <h2>N-Queens Backtracking Visualizer</h2>
     <div id="board"></div>
@@ -20,7 +58,9 @@
 
     <script>
         const N = 8;
-        let board = Array.from({length: N}, () => Array(N).fill(false));
+        let board = Array.from({
+            length: N
+        }, () => Array(N).fill(false));
 
         // Create the UI first
         function createBoardUI() {
@@ -54,7 +94,7 @@
                     // Place queen
                     board[row][col] = true;
                     toggleQueenUI(row, col, true);
-                    
+
                     await sleep(50); // Logic: Added delay to see the process
 
                     if (await solve(row + 1)) return true;
@@ -68,9 +108,12 @@
         }
 
         function isValid(row, col) {
-            for (let i = 0; i < row; i++) if (board[i][col]) return false;
-            for (let i=row-1, j=col-1; i>=0 && j>=0; i--, j--) if (board[i][j]) return false;
-            for (let i=row-1, j=col+1; i>=0 && j<N; i--, j++) if (board[i][j]) return false;
+            for (let i = 0; i < row; i++)
+                if (board[i][col]) return false;
+            for (let i = row - 1, j = col - 1; i >= 0 && j >= 0; i--, j--)
+                if (board[i][j]) return false;
+            for (let i = row - 1, j = col + 1; i >= 0 && j < N; i--, j++)
+                if (board[i][j]) return false;
             return true;
         }
 
@@ -81,4 +124,5 @@
         });
     </script>
 </body>
+
 </html>

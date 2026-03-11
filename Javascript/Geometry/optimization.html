@@ -1,146 +1,271 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Optimization & Culling Lab</title>
     <style>
-        :root { --bg: #050505; --card: #121212; --accent: #00ffcc; --low: #ffcc00; --med: #00ccff; --high: #ff3366; }
-        body { margin: 0; background: var(--bg); color: #eee; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; padding: 20px; width: 95%; max-width: 1400px; }
-        .card { background: var(--card); border: 1px solid #333; border-radius: 12px; padding: 15px; position: relative; }
-        canvas { background: #000; border: 1px solid #222; border-radius: 8px; width: 100%; height: 300px; cursor: crosshair; }
-        h2 { color: var(--accent); margin: 0 0 8px 0; font-size: 1.1rem; text-transform: uppercase; }
-        .desc { font-size: 0.8rem; color: #999; margin-bottom: 12px; height: 3em; }
-        .status { font-family: monospace; font-size: 0.85rem; margin-top: 8px; color: var(--accent); }
+        :root {
+            --bg: #050505;
+            --card: #121212;
+            --accent: #00ffcc;
+            --low: #ffcc00;
+            --med: #00ccff;
+            --high: #ff3366;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: #eee;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            width: 95%;
+            max-width: 1400px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 15px;
+            position: relative;
+        }
+
+        canvas {
+            background: #000;
+            border: 1px solid #222;
+            border-radius: 8px;
+            width: 100%;
+            height: 300px;
+            cursor: crosshair;
+        }
+
+        h2 {
+            color: var(--accent);
+            margin: 0 0 8px 0;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+        }
+
+        .desc {
+            font-size: 0.8rem;
+            color: #999;
+            margin-bottom: 12px;
+            height: 3em;
+        }
+
+        .status {
+            font-family: monospace;
+            font-size: 0.85rem;
+            margin-top: 8px;
+            color: var(--accent);
+        }
     </style>
 </head>
+
 <body>
 
-<h1 style="margin-top: 20px; letter-spacing: 2px;">OPTIMIZATION & CULLING</h1>
+    <h1 style="margin-top: 20px; letter-spacing: 2px;">OPTIMIZATION & CULLING</h1>
 
-<div class="grid">
-    <!-- 1. PORTAL CULLING -->
-    <div class="card">
-        <h2>1. Portal Culling (Indoor)</h2>
-        <div class="desc">Sceno razdeli na celice (sobe) in portale (vrata). Renderira le tisto, kar je vidno skozi odprta vrata.</div>
-        <canvas id="cPortal"></canvas>
-        <div id="sPortal" class="status">Vidne sobe: 0</div>
+    <div class="grid">
+        <!-- 1. PORTAL CULLING -->
+        <div class="card">
+            <h2>1. Portal Culling (Indoor)</h2>
+            <div class="desc">Sceno razdeli na celice (sobe) in portale (vrata). Renderira le tisto, kar je vidno skozi odprta vrata.</div>
+            <canvas id="cPortal"></canvas>
+            <div id="sPortal" class="status">Vidne sobe: 0</div>
+        </div>
+
+        <!-- 2. LOD SELECTION -->
+        <div class="card">
+            <h2>2. LOD (Level of Detail)</h2>
+            <div class="desc">Samodejno zamenja kompleksnost mreže glede na razdaljo od kamere za ohranjanje FPS.</div>
+            <canvas id="cLOD"></canvas>
+            <div id="sLOD" class="status">Trenutni detajl: High</div>
+        </div>
+
+        <!-- 3. OCCLUSION CULLING -->
+        <div class="card" style="grid-column: span 1;">
+            <h2>3. Occlusion Culling</h2>
+            <div class="desc">Preskoči renderiranje objektov, ki so skriti za večjimi "occluderji" (npr. zidovi).</div>
+            <canvas id="cOcclusion"></canvas>
+            <div id="sOcclusion" class="status">Skritih objektov: 0</div>
+        </div>
     </div>
 
-    <!-- 2. LOD SELECTION -->
-    <div class="card">
-        <h2>2. LOD (Level of Detail)</h2>
-        <div class="desc">Samodejno zamenja kompleksnost mreže glede na razdaljo od kamere za ohranjanje FPS.</div>
-        <canvas id="cLOD"></canvas>
-        <div id="sLOD" class="status">Trenutni detajl: High</div>
-    </div>
+    <script>
+        const mouse = {
+            x: 0,
+            y: 0
+        };
+        window.onmousemove = e => {
+            const rect = e.target.getBoundingClientRect?.();
+            if (rect) {
+                mouse.x = e.clientX - rect.left;
+                mouse.y = e.clientY - rect.top;
+            }
+        };
 
-    <!-- 3. OCCLUSION CULLING -->
-    <div class="card" style="grid-column: span 1;">
-        <h2>3. Occlusion Culling</h2>
-        <div class="desc">Preskoči renderiranje objektov, ki so skriti za večjimi "occluderji" (npr. zidovi).</div>
-        <canvas id="cOcclusion"></canvas>
-        <div id="sOcclusion" class="status">Skritih objektov: 0</div>
-    </div>
-</div>
+        // --- 1. PORTAL CULLING (Simplified 2D) ---
+        const canvasPortal = document.getElementById('cPortal');
+        const ctxPortal = canvasPortal.getContext('2d');
+        const rooms = [{
+                x: 50,
+                y: 50,
+                w: 100,
+                h: 100,
+                id: "Soba 1"
+            },
+            {
+                x: 200,
+                y: 50,
+                w: 100,
+                h: 100,
+                id: "Soba 2"
+            }
+        ];
+        const portal = {
+            x: 150,
+            y: 80,
+            w: 50,
+            h: 40
+        };
 
-<script>
-const mouse = { x: 0, y: 0 };
-window.onmousemove = e => {
-    const rect = e.target.getBoundingClientRect?.();
-    if(rect) { mouse.x = e.clientX - rect.left; mouse.y = e.clientY - rect.top; }
-};
+        function drawPortal() {
+            canvasPortal.width = canvasPortal.offsetWidth;
+            canvasPortal.height = 300;
+            ctxPortal.clearRect(0, 0, 800, 300);
+            const cam = {
+                x: mouse.x,
+                y: mouse.y
+            };
 
-// --- 1. PORTAL CULLING (Simplified 2D) ---
-const canvasPortal = document.getElementById('cPortal');
-const ctxPortal = canvasPortal.getContext('2d');
-const rooms = [
-    { x: 50, y: 50, w: 100, h: 100, id: "Soba 1" },
-    { x: 200, y: 50, w: 100, h: 100, id: "Soba 2" }
-];
-const portal = { x: 150, y: 80, w: 50, h: 40 };
+            // Preveri, v kateri sobi je kamera
+            let activeRoom = rooms.find(r => cam.x > r.x && cam.x < r.x + r.w && cam.y > r.y && cam.y < r.y + r.h);
 
-function drawPortal() {
-    canvasPortal.width = canvasPortal.offsetWidth; canvasPortal.height = 300;
-    ctxPortal.clearRect(0,0,800,300);
-    const cam = { x: mouse.x, y: mouse.y };
-    
-    // Preveri, v kateri sobi je kamera
-    let activeRoom = rooms.find(r => cam.x > r.x && cam.x < r.x + r.w && cam.y > r.y && cam.y < r.y + r.h);
-    
-    rooms.forEach(r => {
-        const isVisible = r === activeRoom || (activeRoom && activeRoom.id === "Soba 1" && cam.x > 100); // Poenostavljen portal test
-        ctxPortal.strokeStyle = isVisible ? "var(--accent)" : "#222";
-        ctxPortal.setLineDash(isVisible ? [] : [5, 5]);
-        ctxPortal.strokeRect(r.x, r.y, r.w, r.h);
-    });
+            rooms.forEach(r => {
+                const isVisible = r === activeRoom || (activeRoom && activeRoom.id === "Soba 1" && cam.x > 100); // Poenostavljen portal test
+                ctxPortal.strokeStyle = isVisible ? "var(--accent)" : "#222";
+                ctxPortal.setLineDash(isVisible ? [] : [5, 5]);
+                ctxPortal.strokeRect(r.x, r.y, r.w, r.h);
+            });
 
-    ctxPortal.fillStyle = "white"; ctxPortal.fillRect(portal.x, portal.y, portal.w, portal.h);
-    document.getElementById('sPortal').innerText = `Vidne sobe: ${activeRoom ? (cam.x > 100 ? 2 : 1) : 0}`;
-    requestAnimationFrame(drawPortal);
-}
-
-// --- 2. LOD SELECTION ---
-const canvasLOD = document.getElementById('cLOD');
-const ctxLOD = canvasLOD.getContext('2d');
-
-function drawLOD() {
-    canvasLOD.width = canvasLOD.offsetWidth; canvasLOD.height = 300;
-    ctxLOD.clearRect(0,0,800,300);
-    const center = { x: canvasLOD.width/2, y: 150 };
-    const dist = Math.hypot(mouse.x - center.x, mouse.y - center.y);
-    
-    let lod = "High", segments = 32, color = "var(--high)";
-    if (dist > 150) { lod = "Low"; segments = 4; color = "var(--low)"; }
-    else if (dist > 80) { lod = "Med"; segments = 8; color = "var(--med)"; }
-
-    ctxLOD.strokeStyle = color; ctxLOD.lineWidth = 2;
-    ctxLOD.beginPath();
-    for(let i=0; i<=segments; i++) {
-        const a = (i/segments) * Math.PI * 2;
-        const x = center.x + Math.cos(a) * 50;
-        const y = center.y + Math.sin(a) * 50;
-        i === 0 ? ctxLOD.moveTo(x, y) : ctxLOD.lineTo(x, y);
-    }
-    ctxLOD.closePath(); ctxLOD.stroke();
-    
-    document.getElementById('sLOD').innerText = `Razdalja: ${Math.round(dist)}px | LOD: ${lod}`;
-    requestAnimationFrame(drawLOD);
-}
-
-// --- 3. OCCLUSION CULLING ---
-const canvasOcc = document.getElementById('cOcclusion');
-const ctxOcc = canvasOcc.getContext('2d');
-const occluder = { x: 150, y: 50, w: 100, h: 200 };
-const spheres = Array.from({length: 15}, () => ({ x: 300, y: 50 + Math.random()*200, r: 10 }));
-
-function drawOcclusion() {
-    canvasOcc.width = canvasOcc.offsetWidth; canvasOcc.height = 300;
-    ctxOcc.clearRect(0,0,800,300);
-    const cam = { x: mouse.x, y: mouse.y };
-    let hiddenCount = 0;
-
-    // Occluder
-    ctxOcc.fillStyle = "#333"; ctxOcc.fillRect(occluder.x, occluder.y, occluder.w, occluder.h);
-
-    spheres.forEach(s => {
-        // Poenostavljen ray-cast test za okluzijo
-        const isOccluded = cam.x < occluder.x && s.x > occluder.x + occluder.w;
-        if (!isOccluded) {
-            ctxOcc.fillStyle = "var(--accent)";
-            ctxOcc.beginPath(); ctxOcc.arc(s.x, s.y, s.r, 0, Math.PI*2); ctxOcc.fill();
-        } else {
-            hiddenCount++;
-            ctxOcc.strokeStyle = "#222"; ctxOcc.beginPath(); ctxOcc.arc(s.x, s.y, s.r, 0, Math.PI*2); ctxOcc.stroke();
+            ctxPortal.fillStyle = "white";
+            ctxPortal.fillRect(portal.x, portal.y, portal.w, portal.h);
+            document.getElementById('sPortal').innerText = `Vidne sobe: ${activeRoom ? (cam.x > 100 ? 2 : 1) : 0}`;
+            requestAnimationFrame(drawPortal);
         }
-    });
 
-    document.getElementById('sOcclusion').innerText = `Skritih objektov: ${hiddenCount}`;
-    requestAnimationFrame(drawOcclusion);
-}
+        // --- 2. LOD SELECTION ---
+        const canvasLOD = document.getElementById('cLOD');
+        const ctxLOD = canvasLOD.getContext('2d');
 
-// Init
-drawPortal(); drawLOD(); drawOcclusion();
-</script>
+        function drawLOD() {
+            canvasLOD.width = canvasLOD.offsetWidth;
+            canvasLOD.height = 300;
+            ctxLOD.clearRect(0, 0, 800, 300);
+            const center = {
+                x: canvasLOD.width / 2,
+                y: 150
+            };
+            const dist = Math.hypot(mouse.x - center.x, mouse.y - center.y);
+
+            let lod = "High",
+                segments = 32,
+                color = "var(--high)";
+            if (dist > 150) {
+                lod = "Low";
+                segments = 4;
+                color = "var(--low)";
+            } else if (dist > 80) {
+                lod = "Med";
+                segments = 8;
+                color = "var(--med)";
+            }
+
+            ctxLOD.strokeStyle = color;
+            ctxLOD.lineWidth = 2;
+            ctxLOD.beginPath();
+            for (let i = 0; i <= segments; i++) {
+                const a = (i / segments) * Math.PI * 2;
+                const x = center.x + Math.cos(a) * 50;
+                const y = center.y + Math.sin(a) * 50;
+                i === 0 ? ctxLOD.moveTo(x, y) : ctxLOD.lineTo(x, y);
+            }
+            ctxLOD.closePath();
+            ctxLOD.stroke();
+
+            document.getElementById('sLOD').innerText = `Razdalja: ${Math.round(dist)}px | LOD: ${lod}`;
+            requestAnimationFrame(drawLOD);
+        }
+
+        // --- 3. OCCLUSION CULLING ---
+        const canvasOcc = document.getElementById('cOcclusion');
+        const ctxOcc = canvasOcc.getContext('2d');
+        const occluder = {
+            x: 150,
+            y: 50,
+            w: 100,
+            h: 200
+        };
+        const spheres = Array.from({
+            length: 15
+        }, () => ({
+            x: 300,
+            y: 50 + Math.random() * 200,
+            r: 10
+        }));
+
+        function drawOcclusion() {
+            canvasOcc.width = canvasOcc.offsetWidth;
+            canvasOcc.height = 300;
+            ctxOcc.clearRect(0, 0, 800, 300);
+            const cam = {
+                x: mouse.x,
+                y: mouse.y
+            };
+            let hiddenCount = 0;
+
+            // Occluder
+            ctxOcc.fillStyle = "#333";
+            ctxOcc.fillRect(occluder.x, occluder.y, occluder.w, occluder.h);
+
+            spheres.forEach(s => {
+                // Poenostavljen ray-cast test za okluzijo
+                const isOccluded = cam.x < occluder.x && s.x > occluder.x + occluder.w;
+                if (!isOccluded) {
+                    ctxOcc.fillStyle = "var(--accent)";
+                    ctxOcc.beginPath();
+                    ctxOcc.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                    ctxOcc.fill();
+                } else {
+                    hiddenCount++;
+                    ctxOcc.strokeStyle = "#222";
+                    ctxOcc.beginPath();
+                    ctxOcc.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                    ctxOcc.stroke();
+                }
+            });
+
+            document.getElementById('sOcclusion').innerText = `Skritih objektov: ${hiddenCount}`;
+            requestAnimationFrame(drawOcclusion);
+        }
+
+        // Init
+        drawPortal();
+        drawLOD();
+        drawOcclusion();
+    </script>
 </body>
+
 </html>

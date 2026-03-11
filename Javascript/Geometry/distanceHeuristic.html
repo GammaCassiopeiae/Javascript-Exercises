@@ -1,141 +1,207 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Distance & Heuristics Lab</title>
     <style>
-        body { margin: 0; background: #0a0a0a; color: #eee; font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; }
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; padding: 20px; width: 100%; max-width: 1200px; }
-        .card { background: #161616; border: 1px solid #333; border-radius: 12px; padding: 15px; text-align: center; }
-        canvas { background: #000; border: 1px solid #444; border-radius: 8px; width: 100%; cursor: crosshair; image-rendering: pixelated; }
-        h2 { color: #00ffcc; margin-bottom: 5px; font-size: 1.1rem; }
-        p { font-size: 0.8rem; color: #aaa; margin-bottom: 15px; min-height: 32px; }
-        .val { font-family: monospace; color: #ff3366; font-size: 1.1rem; font-weight: bold; }
-        .formula { font-size: 0.75rem; color: #666; margin-top: 5px; }
+        body {
+            margin: 0;
+            background: #0a0a0a;
+            color: #eee;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .card {
+            background: #161616;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        canvas {
+            background: #000;
+            border: 1px solid #444;
+            border-radius: 8px;
+            width: 100%;
+            cursor: crosshair;
+            image-rendering: pixelated;
+        }
+
+        h2 {
+            color: #00ffcc;
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        p {
+            font-size: 0.8rem;
+            color: #aaa;
+            margin-bottom: 15px;
+            min-height: 32px;
+        }
+
+        .val {
+            font-family: monospace;
+            color: #ff3366;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .formula {
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 5px;
+        }
     </style>
 </head>
+
 <body>
 
-<h1 style="margin-top: 30px;">Distance & Heuristics</h1>
-<p>Premakni miško po polju, da vidiš, kako različne matrike merijo razdaljo do središča.</p>
+    <h1 style="margin-top: 30px;">Distance & Heuristics</h1>
+    <p>Premakni miško po polju, da vidiš, kako različne matrike merijo razdaljo do središča.</p>
 
-<div class="grid-container">
-    <!-- EUCLIDEAN -->
-    <div class="card">
-        <h2>Euclidean Distance</h2>
-        <p>Zračna razdalja (pitagorov izrek). Idealno za prosto gibanje v 2D/3D prostoru.</p>
-        <canvas id="cEuclidean"></canvas>
-        <div class="val" id="vEuclidean">0.00</div>
-        <div class="formula">sqrt(dx² + dy²)</div>
+    <div class="grid-container">
+        <!-- EUCLIDEAN -->
+        <div class="card">
+            <h2>Euclidean Distance</h2>
+            <p>Zračna razdalja (pitagorov izrek). Idealno za prosto gibanje v 2D/3D prostoru.</p>
+            <canvas id="cEuclidean"></canvas>
+            <div class="val" id="vEuclidean">0.00</div>
+            <div class="formula">sqrt(dx² + dy²)</div>
+        </div>
+
+        <!-- MANHATTAN -->
+        <div class="card">
+            <h2>Manhattan Distance</h2>
+            <p>Razdalja "taksista". Uporabno v mrežah, kjer je dovoljeno le gibanje gor/dol/levo/desno.</p>
+            <canvas id="cManhattan"></canvas>
+            <div class="val" id="vManhattan">0.00</div>
+            <div class="formula">abs(dx) + abs(dy)</div>
+        </div>
+
+        <!-- CHEBYSHEV -->
+        <div class="card">
+            <h2>Chebyshev Distance</h2>
+            <p>Šahovska razdalja (kralj). Uporabno, ko je diagonalno gibanje enako hitro kot premo.</p>
+            <canvas id="cChebyshev"></canvas>
+            <div class="val" id="vChebyshev">0.00</div>
+            <div class="formula">max(abs(dx), abs(dy))</div>
+        </div>
     </div>
 
-    <!-- MANHATTAN -->
-    <div class="card">
-        <h2>Manhattan Distance</h2>
-        <p>Razdalja "taksista". Uporabno v mrežah, kjer je dovoljeno le gibanje gor/dol/levo/desno.</p>
-        <canvas id="cManhattan"></canvas>
-        <div class="val" id="vManhattan">0.00</div>
-        <div class="formula">abs(dx) + abs(dy)</div>
-    </div>
+    <script>
+        const canvases = ['cEuclidean', 'cManhattan', 'cChebyshev'];
+        const ctxs = {};
+        const size = 300;
+        const center = {
+            x: 150,
+            y: 150
+        };
+        let mousePos = {
+            x: 200,
+            y: 100
+        };
 
-    <!-- CHEBYSHEV -->
-    <div class="card">
-        <h2>Chebyshev Distance</h2>
-        <p>Šahovska razdalja (kralj). Uporabno, ko je diagonalno gibanje enako hitro kot premo.</p>
-        <canvas id="cChebyshev"></canvas>
-        <div class="val" id="vChebyshev">0.00</div>
-        <div class="formula">max(abs(dx), abs(dy))</div>
-    </div>
-</div>
+        // Inicializacija
+        canvases.forEach(id => {
+            const c = document.getElementById(id);
+            c.width = c.height = size;
+            ctxs[id] = c.getContext('2d');
 
-<script>
-const canvases = ['cEuclidean', 'cManhattan', 'cChebyshev'];
-const ctxs = {};
-const size = 300;
-const center = { x: 150, y: 150 };
-let mousePos = { x: 200, y: 100 };
+            c.onmousemove = e => {
+                const rect = c.getBoundingClientRect();
+                mousePos.x = (e.clientX - rect.left) * (size / rect.width);
+                mousePos.y = (e.clientY - rect.top) * (size / rect.height);
+                drawAll();
+            };
+        });
 
-// Inicializacija
-canvases.forEach(id => {
-    const c = document.getElementById(id);
-    c.width = c.height = size;
-    ctxs[id] = c.getContext('2d');
-    
-    c.onmousemove = e => {
-        const rect = c.getBoundingClientRect();
-        mousePos.x = (e.clientX - rect.left) * (size / rect.width);
-        mousePos.y = (e.clientY - rect.top) * (size / rect.height);
-        drawAll();
-    };
-});
-
-function getDistances(p1, p2) {
-    const dx = Math.abs(p1.x - p2.x);
-    const dy = Math.abs(p1.y - p2.y);
-    return {
-        euclidean: Math.sqrt(dx * dx + dy * dy),
-        manhattan: dx + dy,
-        chebyshev: Math.max(dx, dy)
-    };
-}
-
-function drawHeatmap(id, type) {
-    const ctx = ctxs[id];
-    const imgData = ctx.createImageData(size, size);
-    
-    for (let y = 0; y < size; y++) {
-        for (let x = 0; x < size; x++) {
-            const d = getDistances({x, y}, center);
-            let dist = 0;
-            if (type === 'euclidean') dist = d.euclidean;
-            if (type === 'manhattan') dist = d.manhattan;
-            if (type === 'chebyshev') dist = d.chebyshev;
-
-            const index = (x + y * size) * 4;
-            const intensity = (dist % 40 < 2) ? 255 : (dist / 2); // Izohipse (linije enakih razdalj)
-            
-            imgData.data[index] = 20;            // R
-            imgData.data[index + 1] = intensity; // G
-            imgData.data[index + 2] = 150;       // B
-            imgData.data[index + 3] = 255;       // A
+        function getDistances(p1, p2) {
+            const dx = Math.abs(p1.x - p2.x);
+            const dy = Math.abs(p1.y - p2.y);
+            return {
+                euclidean: Math.sqrt(dx * dx + dy * dy),
+                manhattan: dx + dy,
+                chebyshev: Math.max(dx, dy)
+            };
         }
-    }
-    ctx.putImageData(imgData, 0, 0);
 
-    // Nariši interaktivno linijo do miške
-    const d = getDistances(mousePos, center);
-    ctx.strokeStyle = "white";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(center.x, center.y);
-    
-    if (type === 'euclidean') {
-        ctx.lineTo(mousePos.x, mousePos.y);
-        document.getElementById('vEuclidean').innerText = d.euclidean.toFixed(2);
-    } else if (type === 'manhattan') {
-        ctx.lineTo(mousePos.x, center.y);
-        ctx.lineTo(mousePos.x, mousePos.y);
-        document.getElementById('vManhattan').innerText = d.manhattan.toFixed(2);
-    } else {
-        ctx.lineTo(mousePos.x, mousePos.y);
-        document.getElementById('vChebyshev').innerText = d.chebyshev.toFixed(2);
-    }
-    ctx.stroke();
+        function drawHeatmap(id, type) {
+            const ctx = ctxs[id];
+            const imgData = ctx.createImageData(size, size);
 
-    // Središče
-    ctx.fillStyle = "#ff3366";
-    ctx.beginPath(); ctx.arc(center.x, center.y, 4, 0, Math.PI*2); ctx.fill();
-}
+            for (let y = 0; y < size; y++) {
+                for (let x = 0; x < size; x++) {
+                    const d = getDistances({
+                        x,
+                        y
+                    }, center);
+                    let dist = 0;
+                    if (type === 'euclidean') dist = d.euclidean;
+                    if (type === 'manhattan') dist = d.manhattan;
+                    if (type === 'chebyshev') dist = d.chebyshev;
 
-function drawAll() {
-    drawHeatmap('cEuclidean', 'euclidean');
-    drawHeatmap('cManhattan', 'manhattan');
-    drawHeatmap('cChebyshev', 'chebyshev');
-}
+                    const index = (x + y * size) * 4;
+                    const intensity = (dist % 40 < 2) ? 255 : (dist / 2); // Izohipse (linije enakih razdalj)
 
-// Prvi izris
-drawAll();
+                    imgData.data[index] = 20; // R
+                    imgData.data[index + 1] = intensity; // G
+                    imgData.data[index + 2] = 150; // B
+                    imgData.data[index + 3] = 255; // A
+                }
+            }
+            ctx.putImageData(imgData, 0, 0);
 
-</script>
+            // Nariši interaktivno linijo do miške
+            const d = getDistances(mousePos, center);
+            ctx.strokeStyle = "white";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(center.x, center.y);
+
+            if (type === 'euclidean') {
+                ctx.lineTo(mousePos.x, mousePos.y);
+                document.getElementById('vEuclidean').innerText = d.euclidean.toFixed(2);
+            } else if (type === 'manhattan') {
+                ctx.lineTo(mousePos.x, center.y);
+                ctx.lineTo(mousePos.x, mousePos.y);
+                document.getElementById('vManhattan').innerText = d.manhattan.toFixed(2);
+            } else {
+                ctx.lineTo(mousePos.x, mousePos.y);
+                document.getElementById('vChebyshev').innerText = d.chebyshev.toFixed(2);
+            }
+            ctx.stroke();
+
+            // Središče
+            ctx.fillStyle = "#ff3366";
+            ctx.beginPath();
+            ctx.arc(center.x, center.y, 4, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function drawAll() {
+            drawHeatmap('cEuclidean', 'euclidean');
+            drawHeatmap('cManhattan', 'manhattan');
+            drawHeatmap('cChebyshev', 'chebyshev');
+        }
+
+        // Prvi izris
+        drawAll();
+    </script>
 </body>
+
 </html>

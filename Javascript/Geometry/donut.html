@@ -1,91 +1,99 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>JS ASCII Donut</title>
     <style>
-        body { 
-            background-color: #000; 
-            color: #00ffcc; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            margin: 0; 
+        body {
+            background-color: #000;
+            color: #00ffcc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
             overflow: hidden;
             font-family: monospace;
         }
-        pre { 
-            line-height: 8px; 
-            font-size: 10px; 
+
+        pre {
+            line-height: 8px;
+            font-size: 10px;
             font-weight: bold;
         }
     </style>
 </head>
+
 <body>
 
-<pre id="donut"></pre>
+    <pre id="donut"></pre>
 
-<script>
-    const pre = document.getElementById('donut');
+    <script>
+        const pre = document.getElementById('donut');
 
-    let A = 0; // Rotacija okoli X osi
-    let B = 0; // Rotacija okoli Z osi
+        let A = 0; // Rotacija okoli X osi
+        let B = 0; // Rotacija okoli Z osi
 
-    const renderFrame = () => {
-        let b = []; // Buffer za znake
-        let z = []; // Z-buffer za globino
-        
-        A += 0.07;
-        B += 0.03;
+        const renderFrame = () => {
+            let b = []; // Buffer za znake
+            let z = []; // Z-buffer za globino
 
-        const cosA = Math.cos(A), sinA = Math.sin(A);
-        const cosB = Math.cos(B), sinB = Math.sin(B);
+            A += 0.07;
+            B += 0.03;
 
-        // Inicializacija bufferjev
-        for (let k = 0; k < 1760; k++) {
-            b[k] = " ";
-            z[k] = 0;
-        }
+            const cosA = Math.cos(A),
+                sinA = Math.sin(A);
+            const cosB = Math.cos(B),
+                sinB = Math.sin(B);
 
-        // Generiranje torusa
-        for (let j = 0; j < 6.28; j += 0.07) { // Krog okoli prereza
-            const ct = Math.cos(j), st = Math.sin(j);
-            
-            for (let i = 0; i < 6.28; i += 0.02) { // Krog okoli osi torusa
-                const sp = Math.sin(i), cp = Math.cos(i);
-                
-                const h = ct + 2; // Polmer torusa
-                const D = 1 / (sp * h * sinA + st * cosA + 5); // Globina
-                const t = sp * h * cosA - st * sinA;
+            // Inicializacija bufferjev
+            for (let k = 0; k < 1760; k++) {
+                b[k] = " ";
+                z[k] = 0;
+            }
 
-                // Projektirane 2D koordinate
-                const x = Math.floor(40 + 30 * D * (cp * h * cosB - t * sinB));
-                const y = Math.floor(12 + 15 * D * (cp * h * sinB + t * cosB));
-                const o = x + 80 * y; // Indeks v bufferju
+            // Generiranje torusa
+            for (let j = 0; j < 6.28; j += 0.07) { // Krog okoli prereza
+                const ct = Math.cos(j),
+                    st = Math.sin(j);
 
-                // Izračun osvetlitve (Luminance)
-                const N = Math.floor(8 * ((st * sinA - sp * ct * cosA) * cosB - sp * ct * sinA - st * cosA - cp * ct * sinB));
+                for (let i = 0; i < 6.28; i += 0.02) { // Krog okoli osi torusa
+                    const sp = Math.sin(i),
+                        cp = Math.cos(i);
 
-                if (y < 22 && y >= 0 && x >= 0 && x < 79 && D > z[o]) {
-                    z[o] = D;
-                    // Izbira ASCII znaka glede na svetlost
-                    b[o] = ".,-~:;=!*#$@"[N > 0 ? N : 0];
+                    const h = ct + 2; // Polmer torusa
+                    const D = 1 / (sp * h * sinA + st * cosA + 5); // Globina
+                    const t = sp * h * cosA - st * sinA;
+
+                    // Projektirane 2D koordinate
+                    const x = Math.floor(40 + 30 * D * (cp * h * cosB - t * sinB));
+                    const y = Math.floor(12 + 15 * D * (cp * h * sinB + t * cosB));
+                    const o = x + 80 * y; // Indeks v bufferju
+
+                    // Izračun osvetlitve (Luminance)
+                    const N = Math.floor(8 * ((st * sinA - sp * ct * cosA) * cosB - sp * ct * sinA - st * cosA - cp * ct * sinB));
+
+                    if (y < 22 && y >= 0 && x >= 0 && x < 79 && D > z[o]) {
+                        z[o] = D;
+                        // Izbira ASCII znaka glede na svetlost
+                        b[o] = ".,-~:;=!*#$@" [N > 0 ? N : 0];
+                    }
                 }
             }
-        }
 
-        // Izpis v <pre> element
-        let output = "";
-        for (let k = 0; k < 1761; k++) {
-            output += (k % 80 === 0) ? "\n" : b[k];
-        }
-        pre.innerHTML = output;
+            // Izpis v <pre> element
+            let output = "";
+            for (let k = 0; k < 1761; k++) {
+                output += (k % 80 === 0) ? "\n" : b[k];
+            }
+            pre.innerHTML = output;
 
-        requestAnimationFrame(renderFrame);
-    };
+            requestAnimationFrame(renderFrame);
+        };
 
-    renderFrame();
-</script>
+        renderFrame();
+    </script>
 </body>
+
 </html>

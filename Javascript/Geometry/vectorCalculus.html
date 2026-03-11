@@ -1,179 +1,263 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Vector Calculus for Games Lab</title>
     <style>
-        :root { --bg: #050505; --card: #121215; --accent: #00ffcc; --math: #ffcc00; }
-        body { margin: 0; background: var(--bg); color: #eee; font-family: 'Fira Code', monospace; display: flex; flex-direction: column; align-items: center; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 20px; padding: 20px; width: 95%; max-width: 1400px; }
-        .card { background: var(--card); border: 1px solid #2d2d35; border-radius: 12px; padding: 15px; display: flex; flex-direction: column; }
-        canvas { background: #000; border: 1px solid #333; border-radius: 8px; width: 100%; height: 300px; cursor: crosshair; }
-        h2 { color: var(--accent); margin: 0 0 8px 0; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; }
-        .desc { font-size: 0.8rem; color: #999; margin-bottom: 10px; min-height: 3em; }
-        .math-box { background: #000; padding: 8px; border-radius: 4px; font-size: 0.75rem; color: var(--math); border-left: 3px solid var(--math); }
+        :root {
+            --bg: #050505;
+            --card: #121215;
+            --accent: #00ffcc;
+            --math: #ffcc00;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: #eee;
+            font-family: 'Fira Code', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            width: 95%;
+            max-width: 1400px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid #2d2d35;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        canvas {
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 8px;
+            width: 100%;
+            height: 300px;
+            cursor: crosshair;
+        }
+
+        h2 {
+            color: var(--accent);
+            margin: 0 0 8px 0;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .desc {
+            font-size: 0.8rem;
+            color: #999;
+            margin-bottom: 10px;
+            min-height: 3em;
+        }
+
+        .math-box {
+            background: #000;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: var(--math);
+            border-left: 3px solid var(--math);
+        }
     </style>
 </head>
+
 <body>
 
-<h1 style="margin-top: 30px; letter-spacing: 3px; font-weight: 300;">VECTOR CALCULUS FOR GAMES</h1>
+    <h1 style="margin-top: 30px; letter-spacing: 3px; font-weight: 300;">VECTOR CALCULUS FOR GAMES</h1>
 
-<div class="grid">
-    <!-- 1. GRADIENT (∇f) -->
-    <div class="card">
-        <h2>1. Gradient (∇f) - Terrain Following</h2>
-        <div class="desc">Kaže v smer najstrmejšega vzpona. Uporablja se za AI, ki se želi povzpeti na hrib, ali za izračun normal terena.</div>
-        <canvas id="cGradient"></canvas>
-        <div class="math-box">∇f = (∂f/∂x, ∂f/∂y) | Agent sledi beli puščici "navzgor".</div>
+    <div class="grid">
+        <!-- 1. GRADIENT (∇f) -->
+        <div class="card">
+            <h2>1. Gradient (∇f) - Terrain Following</h2>
+            <div class="desc">Kaže v smer najstrmejšega vzpona. Uporablja se za AI, ki se želi povzpeti na hrib, ali za izračun normal terena.</div>
+            <canvas id="cGradient"></canvas>
+            <div class="math-box">∇f = (∂f/∂x, ∂f/∂y) | Agent sledi beli puščici "navzgor".</div>
+        </div>
+
+        <!-- 2. CURL (∇×F) - Vortex Effects -->
+        <div class="card">
+            <h2>2. Curl (∇×F) - Rotational Flow</h2>
+            <div class="desc">Meri lokalno rotacijo v vektorskem polju. Ključno za simulacijo vrtincev, dima in zračnih tokov.</div>
+            <canvas id="cCurl"></canvas>
+            <div class="math-box">∇×F = (∂Fy/∂x - ∂Fx/∂y) | Večji ko je rotor, hitreje se vrti objekt.</div>
+        </div>
+
+        <!-- 3. DIVERGENCE (∇·F) - Fluid Sources -->
+        <div class="card">
+            <h2>3. Divergence (∇·F) - Source/Sink</h2>
+            <div class="desc">Meri, ali se polje v točki "širi" (izvir) ali "krči" (ponor). Osnova za nestisljive tekočine.</div>
+            <canvas id="cDivergence"></canvas>
+            <div class="math-box">∇·F = ∂Fx/dx + ∂Fy/dy | Pozitivna = izvir, Negativna = ponor.</div>
+        </div>
+
+        <!-- 4. LAPLACIAN (∇²f) - Heat & Smoothing -->
+        <div class="card">
+            <h2>4. Laplacian (∇²f) - Field Smoothing</h2>
+            <div class="desc">Meri razliko med točko in povprečjem okolice. Uporablja se za erozijo terena in simulacijo toplote.</div>
+            <canvas id="cLaplacian"></canvas>
+            <div class="math-box">∇²f = ∂²f/∂x² + ∂²f/∂y² | Uporabljeno za glajenje robov.</div>
+        </div>
     </div>
 
-    <!-- 2. CURL (∇×F) - Vortex Effects -->
-    <div class="card">
-        <h2>2. Curl (∇×F) - Rotational Flow</h2>
-        <div class="desc">Meri lokalno rotacijo v vektorskem polju. Ključno za simulacijo vrtincev, dima in zračnih tokov.</div>
-        <canvas id="cCurl"></canvas>
-        <div class="math-box">∇×F = (∂Fy/∂x - ∂Fx/∂y) | Večji ko je rotor, hitreje se vrti objekt.</div>
-    </div>
+    <script>
+        const mouse = {
+            x: 0,
+            y: 0
+        };
+        window.onmousemove = e => {
+            const rect = e.target.getBoundingClientRect?.();
+            if (rect) {
+                mouse.x = e.clientX - rect.left;
+                mouse.y = e.clientY - rect.top;
+            }
+        };
 
-    <!-- 3. DIVERGENCE (∇·F) - Fluid Sources -->
-    <div class="card">
-        <h2>3. Divergence (∇·F) - Source/Sink</h2>
-        <div class="desc">Meri, ali se polje v točki "širi" (izvir) ali "krči" (ponor). Osnova za nestisljive tekočine.</div>
-        <canvas id="cDivergence"></canvas>
-        <div class="math-box">∇·F = ∂Fx/dx + ∂Fy/dy | Pozitivna = izvir, Negativna = ponor.</div>
-    </div>
+        // --- HELPER: NOISE SIMULATION ---
+        const f = (x, y) => {
+            return Math.sin(x * 0.01) * Math.cos(y * 0.01) * 50 +
+                Math.sin(x * 0.05) * 10; // Višinska funkcija
+        };
 
-    <!-- 4. LAPLACIAN (∇²f) - Heat & Smoothing -->
-    <div class="card">
-        <h2>4. Laplacian (∇²f) - Field Smoothing</h2>
-        <div class="desc">Meri razliko med točko in povprečjem okolice. Uporablja se za erozijo terena in simulacijo toplote.</div>
-        <canvas id="cLaplacian"></canvas>
-        <div class="math-box">∇²f = ∂²f/∂x² + ∂²f/∂y² | Uporabljeno za glajenje robov.</div>
-    </div>
-</div>
+        // --- 1. GRADIENT ---
+        const canvasGrad = document.getElementById('cGradient');
+        const ctxGrad = canvasGrad.getContext('2d');
 
-<script>
-const mouse = { x: 0, y: 0 };
-window.onmousemove = e => {
-    const rect = e.target.getBoundingClientRect?.();
-    if(rect) { mouse.x = e.clientX - rect.left; mouse.y = e.clientY - rect.top; }
-};
+        function drawGradient() {
+            canvasGrad.width = canvasGrad.offsetWidth;
+            canvasGrad.height = 300;
+            ctxGrad.clearRect(0, 0, 800, 300);
 
-// --- HELPER: NOISE SIMULATION ---
-const f = (x, y) => {
-    return Math.sin(x * 0.01) * Math.cos(y * 0.01) * 50 + 
-           Math.sin(x * 0.05) * 10; // Višinska funkcija
-};
+            // Nariši "višinski zemljevid" (izohipse)
+            ctxGrad.strokeStyle = "#222";
+            for (let i = 0; i < canvasGrad.width; i += 20) {
+                for (let j = 0; j < canvasGrad.height; j += 20) {
+                    const val = f(i, j);
+                    ctxGrad.fillStyle = `rgb(0, ${Math.max(0, val + 50)}, ${Math.max(0, val + 100)})`;
+                    ctxGrad.fillRect(i, j, 20, 20);
+                }
+            }
 
-// --- 1. GRADIENT ---
-const canvasGrad = document.getElementById('cGradient');
-const ctxGrad = canvasGrad.getContext('2d');
-function drawGradient() {
-    canvasGrad.width = canvasGrad.offsetWidth; canvasGrad.height = 300;
-    ctxGrad.clearRect(0,0,800,300);
-    
-    // Nariši "višinski zemljevid" (izohipse)
-    ctxGrad.strokeStyle = "#222";
-    for(let i=0; i<canvasGrad.width; i+=20) {
-        for(let j=0; j<canvasGrad.height; j+=20) {
-            const val = f(i, j);
-            ctxGrad.fillStyle = `rgb(0, ${Math.max(0, val + 50)}, ${Math.max(0, val + 100)})`;
-            ctxGrad.fillRect(i, j, 20, 20);
+            // Izračunaj gradient na poziciji miške
+            const h = 1.0;
+            const dfdx = (f(mouse.x + h, mouse.y) - f(mouse.x - h, mouse.y)) / (2 * h);
+            const dfdy = (f(mouse.x, mouse.y + h) - f(mouse.x, mouse.y - h)) / (2 * h);
+
+            // Nariši gradient vektor (uphill)
+            ctxGrad.strokeStyle = "white";
+            ctxGrad.lineWidth = 3;
+            ctxGrad.beginPath();
+            ctxGrad.moveTo(mouse.x, mouse.y);
+            ctxGrad.lineTo(mouse.x + dfdx * 10, mouse.y + dfdy * 10);
+            ctxGrad.stroke();
+
+            requestAnimationFrame(drawGradient);
         }
-    }
 
-    // Izračunaj gradient na poziciji miške
-    const h = 1.0;
-    const dfdx = (f(mouse.x + h, mouse.y) - f(mouse.x - h, mouse.y)) / (2 * h);
-    const dfdy = (f(mouse.x, mouse.y + h) - f(mouse.x, mouse.y - h)) / (2 * h);
+        // --- 2. CURL (∇×F) ---
+        const canvasCurl = document.getElementById('cCurl');
+        const ctxCurl = canvasCurl.getContext('2d');
 
-    // Nariši gradient vektor (uphill)
-    ctxGrad.strokeStyle = "white"; ctxGrad.lineWidth = 3;
-    ctxGrad.beginPath();
-    ctxGrad.moveTo(mouse.x, mouse.y);
-    ctxGrad.lineTo(mouse.x + dfdx * 10, mouse.y + dfdy * 10);
-    ctxGrad.stroke();
+        function drawCurl() {
+            canvasCurl.width = canvasCurl.offsetWidth;
+            canvasCurl.height = 300;
+            ctxCurl.clearRect(0, 0, 800, 300);
 
-    requestAnimationFrame(drawGradient);
-}
+            const time = Date.now() * 0.001;
+            for (let x = 20; x < canvasCurl.width; x += 30) {
+                for (let y = 20; y < canvasCurl.height; y += 30) {
+                    // Vektorsko polje vrtinca
+                    const dx = x - mouse.x;
+                    const dy = y - mouse.y;
+                    const dist = Math.hypot(dx, dy) + 1;
+                    const fx = -dy / dist * 20;
+                    const fy = dx / dist * 20;
 
-// --- 2. CURL (∇×F) ---
-const canvasCurl = document.getElementById('cCurl');
-const ctxCurl = canvasCurl.getContext('2d');
-function drawCurl() {
-    canvasCurl.width = canvasCurl.offsetWidth; canvasCurl.height = 300;
-    ctxCurl.clearRect(0,0,800,300);
-    
-    const time = Date.now() * 0.001;
-    for(let x=20; x<canvasCurl.width; x+=30) {
-        for(let y=20; y<canvasCurl.height; y+=30) {
-            // Vektorsko polje vrtinca
-            const dx = x - mouse.x;
-            const dy = y - mouse.y;
-            const dist = Math.hypot(dx, dy) + 1;
-            const fx = -dy / dist * 20;
-            const fy = dx / dist * 20;
-
-            ctxCurl.strokeStyle = "rgba(0, 255, 204, 0.4)";
-            ctxCurl.beginPath(); ctxCurl.moveTo(x, y); ctxCurl.lineTo(x + fx, y + fy); ctxCurl.stroke();
+                    ctxCurl.strokeStyle = "rgba(0, 255, 204, 0.4)";
+                    ctxCurl.beginPath();
+                    ctxCurl.moveTo(x, y);
+                    ctxCurl.lineTo(x + fx, y + fy);
+                    ctxCurl.stroke();
+                }
+            }
+            // Vizualizacija rotacije v središču
+            ctxCurl.strokeStyle = "var(--math)";
+            ctxCurl.beginPath();
+            ctxCurl.arc(mouse.x, mouse.y, 20, time, time + Math.PI * 1.5);
+            ctxCurl.stroke();
+            requestAnimationFrame(drawCurl);
         }
-    }
-    // Vizualizacija rotacije v središču
-    ctxCurl.strokeStyle = "var(--math)";
-    ctxCurl.beginPath();
-    ctxCurl.arc(mouse.x, mouse.y, 20, time, time + Math.PI*1.5);
-    ctxCurl.stroke();
-    requestAnimationFrame(drawCurl);
-}
 
-// --- 3. DIVERGENCE (∇·F) ---
-const canvasDiv = document.getElementById('cDivergence');
-const ctxDiv = canvasDiv.getContext('2d');
-function drawDivergence() {
-    canvasDiv.width = canvasDiv.offsetWidth; canvasDiv.height = 300;
-    ctxDiv.clearRect(0,0,800,300);
-    
-    const isSource = mouse.x < canvasDiv.width / 2;
-    for(let x=20; x<canvasDiv.width; x+=30) {
-        for(let y=20; y<canvasDiv.height; y+=30) {
-            const dx = x - mouse.x;
-            const dy = y - mouse.y;
-            const dist = Math.hypot(dx, dy) + 1;
-            const strength = isSource ? 500 / dist : -500 / dist;
-            
-            ctxDiv.strokeStyle = isSource ? "#00ffcc" : "#ff3366";
-            ctxDiv.beginPath(); ctxDiv.moveTo(x, y);
-            ctxDiv.lineTo(x + (dx/dist)*strength, y + (dy/dist)*strength);
-            ctxDiv.stroke();
+        // --- 3. DIVERGENCE (∇·F) ---
+        const canvasDiv = document.getElementById('cDivergence');
+        const ctxDiv = canvasDiv.getContext('2d');
+
+        function drawDivergence() {
+            canvasDiv.width = canvasDiv.offsetWidth;
+            canvasDiv.height = 300;
+            ctxDiv.clearRect(0, 0, 800, 300);
+
+            const isSource = mouse.x < canvasDiv.width / 2;
+            for (let x = 20; x < canvasDiv.width; x += 30) {
+                for (let y = 20; y < canvasDiv.height; y += 30) {
+                    const dx = x - mouse.x;
+                    const dy = y - mouse.y;
+                    const dist = Math.hypot(dx, dy) + 1;
+                    const strength = isSource ? 500 / dist : -500 / dist;
+
+                    ctxDiv.strokeStyle = isSource ? "#00ffcc" : "#ff3366";
+                    ctxDiv.beginPath();
+                    ctxDiv.moveTo(x, y);
+                    ctxDiv.lineTo(x + (dx / dist) * strength, y + (dy / dist) * strength);
+                    ctxDiv.stroke();
+                }
+            }
+            requestAnimationFrame(drawDivergence);
         }
-    }
-    requestAnimationFrame(drawDivergence);
-}
 
-// --- 4. LAPLACIAN (∇²f) ---
-const canvasLap = document.getElementById('cLaplacian');
-const ctxLap = canvasLap.getContext('2d');
-function drawLaplacian() {
-    canvasLap.width = canvasLap.offsetWidth; canvasLap.height = 300;
-    ctxLap.clearRect(0,0,800,300);
-    
-    const grid = 20;
-    for(let x=grid; x<canvasLap.width-grid; x+=grid) {
-        for(let y=grid; y<canvasLap.height-grid; y+=grid) {
-            // Laplacian diskretna aproksimacija: f(x+1)+f(x-1)+f(y+1)+f(y-1) - 4f(x,y)
-            const val = f(x, y);
-            const lap = f(x+grid, y) + f(x-grid, y) + f(x, y+grid) + f(x, y-grid) - 4 * val;
-            
-            ctxLap.fillStyle = lap > 0 ? "rgba(255, 204, 0, 0.6)" : "rgba(0, 204, 255, 0.6)";
-            const size = Math.abs(lap) * 0.5;
-            ctxLap.fillRect(x - size/2, y - size/2, size, size);
+        // --- 4. LAPLACIAN (∇²f) ---
+        const canvasLap = document.getElementById('cLaplacian');
+        const ctxLap = canvasLap.getContext('2d');
+
+        function drawLaplacian() {
+            canvasLap.width = canvasLap.offsetWidth;
+            canvasLap.height = 300;
+            ctxLap.clearRect(0, 0, 800, 300);
+
+            const grid = 20;
+            for (let x = grid; x < canvasLap.width - grid; x += grid) {
+                for (let y = grid; y < canvasLap.height - grid; y += grid) {
+                    // Laplacian diskretna aproksimacija: f(x+1)+f(x-1)+f(y+1)+f(y-1) - 4f(x,y)
+                    const val = f(x, y);
+                    const lap = f(x + grid, y) + f(x - grid, y) + f(x, y + grid) + f(x, y - grid) - 4 * val;
+
+                    ctxLap.fillStyle = lap > 0 ? "rgba(255, 204, 0, 0.6)" : "rgba(0, 204, 255, 0.6)";
+                    const size = Math.abs(lap) * 0.5;
+                    ctxLap.fillRect(x - size / 2, y - size / 2, size, size);
+                }
+            }
+            requestAnimationFrame(drawLaplacian);
         }
-    }
-    requestAnimationFrame(drawLaplacian);
-}
 
-// Start
-drawGradient(); drawCurl(); drawDivergence(); drawLaplacian();
-</script>
+        // Start
+        drawGradient();
+        drawCurl();
+        drawDivergence();
+        drawLaplacian();
+    </script>
 </body>
+
 </html>

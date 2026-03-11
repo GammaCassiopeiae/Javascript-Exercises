@@ -1,265 +1,480 @@
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <meta charset="UTF-8">
     <title>Advanced Physics & Collision Lab</title>
     <style>
-        :root { --bg: #0d0d0f; --accent: #00ffcc; --hit: #ff3366; --panel: #16161a; }
-        body { margin: 0; background: var(--bg); color: #eee; font-family: 'Fira Code', monospace; display: flex; flex-direction: column; align-items: center; }
-        .container { display: grid; grid-template-columns: 1fr 350px; gap: 20px; padding: 20px; width: 95vw; max-width: 1400px; height: 90vh; }
-        #viewport { background: #000; border: 2px solid #333; border-radius: 12px; cursor: crosshair; position: relative; overflow: hidden; }
-        .sidebar { background: var(--panel); border-radius: 12px; padding: 20px; border: 1px solid #333; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; }
-        h1 { color: var(--accent); font-size: 1.2rem; margin: 0 0 10px 0; text-transform: uppercase; }
-        .algo-box { border-left: 3px solid var(--accent); padding-left: 15px; margin-bottom: 10px; }
-        .algo-title { font-weight: bold; color: var(--accent); font-size: 0.9rem; }
-        .algo-desc { font-size: 0.75rem; color: #888; margin: 5px 0; }
-        .stat { font-size: 0.8rem; color: #fff; background: #222; padding: 5px; border-radius: 4px; }
-        .collision-alert { color: var(--hit); font-weight: bold; animation: blink 0.5s infinite alternate; }
-        @keyframes blink { from { opacity: 1; } to { opacity: 0.5; } }
+        :root {
+            --bg: #0d0d0f;
+            --accent: #00ffcc;
+            --hit: #ff3366;
+            --panel: #16161a;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: #eee;
+            font-family: 'Fira Code', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 20px;
+            padding: 20px;
+            width: 95vw;
+            max-width: 1400px;
+            height: 90vh;
+        }
+
+        #viewport {
+            background: #000;
+            border: 2px solid #333;
+            border-radius: 12px;
+            cursor: crosshair;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            background: var(--panel);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+        }
+
+        h1 {
+            color: var(--accent);
+            font-size: 1.2rem;
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+        }
+
+        .algo-box {
+            border-left: 3px solid var(--accent);
+            padding-left: 15px;
+            margin-bottom: 10px;
+        }
+
+        .algo-title {
+            font-weight: bold;
+            color: var(--accent);
+            font-size: 0.9rem;
+        }
+
+        .algo-desc {
+            font-size: 0.75rem;
+            color: #888;
+            margin: 5px 0;
+        }
+
+        .stat {
+            font-size: 0.8rem;
+            color: #fff;
+            background: #222;
+            padding: 5px;
+            border-radius: 4px;
+        }
+
+        .collision-alert {
+            color: var(--hit);
+            font-weight: bold;
+            animation: blink 0.5s infinite alternate;
+        }
+
+        @keyframes blink {
+            from {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0.5;
+            }
+        }
     </style>
 </head>
+
 <body>
 
-<div style="padding: 20px 0 0 0;">
-    <h1>Advanced Collision & Physics Engine</h1>
-</div>
-
-<div class="container">
-    <canvas id="viewport"></canvas>
-
-    <div class="sidebar">
-        <div class="algo-box">
-            <div class="algo-title">Sweep and Prune (SAP)</div>
-            <div class="algo-desc">Široka faza: Sortiranje objektov po X-osi za drastično manjše število preverjanj.</div>
-            <div class="stat" id="sapStat">Preverjanj: 0 / 0</div>
-        </div>
-
-        <div class="algo-box">
-            <div class="algo-title">Minkowski Difference & GJK</div>
-            <div class="algo-desc">Izračun konveksne razlike dveh oblik. Če vsebuje (0,0), pride do trka.</div>
-        </div>
-
-        <div class="algo-box">
-            <div class="algo-title">EPA (Penetration Depth)</div>
-            <div class="algo-desc">Izračun <b>MTV (Minimum Translation Vector)</b> – najkrajša pot za razrešitev trka.</div>
-            <div class="stat" id="mtvStat">MTV: [0, 0]</div>
-        </div>
-
-        <div class="algo-box">
-            <div class="algo-title">CCD (Continuous Collision)</div>
-            <div class="algo-desc">Preprečuje "tuneliranje" hitrih objektov s preverjanjem poti med okvirji.</div>
-        </div>
-
-        <div id="collisionStatus" style="margin-top: auto;"></div>
+    <div style="padding: 20px 0 0 0;">
+        <h1>Advanced Collision & Physics Engine</h1>
     </div>
-</div>
 
-<script>
-const canvas = document.getElementById('viewport');
-const ctx = canvas.getContext('2d');
-const sapStat = document.getElementById('sapStat');
-const mtvStat = document.getElementById('mtvStat');
-const colStatus = document.getElementById('collisionStatus');
+    <div class="container">
+        <canvas id="viewport"></canvas>
 
-let width, height;
-const entities = [];
-const mouse = { x: 0, y: 0, down: false };
+        <div class="sidebar">
+            <div class="algo-box">
+                <div class="algo-title">Sweep and Prune (SAP)</div>
+                <div class="algo-desc">Široka faza: Sortiranje objektov po X-osi za drastično manjše število preverjanj.</div>
+                <div class="stat" id="sapStat">Preverjanj: 0 / 0</div>
+            </div>
 
-class Entity {
-    constructor(x, y, vertices, isStatic = false) {
-        this.pos = { x, y };
-        this.vertices = vertices; // Relativne točke
-        this.isStatic = isStatic;
-        this.color = isStatic ? '#333' : '#00ffcc';
-        this.velocity = { x: 0, y: 0 };
-    }
+            <div class="algo-box">
+                <div class="algo-title">Minkowski Difference & GJK</div>
+                <div class="algo-desc">Izračun konveksne razlike dveh oblik. Če vsebuje (0,0), pride do trka.</div>
+            </div>
 
-    getGlobalVertices() {
-        return this.vertices.map(v => ({ x: v.x + this.pos.x, y: v.y + this.pos.y }));
-    }
+            <div class="algo-box">
+                <div class="algo-title">EPA (Penetration Depth)</div>
+                <div class="algo-desc">Izračun <b>MTV (Minimum Translation Vector)</b> – najkrajša pot za razrešitev trka.</div>
+                <div class="stat" id="mtvStat">MTV: [0, 0]</div>
+            </div>
 
-    getAABB() {
-        const gv = this.getGlobalVertices();
-        const xs = gv.map(v => v.x), ys = gv.map(v => v.y);
-        return { minX: Math.min(...xs), maxX: Math.max(...xs), minY: Math.min(...ys), maxY: Math.max(...ys) };
-    }
-}
+            <div class="algo-box">
+                <div class="algo-title">CCD (Continuous Collision)</div>
+                <div class="algo-desc">Preprečuje "tuneliranje" hitrih objektov s preverjanjem poti med okvirji.</div>
+            </div>
 
-// Inicializacija scene
-function init() {
-    width = canvas.width = canvas.offsetWidth;
-    height = canvas.height = canvas.offsetHeight;
+            <div id="collisionStatus" style="margin-top: auto;"></div>
+        </div>
+    </div>
 
-    // Statridna ovira
-    entities.push(new Entity(width/2, height/2, [
-        {x:-60, y:-40}, {x:60, y:-60}, {x:80, y:40}, {x:-20, y:80}
-    ], true));
+    <script>
+        const canvas = document.getElementById('viewport');
+        const ctx = canvas.getContext('2d');
+        const sapStat = document.getElementById('sapStat');
+        const mtvStat = document.getElementById('mtvStat');
+        const colStatus = document.getElementById('collisionStatus');
 
-    // Igralčev objekt
-    entities.push(new Entity(100, 100, [
-        {x:-30, y:-30}, {x:30, y:-30}, {x:30, y:30}, {x:-30, y:30}
-    ]));
-}
+        let width, height;
+        const entities = [];
+        const mouse = {
+            x: 0,
+            y: 0,
+            down: false
+        };
 
-// --- MINKOWSKI & GJK ---
-function support(poly1, poly2, dir) {
-    const p1 = getFarthestPoint(poly1, dir);
-    const p2 = getFarthestPoint(poly2, { x: -dir.x, y: -dir.y });
-    return { x: p1.x - p2.x, y: p1.y - p2.y };
-}
+        class Entity {
+            constructor(x, y, vertices, isStatic = false) {
+                this.pos = {
+                    x,
+                    y
+                };
+                this.vertices = vertices; // Relativne točke
+                this.isStatic = isStatic;
+                this.color = isStatic ? '#333' : '#00ffcc';
+                this.velocity = {
+                    x: 0,
+                    y: 0
+                };
+            }
 
-function getFarthestPoint(vertices, dir) {
-    let maxDist = -Infinity;
-    let farthest = vertices[0];
-    for (let v of vertices) {
-        let dot = v.x * dir.x + v.y * dir.y;
-        if (dot > maxDist) { maxDist = dot; farthest = v; }
-    }
-    return farthest;
-}
+            getGlobalVertices() {
+                return this.vertices.map(v => ({
+                    x: v.x + this.pos.x,
+                    y: v.y + this.pos.y
+                }));
+            }
 
-function runGJK(poly1, poly2) {
-    let d = { x: 1, y: 0 };
-    let simplex = [support(poly1, poly2, d)];
-    d = { x: -simplex[0].x, y: -simplex[0].y };
-
-    while (true) {
-        let A = support(poly1, poly2, d);
-        if (A.x * d.x + A.y * d.y < 0) return null; // Ni trka
-        simplex.push(A);
-        if (handleSimplex(simplex, d)) return simplex;
-    }
-}
-
-function handleSimplex(s, d) {
-    if (s.length === 2) {
-        let B = s[0], A = s[1];
-        let AB = { x: B.x - A.x, y: B.y - A.y }, AO = { x: -A.x, y: -A.y };
-        let perp = { x: -AB.y, y: AB.x };
-        if (perp.x * AO.x + perp.y * AO.y < 0) perp = { x: -perp.x, y: -perp.y };
-        d.x = perp.x; d.y = perp.y;
-    } else {
-        let C = s[0], B = s[1], A = s[2];
-        let AB = { x: B.x - A.x, y: B.y - A.y }, AC = { x: C.x - A.x, y: C.y - A.y }, AO = { x: -A.x, y: -A.y };
-        let ABp = { x: -AB.y, y: AB.x }; if (ABp.x * AC.x + ABp.y * AC.y > 0) ABp = { x: -ABp.x, y: -ABp.y };
-        let ACp = { x: -AC.y, y: AC.x }; if (ACp.x * AB.x + ACp.y * AB.y > 0) ACp = { x: -ACp.x, y: -ACp.y };
-        if (ABp.x * AO.x + ABp.y * AO.y > 0) { s.splice(0, 1); d.x = ABp.x; d.y = ABp.y; }
-        else if (ACp.x * AO.x + ACp.y * AO.y > 0) { s.splice(1, 1); d.x = ACp.x; d.y = ACp.y; }
-        else return true;
-    }
-    return false;
-}
-
-// --- EPA (Penetration Depth & MTV) ---
-function runEPA(simplex, poly1, poly2) {
-    let polytope = [...simplex];
-    for (let iter = 0; iter < 20; iter++) {
-        let minEdge = findClosestEdge(polytope);
-        let p = support(poly1, poly2, minEdge.normal);
-        let d = p.x * minEdge.normal.x + p.y * minEdge.normal.y;
-
-        if (d - minEdge.distance < 0.1) {
-            return { x: minEdge.normal.x * d, y: minEdge.normal.y * d };
-        }
-        polytope.splice(minEdge.index, 0, p);
-    }
-}
-
-function findClosestEdge(polytope) {
-    let closest = { distance: Infinity };
-    for (let i = 0; i < polytope.length; i++) {
-        let a = polytope[i], b = polytope[(i + 1) % polytope.length];
-        let edge = { x: b.x - a.x, y: b.y - a.y };
-        let n = { x: edge.y, y: -edge.x };
-        let len = Math.hypot(n.x, n.y);
-        n.x /= len; n.y /= len;
-        let d = n.x * a.x + n.y * a.y;
-        if (d < 0) { d *= -1; n.x *= -1; n.y *= -1; }
-        if (d < closest.distance) closest = { distance: d, normal: n, index: i + 1 };
-    }
-    return closest;
-}
-
-// --- SWEEP AND PRUNE ---
-function sweepAndPrune() {
-    let pairs = [];
-    let sorted = entities.map((e, i) => ({ e, i, aabb: e.getAABB() }))
-                         .sort((a, b) => a.aabb.minX - b.aabb.minX);
-    
-    let checks = 0;
-    for (let i = 0; i < sorted.length; i++) {
-        for (let j = i + 1; j < sorted.length; j++) {
-            checks++;
-            if (sorted[j].aabb.minX > sorted[i].aabb.maxX) break;
-            if (sorted[i].aabb.minY <= sorted[j].aabb.maxY && sorted[i].aabb.maxY >= sorted[j].aabb.minY) {
-                pairs.push([sorted[i].e, sorted[j].e]);
+            getAABB() {
+                const gv = this.getGlobalVertices();
+                const xs = gv.map(v => v.x),
+                    ys = gv.map(v => v.y);
+                return {
+                    minX: Math.min(...xs),
+                    maxX: Math.max(...xs),
+                    minY: Math.min(...ys),
+                    maxY: Math.max(...ys)
+                };
             }
         }
-    }
-    sapStat.innerText = `Preverjanj: ${checks} / ${entities.length * (entities.length-1) / 2}`;
-    return pairs;
-}
 
-function update() {
-    ctx.clearRect(0, 0, width, height);
+        // Inicializacija scene
+        function init() {
+            width = canvas.width = canvas.offsetWidth;
+            height = canvas.height = canvas.offsetHeight;
 
-    // Igralčevo gibanje
-    const player = entities[1];
-    player.pos.x += (mouse.x - player.pos.x) * 0.1;
-    player.pos.y += (mouse.y - player.pos.y) * 0.1;
+            // Statridna ovira
+            entities.push(new Entity(width / 2, height / 2, [{
+                x: -60,
+                y: -40
+            }, {
+                x: 60,
+                y: -60
+            }, {
+                x: 80,
+                y: 40
+            }, {
+                x: -20,
+                y: 80
+            }], true));
 
-    // SAP Broadphase
-    const activePairs = sweepAndPrune();
-    let collisionDetected = false;
+            // Igralčev objekt
+            entities.push(new Entity(100, 100, [{
+                x: -30,
+                y: -30
+            }, {
+                x: 30,
+                y: -30
+            }, {
+                x: 30,
+                y: 30
+            }, {
+                x: -30,
+                y: 30
+            }]));
+        }
 
-    activePairs.forEach(([e1, e2]) => {
-        const poly1 = e1.getGlobalVertices();
-        const poly2 = e2.getGlobalVertices();
-        const simplex = runGJK(poly1, poly2);
+        // --- MINKOWSKI & GJK ---
+        function support(poly1, poly2, dir) {
+            const p1 = getFarthestPoint(poly1, dir);
+            const p2 = getFarthestPoint(poly2, {
+                x: -dir.x,
+                y: -dir.y
+            });
+            return {
+                x: p1.x - p2.x,
+                y: p1.y - p2.y
+            };
+        }
 
-        if (simplex) {
-            collisionDetected = true;
-            const mtv = runEPA(simplex, poly1, poly2);
-            if (mtv) {
-                mtvStat.innerText = `MTV: [${mtv.x.toFixed(1)}, ${mtv.y.toFixed(1)}]`;
-                // Razreševanje (Penetration Resolution)
-                e1.pos.x -= mtv.x; e1.pos.y -= mtv.y;
+        function getFarthestPoint(vertices, dir) {
+            let maxDist = -Infinity;
+            let farthest = vertices[0];
+            for (let v of vertices) {
+                let dot = v.x * dir.x + v.y * dir.y;
+                if (dot > maxDist) {
+                    maxDist = dot;
+                    farthest = v;
+                }
+            }
+            return farthest;
+        }
+
+        function runGJK(poly1, poly2) {
+            let d = {
+                x: 1,
+                y: 0
+            };
+            let simplex = [support(poly1, poly2, d)];
+            d = {
+                x: -simplex[0].x,
+                y: -simplex[0].y
+            };
+
+            while (true) {
+                let A = support(poly1, poly2, d);
+                if (A.x * d.x + A.y * d.y < 0) return null; // Ni trka
+                simplex.push(A);
+                if (handleSimplex(simplex, d)) return simplex;
             }
         }
-    });
 
-    colStatus.innerHTML = collisionDetected ? '<div class="collision-alert">TRK DETEKTIRAN!</div>' : 'Varno';
+        function handleSimplex(s, d) {
+            if (s.length === 2) {
+                let B = s[0],
+                    A = s[1];
+                let AB = {
+                        x: B.x - A.x,
+                        y: B.y - A.y
+                    },
+                    AO = {
+                        x: -A.x,
+                        y: -A.y
+                    };
+                let perp = {
+                    x: -AB.y,
+                    y: AB.x
+                };
+                if (perp.x * AO.x + perp.y * AO.y < 0) perp = {
+                    x: -perp.x,
+                    y: -perp.y
+                };
+                d.x = perp.x;
+                d.y = perp.y;
+            } else {
+                let C = s[0],
+                    B = s[1],
+                    A = s[2];
+                let AB = {
+                        x: B.x - A.x,
+                        y: B.y - A.y
+                    },
+                    AC = {
+                        x: C.x - A.x,
+                        y: C.y - A.y
+                    },
+                    AO = {
+                        x: -A.x,
+                        y: -A.y
+                    };
+                let ABp = {
+                    x: -AB.y,
+                    y: AB.x
+                };
+                if (ABp.x * AC.x + ABp.y * AC.y > 0) ABp = {
+                    x: -ABp.x,
+                    y: -ABp.y
+                };
+                let ACp = {
+                    x: -AC.y,
+                    y: AC.x
+                };
+                if (ACp.x * AB.x + ACp.y * AB.y > 0) ACp = {
+                    x: -ACp.x,
+                    y: -ACp.y
+                };
+                if (ABp.x * AO.x + ABp.y * AO.y > 0) {
+                    s.splice(0, 1);
+                    d.x = ABp.x;
+                    d.y = ABp.y;
+                } else if (ACp.x * AO.x + ACp.y * AO.y > 0) {
+                    s.splice(1, 1);
+                    d.x = ACp.x;
+                    d.y = ACp.y;
+                } else return true;
+            }
+            return false;
+        }
 
-    // Risanje
-    entities.forEach(e => {
-        const gv = e.getGlobalVertices();
-        ctx.strokeStyle = collisionDetected && !e.isStatic ? 'var(--hit)' : e.color;
-        ctx.fillStyle = e.isStatic ? '#222' : 'rgba(0, 255, 204, 0.1)';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(gv[0].x, gv[0].y);
-        gv.forEach(v => ctx.lineTo(v.x, v.y));
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
+        // --- EPA (Penetration Depth & MTV) ---
+        function runEPA(simplex, poly1, poly2) {
+            let polytope = [...simplex];
+            for (let iter = 0; iter < 20; iter++) {
+                let minEdge = findClosestEdge(polytope);
+                let p = support(poly1, poly2, minEdge.normal);
+                let d = p.x * minEdge.normal.x + p.y * minEdge.normal.y;
 
-        // Risanje AABB
-        const aabb = e.getAABB();
-        ctx.strokeStyle = '#333'; ctx.lineWidth = 1;
-        ctx.strokeRect(aabb.minX, aabb.minY, aabb.maxX - aabb.minX, aabb.maxY - aabb.minY);
-    });
+                if (d - minEdge.distance < 0.1) {
+                    return {
+                        x: minEdge.normal.x * d,
+                        y: minEdge.normal.y * d
+                    };
+                }
+                polytope.splice(minEdge.index, 0, p);
+            }
+        }
 
-    requestAnimationFrame(update);
-}
+        function findClosestEdge(polytope) {
+            let closest = {
+                distance: Infinity
+            };
+            for (let i = 0; i < polytope.length; i++) {
+                let a = polytope[i],
+                    b = polytope[(i + 1) % polytope.length];
+                let edge = {
+                    x: b.x - a.x,
+                    y: b.y - a.y
+                };
+                let n = {
+                    x: edge.y,
+                    y: -edge.x
+                };
+                let len = Math.hypot(n.x, n.y);
+                n.x /= len;
+                n.y /= len;
+                let d = n.x * a.x + n.y * a.y;
+                if (d < 0) {
+                    d *= -1;
+                    n.x *= -1;
+                    n.y *= -1;
+                }
+                if (d < closest.distance) closest = {
+                    distance: d,
+                    normal: n,
+                    index: i + 1
+                };
+            }
+            return closest;
+        }
 
-window.onmousemove = e => {
-    const rect = canvas.getBoundingClientRect();
-    mouse.x = e.clientX - rect.left;
-    mouse.y = e.clientY - rect.top;
-};
+        // --- SWEEP AND PRUNE ---
+        function sweepAndPrune() {
+            let pairs = [];
+            let sorted = entities.map((e, i) => ({
+                    e,
+                    i,
+                    aabb: e.getAABB()
+                }))
+                .sort((a, b) => a.aabb.minX - b.aabb.minX);
 
-init();
-update();
-</script>
+            let checks = 0;
+            for (let i = 0; i < sorted.length; i++) {
+                for (let j = i + 1; j < sorted.length; j++) {
+                    checks++;
+                    if (sorted[j].aabb.minX > sorted[i].aabb.maxX) break;
+                    if (sorted[i].aabb.minY <= sorted[j].aabb.maxY && sorted[i].aabb.maxY >= sorted[j].aabb.minY) {
+                        pairs.push([sorted[i].e, sorted[j].e]);
+                    }
+                }
+            }
+            sapStat.innerText = `Preverjanj: ${checks} / ${entities.length * (entities.length-1) / 2}`;
+            return pairs;
+        }
+
+        function update() {
+            ctx.clearRect(0, 0, width, height);
+
+            // Igralčevo gibanje
+            const player = entities[1];
+            player.pos.x += (mouse.x - player.pos.x) * 0.1;
+            player.pos.y += (mouse.y - player.pos.y) * 0.1;
+
+            // SAP Broadphase
+            const activePairs = sweepAndPrune();
+            let collisionDetected = false;
+
+            activePairs.forEach(([e1, e2]) => {
+                const poly1 = e1.getGlobalVertices();
+                const poly2 = e2.getGlobalVertices();
+                const simplex = runGJK(poly1, poly2);
+
+                if (simplex) {
+                    collisionDetected = true;
+                    const mtv = runEPA(simplex, poly1, poly2);
+                    if (mtv) {
+                        mtvStat.innerText = `MTV: [${mtv.x.toFixed(1)}, ${mtv.y.toFixed(1)}]`;
+                        // Razreševanje (Penetration Resolution)
+                        e1.pos.x -= mtv.x;
+                        e1.pos.y -= mtv.y;
+                    }
+                }
+            });
+
+            colStatus.innerHTML = collisionDetected ? '<div class="collision-alert">TRK DETEKTIRAN!</div>' : 'Varno';
+
+            // Risanje
+            entities.forEach(e => {
+                const gv = e.getGlobalVertices();
+                ctx.strokeStyle = collisionDetected && !e.isStatic ? 'var(--hit)' : e.color;
+                ctx.fillStyle = e.isStatic ? '#222' : 'rgba(0, 255, 204, 0.1)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(gv[0].x, gv[0].y);
+                gv.forEach(v => ctx.lineTo(v.x, v.y));
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
+                // Risanje AABB
+                const aabb = e.getAABB();
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(aabb.minX, aabb.minY, aabb.maxX - aabb.minX, aabb.maxY - aabb.minY);
+            });
+
+            requestAnimationFrame(update);
+        }
+
+        window.onmousemove = e => {
+            const rect = canvas.getBoundingClientRect();
+            mouse.x = e.clientX - rect.left;
+            mouse.y = e.clientY - rect.top;
+        };
+
+        init();
+        update();
+    </script>
 </body>
+
 </html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sliding Window Algorithms</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <a href="index.html" class="back-link">Back to Hub</a>
+    <h1>Sliding Window Algorithms</h1>
+
+    <!-- Longest Substring Without Repeating Characters -->
+    <div class="algorithm-section">
+        <h2>1. Longest Substring Without Repeating Characters</h2>
+        <div class="code-block" id="code-longestSubstring">
+function lengthOfLongestSubstring(s) {
+    let map = new Map(), left = 0, maxLen = 0;
+    for (let right = 0; right < s.length; right++) {
+        if (map.has(s[right])) left = Math.max(left, map.get(s[right]) + 1);
+        map.set(s[right], right);
+        maxLen = Math.max(maxLen, right - left + 1);
+    }
+    return maxLen;
+}</div>
+        <button onclick="runLongestSubstring()">Run Example</button>
+        <div class="result-block" id="result-longestSubstring">Result: ...</div>
+    </div>
+
+    <!-- Minimum Size Subarray Sum -->
+    <div class="algorithm-section">
+        <h2>2. Minimum Size Subarray Sum</h2>
+        <div class="code-block" id="code-minSizeSubarray">
+function minSubArrayLen(target, nums) {
+    let left = 0, currentSum = 0, minLen = Infinity;
+    for (let right = 0; right < nums.length; right++) {
+        currentSum += nums[right];
+        while (currentSum >= target) {
+            minLen = Math.min(minLen, right - left + 1);
+            currentSum -= nums[left++];
+        }
+    }
+    return minLen === Infinity ? 0 : minLen;
+}</div>
+        <button onclick="runMinSizeSubarray()">Run Example</button>
+        <div class="result-block" id="result-minSizeSubarray">Result: ...</div>
+    </div>
+
+    <script>
+        function runLongestSubstring() {
+            let s = "abcabcbb";
+            document.getElementById('result-longestSubstring').innerText = "S: 'abcabcbb' | Max Len: " + lengthOfLongestSubstring(s);
+        }
+
+        function runMinSizeSubarray() {
+            let target = 7, nums = [2, 3, 1, 2, 4, 3];
+            document.getElementById('result-minSizeSubarray').innerText = "Target: 7, Nums: [2,3,1,2,4,3] | Min Len: " + minSubArrayLen(target, nums);
+        }
+
+        eval(document.getElementById('code-longestSubstring').innerText);
+        eval(document.getElementById('code-minSizeSubarray').innerText);
+    </script>
+</body>
+</html>

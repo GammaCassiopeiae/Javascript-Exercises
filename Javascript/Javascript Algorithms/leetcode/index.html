@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeetCode Learning Hub</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .category-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .category-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-decoration: none;
+            color: #333;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-top: 4px solid #3498db;
+        }
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+        }
+        .category-card h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .category-card p {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <h1>LeetCode Learning Hub</h1>
+    <p>A collection of common LeetCode algorithms implemented in JavaScript for quick reference and practice.</p>
+    
+    <div class="category-list">
+        <a href="linkedList.html" class="category-card">
+            <h3>LinkedList</h3>
+            <p>Cycle Detection, Duplicates Removal, Add Two Numbers</p>
+        </a>
+        <a href="stack.html" class="category-card">
+            <h3>Stack</h3>
+            <p>Valid Parentheses, Reverse Linked List</p>
+        </a>
+        <a href="heap.html" class="category-card">
+            <h3>Heap, PriorityQueue</h3>
+            <p>Kth Largest, Top K Frequent, Smallest Sums</p>
+        </a>
+        <a href="hashMap.html" class="category-card">
+            <h3>HashMap</h3>
+            <p>Two Sum, Group Anagrams, Subarray Sum</p>
+        </a>
+        <a href="graph.html" class="category-card">
+            <h3>Graph, BFS, DFS</h3>
+            <p>Number of Islands, Word Ladder, Components</p>
+        </a>
+        <a href="tree.html" class="category-card">
+            <h3>Tree, BST</h3>
+            <p>Depth, Traversal, Validation, Reconstruction</p>
+        </a>
+        <a href="dp.html" class="category-card">
+            <h3>Dynamic Programming</h3>
+            <p>LIS, Subarray, Paths, Robber, Stock, Coin Change</p>
+        </a>
+        <a href="binarySearch.html" class="category-card">
+            <h3>Binary Search</h3>
+            <p>Rotated Arrays, Search Insert, Capacity</p>
+        </a>
+        <a href="recursion.html" class="category-card">
+            <h3>Recursion</h3>
+            <p>Pow(x, n), K-th Symbol, Split BST</p>
+        </a>
+        <a href="slidingWindow.html" class="category-card">
+            <h3>Sliding Window</h3>
+            <p>Longest Substring, Minimum Size Subarray</p>
+        </a>
+        <a href="greedyBacktracking.html" class="category-card">
+            <h3>Greedy + Backtracking</h3>
+            <p>Permutations, Subsets, Combination Sum</p>
+        </a>
+        <a href="others.html" class="category-card">
+            <h3>Others</h3>
+            <p>Move Zeroes, Meeting Rooms, atoi, ZigZag</p>
+        </a>
+    </div>
+</body>
+</html>

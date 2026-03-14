@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph Algorithms</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <a href="index.html" class="back-link">Back to Hub</a>
+    <h1>Graph Algorithms</h1>
+
+    <!-- Number of Islands -->
+    <div class="algorithm-section">
+        <h2>1. Number of Islands (BFS/DFS)</h2>
+        <div class="code-block" id="code-islands">
+function numIslands(grid) {
+    if (!grid) return 0;
+    let count = 0;
+    for (let r = 0; r < grid.length; r++) {
+        for (let c = 0; c < grid[0].length; c++) {
+            if (grid[r][c] === '1') {
+                count++;
+                dfs(grid, r, c);
+            }
+        }
+    }
+    return count;
+}
+function dfs(grid, r, c) {
+    if (r < 0 || c < 0 || r >= grid.length || c >= grid[0].length || grid[r][c] === '0') return;
+    grid[r][c] = '0';
+    dfs(grid, r + 1, c); dfs(grid, r - 1, c);
+    dfs(grid, r, c + 1); dfs(grid, r, c - 1);
+}</div>
+        <button onclick="runIslands()">Run Example</button>
+        <div class="result-block" id="result-islands">Result: ...</div>
+    </div>
+
+    <!-- Max Area of Island -->
+    <div class="algorithm-section">
+        <h2>2. Max Area of Island</h2>
+        <div class="code-block" id="code-maxArea">
+function maxAreaOfIsland(grid) {
+    let maxArea = 0;
+    for (let r = 0; r < grid.length; r++) {
+        for (let c = 0; c < grid[0].length; c++) {
+            if (grid[r][c] === 1) maxArea = Math.max(maxArea, areaDfs(grid, r, c));
+        }
+    }
+    return maxArea;
+}
+function areaDfs(grid, r, c) {
+    if (r < 0 || c < 0 || r >= grid.length || c >= grid[0].length || grid[r][c] === 0) return 0;
+    grid[r][c] = 0;
+    return 1 + areaDfs(grid, r + 1, c) + areaDfs(grid, r - 1, c) + areaDfs(grid, r, c + 1) + areaDfs(grid, r, c - 1);
+}</div>
+        <button onclick="runMaxArea()">Run Example</button>
+        <div class="result-block" id="result-maxArea">Result: ...</div>
+    </div>
+
+    <script>
+        function runIslands() {
+            let grid = [
+                ["1","1","1","1","0"],
+                ["1","1","0","1","0"],
+                ["1","1","0","0","0"],
+                ["0","0","0","0","0"]
+            ];
+            document.getElementById('result-islands').innerText = "Output: " + numIslands(grid);
+        }
+
+        function runMaxArea() {
+            let grid = [
+                [0,0,1,0,0,0,0,1,0,0,0,0,0],
+                [0,0,0,0,0,0,0,1,1,1,0,0,0],
+                [0,1,1,0,1,0,0,0,0,0,0,0,0],
+                [0,1,0,0,1,1,0,0,1,0,1,0,0],
+                [0,1,0,0,1,1,0,0,1,1,1,0,0],
+                [0,0,0,0,0,0,0,0,0,0,1,0,0],
+                [0,0,0,0,0,0,0,1,1,1,0,0,0],
+                [0,0,0,0,0,0,0,1,1,0,0,0,0]
+            ];
+            document.getElementById('result-maxArea').innerText = "Max Area: " + maxAreaOfIsland(grid);
+        }
+
+        eval(document.getElementById('code-islands').innerText);
+        eval(document.getElementById('code-maxArea').innerText);
+    </script>
+</body>
+</html>

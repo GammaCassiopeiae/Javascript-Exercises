@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stack Algorithms</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <a href="index.html" class="back-link">Back to Hub</a>
+    <h1>Stack Algorithms</h1>
+
+    <!-- Valid Parentheses -->
+    <div class="algorithm-section">
+        <h2>1. Valid Parentheses</h2>
+        <div class="code-block" id="code-parentheses">
+function isValid(s) {
+    let stack = [];
+    let mapping = { ')': '(', '}': '{', ']': '[' };
+    for (let char of s) {
+        if (mapping[char]) {
+            let topElement = stack.length === 0 ? '#' : stack.pop();
+            if (topElement !== mapping[char]) return false;
+        } else {
+            stack.push(char);
+        }
+    }
+    return stack.length === 0;
+}</div>
+        <button onclick="runParentheses()">Run Example</button>
+        <div class="result-block" id="result-parentheses">Result: ...</div>
+    </div>
+
+    <!-- Reverse Linked List -->
+    <div class="algorithm-section">
+        <h2>2. Reverse Linked List</h2>
+        <div class="code-block" id="code-reverse">
+function reverseList(head) {
+    let prev = null, curr = head;
+    while (curr) {
+        let nextTemp = curr.next;
+        curr.next = prev;
+        prev = curr;
+        curr = nextTemp;
+    }
+    return prev;
+}</div>
+        <button onclick="runReverse()">Run Example</button>
+        <div class="result-block" id="result-reverse">Result: ...</div>
+    </div>
+
+    <script>
+        function ListNode(val, next) {
+            this.val = (val===undefined ? 0 : val)
+            this.next = (next===undefined ? null : next)
+        }
+
+        function listToArray(head) {
+            const arr = [];
+            while (head) {
+                arr.push(head.val);
+                head = head.next;
+            }
+            return arr;
+        }
+
+        function arrayToList(arr) {
+            let dummy = new ListNode();
+            let curr = dummy;
+            for (let val of arr) {
+                curr.next = new ListNode(val);
+                curr = curr.next;
+            }
+            return dummy.next;
+        }
+
+        function runParentheses() {
+            let s = "()[]{}";
+            document.getElementById('result-parentheses').innerText = "Input: " + s + " | Is Valid: " + isValid(s);
+        }
+
+        function runReverse() {
+            let list = arrayToList([1, 2, 3, 4, 5]);
+            let reversed = reverseList(list);
+            document.getElementById('result-reverse').innerText = "Original: [1,2,3,4,5] | Reversed: " + JSON.stringify(listToArray(reversed));
+        }
+
+        eval(document.getElementById('code-parentheses').innerText);
+        eval(document.getElementById('code-reverse').innerText);
+    </script>
+</body>
+</html>

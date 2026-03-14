@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Other Algorithms</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <a href="index.html" class="back-link">Back to Hub</a>
+    <h1>Other Essential Algorithms</h1>
+
+    <!-- Move Zeroes -->
+    <div class="algorithm-section">
+        <h2>1. Move Zeroes</h2>
+        <div class="code-block" id="code-moveZeroes">
+function moveZeroes(nums) {
+    let lastNonZero = 0;
+    for (let i = 0; i < nums.length; i++) {
+        if (nums[i] !== 0) nums[lastNonZero++] = nums[i];
+    }
+    for (let i = lastNonZero; i < nums.length; i++) nums[i] = 0;
+    return nums;
+}</div>
+        <button onclick="runMoveZeroes()">Run Example</button>
+        <div class="result-block" id="result-moveZeroes">Result: ...</div>
+    </div>
+
+    <!-- String to Integer (atoi) -->
+    <div class="algorithm-section">
+        <h2>2. String to Integer (atoi)</h2>
+        <div class="code-block" id="code-atoi">
+function myAtoi(s) {
+    let i = 0, sign = 1, result = 0;
+    while (s[i] === ' ') i++;
+    if (s[i] === '+' || s[i] === '-') {
+        sign = s[i] === '-' ? -1 : 1;
+        i++;
+    }
+    while (i < s.length && s[i] >= '0' && s[i] <= '9') {
+        result = result * 10 + (s[i] - '0');
+        i++;
+    }
+    result *= sign;
+    if (result < -Math.pow(2, 31)) return -Math.pow(2, 31);
+    if (result > Math.pow(2, 31) - 1) return Math.pow(2, 31) - 1;
+    return result;
+}</div>
+        <button onclick="runAtoi()">Run Example</button>
+        <div class="result-block" id="result-atoi">Result: ...</div>
+    </div>
+
+    <script>
+        function runMoveZeroes() {
+            let nums = [0, 1, 0, 3, 12];
+            document.getElementById('result-moveZeroes').innerText = "Original: [0,1,0,3,12] | Moved: " + JSON.stringify(moveZeroes([...nums]));
+        }
+
+        function runAtoi() {
+            let s = "   -42";
+            document.getElementById('result-atoi').innerText = "S: '   -42' | Integer: " + myAtoi(s);
+        }
+
+        eval(document.getElementById('code-moveZeroes').innerText);
+        eval(document.getElementById('code-atoi').innerText);
+    </script>
+</body>
+</html>

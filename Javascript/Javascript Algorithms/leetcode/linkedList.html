@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkedList Algorithms</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <a href="index.html" class="back-link">Back to Hub</a>
+    <h1>LinkedList Algorithms</h1>
+
+    <!-- Linked List Cycle -->
+    <div class="algorithm-section">
+        <h2>1. Linked List Cycle</h2>
+        <div class="code-block" id="code-cycle">
+function hasCycle(head) {
+    let slow = head, fast = head;
+    while (fast && fast.next) {
+        slow = slow.next;
+        fast = fast.next.next;
+        if (slow === fast) return true;
+    }
+    return false;
+}</div>
+        <button onclick="runCycle()">Run Example</button>
+        <div class="result-block" id="result-cycle">Result will appear here...</div>
+    </div>
+
+    <!-- Linked List Cycle II -->
+    <div class="algorithm-section">
+        <h2>2. Linked List Cycle II</h2>
+        <div class="code-block" id="code-cycle2">
+function detectCycle(head) {
+    let slow = head, fast = head;
+    while (fast && fast.next) {
+        slow = slow.next;
+        fast = fast.next.next;
+        if (slow === fast) {
+            let pointer = head;
+            while (pointer !== slow) {
+                pointer = pointer.next;
+                slow = slow.next;
+            }
+            return pointer;
+        }
+    }
+    return null;
+}</div>
+        <button onclick="runCycle2()">Run Example</button>
+        <div class="result-block" id="result-cycle2">Result will appear here...</div>
+    </div>
+
+    <!-- Remove Duplicates from Sorted List -->
+    <div class="algorithm-section">
+        <h2>3. Remove Duplicates from Sorted List</h2>
+        <div class="code-block" id="code-duplicates">
+function deleteDuplicates(head) {
+    let curr = head;
+    while (curr && curr.next) {
+        if (curr.val === curr.next.val) {
+            curr.next = curr.next.next;
+        } else {
+            curr = curr.next;
+        }
+    }
+    return head;
+}</div>
+        <button onclick="runDuplicates()">Run Example</button>
+        <div class="result-block" id="result-duplicates">Result will appear here...</div>
+    </div>
+
+    <!-- Remove Duplicates from Sorted List II -->
+    <div class="algorithm-section">
+        <h2>4. Remove Duplicates from Sorted List II</h2>
+        <div class="code-block" id="code-duplicates2">
+function deleteDuplicatesII(head) {
+    let dummy = { next: head };
+    let prev = dummy;
+    while (head) {
+        if (head.next && head.val === head.next.val) {
+            while (head.next && head.val === head.next.val) {
+                head = head.next;
+            }
+            prev.next = head.next;
+        } else {
+            prev = prev.next;
+        }
+        head = head.next;
+    }
+    return dummy.next;
+}</div>
+        <button onclick="runDuplicates2()">Run Example</button>
+        <div class="result-block" id="result-duplicates2">Result will appear here...</div>
+    </div>
+
+    <!-- Add Two Numbers -->
+    <div class="algorithm-section">
+        <h2>5. Add Two Numbers</h2>
+        <div class="code-block" id="code-addTwo">
+function addTwoNumbers(l1, l2) {
+    let dummy = { val: 0, next: null };
+    let curr = dummy, carry = 0;
+    while (l1 || l2 || carry) {
+        let sum = (l1 ? l1.val : 0) + (l2 ? l2.val : 0) + carry;
+        carry = Math.floor(sum / 10);
+        curr.next = { val: sum % 10, next: null };
+        curr = curr.next;
+        if (l1) l1 = l1.next;
+        if (l2) l2 = l2.next;
+    }
+    return dummy.next;
+}</div>
+        <button onclick="runAddTwo()">Run Example</button>
+        <div class="result-block" id="result-addTwo">Result will appear here...</div>
+    </div>
+
+    <script>
+        function ListNode(val, next) {
+            this.val = (val===undefined ? 0 : val)
+            this.next = (next===undefined ? null : next)
+        }
+
+        function listToArray(head) {
+            const arr = [];
+            while (head) {
+                arr.push(head.val);
+                head = head.next;
+            }
+            return arr;
+        }
+
+        function arrayToList(arr) {
+            let dummy = new ListNode();
+            let curr = dummy;
+            for (let val of arr) {
+                curr.next = new ListNode(val);
+                curr = curr.next;
+            }
+            return dummy.next;
+        }
+
+        function runCycle() {
+            let node1 = new ListNode(3);
+            let node2 = new ListNode(2);
+            let node3 = new ListNode(0);
+            let node4 = new ListNode(-4);
+            node1.next = node2; node2.next = node3; node3.next = node4; node4.next = node2; // Cycle
+            
+            document.getElementById('result-cycle').innerText = "Has cycle: " + hasCycle(node1);
+        }
+
+        function runCycle2() {
+            let node1 = new ListNode(3);
+            let node2 = new ListNode(2);
+            let node3 = new ListNode(0);
+            let node4 = new ListNode(-4);
+            node1.next = node2; node2.next = node3; node3.next = node4; node4.next = node2; // Cycle back to node2
+            let cycleStart = detectCycle(node1);
+            document.getElementById('result-cycle2').innerText = "Cycle starts at node with value: " + (cycleStart ? cycleStart.val : "None");
+        }
+
+        function runDuplicates() {
+            let list = arrayToList([1, 1, 2, 3, 3]);
+            let result = deleteDuplicates(list);
+            document.getElementById('result-duplicates').innerText = "Result: " + JSON.stringify(listToArray(result));
+        }
+
+        function runDuplicates2() {
+            let list = arrayToList([1, 2, 3, 3, 4, 4, 5]);
+            let result = deleteDuplicatesII(list);
+            document.getElementById('result-duplicates2').innerText = "Result: " + JSON.stringify(listToArray(result));
+        }
+
+        function runAddTwo() {
+            let l1 = arrayToList([2, 4, 3]);
+            let l2 = arrayToList([5, 6, 4]);
+            let result = addTwoNumbers(l1, l2);
+            document.getElementById('result-addTwo').innerText = "Result: " + JSON.stringify(listToArray(result));
+        }
+
+        // Include the functions in scope
+        eval(document.getElementById('code-cycle').innerText);
+        eval(document.getElementById('code-cycle2').innerText);
+        eval(document.getElementById('code-duplicates').innerText);
+        eval(document.getElementById('code-duplicates2').innerText);
+        eval(document.getElementById('code-addTwo').innerText);
+    </script>
+</body>
+</html>

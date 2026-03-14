@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HashMap Algorithms</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <a href="index.html" class="back-link">Back to Hub</a>
+    <h1>HashMap Algorithms</h1>
+
+    <!-- Two Sum -->
+    <div class="algorithm-section">
+        <h2>1. Two Sum</h2>
+        <div class="code-block" id="code-twoSum">
+function twoSum(nums, target) {
+    let map = new Map();
+    for (let i = 0; i < nums.length; i++) {
+        let complement = target - nums[i];
+        if (map.has(complement)) return [map.get(complement), i];
+        map.set(nums[i], i);
+    }
+}</div>
+        <button onclick="runTwoSum()">Run Example</button>
+        <div class="result-block" id="result-twoSum">Result: ...</div>
+    </div>
+
+    <!-- Group Anagrams -->
+    <div class="algorithm-section">
+        <h2>2. Group Anagrams</h2>
+        <div class="code-block" id="code-groupAnagrams">
+function groupAnagrams(strs) {
+    let map = {};
+    for (let s of strs) {
+        let count = new Array(26).fill(0);
+        for (let char of s) count[char.charCodeAt(0) - 97]++;
+        let key = count.join('#');
+        if (!map[key]) map[key] = [];
+        map[key].push(s);
+    }
+    return Object.values(map);
+}</div>
+        <button onclick="runGroupAnagrams()">Run Example</button>
+        <div class="result-block" id="result-groupAnagrams">Result: ...</div>
+    </div>
+
+    <!-- Subarray Sum Equals K -->
+    <div class="algorithm-section">
+        <h2>3. Subarray Sum Equals K</h2>
+        <div class="code-block" id="code-subarraySum">
+function subarraySum(nums, k) {
+    let count = 0, sum = 0;
+    let map = new Map();
+    map.set(0, 1);
+    for (let i = 0; i < nums.length; i++) {
+        sum += nums[i];
+        if (map.has(sum - k)) count += map.get(sum - k);
+        map.set(sum, (map.get(sum) || 0) + 1);
+    }
+    return count;
+}</div>
+        <button onclick="runSubarraySum()">Run Example</button>
+        <div class="result-block" id="result-subarraySum">Result: ...</div>
+    </div>
+
+    <script>
+        function runTwoSum() {
+            let nums = [2, 7, 11, 15], target = 9;
+            document.getElementById('result-twoSum').innerText = "Input: [2, 7, 11, 15], target: 9 | Output: " + JSON.stringify(twoSum(nums, target));
+        }
+
+        function runGroupAnagrams() {
+            let strs = ["eat","tea","tan","ate","nat","bat"];
+            document.getElementById('result-groupAnagrams').innerText = "Input: eat, tea, tan, ate, nat, bat | Output: " + JSON.stringify(groupAnagrams(strs));
+        }
+
+        function runSubarraySum() {
+            let nums = [1, 1, 1], k = 2;
+            document.getElementById('result-subarraySum').innerText = "Input: [1, 1, 1], k: 2 | Output: " + subarraySum(nums, k);
+        }
+
+        eval(document.getElementById('code-twoSum').innerText);
+        eval(document.getElementById('code-groupAnagrams').innerText);
+        eval(document.getElementById('code-subarraySum').innerText);
+    </script>
+</body>
+</html>

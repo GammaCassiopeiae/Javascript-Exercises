@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<body><canvas id="c" width="400" height="200" style="border:1px solid"></canvas>
+    <script>
+        const canvas = document.getElementById('c'),
+            ctx = canvas.getContext('2d');
+        let arr = Array.from({
+            length: 40
+        }, () => Math.random() * 180 + 10);
+        async function partition(l, h) {
+            let p = arr[h],
+                i = l - 1;
+            for (let j = l; j < h; j++) {
+                if (arr[j] < p) {
+                    i++;
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                    draw(j);
+                    await new Promise(r => setTimeout(r, 30));
+                }
+            }
+            [arr[i + 1], arr[h]] = [arr[h], arr[i + 1]];
+            return i + 1;
+        }
+        async function sort(l, h) {
+            if (l < h) {
+                let pi = await partition(l, h);
+                await sort(l, pi - 1);
+                await sort(pi + 1, h);
+            }
+            draw();
+        }
+
+        function draw(idx) {
+            ctx.clearRect(0, 0, 400, 200);
+            arr.forEach((v, i) => {
+                ctx.fillStyle = i == idx ? 'orange' : 'blue';
+                ctx.fillRect(i * 10, 200 - v, 8, v);
+            });
+        }
+        sort(0, 39);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<body><canvas id="c" width="400" height="200" style="border:1px solid"></canvas>
+    <script>
+        const canvas = document.getElementById('c'),
+            ctx = canvas.getContext('2d');
+        let arr = Array.from({
+            length: 40
+        }, () => Math.random() * 180 + 10);
+        async function merge(l, m, r) {
+            let n1 = m - l + 1,
+                n2 = r - m,
+                L = arr.slice(l, m + 1),
+                R = arr.slice(m + 1, r + 1);
+            let i = 0,
+                j = 0,
+                k = l;
+            while (i < n1 && j < n2) {
+                if (L[i] <= R[j]) arr[k] = L[i++];
+                else arr[k] = R[j++];
+                draw(k);
+                await new Promise(res => setTimeout(res, 30));
+                k++;
+            }
+            while (i < n1) {
+                arr[k] = L[i++];
+                draw(k);
+                await new Promise(res => setTimeout(res, 30));
+                k++;
+            }
+            while (j < n2) {
+                arr[k] = R[j++];
+                draw(k);
+                await new Promise(res => setTimeout(res, 30));
+                k++;
+            }
+        }
+        async function sort(l, r) {
+            if (l >= r) return;
+            let m = Math.floor((l + r) / 2);
+            await sort(l, m);
+            await sort(m + 1, r);
+            await merge(l, m, r);
+        }
+
+        function draw(idx) {
+            ctx.clearRect(0, 0, 400, 200);
+            arr.forEach((v, i) => {
+                ctx.fillStyle = i == idx ? 'red' : 'cyan';
+                ctx.fillRect(i * 10, 200 - v, 8, v);
+            });
+        }
+        sort(0, 39);
+    </script>
+</body>
+
+</html>

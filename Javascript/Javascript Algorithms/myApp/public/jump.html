@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<body><canvas id="c" width="400" height="200" style="border:1px solid"></canvas>
+    <script>
+        const canvas = document.getElementById('c'),
+            ctx = canvas.getContext('2d');
+        let arr = Array.from({
+            length: 40
+        }, (_, i) => i * 4 + 20);
+        let target = arr[35],
+            n = 40,
+            step = Math.floor(Math.sqrt(n));
+        async function search() {
+            let prev = 0;
+            while (arr[Math.min(step, n) - 1] < target) {
+                prev = step;
+                step += Math.floor(Math.sqrt(n));
+                draw(prev);
+                await new Promise(r => setTimeout(r, 500));
+                if (prev >= n) return;
+            }
+            while (arr[prev] < target) {
+                prev++;
+                draw(prev);
+                await new Promise(r => setTimeout(r, 100));
+            }
+            if (arr[prev] == target) alert('Found!');
+        }
+
+        function draw(idx) {
+            ctx.clearRect(0, 0, 400, 200);
+            arr.forEach((v, i) => {
+                ctx.fillStyle = i == idx ? 'red' : 'pink';
+                ctx.fillRect(i * 10, 200 - v, 8, v);
+            });
+        }
+        search();
+    </script>
+</body>
+
+</html>

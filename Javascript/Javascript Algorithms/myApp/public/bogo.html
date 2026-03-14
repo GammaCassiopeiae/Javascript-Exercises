@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<body><canvas id="c" width="400" height="200" style="border:1px solid"></canvas>
+    <script>
+        const canvas = document.getElementById('c'),
+            ctx = canvas.getContext('2d');
+        let arr = Array.from({
+            length: 6
+        }, () => Math.random() * 180 + 10); // Samo 6 elementov, ker je Bogo počasen
+        async function sort() {
+            while (!isSorted()) {
+                for (let i = arr.length - 1; i > 0; i--) {
+                    let j = Math.floor(Math.random() * (i + 1));
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                }
+                draw();
+                await new Promise(r => setTimeout(r, 50));
+            }
+            alert('Sorted by luck!');
+        }
+
+        function isSorted() {
+            for (let i = 0; i < arr.length - 1; i++)
+                if (arr[i] > arr[i + 1]) return false;
+            return true;
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, 400, 200);
+            arr.forEach((v, i) => {
+                ctx.fillStyle = 'red';
+                ctx.fillRect(i * 60, 200 - v, 50, v);
+            });
+        }
+        sort();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<body><canvas id="c" width="400" height="200" style="border:1px solid"></canvas>
+    <script>
+        const canvas = document.getElementById('c'),
+            ctx = canvas.getContext('2d');
+        let arr = Array.from({
+            length: 40
+        }, () => Math.random() * 180 + 10);
+        async function sort() {
+            for (let g = Math.floor(40 / 2); g > 0; g = Math.floor(g / 2)) {
+                for (let i = g; i < 40; i++) {
+                    let t = arr[i],
+                        j = i;
+                    while (j >= g && arr[j - g] > t) {
+                        arr[j] = arr[j - g];
+                        j -= g;
+                        draw(j);
+                        await new Promise(r => setTimeout(r, 20));
+                    }
+                    arr[j] = t;
+                }
+            }
+            draw();
+        }
+
+        function draw(idx) {
+            ctx.clearRect(0, 0, 400, 200);
+            arr.forEach((v, i) => {
+                ctx.fillStyle = i == idx ? 'red' : 'brown';
+                ctx.fillRect(i * 10, 200 - v, 8, v);
+            });
+        }
+        sort();
+    </script>
+</body>
+
+</html>

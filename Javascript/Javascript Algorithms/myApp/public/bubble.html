@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="sl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Bubble Sort Vizualizacija</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <h1>Bubble Sort</h1>
+    <canvas id="c" width="400" height="200"></canvas>
+    <br>
+    <a href="index.html" class="back-btn">Nazaj na meni</a>
+
+    <script>
+        const canvas = document.getElementById('c'),
+            ctx = canvas.getContext('2d');
+        let arr = Array.from({
+            length: 40
+        }, () => Math.random() * 180 + 10);
+
+        async function sort() {
+            for (let i = 0; i < arr.length; i++) {
+                for (let j = 0; j < arr.length - i - 1; j++) {
+                    if (arr[j] > arr[j + 1]) {
+                        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+                        draw(j);
+                        await new Promise(r => setTimeout(r, 10));
+                    }
+                }
+            }
+            draw();
+        }
+
+        function draw(idx) {
+            ctx.clearRect(0, 0, 400, 200);
+            arr.forEach((v, i) => {
+                ctx.fillStyle = i === idx ? '#e74c3c' : '#3498db';
+                ctx.fillRect(i * 10, 200 - v, 8, v);
+            });
+        }
+        sort();
+    </script>
+</body>
+
+</html>

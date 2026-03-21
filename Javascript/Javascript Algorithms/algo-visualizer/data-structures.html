@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Structures - AlgoViz</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="l-body">
+    <a href="#main-content" class="u-skip-link">Skip to main content</a>
+    <div id="wrapper" class="l-wrapper">
+        <aside id="sidebar" class="c-sidebar">
+            <div class="c-sidebar__brand"><h1 class="c-sidebar__title"><i class="fas fa-brain"></i> AlgoViz</h1></div>
+            <nav class="c-sidebar__nav">
+                <ul class="c-sidebar__menu">
+                    <li class="c-sidebar__item"><a href="index.html" class="c-sidebar__link"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+                    <hr class="c-sidebar__divider"><li class="c-sidebar__heading">Categories</li>
+                    <li class="c-sidebar__item"><a href="sorting.html" class="c-sidebar__link"><i class="fas fa-sort"></i><span>Sorting</span></a></li>
+                    <li class="c-sidebar__item"><a href="searching.html" class="c-sidebar__link"><i class="fas fa-search"></i><span>Searching</span></a></li>
+                    <li class="c-sidebar__item"><a href="trees.html" class="c-sidebar__link"><i class="fas fa-project-diagram"></i><span>Trees</span></a></li>
+                    <li class="c-sidebar__item"><a href="graphs.html" class="c-sidebar__link"><i class="fas fa-network-wired"></i><span>Graphs</span></a></li>
+                    <li class="c-sidebar__item"><a href="dynamic-programming.html" class="c-sidebar__link"><i class="fas fa-layer-group"></i><span>DP</span></a></li>
+                    <li class="c-sidebar__item c-sidebar__item--active"><a href="data-structures.html" class="c-sidebar__link"><i class="fas fa-cubes"></i><span>Data Structures</span></a></li>
+                    <li class="c-sidebar__item"><a href="pathfinding.html" class="c-sidebar__link"><i class="fas fa-route"></i><span>Pathfinding</span></a></li>
+                    <li class="c-sidebar__item"><a href="recursion.html" class="c-sidebar__link"><i class="fas fa-sync-alt"></i><span>Recursion</span></a></li>
+                    <li class="c-sidebar__item"><a href="strings.html" class="c-sidebar__link"><i class="fas fa-font"></i><span>Strings</span></a></li>
+                    <li class="c-sidebar__item"><a href="advanced.html" class="c-sidebar__link"><i class="fas fa-graduation-cap"></i><span>Advanced</span></a></li>
+                </ul>
+            </nav>
+        </aside>
+        <div id="content-wrapper" class="l-content-wrapper">
+            <header id="topbar" class="c-topbar">
+                <div class="c-topbar__brand">
+                    <button id="sidebarToggle" class="c-topbar__toggle"><i class="fas fa-bars"></i></button>
+                    <div class="c-topbar__logo"><div class="c-topbar__logo-icon"><i class="fas fa-cubes"></i></div><span>Data Structures</span></div>
+                </div>
+                <nav><ul class="c-topbar__nav"><li><a href="index.html" class="c-topbar__nav-link"><i class="fas fa-th-large"></i></a></li></ul></nav>
+            </header>
+            <main id="main-content" class="l-main">
+                <nav class="c-breadcrumbs"><span class="c-breadcrumbs__item"><a href="index.html">Home</a></span><span class="c-breadcrumbs__separator">/</span><span class="c-breadcrumbs__item c-breadcrumbs__item--current">Data Structures</span></nav>
+                <header class="c-page-header">
+                    <h1 class="c-page-header__title"><i class="fas fa-cubes"></i> Data Structures</h1>
+                    <p class="c-page-header__subtitle">Visualize fundamental data structures in action.</p>
+                </header>
+                <div class="l-algo-grid">
+                    <!-- Stack -->
+                    <article class="c-algo-card">
+                        <header class="c-algo-card__header"><h2 class="c-algo-card__title">Stack (LIFO)</h2><span class="c-algo-card__tag">O(1)</span></header>
+                        <div class="c-algo-card__body">
+                            <p class="c-algo-card__description">Last In First Out structure. Push and pop from top.</p>
+                            <div class="c-controls">
+                                <div class="c-control-group"><label class="c-control-label">Value:</label><input type="number" class="c-input c-input--number" id="stackValue" value="1" min="1" max="99"></div>
+                            </div>
+                            <div class="c-controls">
+                                <button class="c-btn c-btn--primary c-btn--sm" onclick="stackViz.push()"><i class="fas fa-plus"></i> Push</button>
+                                <button class="c-btn c-btn--danger c-btn--sm" onclick="stackViz.pop()"><i class="fas fa-minus"></i> Pop</button>
+                                <button class="c-btn c-btn--secondary c-btn--sm" onclick="stackViz.clear()"><i class="fas fa-trash"></i> Clear</button>
+                            </div>
+                            <div class="c-visualization"><canvas id="stackCanvas" class="c-visualization__canvas"></canvas></div>
+                            <div class="c-stats" id="stackStats"></div>
+                            <div class="c-code-block"><pre><code>class Stack {
+    constructor() { this.items = []; }
+    push(item) { this.items.push(item); }
+    pop() { return this.items.pop(); }
+    peek() { return this.items[this.items.length - 1]; }
+    isEmpty() { return this.items.length === 0; }
+}</code></pre></div>
+                        </div>
+                    </article>
+                    <!-- Queue -->
+                    <article class="c-algo-card">
+                        <header class="c-algo-card__header"><h2 class="c-algo-card__title">Queue (FIFO)</h2><span class="c-algo-card__tag">O(1)</span></header>
+                        <div class="c-algo-card__body">
+                            <p class="c-algo-card__description">First In First Out structure. Enqueue at rear, dequeue from front.</p>
+                            <div class="c-controls">
+                                <div class="c-control-group"><label class="c-control-label">Value:</label><input type="number" class="c-input c-input--number" id="queueValue" value="1" min="1" max="99"></div>
+                            </div>
+                            <div class="c-controls">
+                                <button class="c-btn c-btn--primary c-btn--sm" onclick="queueViz.enqueue()"><i class="fas fa-plus"></i> Enqueue</button>
+                                <button class="c-btn c-btn--danger c-btn--sm" onclick="queueViz.dequeue()"><i class="fas fa-minus"></i> Dequeue</button>
+                                <button class="c-btn c-btn--secondary c-btn--sm" onclick="queueViz.clear()"><i class="fas fa-trash"></i> Clear</button>
+                            </div>
+                            <div class="c-visualization"><canvas id="queueCanvas" class="c-visualization__canvas"></canvas></div>
+                            <div class="c-stats" id="queueStats"></div>
+                            <div class="c-code-block"><pre><code>class Queue {
+    constructor() { this.items = []; }
+    enqueue(item) { this.items.push(item); }
+    dequeue() { return this.items.shift(); }
+    front() { return this.items[0]; }
+    isEmpty() { return this.items.length === 0; }
+}</code></pre></div>
+                        </div>
+                    </article>
+                    <!-- Linked List -->
+                    <article class="c-algo-card">
+                        <header class="c-algo-card__header"><h2 class="c-algo-card__title">Linked List</h2><span class="c-algo-card__tag">O(n)</span></header>
+                        <div class="c-algo-card__body">
+                            <p class="c-algo-card__description">Linear structure with nodes pointing to next node.</p>
+                            <div class="c-controls">
+                                <div class="c-control-group"><label class="c-control-label">Value:</label><input type="number" class="c-input c-input--number" id="listValue" value="1" min="1" max="99"></div>
+                            </div>
+                            <div class="c-controls">
+                                <button class="c-btn c-btn--primary c-btn--sm" onclick="listViz.append()"><i class="fas fa-plus"></i> Append</button>
+                                <button class="c-btn c-btn--warning c-btn--sm" onclick="listViz.prepend()"><i class="fas fa-angle-double-left"></i> Prepend</button>
+                                <button class="c-btn c-btn--danger c-btn--sm" onclick="listViz.delete()"><i class="fas fa-trash"></i> Delete Last</button>
+                                <button class="c-btn c-btn--secondary c-btn--sm" onclick="listViz.clear()"><i class="fas fa-trash"></i> Clear</button>
+                            </div>
+                            <div class="c-visualization"><canvas id="listCanvas" class="c-visualization__canvas"></canvas></div>
+                            <div class="c-stats" id="listStats"></div>
+                            <div class="c-code-block"><pre><code>class Node {
+    constructor(data) {
+        this.data = data;
+        this.next = null;
+    }
+}
+class LinkedList {
+    append(data) { /* add to end */ }
+    prepend(data) { /* add to start */ }
+    delete(data) { /* remove node */ }
+}</code></pre></div>
+                        </div>
+                    </article>
+                    <!-- Hash Table -->
+                    <article class="c-algo-card">
+                        <header class="c-algo-card__header"><h2 class="c-algo-card__title">Hash Table</h2><span class="c-algo-card__tag">O(1)</span></header>
+                        <div class="c-algo-card__body">
+                            <p class="c-algo-card__description">Key-value storage with hash function for indexing.</p>
+                            <div class="c-controls">
+                                <div class="c-control-group"><label class="c-control-label">Key:</label><input type="text" class="c-input c-input--text" id="hashKey" value="A" maxlength="3"></div>
+                                <div class="c-control-group"><label class="c-control-label">Value:</label><input type="number" class="c-input c-input--number" id="hashValue" value="1" min="1" max="99"></div>
+                            </div>
+                            <div class="c-controls">
+                                <button class="c-btn c-btn--primary c-btn--sm" onclick="hashViz.insert()"><i class="fas fa-plus"></i> Insert</button>
+                                <button class="c-btn c-btn--danger c-btn--sm" onclick="hashViz.remove()"><i class="fas fa-trash"></i> Remove</button>
+                                <button class="c-btn c-btn--secondary c-btn--sm" onclick="hashViz.clear()"><i class="fas fa-trash"></i> Clear</button>
+                            </div>
+                            <div class="c-visualization"><canvas id="hashCanvas" class="c-visualization__canvas"></canvas></div>
+                            <div class="c-stats" id="hashStats"></div>
+                            <div class="c-code-block"><pre><code>class HashTable {
+    constructor(size = 10) {
+        this.buckets = Array(size).fill(null);
+    }
+    hash(key) { return key.length % this.buckets.length; }
+    insert(key, value) { /* add key-value */ }
+    get(key) { /* retrieve value */ }
+}</code></pre></div>
+                        </div>
+                    </article>
+                </div>
+            </main>
+            <footer class="c-footer"><div class="c-footer__content"><span>Copyright &copy; AlgoViz Platform 2026</span></div></footer>
+        </div>
+    </div>
+    <script src="js/utils.js"></script>
+    <script>
+    (function() {
+        'use strict';
+        // Stack Visualizer
+        class StackVisualizer {
+            constructor() {
+                this.canvas = document.getElementById('stackCanvas');
+                this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
+                this.statsContainer = document.getElementById('stackStats');
+                this.valueInput = document.getElementById('stackValue');
+                this.stack = [];
+                this.ops = 0;
+                this.setupCanvas();
+                this.render();
+            }
+            setupCanvas() {
+                if (!this.canvas) return;
+                const setup = AlgoViz.setupCanvas(this.canvas.id);
+                if (setup) { this.width = setup.width; this.height = setup.height; this.ctx = setup.ctx; }
+            }
+            render() {
+                if (!this.ctx) return;
+                AlgoViz.clearCanvas(this.ctx, this.width, this.height);
+                const containerWidth = 150;
+                const containerHeight = 250;
+                const containerX = (this.width - containerWidth) / 2;
+                const containerY = (this.height - containerHeight) / 2;
+                // Draw container
+                this.ctx.strokeStyle = 'rgba(0, 243, 255, 0.3)';
+                this.ctx.lineWidth = 3;
+                this.ctx.strokeRect(containerX, containerY, containerWidth, containerHeight);
+                // Draw label
+                this.ctx.fillStyle = '#00f3ff';
+                this.ctx.font = '16px Rajdhani';
+                this.ctx.textAlign = 'center';
+                this.ctx.fillText('STACK (LIFO)', this.width / 2, containerY - 15);
+                // Draw items
+                const itemHeight = 35;
+                const gap = 3;
+                this.stack.forEach((item, i) => {
+                    const x = containerX + 10;
+                    const y = containerY + containerHeight - itemHeight - i * (itemHeight + gap);
+                    const hue = (i * 40) % 360;
+                    this.ctx.shadowColor = `hsla(${hue}, 80%, 60%, 0.8)`;
+                    this.ctx.shadowBlur = i === this.stack.length - 1 ? 15 : 5;
+                    this.ctx.fillStyle = `hsla(${hue}, 80%, 60%, 0.7)`;
+                    this.ctx.beginPath();
+                    this.ctx.roundRect(x, y, containerWidth - 20, itemHeight - gap, 5);
+                    this.ctx.fill();
+                    this.ctx.shadowBlur = 0;
+                    this.ctx.fillStyle = '#ffffff';
+                    this.ctx.font = 'bold 16px Rajdhani';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText(item.toString(), x + (containerWidth - 20) / 2, y + itemHeight / 2 - gap / 2);
+                });
+                // Draw stats
+                if (this.statsContainer) {
+                    this.statsContainer.innerHTML = `<div class="c-stat"><div class="c-stat__value">${this.stack.length}</div><div class="c-stat__label">Size</div></div><div class="c-stat"><div class="c-stat__value">${this.ops}</div><div class="c-stat__label">Operations</div></div>`;
+                }
+            }
+            push() {
+                const value = parseInt(this.valueInput?.value) || Math.floor(Math.random() * 90) + 10;
+                if (this.stack.length < 6) {
+                    this.stack.push(value);
+                    this.ops++;
+                    this.render();
+                } else {
+                    AlgoViz.showToast('Stack overflow! Max size is 6.', 'error');
+                }
+            }
+            pop() {
+                if (this.stack.length > 0) {
+                    this.stack.pop();
+                    this.ops++;
+                    this.render();
+                } else {
+                    AlgoViz.showToast('Stack underflow! Stack is empty.', 'error');
+                }
+            }
+            clear() { this.stack = []; this.ops = 0; this.render(); }
+        }
+        // Queue Visualizer
+        class QueueVisualizer {
+            constructor() {
+                this.canvas = document.getElementById('queueCanvas');
+                this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
+                this.statsContainer = document.getElementById('queueStats');
+                this.valueInput = document.getElementById('queueValue');
+                this.queue = [];
+                this.ops = 0;
+                this.setupCanvas();
+                this.render();
+            }
+            setupCanvas() {
+                if (!this.canvas) return;
+                const setup = AlgoViz.setupCanvas(this.canvas.id);
+                if (setup) { this.width = setup.width; this.height = setup.height; this.ctx = setup.ctx; }
+            }
+            render() {
+                if (!this.ctx) return;
+                AlgoViz.clearCanvas(this.ctx, this.width, this.height);
+                const containerWidth = 350;
+                const containerHeight = 80;
+                const containerX = (this.width - containerWidth) / 2;
+                const containerY = (this.height - containerHeight) / 2;
+                // Draw container
+                this.ctx.strokeStyle = 'rgba(0, 243, 255, 0.3)';
+                this.ctx.lineWidth = 3;
+                this.ctx.strokeRect(containerX, containerY, containerWidth, containerHeight);
+                // Draw labels
+                this.ctx.fillStyle = '#1cc88a';
+                this.ctx.font = '14px Rajdhani';
+                this.ctx.textAlign = 'center';
+                this.ctx.fillText('FRONT (Dequeue)', containerX + 50, containerY - 15);
+                this.ctx.fillStyle = '#ff00ff';
+                this.ctx.fillText('REAR (Enqueue)', containerX + containerWidth - 50, containerY - 15);
+                // Draw items
+                const itemWidth = 60;
+                const gap = 5;
+                const itemX = containerX + 10;
+                const itemY = containerY + 10;
+                this.queue.forEach((item, i) => {
+                    const x = itemX + i * (itemWidth + gap);
+                    const hue = (i * 40) % 360;
+                    this.ctx.shadowColor = `hsla(${hue}, 80%, 60%, 0.8)`;
+                    this.ctx.shadowBlur = i === this.queue.length - 1 ? 15 : 5;
+                    this.ctx.fillStyle = `hsla(${hue}, 80%, 60%, 0.7)`;
+                    this.ctx.beginPath();
+                    this.ctx.roundRect(x, itemY, itemWidth, containerHeight - 20, 5);
+                    this.ctx.fill();
+                    this.ctx.shadowBlur = 0;
+                    this.ctx.fillStyle = '#ffffff';
+                    this.ctx.font = 'bold 18px Rajdhani';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText(item.toString(), x + itemWidth / 2, itemY + (containerHeight - 20) / 2);
+                });
+                // Draw arrows
+                this.ctx.fillStyle = '#1cc88a';
+                this.ctx.font = '20px FontAwesome';
+                this.ctx.textAlign = 'center';
+                this.ctx.fillText('←', containerX - 20, containerY + containerHeight / 2);
+                this.ctx.fillStyle = '#ff00ff';
+                this.ctx.fillText('→', containerX + containerWidth + 20, containerY + containerHeight / 2);
+                if (this.statsContainer) {
+                    this.statsContainer.innerHTML = `<div class="c-stat"><div class="c-stat__value">${this.queue.length}</div><div class="c-stat__label">Size</div></div><div class="c-stat"><div class="c-stat__value">${this.ops}</div><div class="c-stat__label">Operations</div></div>`;
+                }
+            }
+            enqueue() {
+                const value = parseInt(this.valueInput?.value) || Math.floor(Math.random() * 90) + 10;
+                if (this.queue.length < 5) {
+                    this.queue.push(value);
+                    this.ops++;
+                    this.render();
+                } else {
+                    AlgoViz.showToast('Queue overflow! Max size is 5.', 'error');
+                }
+            }
+            dequeue() {
+                if (this.queue.length > 0) {
+                    this.queue.shift();
+                    this.ops++;
+                    this.render();
+                } else {
+                    AlgoViz.showToast('Queue underflow! Queue is empty.', 'error');
+                }
+            }
+            clear() { this.queue = []; this.ops = 0; this.render(); }
+        }
+        // Linked List Visualizer
+        class LinkedListVisualizer {
+            constructor() {
+                this.canvas = document.getElementById('listCanvas');
+                this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
+                this.statsContainer = document.getElementById('listStats');
+                this.valueInput = document.getElementById('listValue');
+                this.list = [];
+                this.ops = 0;
+                this.setupCanvas();
+                this.render();
+            }
+            setupCanvas() {
+                if (!this.canvas) return;
+                const setup = AlgoViz.setupCanvas(this.canvas.id);
+                if (setup) { this.width = setup.width; this.height = setup.height; this.ctx = setup.ctx; }
+            }
+            render() {
+                if (!this.ctx) return;
+                AlgoViz.clearCanvas(this.ctx, this.width, this.height);
+                const nodeWidth = 120;
+                const nodeHeight = 50;
+                const gap = 30;
+                const arrowWidth = 40;
+                const totalWidth = this.list.length * (nodeWidth + arrowWidth) + gap;
+                const startX = (this.width - totalWidth) / 2;
+                const centerY = this.height / 2;
+                // Draw HEAD label
+                this.ctx.fillStyle = '#00f3ff';
+                this.ctx.font = '14px Rajdhani';
+                this.ctx.textAlign = 'center';
+                this.ctx.fillText('HEAD', startX - 20, centerY - 40);
+                // Draw nodes
+                this.list.forEach((item, i) => {
+                    const x = startX + i * (nodeWidth + arrowWidth);
+                    const y = centerY - nodeHeight / 2;
+                    const hue = (i * 40) % 360;
+                    const isLast = i === this.list.length - 1;
+                    // Node box
+                    this.ctx.shadowColor = `hsla(${hue}, 80%, 60%, 0.8)`;
+                    this.ctx.shadowBlur = i === this.list.length - 1 ? 15 : 5;
+                    this.ctx.fillStyle = `hsla(${hue}, 80%, 60%, 0.7)`;
+                    this.ctx.beginPath();
+                    this.ctx.roundRect(x, y, nodeWidth, nodeHeight, 5);
+                    this.ctx.fill();
+                    // Data section
+                    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+                    this.ctx.fillRect(x + nodeWidth - 40, y, 40, nodeHeight);
+                    this.ctx.shadowBlur = 0;
+                    // Data value
+                    this.ctx.fillStyle = '#ffffff';
+                    this.ctx.font = 'bold 18px Rajdhani';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText(item.toString(), x + nodeWidth / 2 - 10, y + nodeHeight / 2);
+                    // Next pointer
+                    this.ctx.fillStyle = '#858796';
+                    this.ctx.font = '12px Rajdhani';
+                    this.ctx.fillText(isLast ? 'NULL' : '→', x + nodeWidth - 20, y + nodeHeight / 2);
+                    // Arrow to next
+                    if (!isLast) {
+                        this.ctx.strokeStyle = '#00f3ff';
+                        this.ctx.lineWidth = 2;
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(x + nodeWidth + 5, centerY);
+                        this.ctx.lineTo(x + nodeWidth + arrowWidth - 5, centerY);
+                        this.ctx.stroke();
+                        // Arrowhead
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(x + nodeWidth + arrowWidth - 10, centerY - 5);
+                        this.ctx.lineTo(x + nodeWidth + arrowWidth, centerY);
+                        this.ctx.lineTo(x + nodeWidth + arrowWidth - 10, centerY + 5);
+                        this.ctx.stroke();
+                    }
+                });
+                if (this.statsContainer) {
+                    this.statsContainer.innerHTML = `<div class="c-stat"><div class="c-stat__value">${this.list.length}</div><div class="c-stat__label">Length</div></div><div class="c-stat"><div class="c-stat__value">${this.ops}</div><div class="c-stat__label">Operations</div></div>`;
+                }
+            }
+            append() {
+                const value = parseInt(this.valueInput?.value) || Math.floor(Math.random() * 90) + 10;
+                if (this.list.length < 5) {
+                    this.list.push(value);
+                    this.ops++;
+                    this.render();
+                } else {
+                    AlgoViz.showToast('Max 5 nodes for visualization.', 'warning');
+                }
+            }
+            prepend() {
+                const value = parseInt(this.valueInput?.value) || Math.floor(Math.random() * 90) + 10;
+                if (this.list.length < 5) {
+                    this.list.unshift(value);
+                    this.ops++;
+                    this.render();
+                } else {
+                    AlgoViz.showToast('Max 5 nodes for visualization.', 'warning');
+                }
+            }
+            delete() {
+                if (this.list.length > 0) {
+                    this.list.pop();
+                    this.ops++;
+                    this.render();
+                }
+            }
+            clear() { this.list = []; this.ops = 0; this.render(); }
+        }
+        // Hash Table Visualizer
+        class HashTableVisualizer {
+            constructor() {
+                this.canvas = document.getElementById('hashCanvas');
+                this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
+                this.statsContainer = document.getElementById('hashStats');
+                this.keyInput = document.getElementById('hashKey');
+                this.valueInput = document.getElementById('hashValue');
+                this.size = 8;
+                this.table = Array(this.size).fill(null);
+                this.ops = 0;
+                this.setupCanvas();
+                this.render();
+            }
+            setupCanvas() {
+                if (!this.canvas) return;
+                const setup = AlgoViz.setupCanvas(this.canvas.id);
+                if (setup) { this.width = setup.width; this.height = setup.height; this.ctx = setup.ctx; }
+            }
+            hash(key) {
+                return key.length > 0 ? key.charCodeAt(0) % this.size : 0;
+            }
+            render() {
+                if (!this.ctx) return;
+                AlgoViz.clearCanvas(this.ctx, this.width, this.height);
+                const bucketWidth = 160;
+                const bucketHeight = 50;
+                const gap = 15;
+                const totalHeight = this.size * (bucketHeight + gap);
+                const startX = 80;
+                const startY = (this.height - totalHeight) / 2;
+                // Draw title
+                this.ctx.fillStyle = '#00f3ff';
+                this.ctx.font = '16px Rajdhani';
+                this.ctx.textAlign = 'center';
+                this.ctx.fillText('HASH TABLE (Chaining)', this.width / 2, 40);
+                // Draw buckets
+                for (let i = 0; i < this.size; i++) {
+                    const y = startY + i * (bucketHeight + gap);
+                    // Index label
+                    this.ctx.fillStyle = '#858796';
+                    this.ctx.font = '14px Rajdhani';
+                    this.ctx.textAlign = 'right';
+                    this.ctx.fillText(`[${i}]`, startX - 10, y + bucketHeight / 2);
+                    // Bucket
+                    this.ctx.strokeStyle = 'rgba(0, 243, 255, 0.3)';
+                    this.ctx.lineWidth = 2;
+                    this.ctx.strokeRect(startX, y, bucketWidth, bucketHeight);
+                    // Hash function
+                    this.ctx.fillStyle = 'rgba(0, 243, 255, 0.1)';
+                    this.ctx.fillRect(startX, y, bucketWidth, bucketHeight);
+                    // Items in bucket
+                    if (this.table[i]) {
+                        this.ctx.fillStyle = '#ffffff';
+                        this.ctx.font = '14px Rajdhani';
+                        this.ctx.textAlign = 'left';
+                        this.ctx.fillText(`${this.table[i].key}: ${this.table[i].value}`, startX + 10, y + bucketHeight / 2);
+                    } else {
+                        this.ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                        this.ctx.font = '12px Rajdhani';
+                        this.ctx.textAlign = 'center';
+                        this.ctx.fillText('empty', startX + bucketWidth / 2, y + bucketHeight / 2);
+                    }
+                }
+                if (this.statsContainer) {
+                    const count = this.table.filter(x => x !== null).length;
+                    this.statsContainer.innerHTML = `<div class="c-stat"><div class="c-stat__value">${count}</div><div class="c-stat__label">Items</div></div><div class="c-stat"><div class="c-stat__value">${this.size}</div><div class="c-stat__label">Buckets</div></div><div class="c-stat"><div class="c-stat__value">${this.ops}</div><div class="c-stat__label">Operations</div></div>`;
+                }
+            }
+            insert() {
+                const key = this.keyInput?.value || 'A';
+                const value = parseInt(this.valueInput?.value) || Math.floor(Math.random() * 90) + 10;
+                const index = this.hash(key);
+                this.table[index] = { key, value };
+                this.ops++;
+                this.render();
+            }
+            remove() {
+                const key = this.keyInput?.value || 'A';
+                const index = this.hash(key);
+                if (this.table[index] && this.table[index].key === key) {
+                    this.table[index] = null;
+                    this.ops++;
+                }
+                this.render();
+            }
+            clear() { this.table = Array(this.size).fill(null); this.ops = 0; this.render(); }
+        }
+        window.stackViz = new StackVisualizer();
+        window.queueViz = new QueueVisualizer();
+        window.listViz = new LinkedListVisualizer();
+        window.hashViz = new HashTableVisualizer();
+    })();
+    </script>
+    <script src="js/main.js"></script>
+</body>
+</html>

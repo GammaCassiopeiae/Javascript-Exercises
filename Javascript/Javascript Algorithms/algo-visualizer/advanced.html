@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Topics - AlgoViz</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="l-body">
+    <a href="#main-content" class="u-skip-link">Skip to main content</a>
+    <div id="wrapper" class="l-wrapper">
+        <aside id="sidebar" class="c-sidebar">
+            <div class="c-sidebar__brand"><h1 class="c-sidebar__title"><i class="fas fa-brain"></i> AlgoViz</h1></div>
+            <nav class="c-sidebar__nav">
+                <ul class="c-sidebar__menu">
+                    <li class="c-sidebar__item"><a href="index.html" class="c-sidebar__link"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+                    <hr class="c-sidebar__divider"><li class="c-sidebar__heading">Categories</li>
+                    <li class="c-sidebar__item"><a href="sorting.html" class="c-sidebar__link"><i class="fas fa-sort"></i><span>Sorting</span></a></li>
+                    <li class="c-sidebar__item"><a href="searching.html" class="c-sidebar__link"><i class="fas fa-search"></i><span>Searching</span></a></li>
+                    <li class="c-sidebar__item"><a href="trees.html" class="c-sidebar__link"><i class="fas fa-project-diagram"></i><span>Trees</span></a></li>
+                    <li class="c-sidebar__item"><a href="graphs.html" class="c-sidebar__link"><i class="fas fa-network-wired"></i><span>Graphs</span></a></li>
+                    <li class="c-sidebar__item"><a href="dynamic-programming.html" class="c-sidebar__link"><i class="fas fa-layer-group"></i><span>DP</span></a></li>
+                    <li class="c-sidebar__item"><a href="data-structures.html" class="c-sidebar__link"><i class="fas fa-cubes"></i><span>Data Structures</span></a></li>
+                    <li class="c-sidebar__item"><a href="pathfinding.html" class="c-sidebar__link"><i class="fas fa-route"></i><span>Pathfinding</span></a></li>
+                    <li class="c-sidebar__item"><a href="recursion.html" class="c-sidebar__link"><i class="fas fa-sync-alt"></i><span>Recursion</span></a></li>
+                    <li class="c-sidebar__item"><a href="strings.html" class="c-sidebar__link"><i class="fas fa-font"></i><span>Strings</span></a></li>
+                    <li class="c-sidebar__item c-sidebar__item--active"><a href="advanced.html" class="c-sidebar__link"><i class="fas fa-graduation-cap"></i><span>Advanced</span></a></li>
+                </ul>
+            </nav>
+        </aside>
+        <div id="content-wrapper" class="l-content-wrapper">
+            <header id="topbar" class="c-topbar">
+                <div class="c-topbar__brand">
+                    <button id="sidebarToggle" class="c-topbar__toggle"><i class="fas fa-bars"></i></button>
+                    <div class="c-topbar__logo"><div class="c-topbar__logo-icon"><i class="fas fa-graduation-cap"></i></div><span>Advanced Topics</span></div>
+                </div>
+                <nav><ul class="c-topbar__nav"><li><a href="index.html" class="c-topbar__nav-link"><i class="fas fa-th-large"></i></a></li></ul></nav>
+            </header>
+            <main id="main-content" class="l-main">
+                <nav class="c-breadcrumbs"><span class="c-breadcrumbs__item"><a href="index.html">Home</a></span><span class="c-breadcrumbs__separator">/</span><span class="c-breadcrumbs__item c-breadcrumbs__item--current">Advanced</span></nav>
+                <header class="c-page-header">
+                    <h1 class="c-page-header__title"><i class="fas fa-graduation-cap"></i> Advanced Data Structures</h1>
+                    <p class="c-page-header__subtitle">Competitive programming and advanced algorithm topics.</p>
+                </header>
+                <div class="l-algo-grid">
+                    <!-- Segment Tree -->
+                    <article class="c-algo-card">
+                        <header class="c-algo-card__header"><h2 class="c-algo-card__title">Segment Tree</h2><span class="c-algo-card__tag">O(log n)</span></header>
+                        <div class="c-algo-card__body">
+                            <p class="c-algo-card__description">Tree for efficient range queries and updates.</p>
+                            <div class="c-controls">
+                                <div class="c-control-group"><label class="c-control-label">Array:</label><input type="text" class="c-input c-input--text" id="segArray" value="1,3,5,7,9,11" maxlength="30"></div>
+                                <div class="c-control-group"><label class="c-control-label">Speed:</label><input type="range" class="c-slider" id="segSpeed" min="1" max="500" value="300"></div>
+                            </div>
+                            <div class="c-controls">
+                                <button class="c-btn c-btn--primary c-btn--sm" onclick="segViz.build()"><i class="fas fa-play"></i> Build Tree</button>
+                            </div>
+                            <div class="c-visualization"><canvas id="segCanvas" class="c-visualization__canvas c-visualization__canvas--tree"></canvas></div>
+                            <div class="c-stats" id="segStats"></div>
+                            <div class="c-code-block"><pre><code>class SegmentTree {
+    constructor(arr) {
+        this.n = arr.length;
+        this.tree = Array(4 * n).fill(0);
+        this.build(arr, 0, 0, n - 1);
+    }
+    build(arr, node, start, end) {
+        if (start === end) {
+            this.tree[node] = arr[start];
+        } else {
+            const mid = (start + end) / 2;
+            this.build(arr, 2*node+1, start, mid);
+            this.build(arr, 2*node+2, mid+1, end);
+            this.tree[node] = this.tree[2*node+1] + this.tree[2*node+2];
+        }
+    }
+}</code></pre></div>
+                        </div>
+                    </article>
+                    <!-- Fenwick Tree (BIT) -->
+                    <article class="c-algo-card">
+                        <header class="c-algo-card__header"><h2 class="c-algo-card__title">Fenwick Tree (BIT)</h2><span class="c-algo-card__tag">O(log n)</span></header>
+                        <div class="c-algo-card__body">
+                            <p class="c-algo-card__description">Binary Indexed Tree for prefix sum queries.</p>
+                            <div class="c-controls">
+                                <div class="c-control-group"><label class="c-control-label">Array:</label><input type="text" class="c-input c-input--text" id="bitArray" value="1,2,3,4,5,6,7,8" maxlength="30"></div>
+                                <div class="c-control-group"><label class="c-control-label">Speed:</label><input type="range" class="c-slider" id="bitSpeed" min="1" max="500" value="300"></div>
+                            </div>
+                            <div class="c-controls">
+                                <button class="c-btn c-btn--primary c-btn--sm" onclick="bitViz.build()"><i class="fas fa-play"></i> Build BIT</button>
+                            </div>
+                            <div class="c-visualization"><canvas id="bitCanvas" class="c-visualization__canvas"></canvas></div>
+                            <div class="c-stats" id="bitStats"></div>
+                            <div class="c-code-block"><pre><code>class FenwickTree {
+    constructor(n) {
+        this.tree = Array(n + 1).fill(0);
+    }
+    update(i, delta) {
+        while (i < this.tree.length) {
+            this.tree[i] += delta;
+            i += i & (-i);
+        }
+    }
+    query(i) {
+        let sum = 0;
+        while (i > 0) {
+            sum += this.tree[i];
+            i -= i & (-i);
+        }
+        return sum;
+    }
+}</code></pre></div>
+                        </div>
+                    </article>
+                    <!-- Trie -->
+                    <article class="c-algo-card">
+                        <header class="c-algo-card__header"><h2 class="c-algo-card__title">Trie (Prefix Tree)</h2><span class="c-algo-card__tag">O(m)</span></header>
+                        <div class="c-algo-card__body">
+                            <p class="c-algo-card__description">Tree structure for efficient string operations.</p>
+                            <div class="c-controls">
+                                <div class="c-control-group"><label class="c-control-label">Words:</label><input type="text" class="c-input c-input--text" id="trieWords" value="CAT,CAR,CARD,DOG" maxlength="40"></div>
+                                <div class="c-control-group"><label class="c-control-label">Speed:</label><input type="range" class="c-slider" id="trieSpeed" min="1" max="500" value="300"></div>
+                            </div>
+                            <div class="c-controls">
+                                <button class="c-btn c-btn--primary c-btn--sm" onclick="trieViz.build()"><i class="fas fa-play"></i> Build Trie</button>
+                            </div>
+                            <div class="c-visualization"><canvas id="trieCanvas" class="c-visualization__canvas c-visualization__canvas--tree"></canvas></div>
+                            <div class="c-stats" id="trieStats"></div>
+                            <div class="c-code-block"><pre><code>class TrieNode {
+    constructor() {
+        this.children = {};
+        this.isEnd = false;
+    }
+}
+class Trie {
+    insert(word) {
+        let node = this.root;
+        for (const char of word) {
+            if (!node.children[char]) {
+                node.children[char] = new TrieNode();
+            }
+            node = node.children[char];
+        }
+        node.isEnd = true;
+    }
+}</code></pre></div>
+                        </div>
+                    </article>
+                    <!-- Suffix Array -->
+                    <article class="c-algo-card">
+                        <header class="c-algo-card__header"><h2 class="c-algo-card__title">Suffix Array</h2><span class="c-algo-card__tag">O(n log n)</span></header>
+                        <div class="c-algo-card__body">
+                            <p class="c-algo-card__description">Sorted array of all suffixes for string processing.</p>
+                            <div class="c-controls">
+                                <div class="c-control-group"><label class="c-control-label">String:</label><input type="text" class="c-input c-input--text" id="suffixStr" value="BANANA" maxlength="12"></div>
+                                <div class="c-control-group"><label class="c-control-label">Speed:</label><input type="range" class="c-slider" id="suffixSpeed" min="1" max="500" value="200"></div>
+                            </div>
+                            <div class="c-controls">
+                                <button class="c-btn c-btn--primary c-btn--sm" onclick="suffixViz.build()"><i class="fas fa-play"></i> Build</button>
+                            </div>
+                            <div class="c-visualization"><canvas id="suffixCanvas" class="c-visualization__canvas"></canvas></div>
+                            <div class="c-stats" id="suffixStats"></div>
+                            <div class="c-code-block"><pre><code>function buildSuffixArray(s) {
+    const suffixes = [];
+    for (let i = 0; i < s.length; i++) {
+        suffixes.push({ suffix: s.slice(i), index: i });
+    }
+    suffixes.sort((a, b) => 
+        a.suffix.localeCompare(b.suffix)
+    );
+    return suffixes.map(x => x.index);
+}</code></pre></div>
+                        </div>
+                    </article>
+                </div>
+            </main>
+            <footer class="c-footer"><div class="c-footer__content"><span>Copyright &copy; AlgoViz Platform 2026</span></div></footer>
+        </div>
+    </div>
+    <script src="js/utils.js"></script>
+    <script>
+    (function() {
+        'use strict';
+        // Segment Tree Visualizer
+        class SegmentTreeVisualizer {
+            constructor() {
+                this.canvas = document.getElementById('segCanvas');
+                this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
+                this.statsContainer = document.getElementById('segStats');
+                this.arrayInput = document.getElementById('segArray');
+                this.speedSlider = document.getElementById('segSpeed');
+                this.stats = new AlgoViz.StatsTracker();
+                this.animation = new AlgoViz.AnimationController();
+                this.setupCanvas();
+                this.bindEvents();
+            }
+            setupCanvas() {
+                if (!this.canvas) return;
+                const setup = AlgoViz.setupCanvas(this.canvas.id);
+                if (setup) { this.width = setup.width; this.height = setup.height; this.ctx = setup.ctx; }
+            }
+            bindEvents() {
+                if (this.speedSlider) this.speedSlider.addEventListener('input', (e) => this.animation.setSpeed(501 - e.target.value));
+                this.animation.onStep = (step) => this.render(step);
+                this.animation.onComplete = () => this.stats.updateDisplay(this.statsContainer.id);
+            }
+            render(step) {
+                if (!this.ctx) return;
+                AlgoViz.clearCanvas(this.ctx, this.width, this.height);
+                if (!step.nodes) return;
+                // Draw nodes and edges
+                step.nodes.forEach((node, i) => {
+                    if (node.parent !== undefined && step.nodes[node.parent]) {
+                        const parent = step.nodes[node.parent];
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(parent.x, parent.y + 20);
+                        this.ctx.lineTo(node.x, node.y - 20);
+                        this.ctx.strokeStyle = 'rgba(0, 243, 255, 0.2)';
+                        this.ctx.lineWidth = 2;
+                        this.ctx.stroke();
+                    }
+                });
+                // Draw nodes
+                step.nodes.forEach((node, i) => {
+                    const isCurrent = step.currentNode === i;
+                    this.ctx.shadowColor = isCurrent ? '#00f3ff' : 'transparent';
+                    this.ctx.shadowBlur = isCurrent ? 15 : 0;
+                    this.ctx.beginPath();
+                    this.ctx.arc(node.x, node.y, 22, 0, Math.PI * 2);
+                    this.ctx.fillStyle = isCurrent ? '#00f3ff' : 'rgba(0, 243, 255, 0.2)';
+                    this.ctx.fill();
+                    this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                    this.ctx.lineWidth = 2;
+                    this.ctx.stroke();
+                    this.ctx.shadowBlur = 0;
+                    this.ctx.fillStyle = '#ffffff';
+                    this.ctx.font = '12px Rajdhani';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText(node.value?.toString() || '', node.x, node.y - 5);
+                    this.ctx.fillStyle = '#858796';
+                    this.ctx.font = '10px Rajdhani';
+                    this.ctx.fillText(`[${node.range}]`, node.x, node.y + 12);
+                });
+                if (this.statsContainer) {
+                    this.statsContainer.innerHTML = `<div class="c-stat"><div class="c-stat__value">${step.nodes?.length || 0}</div><div class="c-stat__label">Nodes</div></div>`;
+                }
+            }
+            build() {
+                this.animation.stop();
+                const arrStr = this.arrayInput?.value || '1,3,5,7,9,11';
+                const arr = arrStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+                if (arr.length === 0) return;
+                this.stats.start();
+                const steps = [];
+                const nodes = [];
+                const buildTree = (nodeIdx, start, end, parentIdx) => {
+                    const mid = Math.floor((start + end) / 2);
+                    const level = nodeIdx < 2 ? 0 : (nodeIdx < 6 ? 1 : 2);
+                    const levelY = 50 + level * 90;
+                    const nodesAtLevel = Math.pow(2, level);
+                    const xPos = this.width / 2 + (nodeIdx - Math.pow(2, level) + 1) * (this.width / (2 * nodesAtLevel));
+                    nodes[nodeIdx] = { x: xPos, y: levelY, range: `${start}-${end}`, parent: parentIdx };
+                    this.stats.recordIteration();
+                    steps.push({ nodes: [...nodes], currentNode: nodeIdx });
+                    if (start === end) {
+                        nodes[nodeIdx].value = arr[start];
+                        steps.push({ nodes: [...nodes], currentNode: nodeIdx });
+                        return arr[start];
+                    }
+                    const leftSum = buildTree(2 * nodeIdx + 1, start, mid, nodeIdx);
+                    const rightSum = buildTree(2 * nodeIdx + 2, mid + 1, end, nodeIdx);
+                    nodes[nodeIdx].value = leftSum + rightSum;
+                    steps.push({ nodes: [...nodes], currentNode: nodeIdx });
+                    return nodes[nodeIdx].value;
+                };
+                buildTree(0, 0, arr.length - 1, undefined);
+                this.stats.stop();
+                this.animation.run(steps);
+            }
+        }
+        // Fenwick Tree Visualizer
+        class BITVisualizer {
+            constructor() {
+                this.canvas = document.getElementById('bitCanvas');
+                this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
+                this.statsContainer = document.getElementById('bitStats');
+                this.arrayInput = document.getElementById('bitArray');
+                this.speedSlider = document.getElementById('bitSpeed');
+                this.stats = new AlgoViz.StatsTracker();
+                this.animation = new AlgoViz.AnimationController();
+                this.setupCanvas();
+                this.bindEvents();
+            }
+            setupCanvas() {
+                if (!this.canvas) return;
+                const setup = AlgoViz.setupCanvas(this.canvas.id);
+                if (setup) { this.width = setup.width; this.height = setup.height; this.ctx = setup.ctx; }
+            }
+            bindEvents() {
+                if (this.speedSlider) this.speedSlider.addEventListener('input', (e) => this.animation.setSpeed(501 - e.target.value));
+                this.animation.onStep = (step) => this.render(step);
+                this.animation.onComplete = () => this.stats.updateDisplay(this.statsContainer.id);
+            }
+            render(step) {
+                if (!this.ctx) return;
+                AlgoViz.clearCanvas(this.ctx, this.width, this.height);
+                const arr = step.originalArray || [];
+                const bit = step.bitArray || [];
+                const cellSize = 55;
+                const gap = 8;
+                // Draw original array
+                const arrStartX = (this.width - arr.length * (cellSize + gap)) / 2;
+                this.ctx.fillStyle = '#00f3ff';
+                this.ctx.font = '14px Rajdhani';
+                this.ctx.textAlign = 'center';
+                this.ctx.fillText('Original Array', this.width / 2, 40);
+                arr.forEach((val, i) => {
+                    const x = arrStartX + i * (cellSize + gap);
+                    this.ctx.fillStyle = 'rgba(0, 243, 255, 0.1)';
+                    this.ctx.fillRect(x + 1, 55, cellSize - 2, cellSize - 2);
+                    this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+                    this.ctx.strokeRect(x, 55, cellSize, cellSize);
+                    this.ctx.fillStyle = '#ffffff';
+                    this.ctx.font = 'bold 16px Rajdhani';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText(val.toString(), x + cellSize / 2, 55 + cellSize / 2);
+                    this.ctx.fillStyle = '#858796';
+                    this.ctx.font = '10px Rajdhani';
+                    this.ctx.fillText(`[${i}]`, x + cellSize / 2, 55 + cellSize + 15);
+                });
+                // Draw BIT array
+                const bitStartX = (this.width - bit.length * (cellSize + gap)) / 2;
+                this.ctx.fillStyle = '#1cc88a';
+                this.ctx.fillText('Fenwick Tree (BIT)', this.width / 2, 155);
+                bit.forEach((val, i) => {
+                    const x = bitStartX + i * (cellSize + gap);
+                    const isCurrent = step.currentIndex === i;
+                    this.ctx.shadowColor = isCurrent ? '#1cc88a' : 'transparent';
+                    this.ctx.shadowBlur = isCurrent ? 15 : 0;
+                    this.ctx.fillStyle = isCurrent ? '#1cc88a' : 'rgba(28, 200, 138, 0.2)';
+                    this.ctx.fillRect(x + 1, 170, cellSize - 2, cellSize - 2);
+                    this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+                    this.ctx.strokeRect(x, 170, cellSize, cellSize);
+                    this.ctx.shadowBlur = 0;
+                    this.ctx.fillStyle = '#ffffff';
+                    this.ctx.font = 'bold 16px Rajdhani';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText(val.toString(), x + cellSize / 2, 170 + cellSize / 2);
+                    this.ctx.fillStyle = '#858796';
+                    this.ctx.font = '10px Rajdhani';
+                    this.ctx.fillText(`[${i}]`, x + cellSize / 2, 170 + cellSize + 15);
+                });
+                // Draw parent relationships
+                if (step.showParents) {
+                    this.ctx.strokeStyle = 'rgba(255, 0, 255, 0.3)';
+                    this.ctx.lineWidth = 1;
+                    for (let i = 1; i < bit.length; i++) {
+                        const parent = i + (i & (-i));
+                        if (parent < bit.length) {
+                            const x1 = bitStartX + i * (cellSize + gap) + cellSize / 2;
+                            const y1 = 170 + cellSize;
+                            const x2 = bitStartX + parent * (cellSize + gap) + cellSize / 2;
+                            const y2 = 170;
+                            this.ctx.beginPath();
+                            this.ctx.moveTo(x1, y1);
+                            this.ctx.quadraticCurveTo((x1 + x2) / 2, (y1 + y2) / 2 + 20, x2, y2);
+                            this.ctx.stroke();
+                        }
+                    }
+                }
+            }
+            build() {
+                this.animation.stop();
+                const arrStr = this.arrayInput?.value || '1,2,3,4,5,6,7,8';
+                const arr = arrStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+                if (arr.length === 0) return;
+                this.stats.start();
+                const steps = [];
+                const bit = Array(arr.length + 1).fill(0);
+                steps.push({ originalArray: [...arr], bitArray: [...bit] });
+                // Build BIT
+                arr.forEach((val, i) => {
+                    let idx = i + 1;
+                    while (idx < bit.length) {
+                        this.stats.recordIteration();
+                        bit[idx] += val;
+                        steps.push({ originalArray: [...arr], bitArray: [...bit], currentIndex: idx, showParents: true });
+                        idx += idx & (-idx);
+                    }
+                });
+                this.stats.stop();
+                this.animation.run(steps);
+            }
+        }
+        // Trie Visualizer
+        class TrieVisualizer {
+            constructor() {
+                this.canvas = document.getElementById('trieCanvas');
+                this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
+                this.statsContainer = document.getElementById('trieStats');
+                this.wordsInput = document.getElementById('trieWords');
+                this.speedSlider = document.getElementById('trieSpeed');
+                this.stats = new AlgoViz.StatsTracker();
+                this.animation = new AlgoViz.AnimationController();
+                this.setupCanvas();
+                this.bindEvents();
+            }
+            setupCanvas() {
+                if (!this.canvas) return;
+                const setup = AlgoViz.setupCanvas(this.canvas.id);
+                if (setup) { this.width = setup.width; this.height = setup.height; this.ctx = setup.ctx; }
+            }
+            bindEvents() {
+                if (this.speedSlider) this.speedSlider.addEventListener('input', (e) => this.animation.setSpeed(501 - e.target.value));
+                this.animation.onStep = (step) => this.render(step);
+                this.animation.onComplete = () => this.stats.updateDisplay(this.statsContainer.id);
+            }
+            render(step) {
+                if (!this.ctx) return;
+                AlgoViz.clearCanvas(this.ctx, this.width, this.height);
+                if (!step.nodes) return;
+                // Draw edges first
+                step.nodes.forEach((node, i) => {
+                    if (node.parent !== undefined && step.nodes[node.parent]) {
+                        const parent = step.nodes[node.parent];
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(parent.x, parent.y + 15);
+                        this.ctx.lineTo(node.x, node.y - 15);
+                        this.ctx.strokeStyle = 'rgba(0, 243, 255, 0.2)';
+                        this.ctx.lineWidth = 2;
+                        this.ctx.stroke();
+                        // Draw edge label
+                        const midX = (parent.x + node.x) / 2;
+                        const midY = (parent.y + node.y) / 2;
+                        this.ctx.fillStyle = '#ff00ff';
+                        this.ctx.font = '12px Rajdhani';
+                        this.ctx.textAlign = 'center';
+                        this.ctx.fillText(node.char || '', midX, midY - 5);
+                    }
+                });
+                // Draw nodes
+                step.nodes.forEach((node, i) => {
+                    const isCurrent = step.currentNode === i;
+                    const isEnd = node.isEnd;
+                    this.ctx.shadowColor = isCurrent ? '#00f3ff' : (isEnd ? '#1cc88a' : 'transparent');
+                    this.ctx.shadowBlur = isCurrent ? 15 : (isEnd ? 10 : 0);
+                    this.ctx.beginPath();
+                    this.ctx.arc(node.x, node.y, isEnd ? 18 : 15, 0, Math.PI * 2);
+                    this.ctx.fillStyle = isEnd ? '#1cc88a' : (isCurrent ? '#00f3ff' : 'rgba(0, 243, 255, 0.2)');
+                    this.ctx.fill();
+                    this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                    this.ctx.lineWidth = 2;
+                    this.ctx.stroke();
+                    this.ctx.shadowBlur = 0;
+                });
+                if (this.statsContainer) {
+                    this.statsContainer.innerHTML = `<div class="c-stat"><div class="c-stat__value">${step.nodes?.length || 0}</div><div class="c-stat__label">Nodes</div></div><div class="c-stat"><div class="c-stat__value">${step.words?.length || 0}</div><div class="c-stat__label">Words</div></div>`;
+                }
+            }
+            build() {
+                this.animation.stop();
+                const wordsStr = this.wordsInput?.value || 'CAT,CAR,CARD,DOG';
+                const words = wordsStr.split(',').map(s => s.trim().toUpperCase()).filter(s => s.length > 0);
+                if (words.length === 0) return;
+                this.stats.start();
+                const steps = [];
+                const nodes = [{ x: this.width / 2, y: 50, char: 'ROOT', parent: undefined, isEnd: false }];
+                steps.push({ nodes: [...nodes], words: [] });
+                let nodeId = 1;
+                const levelHeight = 50;
+                words.forEach((word, wordIdx) => {
+                    let currentNode = 0;
+                    let level = 0;
+                    for (let c = 0; c < word.length; c++) {
+                        const char = word[c];
+                        // Find existing child with this char
+                        let childIdx = nodes.findIndex(n => n.parent === currentNode && n.char === char);
+                        if (childIdx === -1) {
+                            // Create new node
+                            const siblings = nodes.filter(n => n.parent === currentNode);
+                            const levelNodes = nodes.filter(n => n.level === level + 1);
+                            const xPos = this.width / 2 + (nodeId % 10 - 4.5) * 40;
+                            nodes.push({
+                                x: xPos,
+                                y: 50 + (level + 1) * levelHeight,
+                                char: char,
+                                parent: currentNode,
+                                level: level + 1,
+                                isEnd: c === word.length - 1
+                            });
+                            childIdx = nodes.length - 1;
+                            nodeId++;
+                        } else if (c === word.length - 1) {
+                            nodes[childIdx].isEnd = true;
+                        }
+                        this.stats.recordIteration();
+                        steps.push({ nodes: [...nodes], currentNode: childIdx, words: words.slice(0, wordIdx + 1) });
+                        currentNode = childIdx;
+                        level++;
+                    }
+                });
+                this.stats.stop();
+                this.animation.run(steps);
+            }
+        }
+        // Suffix Array Visualizer
+        class SuffixArrayVisualizer {
+            constructor() {
+                this.canvas = document.getElementById('suffixCanvas');
+                this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
+                this.statsContainer = document.getElementById('suffixStats');
+                this.strInput = document.getElementById('suffixStr');
+                this.speedSlider = document.getElementById('suffixSpeed');
+                this.stats = new AlgoViz.StatsTracker();
+                this.animation = new AlgoViz.AnimationController();
+                this.setupCanvas();
+                this.bindEvents();
+            }
+            setupCanvas() {
+                if (!this.canvas) return;
+                const setup = AlgoViz.setupCanvas(this.canvas.id);
+                if (setup) { this.width = setup.width; this.height = setup.height; this.ctx = setup.ctx; }
+            }
+            bindEvents() {
+                if (this.speedSlider) this.speedSlider.addEventListener('input', (e) => this.animation.setSpeed(501 - e.target.value));
+                this.animation.onStep = (step) => this.render(step);
+                this.animation.onComplete = () => this.stats.updateDisplay(this.statsContainer.id);
+            }
+            render(step) {
+                if (!this.ctx) return;
+                AlgoViz.clearCanvas(this.ctx, this.width, this.height);
+                const str = step.str || '';
+                const suffixes = step.suffixes || [];
+                const cellWidth = 100;
+                const cellHeight = 35;
+                const gap = 8;
+                // Draw original string
+                this.ctx.fillStyle = '#00f3ff';
+                this.ctx.font = '16px Rajdhani';
+                this.ctx.textAlign = 'center';
+                this.ctx.fillText('Original String: ' + str, this.width / 2, 40);
+                // Draw suffixes
+                const listX = 80;
+                let listY = 80;
+                suffixes.forEach((suf, i) => {
+                    const isCurrent = step.currentIndex === i;
+                    this.ctx.shadowColor = isCurrent ? '#00f3ff' : 'transparent';
+                    this.ctx.shadowBlur = isCurrent ? 10 : 0;
+                    this.ctx.fillStyle = isCurrent ? 'rgba(0, 243, 255, 0.3)' : 'rgba(255, 255, 255, 0.05)';
+                    this.ctx.fillRect(listX, listY, cellWidth * 2 + gap, cellHeight);
+                    this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+                    this.ctx.strokeRect(listX, listY, cellWidth * 2 + gap, cellHeight);
+                    this.ctx.shadowBlur = 0;
+                    // Index
+                    this.ctx.fillStyle = '#858796';
+                    this.ctx.font = '12px Rajdhani';
+                    this.ctx.textAlign = 'right';
+                    this.ctx.fillText(`[${i}]`, listX - 10, listY + cellHeight / 2);
+                    // Starting position
+                    this.ctx.fillStyle = '#00f3ff';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.fillText(suf.index.toString(), listX + cellWidth / 2, listY + cellHeight / 2);
+                    // Suffix
+                    this.ctx.fillStyle = '#ffffff';
+                    this.ctx.textAlign = 'left';
+                    this.ctx.fillText(suf.suffix, listX + cellWidth + gap + 10, listY + cellHeight / 2);
+                    listY += cellHeight + gap;
+                });
+                // Draw suffix array result
+                if (step.suffixArray) {
+                    const saY = listY + 20;
+                    this.ctx.fillStyle = '#1cc88a';
+                    this.ctx.font = '16px Rajdhani';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.fillText('Suffix Array: [' + step.suffixArray.join(', ') + ']', this.width / 2, saY);
+                }
+            }
+            build() {
+                this.animation.stop();
+                const str = this.strInput?.value || 'BANANA';
+                this.stats.start();
+                const steps = [];
+                const suffixes = [];
+                for (let i = 0; i < str.length; i++) {
+                    suffixes.push({ suffix: str.slice(i), index: i });
+                }
+                steps.push({ str, suffixes: [...suffixes] });
+                // Sort suffixes
+                for (let i = 0; i < suffixes.length; i++) {
+                    for (let j = i + 1; j < suffixes.length; j++) {
+                        this.stats.recordComparison();
+                        if (suffixes[i].suffix > suffixes[j].suffix) {
+                            [suffixes[i], suffixes[j]] = [suffixes[j], suffixes[i]];
+                            steps.push({ str, suffixes: [...suffixes], currentIndex: i });
+                        }
+                    }
+                }
+                const suffixArray = suffixes.map(s => s.index);
+                steps.push({ str, suffixes, suffixArray });
+                this.stats.stop();
+                this.animation.run(steps);
+            }
+        }
+        window.segViz = new SegmentTreeVisualizer();
+        window.bitViz = new BITVisualizer();
+        window.trieViz = new TrieVisualizer();
+        window.suffixViz = new SuffixArrayVisualizer();
+    })();
+    </script>
+    <script src="js/main.js"></script>
+</body>
+</html>

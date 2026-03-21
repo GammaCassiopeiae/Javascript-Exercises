@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph Algorithms - AlgoViz</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="l-body">
+    <a href="#main-content" class="u-skip-link">Skip to main content</a>
+    <div id="wrapper" class="l-wrapper">
+        <aside id="sidebar" class="c-sidebar">
+            <div class="c-sidebar__brand"><h1 class="c-sidebar__title"><i class="fas fa-brain"></i> AlgoViz</h1></div>
+            <nav class="c-sidebar__nav">
+                <ul class="c-sidebar__menu">
+                    <li class="c-sidebar__item"><a href="index.html" class="c-sidebar__link"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+                    <hr class="c-sidebar__divider"><li class="c-sidebar__heading">Categories</li>
+                    <li class="c-sidebar__item"><a href="sorting.html" class="c-sidebar__link"><i class="fas fa-sort"></i><span>Sorting</span></a></li>
+                    <li class="c-sidebar__item"><a href="searching.html" class="c-sidebar__link"><i class="fas fa-search"></i><span>Searching</span></a></li>
+                    <li class="c-sidebar__item"><a href="trees.html" class="c-sidebar__link"><i class="fas fa-project-diagram"></i><span>Trees</span></a></li>
+                    <li class="c-sidebar__item c-sidebar__item--active"><a href="graphs.html" class="c-sidebar__link"><i class="fas fa-network-wired"></i><span>Graphs</span></a></li>
+                    <li class="c-sidebar__item"><a href="dynamic-programming.html" class="c-sidebar__link"><i class="fas fa-layer-group"></i><span>DP</span></a></li>
+                    <li class="c-sidebar__item"><a href="data-structures.html" class="c-sidebar__link"><i class="fas fa-cubes"></i><span>Data Structures</span></a></li>
+                    <li class="c-sidebar__item"><a href="pathfinding.html" class="c-sidebar__link"><i class="fas fa-route"></i><span>Pathfinding</span></a></li>
+                    <li class="c-sidebar__item"><a href="recursion.html" class="c-sidebar__link"><i class="fas fa-sync-alt"></i><span>Recursion</span></a></li>
+                    <li class="c-sidebar__item"><a href="strings.html" class="c-sidebar__link"><i class="fas fa-font"></i><span>Strings</span></a></li>
+                    <li class="c-sidebar__item"><a href="advanced.html" class="c-sidebar__link"><i class="fas fa-graduation-cap"></i><span>Advanced</span></a></li>
+                </ul>
+            </nav>
+        </aside>
+        <div id="content-wrapper" class="l-content-wrapper">
+            <header id="topbar" class="c-topbar">
+                <div class="c-topbar__brand">
+                    <button id="sidebarToggle" class="c-topbar__toggle"><i class="fas fa-bars"></i></button>
+                    <div class="c-topbar__logo"><div class="c-topbar__logo-icon"><i class="fas fa-network-wired"></i></div><span>Graph Algorithms</span></div>
+                </div>
+                <nav><ul class="c-topbar__nav"><li><a href="index.html" class="c-topbar__nav-link"><i class="fas fa-th-large"></i></a></li></ul></nav>
+            </header>
+            <main id="main-content" class="l-main">
+                <nav class="c-breadcrumbs"><span class="c-breadcrumbs__item"><a href="index.html">Home</a></span><span class="c-breadcrumbs__separator">/</span><span class="c-breadcrumbs__item c-breadcrumbs__item--current">Graphs</span></nav>
+                <header class="c-page-header">
+                    <h1 class="c-page-header__title"><i class="fas fa-network-wired"></i> Graph Algorithms</h1>
+                    <p class="c-page-header__subtitle">Visualize graph traversal and shortest path algorithms.</p>
+                </header>
+                <div class="l-algo-grid">
+                    <!-- BFS -->
+                    <article class="c-algo-card">
+                        <header class="c-algo-card__header"><h2 class="c-algo-card__title">BFS</h2><span class="c-algo-card__tag">O(V+E)</span></header>
+                        <div class="c-algo-card__body">
+                            <p class="c-algo-card__description">Breadth-First Search explores level by level using a queue.</p>
+                            <div class="c-controls">
+                                <div class="c-control-group"><label class="c-control-label">Speed:</label><input type="range" class="c-slider" id="bfsSpeed" min="1" max="500" value="200"></div>
+                            </div>
+                            <div class="c-controls">
+                                <button class="c-btn c-btn--primary c-btn--sm" onclick="bfsViz.generate()"><i class="fas fa-random"></i> New Graph</button>
+                                <button class="c-btn c-btn--success c-btn--sm" onclick="bfsViz.start()"><i class="fas fa-play"></i> Start</button>
+                            </div>
+                            <div class="c-visualization"><canvas id="bfsCanvas" class="c-visualization__canvas"></canvas></div>
+                            <div class="c-stats" id="bfsStats"></div>
+                            <div class="c-code-block"><pre><code>function BFS(graph, start) {
+    const queue = [start];
+    const visited = new Set([start]);
+    while (queue.length) {
+        const node = queue.shift();
+        visit(node);
+        graph[node].forEach(neighbor => {
+            if (!visited.has(neighbor)) {
+                visited.add(neighbor);
+                queue.push(neighbor);
+            }
+        });
+    }
+}</code></pre></div>
+                        </div>
+                    </article>
+                    <!-- DFS -->
+                    <article class="c-algo-card">
+                        <header class="c-algo-card__header"><h2 class="c-algo-card__title">DFS</h2><span class="c-algo-card__tag">O(V+E)</span></header>
+                        <div class="c-algo-card__body">
+                            <p class="c-algo-card__description">Depth-First Search explores as far as possible using recursion/stack.</p>
+                            <div class="c-controls">
+                                <div class="c-control-group"><label class="c-control-label">Speed:</label><input type="range" class="c-slider" id="dfsSpeed" min="1" max="500" value="200"></div>
+                            </div>
+                            <div class="c-controls">
+                                <button class="c-btn c-btn--primary c-btn--sm" onclick="dfsViz.generate()"><i class="fas fa-random"></i> New Graph</button>
+                                <button class="c-btn c-btn--success c-btn--sm" onclick="dfsViz.start()"><i class="fas fa-play"></i> Start</button>
+                            </div>
+                            <div class="c-visualization"><canvas id="dfsCanvas" class="c-visualization__canvas"></canvas></div>
+                            <div class="c-stats" id="dfsStats"></div>
+                            <div class="c-code-block"><pre><code>function DFS(graph, node, visited) {
+    if (visited.has(node)) return;
+    visited.add(node);
+    visit(node);
+    graph[node].forEach(neighbor => {
+        DFS(graph, neighbor, visited);
+    });
+}</code></pre></div>
+                        </div>
+                    </article>
+                    <!-- Dijkstra -->
+                    <article class="c-algo-card">
+                        <header class="c-algo-card__header"><h2 class="c-algo-card__title">Dijkstra</h2><span class="c-algo-card__tag">O(E log V)</span></header>
+                        <div class="c-algo-card__body">
+                            <p class="c-algo-card__description">Finds shortest path from source to all nodes using priority queue.</p>
+                            <div class="c-controls">
+                                <div class="c-control-group"><label class="c-control-label">Speed:</label><input type="range" class="c-slider" id="dijkstraSpeed" min="1" max="500" value="200"></div>
+                            </div>
+                            <div class="c-controls">
+                                <button class="c-btn c-btn--primary c-btn--sm" onclick="dijkstraViz.generate()"><i class="fas fa-random"></i> New Graph</button>
+                                <button class="c-btn c-btn--success c-btn--sm" onclick="dijkstraViz.start()"><i class="fas fa-play"></i> Start</button>
+                            </div>
+                            <div class="c-visualization"><canvas id="dijkstraCanvas" class="c-visualization__canvas"></canvas></div>
+                            <div class="c-stats" id="dijkstraStats"></div>
+                            <div class="c-code-block"><pre><code>function dijkstra(graph, start) {
+    const dist = {};
+    const pq = new PriorityQueue();
+    dist[start] = 0;
+    pq.enqueue(start, 0);
+    while (!pq.isEmpty()) {
+        const node = pq.dequeue();
+        graph[node].forEach(([neighbor, weight]) => {
+            if (dist[node] + weight < (dist[neighbor] || Infinity)) {
+                dist[neighbor] = dist[node] + weight;
+                pq.enqueue(neighbor, dist[neighbor]);
+            }
+        });
+    }
+}</code></pre></div>
+                        </div>
+                    </article>
+                    <!-- A* Search -->
+                    <article class="c-algo-card">
+                        <header class="c-algo-card__header"><h2 class="c-algo-card__title">A* Search</h2><span class="c-algo-card__tag">O(E log V)</span></header>
+                        <div class="c-algo-card__body">
+                            <p class="c-algo-card__description">Finds shortest path using heuristic function f(n) = g(n) + h(n).</p>
+                            <div class="c-controls">
+                                <div class="c-control-group"><label class="c-control-label">Speed:</label><input type="range" class="c-slider" id="astarSpeed" min="1" max="500" value="200"></div>
+                            </div>
+                            <div class="c-controls">
+                                <button class="c-btn c-btn--primary c-btn--sm" onclick="astarViz.generate()"><i class="fas fa-random"></i> New Graph</button>
+                                <button class="c-btn c-btn--success c-btn--sm" onclick="astarViz.start()"><i class="fas fa-play"></i> Start</button>
+                            </div>
+                            <div class="c-visualization"><canvas id="astarCanvas" class="c-visualization__canvas"></canvas></div>
+                            <div class="c-stats" id="astarStats"></div>
+                            <div class="c-code-block"><pre><code>function AStar(graph, start, goal) {
+    const openSet = [start];
+    const gScore = { [start]: 0 };
+    const fScore = { [start]: heuristic(start, goal) };
+    while (openSet.length) {
+        const current = getNodeWithLowestFScore(openSet, fScore);
+        if (current === goal) return reconstructPath();
+        openSet.splice(openSet.indexOf(current), 1);
+        graph[current].forEach(neighbor => {
+            const tentativeG = gScore[current] + dist(current, neighbor);
+            if (tentativeG < (gScore[neighbor] || Infinity)) {
+                gScore[neighbor] = tentativeG;
+                fScore[neighbor] = tentativeG + heuristic(neighbor, goal);
+                openSet.push(neighbor);
+            }
+        });
+    }
+}</code></pre></div>
+                        </div>
+                    </article>
+                </div>
+            </main>
+            <footer class="c-footer"><div class="c-footer__content"><span>Copyright &copy; AlgoViz Platform 2026</span></div></footer>
+        </div>
+    </div>
+    <script src="js/utils.js"></script>
+    <script>
+    (function() {
+        'use strict';
+        class GraphVisualizer {
+            constructor(canvasId, statsId, speedId) {
+                this.canvas = document.getElementById(canvasId);
+                this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
+                this.statsContainer = document.getElementById(statsId);
+                this.speedSlider = document.getElementById(speedId);
+                this.nodes = [];
+                this.edges = [];
+                this.stats = new AlgoViz.StatsTracker();
+                this.animation = new AlgoViz.AnimationController();
+                this.setupCanvas();
+                this.bindEvents();
+                this.generate();
+            }
+            setupCanvas() {
+                if (!this.canvas) return;
+                const setup = AlgoViz.setupCanvas(this.canvas.id);
+                if (setup) { this.width = setup.width; this.height = setup.height; this.ctx = setup.ctx; }
+            }
+            bindEvents() {
+                if (this.speedSlider) this.speedSlider.addEventListener('input', (e) => this.animation.setSpeed(501 - e.target.value));
+                this.animation.onStep = (step) => this.render(step);
+                this.animation.onComplete = () => this.stats.updateDisplay(this.statsContainer.id);
+            }
+            generate() {
+                this.animation.stop();
+                this.generateGraph();
+                this.stats.start();
+                this.render({ currentNode: -1, visited: [], edges: [] });
+            }
+            generateGraph() {
+                const numNodes = 7;
+                const centerX = this.width / 2;
+                const centerY = this.height / 2;
+                const radius = Math.min(this.width, this.height) * 0.35;
+                this.nodes = [];
+                for (let i = 0; i < numNodes; i++) {
+                    const angle = (i / numNodes) * Math.PI * 2 - Math.PI / 2;
+                    this.nodes.push({
+                        id: i,
+                        x: centerX + Math.cos(angle) * radius,
+                        y: centerY + Math.sin(angle) * radius
+                    });
+                }
+                // Create edges
+                this.edges = [];
+                for (let i = 0; i < numNodes - 1; i++) {
+                    this.edges.push([i, i + 1, Math.floor(Math.random() * 10) + 1]);
+                }
+                this.edges.push([numNodes - 1, 0, Math.floor(Math.random() * 10) + 1]);
+                // Add some random edges
+                for (let i = 0; i < 3; i++) {
+                    const a = Math.floor(Math.random() * numNodes);
+                    const b = Math.floor(Math.random() * numNodes);
+                    if (a !== b && !this.edges.find(e => (e[0] === a && e[1] === b) || (e[0] === b && e[1] === a))) {
+                        this.edges.push([a, b, Math.floor(Math.random() * 10) + 1]);
+                    }
+                }
+            }
+            render(step) {
+                if (!this.ctx) return;
+                AlgoViz.clearCanvas(this.ctx, this.width, this.height);
+                // Draw edges
+                this.edges.forEach(([from, to, weight]) => {
+                    const fromNode = this.nodes[from];
+                    const toNode = this.nodes[to];
+                    const isHighlighted = step.edges?.some(e => (e[0] === from && e[1] === to) || (e[0] === to && e[1] === from));
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(fromNode.x, fromNode.y);
+                    this.ctx.lineTo(toNode.x, toNode.y);
+                    this.ctx.strokeStyle = isHighlighted ? '#00f3ff' : 'rgba(0, 243, 255, 0.2)';
+                    this.ctx.lineWidth = isHighlighted ? 3 : 2;
+                    this.ctx.stroke();
+                    // Draw weight
+                    const midX = (fromNode.x + toNode.x) / 2;
+                    const midY = (fromNode.y + toNode.y) / 2;
+                    this.ctx.fillStyle = isHighlighted ? '#00f3ff' : 'rgba(255, 255, 255, 0.5)';
+                    this.ctx.font = '12px Rajdhani';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText(weight.toString(), midX, midY);
+                });
+                // Draw nodes
+                this.nodes.forEach((node, i) => {
+                    const isCurrent = step.currentNode === i;
+                    const isVisited = step.visited?.includes(i);
+                    const radius = isCurrent ? 30 : 25;
+                    this.ctx.shadowColor = isCurrent ? '#00f3ff' : (isVisited ? '#1cc88a' : 'transparent');
+                    this.ctx.shadowBlur = isCurrent ? 20 : (isVisited ? 10 : 0);
+                    this.ctx.beginPath();
+                    this.ctx.arc(node.x, node.y, radius, 0, Math.PI * 2);
+                    this.ctx.fillStyle = isCurrent ? '#00f3ff' : (isVisited ? '#1cc88a' : 'rgba(0, 243, 255, 0.3)');
+                    this.ctx.fill();
+                    this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                    this.ctx.lineWidth = 2;
+                    this.ctx.stroke();
+                    this.ctx.shadowBlur = 0;
+                    this.ctx.fillStyle = '#ffffff';
+                    this.ctx.font = '16px Rajdhani';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText((i + 1).toString(), node.x, node.y);
+                });
+            }
+            start() { if (this.animation.isRunning) return; this.stats.start(); this.runAlgorithm(); }
+        }
+        class BFSVisualizer extends GraphVisualizer {
+            async runAlgorithm() {
+                const steps = [];
+                const visited = [];
+                const queue = [0];
+                const visitedSet = new Set([0]);
+                while (queue.length) {
+                    const node = queue.shift();
+                    this.stats.recordIteration();
+                    visited.push(node);
+                    steps.push({ currentNode: node, visited: [...visited], edges: [] });
+                    const neighbors = this.edges.filter(e => e[0] === node || e[1] === node).map(e => e[0] === node ? e[1] : e[0]);
+                    neighbors.forEach(neighbor => {
+                        if (!visitedSet.has(neighbor)) {
+                            visitedSet.add(neighbor);
+                            queue.push(neighbor);
+                            steps.push({ currentNode: node, visited: [...visited], edges: [[node, neighbor]] });
+                        }
+                    });
+                }
+                this.stats.stop();
+                this.animation.run(steps);
+            }
+        }
+        class DFSVisualizer extends GraphVisualizer {
+            async runAlgorithm() {
+                const steps = [];
+                const visited = [];
+                const visitedSet = new Set();
+                const dfs = (node, path = []) => {
+                    if (visitedSet.has(node)) return;
+                    visitedSet.add(node);
+                    this.stats.recordIteration();
+                    visited.push(node);
+                    steps.push({ currentNode: node, visited: [...visited], edges: path.length ? [[path[path.length - 1], node]] : [] });
+                    const neighbors = this.edges.filter(e => e[0] === node || e[1] === node).map(e => e[0] === node ? e[1] : e[0]);
+                    neighbors.forEach(neighbor => {
+                        dfs(neighbor, [...path, node]);
+                    });
+                };
+                dfs(0);
+                this.stats.stop();
+                this.animation.run(steps);
+            }
+        }
+        class DijkstraVisualizer extends GraphVisualizer {
+            async runAlgorithm() {
+                const steps = [];
+                const dist = {};
+                const visited = [];
+                const visitedSet = new Set();
+                this.nodes.forEach(n => dist[n.id] = Infinity);
+                dist[0] = 0;
+                const pq = [{ node: 0, dist: 0 }];
+                while (pq.length) {
+                    pq.sort((a, b) => a.dist - b.dist);
+                    const { node: current } = pq.shift();
+                    if (visitedSet.has(current)) continue;
+                    visitedSet.add(current);
+                    this.stats.recordIteration();
+                    visited.push(current);
+                    steps.push({ currentNode: current, visited: [...visited], edges: [] });
+                    const neighbors = this.edges.filter(e => e[0] === current || e[1] === current);
+                    neighbors.forEach(([from, to, weight]) => {
+                        const neighbor = from === current ? to : from;
+                        const newDist = dist[current] + weight;
+                        if (newDist < dist[neighbor]) {
+                            dist[neighbor] = newDist;
+                            pq.push({ node: neighbor, dist: newDist });
+                            steps.push({ currentNode: current, visited: [...visited], edges: [[current, neighbor]] });
+                        }
+                    });
+                }
+                this.stats.stop();
+                this.animation.run(steps);
+            }
+        }
+        class AStarVisualizer extends GraphVisualizer {
+            async runAlgorithm() {
+                const steps = [];
+                const visited = [];
+                const gScore = {};
+                const fScore = {};
+                this.nodes.forEach(n => { gScore[n.id] = Infinity; fScore[n.id] = Infinity; });
+                gScore[0] = 0;
+                fScore[0] = this.heuristic(0, this.nodes.length - 1);
+                const openSet = [0];
+                while (openSet.length) {
+                    openSet.sort((a, b) => fScore[a] - fScore[b]);
+                    const current = openSet.shift();
+                    this.stats.recordIteration();
+                    visited.push(current);
+                    steps.push({ currentNode: current, visited: [...visited], edges: [] });
+                    if (current === this.nodes.length - 1) break;
+                    const neighbors = this.edges.filter(e => e[0] === current || e[1] === current);
+                    neighbors.forEach(([from, to, weight]) => {
+                        const neighbor = from === current ? to : from;
+                        const tentativeG = gScore[current] + weight;
+                        if (tentativeG < gScore[neighbor]) {
+                            gScore[neighbor] = tentativeG;
+                            fScore[neighbor] = tentativeG + this.heuristic(neighbor, this.nodes.length - 1);
+                            if (!openSet.includes(neighbor)) openSet.push(neighbor);
+                            steps.push({ currentNode: current, visited: [...visited], edges: [[current, neighbor]] });
+                        }
+                    });
+                }
+                this.stats.stop();
+                this.animation.run(steps);
+            }
+            heuristic(a, b) {
+                const nodeA = this.nodes[a];
+                const nodeB = this.nodes[b];
+                return Math.sqrt(Math.pow(nodeA.x - nodeB.x, 2) + Math.pow(nodeA.y - nodeB.y, 2));
+            }
+        }
+        window.bfsViz = new BFSVisualizer('bfsCanvas', 'bfsStats', 'bfsSpeed');
+        window.dfsViz = new DFSVisualizer('dfsCanvas', 'dfsStats', 'dfsSpeed');
+        window.dijkstraViz = new DijkstraVisualizer('dijkstraCanvas', 'dijkstraStats', 'dijkstraSpeed');
+        window.astarViz = new AStarVisualizer('astarCanvas', 'astarStats', 'astarSpeed');
+    })();
+    </script>
+    <script src="js/main.js"></script>
+</body>
+</html>

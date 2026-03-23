@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEON-GRID | Algorithm Visualizer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #050505;
+      --bg2: #0a0b10;
+      --cyan: #00f3ff;
+      --magenta: #ff00ff;
+      --green: #00ff88;
+      --yellow: #ffea00;
+      --text: #ffffff;
+      --text2: #b0b0b0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      scrollbar-gutter: stable;
+      isolation: isolate;
+    }
+    .header {
+      background: linear-gradient(135deg, var(--bg2), var(--bg));
+      border-bottom: 1px solid rgba(0, 243, 255, 0.3);
+      padding: 1rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .header h1 {
+      font-size: 2.5rem;
+      background: linear-gradient(90deg, var(--cyan), var(--magenta));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-transform: uppercase;
+      position: relative;
+      display: inline-block;
+    }
+    .header h1::after {
+      content: 'NEON-GRID';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      -webkit-text-fill-color: var(--cyan);
+      opacity: 0;
+      z-index: -1;
+    }
+    .header h1:hover::after {
+      animation: glitch 0.3s cubic-bezier(.25,.46,.45,.94) both infinite;
+      opacity: 0.5;
+    }
+    @keyframes glitch {
+      0% { transform: translate(0); }
+      20% { transform: translate(-3px, 3px); }
+      40% { transform: translate(-3px, -3px); }
+      60% { transform: translate(3px, 3px); }
+      80% { transform: translate(3px, -3px); }
+      100% { transform: translate(0); }
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem;
+      display: grid;
+      grid-template-columns: 250px 1fr 280px;
+      gap: 1.5rem;
+    }
+    @media (max-width: 992px) {
+      .container { grid-template-columns: 1fr; }
+      .sidebar { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+    }
+    .sidebar, .infopanel {
+      background: var(--bg2);
+      border: 1px solid rgba(0, 243, 255, 0.2);
+      border-radius: 12px;
+      padding: 1rem;
+      height: fit-content;
+    }
+    .sidebar h2, .infopanel h2 {
+      color: var(--cyan);
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+      text-transform: uppercase;
+    }
+    .category { margin-bottom: 1rem; }
+    .category-title {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.8rem;
+      color: var(--magenta);
+      margin-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(255, 0, 255, 0.3);
+      padding-bottom: 0.25rem;
+    }
+    .algo-btn {
+      width: 100%;
+      padding: 0.5rem 1rem;
+      margin: 0.25rem 0;
+      background: transparent;
+      border: 1px solid rgba(0, 243, 255, 0.2);
+      border-radius: 8px;
+      color: var(--text2);
+      font-family: 'Fira Code', monospace;
+      font-size: 0.75rem;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.3s;
+    }
+    .algo-btn:hover, .algo-btn.active {
+      background: rgba(0, 243, 255, 0.1);
+      border-color: var(--cyan);
+      color: var(--text);
+      box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+    }
+    .algo-btn.active::before { content: '◈ '; color: var(--cyan); }
+    .infopanel h3 {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.8rem;
+      color: var(--cyan);
+      margin: 1rem 0 0.5rem;
+    }
+    .infopanel p, .infopanel pre {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.75rem;
+      color: var(--text2);
+      line-height: 1.6;
+    }
+    .infopanel pre {
+      background: var(--bg);
+      border: 1px solid rgba(0, 243, 255, 0.2);
+      border-radius: 8px;
+      padding: 0.75rem;
+      max-height: 150px;
+      overflow: auto;
+    }
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.25rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .stat-val { color: var(--green); }
+    .visualizer {
+      grid-column: 1 / -1;
+      background: var(--bg2);
+      border: 1px solid rgba(0, 243, 255, 0.2);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+    .viz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .viz-title {
+      font-size: 1.5rem;
+      color: var(--green);
+      text-transform: uppercase;
+    }
+    .viz-status {
+      font-family: 'Fira Code', monospace;
+      padding: 0.25rem 1rem;
+      background: rgba(0, 255, 136, 0.1);
+      border: 1px solid rgba(0, 255, 136, 0.3);
+      border-radius: 20px;
+      color: var(--green);
+    }
+    .canvas-wrap {
+      background: var(--bg);
+      border: 1px solid rgba(0, 243, 255, 0.1);
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+    }
+    .canvas-wrap::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(0deg, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 1px, transparent 1px, transparent 2px);
+      pointer-events: none;
+      opacity: 0.3;
+    }
+    #canvas {
+      width: 100%;
+      height: 400px;
+      display: block;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1rem;
+      align-items: center;
+    }
+    .ctrl-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn {
+      padding: 0.5rem 1.5rem;
+      background: linear-gradient(135deg, rgba(0, 243, 255, 0.2), rgba(255, 0, 255, 0.2));
+      border: 1px solid var(--cyan);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Fira Code', monospace;
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.3s;
+    }
+    .btn:hover:not(:disabled) {
+      background: linear-gradient(135deg, rgba(0, 243, 255, 0.3), rgba(255, 0, 255, 0.3));
+      box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+      transform: translateY(-2px);
+    }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--cyan), var(--magenta));
+      color: var(--bg);
+      font-weight: 700;
+    }
+    .range {
+      -webkit-appearance: none;
+      width: 120px;
+      height: 6px;
+      background: rgba(0, 243, 255, 0.2);
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    .range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      background: var(--cyan);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 10px var(--cyan);
+    }
+    .lbl {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.75rem;
+      color: var(--text2);
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .stat-card {
+      background: var(--bg);
+      border: 1px solid rgba(0, 243, 255, 0.2);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+    }
+    .stat-card .lbl {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    .stat-card .val {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--cyan);
+    }
+    .footer {
+      background: var(--bg2);
+      border-top: 1px solid rgba(0, 243, 255, 0.2);
+      padding: 1rem 2rem;
+      text-align: center;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.75rem;
+      color: var(--text2);
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1>NEON-GRID</h1>
+    <p style="font-family:'Fira Code';font-size:0.8rem;color:var(--text2);">Algorithm Visualization System</p>
+  </header>
+
+  <div class="container">
+    <aside class="sidebar">
+      <h2>Algorithms</h2>
+      <div class="category">
+        <div class="category-title">SORTING (12)</div>
+        <button class="algo-btn active" data-algo="bubble" data-type="sort">Bubble Sort</button>
+        <button class="algo-btn" data-algo="selection" data-type="sort">Selection Sort</button>
+        <button class="algo-btn" data-algo="insertion" data-type="sort">Insertion Sort</button>
+        <button class="algo-btn" data-algo="merge" data-type="sort">Merge Sort</button>
+        <button class="algo-btn" data-algo="quick" data-type="sort">Quick Sort</button>
+        <button class="algo-btn" data-algo="heap" data-type="sort">Heap Sort</button>
+        <button class="algo-btn" data-algo="shell" data-type="sort">Shell Sort</button>
+        <button class="algo-btn" data-algo="cocktail" data-type="sort">Cocktail Sort</button>
+        <button class="algo-btn" data-algo="gnome" data-type="sort">Gnome Sort</button>
+        <button class="algo-btn" data-algo="bogo" data-type="sort">Bogo Sort</button>
+        <button class="algo-btn" data-algo="counting" data-type="sort">Counting Sort</button>
+        <button class="algo-btn" data-algo="radix" data-type="sort">Radix Sort</button>
+      </div>
+      <div class="category">
+        <div class="category-title">SEARCHING (8)</div>
+        <button class="algo-btn" data-algo="linear" data-type="search">Linear Search</button>
+        <button class="algo-btn" data-algo="binary" data-type="search">Binary Search</button>
+        <button class="algo-btn" data-algo="jump" data-type="search">Jump Search</button>
+        <button class="algo-btn" data-algo="interpolation" data-type="search">Interpolation Search</button>
+        <button class="algo-btn" data-algo="exponential" data-type="search">Exponential Search</button>
+        <button class="algo-btn" data-algo="ternary" data-type="search">Ternary Search</button>
+        <button class="algo-btn" data-algo="fibonacci" data-type="search">Fibonacci Search</button>
+        <button class="algo-btn" data-algo="sentinel" data-type="search">Sentinel Search</button>
+      </div>
+    </aside>
+
+    <aside class="infopanel">
+      <h2>Algorithm Info</h2>
+      <h3>Description</h3>
+      <p id="info-desc">Simple sorting algorithm that repeatedly steps through the list, compares adjacent elements and swaps them if they are in the wrong order.</p>
+      <h3>Complexity</h3>
+      <div class="stat-row"><span>Best:</span><span class="stat-val" id="info-best">Ω(n)</span></div>
+      <div class="stat-row"><span>Average:</span><span class="stat-val" id="info-avg">Θ(n²)</span></div>
+      <div class="stat-row"><span>Worst:</span><span class="stat-val" id="info-worst">O(n²)</span></div>
+      <div class="stat-row"><span>Space:</span><span class="stat-val" id="info-space">O(1)</span></div>
+      <h3>Pseudocode</h3>
+      <pre id="info-code">for i from 0 to n-1
+  for j from 0 to n-i-1
+    if arr[j] > arr[j+1]
+      swap(arr[j], arr[j+1])</pre>
+    </aside>
+
+    <section class="visualizer">
+      <div class="viz-header">
+        <h2 class="viz-title" id="algo-name">Bubble Sort</h2>
+        <span class="viz-status" id="status">Ready</span>
+      </div>
+      <div class="canvas-wrap">
+        <canvas id="canvas"></canvas>
+      </div>
+      <div class="controls">
+        <div class="ctrl-group">
+          <button class="btn btn-primary" id="btn-start">▶ Start</button>
+          <button class="btn" id="btn-pause" disabled>❚❚ Pause</button>
+          <button class="btn" id="btn-reset">↻ Reset</button>
+        </div>
+        <div class="ctrl-group">
+          <span class="lbl">Speed:</span>
+          <input type="range" class="range" id="speed" min="1" max="100" value="50">
+        </div>
+        <div class="ctrl-group">
+          <span class="lbl">Size:</span>
+          <input type="range" class="range" id="size" min="10" max="100" value="50">
+        </div>
+        <div class="ctrl-group">
+          <button class="btn" id="btn-shuffle">🔀 Shuffle</button>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat-card"><span class="lbl">Comparisons</span><span class="val" id="stat-comp">0</span></div>
+        <div class="stat-card"><span class="lbl">Swaps</span><span class="val" id="stat-swap">0</span></div>
+        <div class="stat-card"><span class="lbl">Accesses</span><span class="val" id="stat-acc">0</span></div>
+        <div class="stat-card"><span class="lbl">Time (ms)</span><span class="val" id="stat-time">0</span></div>
+      </div>
+    </section>
+  </div>
+
+  <footer class="footer">
+    NEON-GRID Algorithm Visualizer | 20 Algorithms | Canvas + Vanilla JS
+  </footer>
+
+  <script>
+    // DOM Elements Cache
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const btnStart = document.getElementById('btn-start');
+    const btnPause = document.getElementById('btn-pause');
+    const btnReset = document.getElementById('btn-reset');
+    const btnShuffle = document.getElementById('btn-shuffle');
+    const rngSpeed = document.getElementById('speed');
+    const rngSize = document.getElementById('size');
+    const statComp = document.getElementById('stat-comp');
+    const statSwap = document.getElementById('stat-swap');
+    const statAcc = document.getElementById('stat-acc');
+    const statTime = document.getElementById('stat-time');
+    const status = document.getElementById('status');
+    const algoName = document.getElementById('algo-name');
+    const infoDesc = document.getElementById('info-desc');
+    const infoBest = document.getElementById('info-best');
+    const infoAvg = document.getElementById('info-avg');
+    const infoWorst = document.getElementById('info-worst');
+    const infoSpace = document.getElementById('info-space');
+    const infoCode = document.getElementById('info-code');
+    const algoBtns = document.querySelectorAll('.algo-btn');
+
+    // State
+    let arr = [];
+    let n = 50;
+    let speed = 50;
+    let running = false;
+    let paused = false;
+    let stop = false;
+    let comps = 0, swaps = 0, accs = 0, startTime = 0;
+    let currentAlgo = 'bubble';
+    let currentType = 'sort';
+
+    // Algorithm info
+    const info = {
+      bubble: { name: 'Bubble Sort', type: 'sort', desc: 'Repeatedly compares adjacent elements and swaps if wrong order.', best: 'Ω(n)', avg: 'Θ(n²)', worst: 'O(n²)', space: 'O(1)', code: 'for i=0 to n-1\n  for j=0 to n-i-1\n    if arr[j] > arr[j+1]\n      swap(arr[j], arr[j+1])' },
+      selection: { name: 'Selection Sort', type: 'sort', desc: 'Finds minimum from unsorted part and puts at beginning.', best: 'Ω(n²)', avg: 'Θ(n²)', worst: 'O(n²)', space: 'O(1)', code: 'for i=0 to n-1\n  minIdx = i\n  for j=i+1 to n\n    if arr[j] < arr[minIdx]\n      minIdx = j\n  swap(arr[i], arr[minIdx])' },
+      insertion: { name: 'Insertion Sort', type: 'sort', desc: 'Builds sorted array one item at a time by inserting each element.', best: 'Ω(n)', avg: 'Θ(n²)', worst: 'O(n²)', space: 'O(1)', code: 'for i=1 to n-1\n  key = arr[i]\n  j = i-1\n  while j>=0 and arr[j]>key\n    arr[j+1] = arr[j]\n    j--\n  arr[j+1] = key' },
+      merge: { name: 'Merge Sort', type: 'sort', desc: 'Divide-and-conquer: divides array, sorts halves, merges them.', best: 'Ω(n log n)', avg: 'Θ(n log n)', worst: 'O(n log n)', space: 'O(n)', code: 'mergeSort(arr, l, r)\n  if l < r\n    m = (l+r)/2\n    mergeSort(arr, l, m)\n    mergeSort(arr, m+1, r)\n    merge(arr, l, m, r)' },
+      quick: { name: 'Quick Sort', type: 'sort', desc: 'Divide-and-conquer using pivot to partition array.', best: 'Ω(n log n)', avg: 'Θ(n log n)', worst: 'O(n²)', space: 'O(log n)', code: 'quickSort(arr, lo, hi)\n  if lo < hi\n    p = partition(arr, lo, hi)\n    quickSort(arr, lo, p-1)\n    quickSort(arr, p+1, hi)' },
+      heap: { name: 'Heap Sort', type: 'sort', desc: 'Uses binary heap to repeatedly extract maximum element.', best: 'Ω(n log n)', avg: 'Θ(n log n)', worst: 'O(n log n)', space: 'O(1)', code: 'heapSort(arr)\n  buildMaxHeap(arr)\n  for i=n-1 to 1\n    swap(arr[0], arr[i])\n    heapify(arr, 0, i)' },
+      shell: { name: 'Shell Sort', type: 'sort', desc: 'Insertion sort variant using gap sequence for distant elements.', best: 'Ω(n log n)', avg: 'Θ(n^1.5)', worst: 'O(n²)', space: 'O(1)', code: 'for gap=n/2 to 1\n  for i=gap to n\n    temp = arr[i]\n    j = i\n    while j>=gap and arr[j-gap]>temp\n      arr[j] = arr[j-gap]\n      j -= gap\n    arr[j] = temp' },
+      cocktail: { name: 'Cocktail Sort', type: 'sort', desc: 'Bidirectional bubble sort that goes both directions.', best: 'Ω(n)', avg: 'Θ(n²)', worst: 'O(n²)', space: 'O(1)', code: 'do\n  for i=left to right\n    if arr[i]>arr[i+1] swap\n  for i=right to left\n    if arr[i]>arr[i+1] swap\nwhile swapped' },
+      gnome: { name: 'Gnome Sort', type: 'sort', desc: 'Like insertion sort but uses swaps like bubble sort.', best: 'Ω(n)', avg: 'Θ(n²)', worst: 'O(n²)', space: 'O(1)', code: 'i=0\nwhile i<n\n  if i==0 or arr[i]>=arr[i-1]\n    i++\n  else\n    swap(arr[i], arr[i-1])\n    i--' },
+      bogo: { name: 'Bogo Sort', type: 'sort', desc: 'Randomly shuffles until sorted (very inefficient!).', best: 'Ω(n)', avg: 'Θ(n×n!)', worst: 'O(∞)', space: 'O(1)', code: 'while not sorted(arr)\n  shuffle(arr)' },
+      counting: { name: 'Counting Sort', type: 'sort', desc: 'Counts occurrences of each value to determine positions.', best: 'Ω(n+k)', avg: 'Θ(n+k)', worst: 'O(n+k)', space: 'O(k)', code: 'count[x]++ for each x\nfor i=1 to k\n  count[i] += count[i-1]\nbuild output from count' },
+      radix: { name: 'Radix Sort', type: 'sort', desc: 'Sorts by individual digits from least to most significant.', best: 'Ω(nk)', avg: 'Θ(nk)', worst: 'O(nk)', space: 'O(n+k)', code: 'for each digit d\n  countingSort by digit d' },
+      linear: { name: 'Linear Search', type: 'search', desc: 'Checks each element sequentially until found.', best: 'Ω(1)', avg: 'Θ(n)', worst: 'O(n)', space: 'O(1)', code: 'for i=0 to n-1\n  if arr[i]==target return i\nreturn -1' },
+      binary: { name: 'Binary Search', type: 'search', desc: 'Divides sorted array in half repeatedly.', best: 'Ω(1)', avg: 'Θ(log n)', worst: 'O(log n)', space: 'O(1)', code: 'lo=0, hi=n-1\nwhile lo<=hi\n  mid=(lo+hi)/2\n  if arr[mid]==target return mid\n  if arr[mid]<target lo=mid+1\n  else hi=mid-1' },
+      jump: { name: 'Jump Search', type: 'search', desc: 'Jumps by √n steps then linear search.', best: 'Ω(1)', avg: 'Θ(√n)', worst: 'O(√n)', space: 'O(1)', code: 'step=√n\nwhile arr[step]<target\n  prev=step; step+=√n\nlinear search prev to step' },
+      interpolation: { name: 'Interpolation Search', type: 'search', desc: 'Estimates position using linear interpolation.', best: 'Ω(log log n)', avg: 'Θ(log log n)', worst: 'O(n)', space: 'O(1)', code: 'pos = lo + ((target-arr[lo])*(hi-lo))/(arr[hi]-arr[lo])' },
+      exponential: { name: 'Exponential Search', type: 'search', desc: 'Finds range then binary search.', best: 'Ω(1)', avg: 'Θ(log n)', worst: 'O(log n)', space: 'O(1)', code: 'i=1\nwhile i<n and arr[i]<=target\n  i*=2\nbinarySearch(i/2, min(i,n))' },
+      ternary: { name: 'Ternary Search', type: 'search', desc: 'Divides array into three parts.', best: 'Ω(1)', avg: 'Θ(log₃n)', worst: 'O(log n)', space: 'O(1)', code: 'm1=l+(r-l)/3\nm2=r-(r-l)/3\ncheck m1, m2' },
+      fibonacci: { name: 'Fibonacci Search', type: 'search', desc: 'Uses Fibonacci numbers to divide array.', best: 'Ω(1)', avg: 'Θ(log n)', worst: 'O(log n)', space: 'O(1)', code: 'Use Fibonacci to find position' },
+      sentinel: { name: 'Sentinel Search', type: 'search', desc: 'Places target at end as sentinel.', best: 'Ω(1)', avg: 'Θ(n)', worst: 'O(n)', space: 'O(1)', code: 'arr[n-1]=target\nwhile arr[i]!=target i++\nrestore arr[n-1]' }
+    };
+
+    // Utils
+    function delay(multiplier = 1) {
+      return new Promise(resolve => {
+        const ms = Math.max(1, (101 - speed) * 0.4 * multiplier);
+        setTimeout(resolve, ms);
+      });
+    }
+
+    async function waitPause() {
+      while (paused && !stop) await new Promise(r => setTimeout(r, 50));
+      if (stop) throw 'STOP';
+    }
+
+    function updateStats() {
+      statComp.textContent = comps;
+      statSwap.textContent = swaps;
+      statAcc.textContent = accs;
+      if (startTime > 0) {
+        statTime.textContent = Math.round(performance.now() - startTime);
+      }
+    }
+
+    function adjustColor(hex, amt) {
+      const num = parseInt(hex.slice(1), 16);
+      const r = Math.max(0, Math.min(255, ((num >> 16) & 0xFF) + amt));
+      const g = Math.max(0, Math.min(255, ((num >> 8) & 0xFF) + amt));
+      const b = Math.max(0, Math.min(255, (num & 0xFF) + amt));
+      return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    }
+
+    // Graphics
+    function draw(highlight = [], sorted = new Set(), searchIdx = -1, found = false) {
+      ctx.fillStyle = '#050505';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      const barW = (canvas.width - 40) / n;
+      const maxVal = Math.max(...arr, 1);
+      const scale = (canvas.height - 60) / maxVal;
+
+      // Grid
+      ctx.strokeStyle = 'rgba(0, 243, 255, 0.1)';
+      ctx.lineWidth = 1;
+      for (let i = 0; i < 5; i++) {
+        const y = 20 + (canvas.height - 40) * (i / 4);
+        ctx.beginPath();
+        ctx.moveTo(20, y);
+        ctx.lineTo(canvas.width - 20, y);
+        ctx.stroke();
+      }
+
+      // Bars
+      for (let i = 0; i < n; i++) {
+        const x = 20 + i * barW;
+        const h = arr[i] * scale;
+        const y = canvas.height - 40 - h;
+
+        let color = '#00f3ff';
+        let glow = 10;
+
+        if (searchIdx === i) { color = found ? '#00ff88' : '#ffea00'; glow = 25; }
+        else if (sorted.has(i)) { color = '#00ff88'; glow = 15; }
+        else if (highlight.includes(i)) { color = '#ff00ff'; glow = 20; }
+
+        ctx.shadowColor = color;
+        ctx.shadowBlur = glow;
+
+        const grad = ctx.createLinearGradient(x, y, x, canvas.height - 40);
+        grad.addColorStop(0, color);
+        grad.addColorStop(1, adjustColor(color, -50));
+        ctx.fillStyle = grad;
+        ctx.fillRect(x + 1, y, Math.max(1, barW - 2), h);
+
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+      }
+
+      // Axis
+      ctx.strokeStyle = 'rgba(0, 243, 255, 0.3)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(20, canvas.height - 40);
+      ctx.lineTo(canvas.width - 20, canvas.height - 40);
+      ctx.stroke();
+    }
+
+    function resizeCanvas() {
+      const wrap = canvas.parentElement;
+      canvas.width = wrap.clientWidth || 800;
+      canvas.height = 400;
+      draw();
+    }
+
+    function genArray() {
+      arr = [];
+      for (let i = 0; i < n; i++) {
+        arr.push(Math.floor(Math.random() * 256) + 10);
+      }
+    }
+
+    // Logic
+    async function runSort(algo) {
+      try {
+        switch (algo) {
+          case 'bubble': await bubbleSort(); break;
+          case 'selection': await selectionSort(); break;
+          case 'insertion': await insertionSort(); break;
+          case 'merge': await mergeSort(); break;
+          case 'quick': await quickSort(); break;
+          case 'heap': await heapSort(); break;
+          case 'shell': await shellSort(); break;
+          case 'cocktail': await cocktailSort(); break;
+          case 'gnome': await gnomeSort(); break;
+          case 'bogo': await bogoSort(); break;
+          case 'counting': await countingSort(); break;
+          case 'radix': await radixSort(); break;
+        }
+        if (!stop) complete();
+      } catch (e) {
+        if (e === 'STOP') return;
+        console.error('Sort Error:', e);
+        resetUI();
+      }
+    }
+
+    async function runSearch(algo) {
+      try {
+        const targetIdx = Math.floor(Math.random() * arr.length);
+        const target = arr[targetIdx];
+        status.textContent = `Searching: ${target}`;
+        let result = -1;
+        switch (algo) {
+          case 'linear': result = await linearSearch(target); break;
+          case 'binary': result = await binarySearch(target); break;
+          case 'jump': result = await jumpSearch(target); break;
+          case 'interpolation': result = await interpolationSearch(target); break;
+          case 'exponential': result = await exponentialSearch(target); break;
+          case 'ternary': result = await ternarySearch(target); break;
+          case 'fibonacci': result = await fibonacciSearch(target); break;
+          case 'sentinel': result = await sentinelSearch(target); break;
+        }
+        if (!stop) {
+          status.textContent = result >= 0 ? `Found: Index ${result}` : 'Not found';
+          status.style.color = result >= 0 ? 'var(--green)' : 'var(--magenta)';
+          running = false;
+          updateStats();
+          enableControls();
+        }
+      } catch (e) {
+        if (e === 'STOP') return;
+        console.error('Search Error:', e);
+        resetUI();
+      }
+    }
+
+    function complete() {
+      running = false;
+      updateStats();
+      status.textContent = 'Complete';
+      status.style.color = 'var(--green)';
+      enableControls();
+      draw([], new Set(arr.keys()));
+    }
+
+    function enableControls() {
+      btnStart.disabled = false;
+      btnPause.disabled = true;
+      btnPause.textContent = '❚❚ Pause';
+      btnReset.disabled = false;
+      btnShuffle.disabled = false;
+      rngSize.disabled = false;
+    }
+
+    function resetUI() {
+      stop = true;
+      running = false;
+      paused = false;
+      genArray();
+      comps = swaps = accs = 0;
+      startTime = 0;
+      updateStats();
+      status.textContent = 'Ready';
+      status.style.color = 'var(--green)';
+      enableControls();
+      draw();
+    }
+
+    // Algorithms
+    async function bubbleSort() {
+      const sorted = new Set();
+      for (let i = 0; i < n - 1; i++) {
+        let swapped = false;
+        for (let j = 0; j < n - i - 1; j++) {
+          await waitPause();
+          comps++; accs += 2;
+          draw([j, j+1], sorted);
+          updateStats();
+          await delay();
+          if (arr[j] > arr[j+1]) {
+            [arr[j], arr[j+1]] = [arr[j+1], arr[j]];
+            swaps++; accs += 2;
+            swapped = true;
+            draw([j, j+1], sorted);
+            updateStats();
+            await delay();
+          }
+        }
+        sorted.add(n - i - 1);
+        if (!swapped) break;
+      }
+    }
+
+    async function selectionSort() {
+      const sorted = new Set();
+      for (let i = 0; i < n - 1; i++) {
+        let min = i;
+        for (let j = i + 1; j < n; j++) {
+          await waitPause();
+          comps++; accs += 2;
+          draw([min, j], sorted);
+          updateStats();
+          await delay();
+          if (arr[j] < arr[min]) min = j;
+        }
+        if (min !== i) {
+          [arr[i], arr[min]] = [arr[min], arr[i]];
+          swaps++; accs += 2;
+          draw([i, min], sorted);
+          updateStats();
+          await delay();
+        }
+        sorted.add(i);
+      }
+    }
+
+    async function insertionSort() {
+      const sorted = new Set([0]);
+      for (let i = 1; i < n; i++) {
+        let key = arr[i], j = i - 1;
+        accs++;
+        while (j >= 0) {
+          await waitPause();
+          comps++; accs += 2;
+          draw([j, j+1], sorted);
+          updateStats();
+          await delay();
+          if (arr[j] > key) {
+            arr[j+1] = arr[j];
+            swaps++; accs += 2;
+            j--;
+            draw([j+1], sorted);
+            updateStats();
+            await delay();
+          } else break;
+        }
+        arr[j+1] = key; accs++;
+        sorted.add(i);
+        draw([], sorted);
+        await delay();
+      }
+    }
+
+    async function mergeSort() {
+      const sorted = new Set();
+      const merge = async (l, m, r) => {
+        const L = arr.slice(l, m+1), R = arr.slice(m+1, r+1);
+        let i = 0, j = 0, k = l;
+        while (i < L.length && j < R.length) {
+          await waitPause();
+          comps++; accs += 2;
+          draw([k], sorted);
+          updateStats();
+          await delay();
+          arr[k++] = L[i] <= R[j] ? L[i++] : R[j++];
+          swaps++; accs++;
+        }
+        while (i < L.length) {
+          await waitPause();
+          accs += 2; arr[k++] = L[i++]; swaps++;
+          draw([k-1], sorted); updateStats(); await delay();
+        }
+        while (j < R.length) {
+          await waitPause();
+          accs += 2; arr[k++] = R[j++]; swaps++;
+          draw([k-1], sorted); updateStats(); await delay();
+        }
+      }
+      const sort = async (l, r) => {
+        if (l >= r) return;
+        const m = Math.floor((l+r)/2);
+        await sort(l, m);
+        await sort(m+1, r);
+        await merge(l, m, r);
+        for (let x = l; x <= r; x++) sorted.add(x);
+        draw([], sorted); await delay();
+      }
+      await sort(0, n-1);
+    }
+
+    async function quickSort() {
+      const sorted = new Set();
+      const partition = async (lo, hi) => {
+        const pivot = arr[hi];
+        let i = lo - 1;
+        for (let j = lo; j < hi; j++) {
+          await waitPause();
+          comps++; accs += 2;
+          draw([j, hi], sorted);
+          updateStats();
+          await delay();
+          if (arr[j] < pivot) {
+            i++;
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+            swaps++; accs += 2;
+            draw([i, j], sorted);
+            updateStats();
+            await delay();
+          }
+        }
+        [arr[i+1], arr[hi]] = [arr[hi], arr[i+1]];
+        swaps++; accs += 2;
+        sorted.add(i+1);
+        draw([i+1, hi], sorted);
+        updateStats();
+        await delay();
+        return i + 1;
+      }
+      const sort = async (lo, hi) => {
+        if (lo < hi) {
+          const p = await partition(lo, hi);
+          await sort(lo, p-1);
+          await sort(p+1, hi);
+        } else if (lo === hi) sorted.add(lo);
+      }
+      await sort(0, n-1);
+    }
+
+    async function heapSort() {
+      const sorted = new Set();
+      const heapify = async (sz, i) => {
+        let lg = i, l = 2*i+1, r = 2*i+2;
+        if (l < sz) {
+          await waitPause(); comps++; accs += 2;
+          draw([lg, l], sorted); updateStats(); await delay();
+          if (arr[l] > arr[lg]) lg = l;
+        }
+        if (r < sz) {
+          await waitPause(); comps++; accs += 2;
+          draw([lg, r], sorted); updateStats(); await delay();
+          if (arr[r] > arr[lg]) lg = r;
+        }
+        if (lg !== i) {
+          [arr[i], arr[lg]] = [arr[lg], arr[i]];
+          swaps++; accs += 2;
+          draw([i, lg], sorted); updateStats(); await delay();
+          await heapify(sz, lg);
+        }
+      }
+      for (let i = Math.floor(n/2)-1; i >= 0; i--) await heapify(n, i);
+      for (let i = n-1; i > 0; i--) {
+        [arr[0], arr[i]] = [arr[i], arr[0]];
+        swaps++; accs += 2;
+        sorted.add(i);
+        draw([0, i], sorted); updateStats(); await delay();
+        await heapify(i, 0);
+      }
+      sorted.add(0);
+    }
+
+    async function shellSort() {
+      const sorted = new Set();
+      for (let gap = Math.floor(n/2); gap > 0; gap = Math.floor(gap/2)) {
+        for (let i = gap; i < n; i++) {
+          const temp = arr[i];
+          let j = i;
+          accs++;
+          while (j >= gap) {
+            await waitPause();
+            comps++; accs += 2;
+            draw([j, j-gap], sorted); updateStats(); await delay();
+            if (arr[j-gap] > temp) {
+              arr[j] = arr[j-gap];
+              swaps++; accs += 2; j -= gap;
+              draw([j], sorted); updateStats(); await delay();
+            } else break;
+          }
+          arr[j] = temp; accs++;
+        }
+      }
+      for (let i = 0; i < n; i++) sorted.add(i);
+    }
+
+    async function cocktailSort() {
+      const sorted = new Set();
+      let sw = true, start = 0, end = n-1;
+      while (sw) {
+        sw = false;
+        for (let i = start; i < end; i++) {
+          await waitPause(); comps++; accs += 2;
+          draw([i, i+1], sorted); updateStats(); await delay();
+          if (arr[i] > arr[i+1]) {
+            [arr[i], arr[i+1]] = [arr[i+1], arr[i]];
+            swaps++; accs += 2; sw = true;
+            draw([i, i+1], sorted); updateStats(); await delay();
+          }
+        }
+        if (!sw) break;
+        sw = false; sorted.add(end); end--;
+        for (let i = end; i > start; i--) {
+          await waitPause(); comps++; accs += 2;
+          draw([i-1, i], sorted); updateStats(); await delay();
+          if (arr[i-1] > arr[i]) {
+            [arr[i-1], arr[i]] = [arr[i], arr[i-1]];
+            swaps++; accs += 2; sw = true;
+            draw([i-1, i], sorted); updateStats(); await delay();
+          }
+        }
+        sorted.add(start); start++;
+      }
+      for (let i = 0; i < n; i++) sorted.add(i);
+    }
+
+    async function gnomeSort() {
+      const sorted = new Set();
+      let i = 0;
+      while (i < n) {
+        await waitPause();
+        if (i === 0 || arr[i] >= arr[i-1]) {
+          i++; draw([i-1], sorted); updateStats(); await delay();
+        } else {
+          comps++; accs += 2;
+          draw([i-1, i], sorted); updateStats(); await delay();
+          [arr[i], arr[i-1]] = [arr[i-1], arr[i]];
+          swaps++; accs += 2; i--;
+          draw([i], sorted); updateStats(); await delay();
+        }
+      }
+    }
+
+    async function bogoSort() {
+      const isSorted = () => {
+        for (let i = 0; i < n-1; i++) {
+          comps++; accs += 2;
+          if (arr[i] > arr[i+1]) return false;
+        }
+        return true;
+      }
+      while (!isSorted()) {
+        await waitPause();
+        for (let i = n-1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i+1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+          swaps++; accs += 2;
+        }
+        draw(); updateStats();
+        await delay(3);
+      }
+    }
+
+    async function countingSort() {
+      const max = Math.max(...arr);
+      const count = new Array(max+1).fill(0);
+      for (let i = 0; i < n; i++) {
+        await waitPause(); accs++; count[arr[i]]++;
+        draw([i]); updateStats(); await delay();
+      }
+      for (let i = 1; i <= max; i++) { count[i] += count[i-1]; accs += 2; }
+      const out = new Array(n);
+      for (let i = n-1; i >= 0; i--) {
+        await waitPause(); accs += 2;
+        out[count[arr[i]]-1] = arr[i]; count[arr[i]]--;
+        draw([i]); updateStats(); await delay();
+      }
+      for (let i = 0; i < n; i++) {
+        await waitPause(); arr[i] = out[i]; swaps++; accs += 2;
+        draw([i]); updateStats(); await delay();
+      }
+    }
+
+    async function radixSort() {
+      const max = Math.max(...arr);
+      const countSort = async (exp) => {
+        const out = new Array(n), count = new Array(10).fill(0);
+        for (let i = 0; i < n; i++) {
+          await waitPause();
+          const d = Math.floor(arr[i]/exp) % 10;
+          accs += 2; count[d]++;
+          draw([i]); updateStats(); await delay();
+        }
+        for (let i = 1; i < 10; i++) { count[i] += count[i-1]; accs += 2; }
+        for (let i = n-1; i >= 0; i--) {
+          await waitPause();
+          const d = Math.floor(arr[i]/exp) % 10;
+          accs += 3; out[count[d]-1] = arr[i]; count[d]--;
+          draw([i]); updateStats(); await delay();
+        }
+        for (let i = 0; i < n; i++) {
+          await waitPause(); arr[i] = out[i]; accs += 2; swaps++;
+          draw([i]); updateStats(); await delay();
+        }
+      }
+      for (let exp = 1; Math.floor(max/exp) > 0; exp *= 10) await countSort(exp);
+    }
+
+    // Searches
+    async function linearSearch(target) {
+      for (let i = 0; i < n; i++) {
+        await waitPause(); comps++; accs++;
+        draw([], new Set(), i, false); updateStats(); await delay(2);
+        if (arr[i] === target) {
+          draw([], new Set(), i, true); updateStats(); await delay(5);
+          return i;
+        }
+      }
+      return -1;
+    }
+
+    async function binarySearch(target) {
+      let l = 0, r = n-1;
+      while (l <= r) {
+        await waitPause();
+        const m = Math.floor((l+r)/2);
+        comps++; accs++;
+        draw([], new Set(), m, false); updateStats(); await delay(3);
+        if (arr[m] === target) { draw([], new Set(), m, true); updateStats(); await delay(5); return m; }
+        if (arr[m] < target) l = m+1; else r = m-1;
+      }
+      return -1;
+    }
+
+    async function jumpSearch(target) {
+      const step = Math.floor(Math.sqrt(n));
+      let prev = 0, curr = step;
+      while (curr < n && arr[Math.min(curr, n)-1] < target) {
+        await waitPause(); comps++; accs++;
+        draw([], new Set(), Math.min(curr, n)-1, false); updateStats(); await delay(3);
+        prev = curr; curr += step;
+      }
+      for (let i = prev; i < Math.min(curr, n); i++) {
+        await waitPause(); comps++; accs++;
+        draw([], new Set(), i, false); updateStats(); await delay(3);
+        if (arr[i] === target) { draw([], new Set(), i, true); updateStats(); await delay(5); return i; }
+      }
+      return -1;
+    }
+
+    async function interpolationSearch(target) {
+      let lo = 0, hi = n-1;
+      while (lo <= hi && target >= arr[lo] && target <= arr[hi]) {
+        await waitPause();
+        const pos = lo + Math.floor(((target - arr[lo]) * (hi - lo)) / (arr[hi] - arr[lo] || 1));
+        comps++; accs += 3;
+        draw([], new Set(), pos, false); updateStats(); await delay(3);
+        if (arr[pos] === target) { draw([], new Set(), pos, true); updateStats(); await delay(5); return pos; }
+        if (arr[pos] < target) lo = pos+1; else hi = pos-1;
+      }
+      return -1;
+    }
+
+    async function exponentialSearch(target) {
+      if (arr[0] === target) { accs++; draw([], new Set(), 0, true); return 0; }
+      let i = 1;
+      while (i < n && arr[i] <= target) {
+        await waitPause(); comps++; accs++;
+        draw([], new Set(), i, false); updateStats(); await delay(3);
+        i *= 2;
+      }
+      let lo = Math.floor(i/2), hi = Math.min(i, n-1);
+      while (lo <= hi) {
+        await waitPause();
+        const m = Math.floor((lo+hi)/2);
+        comps++; accs++;
+        draw([], new Set(), m, false); updateStats(); await delay(3);
+        if (arr[m] === target) { draw([], new Set(), m, true); updateStats(); await delay(5); return m; }
+        if (arr[m] < target) lo = m+1; else hi = m-1;
+      }
+      return -1;
+    }
+
+    async function ternarySearch(target) {
+      let l = 0, r = n-1;
+      while (l <= r) {
+        await waitPause();
+        const m1 = l + Math.floor((r-l)/3), m2 = r - Math.floor((r-l)/3);
+        comps += 2; accs += 2;
+        draw([], new Set(), m1, false); updateStats(); await delay(3);
+        if (arr[m1] === target) { draw([], new Set(), m1, true); return m1; }
+        draw([], new Set(), m2, false); updateStats(); await delay(3);
+        if (arr[m2] === target) { draw([], new Set(), m2, true); return m2; }
+        if (target < arr[m1]) r = m1-1;
+        else if (target > arr[m2]) l = m2+1;
+        else { l = m1+1; r = m2-1; }
+      }
+      return -1;
+    }
+
+    async function fibonacciSearch(target) {
+      let f2 = 0, f1 = 1, fM = 1;
+      while (fM < n) { f2 = f1; f1 = fM; fM = f1 + f2; }
+      let offset = -1;
+      while (fM > 1) {
+        await waitPause();
+        const i = Math.min(offset + f2, n-1);
+        comps++; accs++;
+        draw([], new Set(), i, false); updateStats(); await delay(3);
+        if (arr[i] < target) { fM = f1; f1 = f2; f2 = fM - f1; offset = i; }
+        else if (arr[i] > target) { fM = f2; f1 = f1 - f2; f2 = fM - f1; }
+        else { draw([], new Set(), i, true); return i; }
+      }
+      if (f1 && arr[offset+1] === target) { draw([], new Set(), offset+1, true); return offset+1; }
+      return -1;
+    }
+
+    async function sentinelSearch(target) {
+      const last = arr[n-1];
+      arr[n-1] = target; accs += 2;
+      let i = 0;
+      while (arr[i] !== target) {
+        await waitPause(); comps++; accs++;
+        draw([], new Set(), i, false); updateStats(); await delay(1);
+        i++;
+      }
+      arr[n-1] = last; accs++;
+      if (i < n-1 || last === target) { draw([], new Set(), i, true); return i; }
+      return -1;
+    }
+
+    // Events
+    btnStart.onclick = () => {
+      if (running && !paused) return;
+      if (paused) {
+        paused = false;
+        status.textContent = 'Running';
+        btnPause.textContent = '❚❚ Pause';
+        return;
+      }
+      stop = false; running = true; paused = false;
+      comps = swaps = accs = 0;
+      startTime = performance.now();
+      btnStart.disabled = true; btnPause.disabled = false;
+      btnReset.disabled = true; btnShuffle.disabled = true; rngSize.disabled = true;
+      status.textContent = 'Running';
+      status.style.color = 'var(--cyan)';
+      if (currentType === 'sort') runSort(currentAlgo);
+      else runSearch(currentAlgo);
+    };
+
+    btnPause.onclick = () => {
+      paused = !paused;
+      btnPause.textContent = paused ? '▶ Resume' : '❚❚ Pause';
+      status.textContent = paused ? 'Paused' : 'Running';
+      status.style.color = paused ? 'var(--yellow)' : 'var(--cyan)';
+    };
+
+    btnReset.onclick = resetUI;
+    btnShuffle.onclick = () => { resetUI(); status.textContent = 'Shuffled'; };
+    rngSpeed.oninput = (e) => { speed = parseInt(e.target.value); };
+    rngSize.oninput = (e) => { n = parseInt(e.target.value); resetUI(); };
+
+    algoBtns.forEach(btn => {
+      btn.onclick = () => {
+        algoBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentAlgo = btn.dataset.algo;
+        currentType = btn.dataset.type;
+        algoName.textContent = info[currentAlgo].name;
+        if (currentType === 'search') arr.sort((a, b) => a - b);
+        updateInfo();
+        resetUI();
+      };
+    });
+
+    function updateInfo() {
+      const i = info[currentAlgo];
+      infoDesc.textContent = i.desc;
+      infoBest.textContent = i.best;
+      infoAvg.textContent = i.avg;
+      infoWorst.textContent = i.worst;
+      infoSpace.textContent = i.space;
+      infoCode.textContent = i.code;
+    }
+
+    // Init
+    window.onload = () => {
+      genArray();
+      resizeCanvas();
+      updateInfo();
+      window.addEventListener('resize', resizeCanvas);
+    };
+  </script>
+</body>
+</html>

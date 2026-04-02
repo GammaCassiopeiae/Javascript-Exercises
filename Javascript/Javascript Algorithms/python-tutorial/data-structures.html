@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Python Data Structures Tutorial - Strings, Lists, Tuples, Dictionaries, Sets">
+    <title>Python Data Structures | NEON TERMINAL</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="js-page-data-structures">
+    <div class="l-grid">
+        <!-- Scanline Overlay -->
+        <div class="c-scanlines"></div>
+        
+        <!-- Header -->
+        <header class="c-header l-header" role="banner">
+            <div class="c-header__grid-overlay"></div>
+            <div class="c-header__content">
+                <h1 class="c-header__title" data-text="PYTHON_TERMINAL">
+                    <span class="c-header__prefix">PY_</span>PYTHON_TERMINAL
+                </h1>
+                <div class="c-header__status">
+                    <span class="u-pulse u-pulse--cyan">●</span>
+                    <span class="c-header__status-text">MODULE: DATA STRUCTURES | STATUS: ONLINE</span>
+                </div>
+            </div>
+            <nav class="c-header__nav" role="navigation" aria-label="Main navigation">
+                <a href="index.html" class="c-btn" aria-label="Back to main tutorial">
+                    <span class="c-btn__content">BACK</span>
+                    <span class="c-btn__glitch-layer"></span>
+                </a>
+                <button class="c-btn c-btn--theme" id="themeToggle" aria-label="Toggle theme">
+                    <span class="c-btn__content">THEME</span>
+                    <span class="c-btn__glitch-layer"></span>
+                </button>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="l-main" id="main-content" role="main">
+            <!-- Navigation Sidebar -->
+            <aside class="c-sidebar l-sidebar" role="complementary" aria-label="Data Structures navigation">
+                <div class="c-sidebar__section">
+                    <h2 class="c-sidebar__title">MODULE_03: DATA STRUCTURES</h2>
+                    <ul class="c-nav">
+                        <li><a href="#strings" class="c-nav__link" data-section="strings">[01] Strings</a></li>
+                        <li><a href="#lists" class="c-nav__link" data-section="lists">[02] Lists</a></li>
+                        <li><a href="#tuples" class="c-nav__link" data-section="tuples">[03] Tuples</a></li>
+                        <li><a href="#dictionaries" class="c-nav__link" data-section="dictionaries">[04] Dictionaries</a></li>
+                        <li><a href="#sets" class="c-nav__link" data-section="sets">[05] Sets</a></li>
+                        <li><a href="#arrays" class="c-nav__link" data-section="arrays">[06] Arrays</a></li>
+                        <li><a href="#comprehension" class="c-nav__link" data-section="comprehension">[07] List Comprehension</a></li>
+                        <li><a href="#collections" class="c-nav__link" data-section="collections">[08] Collections Module</a></li>
+                    </ul>
+                </div>
+            </aside>
+
+            <!-- Content Area -->
+            <section class="c-content l-content" id="content-area">
+                <!-- Strings Section -->
+                <article id="strings" class="c-section is-active" data-section="strings">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[01]</span>
+                            STRINGS
+                        </h2>
+                        <div class="c-section__meta">
+                            <span class="c-tag">BEGINNER</span>
+                            <span class="c-tag">MODULE_03</span>
+                        </div>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">String Creation</h3>
+                                <p class="c-card__text">
+                                    Strings are sequences of characters. Python supports single quotes, double quotes, and triple quotes for multiline strings.
+                                </p>
+                                <div class="c-code-block">
+                                    <div class="c-code-block__header">
+                                        <span class="c-code-block__title">strings.py</span>
+                                        <span class="c-code-block__lang">PYTHON</span>
+                                    </div>
+                                    <pre><code class="language-python"><span class="c-code__comment"># String creation</span>
+single = <span class="c-code__string">'Hello'</span>
+double = <span class="c-code__string">"World"</span>
+triple = <span class="c-code__string">"""This is a
+multiline string"""</span>
+
+<span class="c-code__comment"># String concatenation</span>
+greeting = <span class="c-code__string">"Hello"</span> + <span class="c-code__string">" "</span> + <span class="c-code__string">"World"</span>
+<span class="c-code__function">print</span>(greeting)  <span class="c-code__comment"># Hello World</span>
+
+<span class="c-code__comment"># String repetition</span>
+stars = <span class="c-code__string">"*"</span> * <span class="c-code__number">10</span>
+<span class="c-code__function">print</span>(stars)  <span class="c-code__comment"># **********</span>
+
+<span class="c-code__comment"># f-strings (Python 3.6+)</span>
+name = <span class="c-code__string">"Alice"</span>
+age = <span class="c-code__number">25</span>
+<span class="c-code__function">print</span>(<span class="c-code__string">f"{name} is {age} years old"</span>)
+
+<span class="c-code__comment"># format() method</span>
+<span class="c-code__function">print</span>(<span class="c-code__string">"{} is {} years old"</span>.<span class="c-code__function">format</span>(name, age))</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">String Indexing and Slicing</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python">text = <span class="c-code__string">"Python Programming"</span>
+
+<span class="c-code__comment"># Indexing (0-based)</span>
+<span class="c-code__function">print</span>(text[<span class="c-code__number">0</span>])    <span class="c-code__comment"># P</span>
+<span class="c-code__function">print</span>(text[<span class="c-code__number">6</span>])    <span class="c-code__comment"># P (Programming)</span>
+<span class="c-code__function">print</span>(text[-<span class="c-code__number">1</span>])   <span class="c-code__comment"># g (last character)</span>
+<span class="c-code__function">print</span>(text[-<span class="c-code__number">2</span>])   <span class="c-code__comment"># n (second to last)</span>
+
+<span class="c-code__comment"># Slicing [start:end:step]</span>
+<span class="c-code__function">print</span>(text[<span class="c-code__number">0</span>:<span class="c-code__number">6</span>])     <span class="c-code__comment"># Python</span>
+<span class="c-code__function">print</span>(text[<span class="c-code__number">7</span>:])       <span class="c-code__comment"># Programming</span>
+<span class="c-code__function">print</span>(text[:<span class="c-code__number">6</span>])       <span class="c-code__comment"># Python</span>
+<span class="c-code__function">print</span>(text[::<span class="c-code__number">2</span>])      <span class="c-code__comment"># Pto rgamn</span>
+<span class="c-code__function">print</span>(text[::-<span class="c-code__number">1</span>])     <span class="c-code__comment"># gnimmargorP nohtyP</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">String Methods</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python">text = <span class="c-code__string">"  Hello, World!  "</span>
+
+<span class="c-code__comment"># Case methods</span>
+<span class="c-code__function">print</span>(text.<span class="c-code__function">strip</span>().<span class="c-code__function">lower</span>())    <span class="c-code__comment"># hello, world!</span>
+<span class="c-code__function">print</span>(text.<span class="c-code__function">strip</span>().<span class="c-code__function">upper</span>())    <span class="c-code__comment"># HELLO, WORLD!</span>
+<span class="c-code__function">print</span>(text.<span class="c-code__function">strip</span>().<span class="c-code__function">capitalize</span>()) <span class="c-code__comment"># Hello, world!</span>
+<span class="c-code__function">print</span>(text.<span class="c-code__function">strip</span>().<span class="c-code__function">title</span>())     <span class="c-code__comment"># Hello, World!</span>
+
+<span class="c-code__comment"># Search methods</span>
+<span class="c-code__function">print</span>(text.<span class="c-code__function">find</span>(<span class="c-code__string">"World"</span>))   <span class="c-code__comment"># 9</span>
+<span class="c-code__function">print</span>(text.<span class="c-code__function">index</span>(<span class="c-code__string">"World"</span>))  <span class="c-code__comment"># 9</span>
+<span class="c-code__function">print</span>(<span class="c-code__string">"World"</span> <span class="c-code__keyword">in</span> text)      <span class="c-code__comment"># True</span>
+
+<span class="c-code__comment"># Replace and split</span>
+<span class="c-code__function">print</span>(text.<span class="c-code__function">strip</span>().<span class="c-code__function">replace</span>(<span class="c-code__string">"World"</span>, <span class="c-code__string">"Python"</span>))
+<span class="c-code__function">print</span>(text.<span class="c-code__function">strip</span>().<span class="c-code__function">split</span>(<span class="c-code__string">","</span>))  <span class="c-code__comment"># ['Hello', ' World!']</span>
+
+<span class="c-code__comment"># Join</span>
+words = [<span class="c-code__string">"Python"</span>, <span class="c-code__string">"is"</span>, <span class="c-code__string">"awesome"</span>]
+<span class="c-code__function">print</span>(<span class="c-code__string">" "</span>.<span class="c-code__function">join</span>(words))  <span class="c-code__comment"># Python is awesome</span>
+
+<span class="c-code__comment"># Other useful methods</span>
+<span class="c-code__function">print</span>(<span class="c-code__string">"python123"</span>.<span class="c-code__function">isalnum</span>())  <span class="c-code__comment"># True</span>
+<span class="c-code__function">print</span>(<span class="c-code__string">"123"</span>.<span class="c-code__function">isdigit</span>())        <span class="c-code__comment"># True</span>
+<span class="c-code__function">print</span>(<span class="c-code__string">"hello"</span>.<span class="c-code__function">isalpha</span>())      <span class="c-code__comment"># True</span>
+<span class="c-code__function">print</span>(<span class="c-code__string">"  "</span>.<span class="c-code__function">isspace</span>())         <span class="c-code__comment"># True</span>
+<span class="c-code__function">print</span>(<span class="c-code__string">"hello"</span>.<span class="c-code__function">startswith</span>(<span class="c-code__string">"he"</span>)) <span class="c-code__comment"># True</span>
+<span class="c-code__function">print</span>(<span class="c-code__string">"hello"</span>.<span class="c-code__function">endswith</span>(<span class="c-code__string">"lo"</span>))   <span class="c-code__comment"># True</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Lists Section -->
+                <article id="lists" class="c-section" data-section="lists">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[02]</span>
+                            LISTS
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">List Creation and Access</h3>
+                                <p class="c-card__text">
+                                    Lists are mutable (changeable) ordered sequences of elements.
+                                </p>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Creating lists</span>
+fruits = [<span class="c-code__string">"apple"</span>, <span class="c-code__string">"banana"</span>, <span class="c-code__string">"cherry"</span>]
+numbers = [<span class="c-code__number">1</span>, <span class="c-code__number">2</span>, <span class="c-code__number">3</span>, <span class="c-code__number">4</span>, <span class="c-code__number">5</span>]
+mixed = [<span class="c-code__number">1</span>, <span class="c-code__string">"two"</span>, <span class="c-code__number">3.0</span>, <span class="c-code__constant">True</span>]
+nested = [[<span class="c-code__number">1</span>, <span class="c-code__number">2</span>], [<span class="c-code__number">3</span>, <span class="c-code__number">4</span>], [<span class="c-code__number">5</span>, <span class="c-code__number">6</span>]]
+
+<span class="c-code__comment"># Accessing elements</span>
+<span class="c-code__function">print</span>(fruits[<span class="c-code__number">0</span>])     <span class="c-code__comment"># apple</span>
+<span class="c-code__function">print</span>(fruits[-<span class="c-code__number">1</span>])    <span class="c-code__comment"># cherry</span>
+<span class="c-code__function">print</span>(fruits[<span class="c-code__number">1</span>:<span class="c-code__number">3</span>])   <span class="c-code__comment"># ['banana', 'cherry']</span>
+
+<span class="c-code__comment"># Modifying lists</span>
+fruits[<span class="c-code__number">1</span>] = <span class="c-code__string">"blueberry"</span>
+<span class="c-code__function">print</span>(fruits)  <span class="c-code__comment"># ['apple', 'blueberry', 'cherry']</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">List Methods</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python">fruits = [<span class="c-code__string">"apple"</span>, <span class="c-code__string">"banana"</span>]</
+
+<span class="c-code__comment"># Add elements</span>
+fruits.<span class="c-code__function">append</span>(<span class="c-code__string">"cherry"</span>)      <span class="c-code__comment"># Add to end</span>
+fruits.<span class="c-code__function">insert</span>(<span class="c-code__number">1</span>, <span class="c-code__string">"date"</span>)     <span class="c-code__comment"># Insert at index</span>
+fruits.<span class="c-code__function">extend</span>([<span class="c-code__string">"elderberry"</span>, <span class="c-code__string">"fig"</span>])
+
+<span class="c-code__comment"># Remove elements</span>
+fruits.<span class="c-code__function">remove</span>(<span class="c-code__string">"banana"</span>)  <span class="c-code__comment"># Remove by value</span>
+popped = fruits.<span class="c-code__function">pop</span>()     <span class="c-code__comment"># Remove and return last</span>
+popped = fruits.<span class="c-code__function">pop</span>(<span class="c-code__number">0</span>)   <span class="c-code__comment"># Remove and return at index</span>
+<span class="c-code__keyword">del</span> fruits[<span class="c-code__number">0</span>]            <span class="c-code__comment"># Delete by index</span>
+
+<span class="c-code__comment"># Other methods</span>
+<span class="c-code__function">print</span>(fruits.<span class="c-code__function">index</span>(<span class="c-code__string">"apple"</span>))  <span class="c-code__comment"># Find index</span>
+<span class="c-code__function">print</span>(fruits.<span class="c-code__function">count</span>(<span class="c-code__string">"apple"</span>))  <span class="c-code__comment"># Count occurrences</span>
+fruits.<span class="c-code__function">sort</span>()                  <span class="c-code__comment"># Sort in place</span>
+fruits.<span class="c-code__function">reverse</span>()               <span class="c-code__comment"># Reverse in place</span>
+fruits.<span class="c-code__function">clear</span>()                 <span class="c-code__comment"># Empty the list</span>
+
+<span class="c-code__comment"># List functions</span>
+numbers = [<span class="c-code__number">3</span>, <span class="c-code__number">1</span>, <span class="c-code__number">4</span>, <span class="c-code__number">1</span>, <span class="c-code__number">5</span>, <span class="c-code__number">9</span>]
+<span class="c-code__function">print</span>(<span class="c-code__function">len</span>(numbers))     <span class="c-code__comment"># 6</span>
+<span class="c-code__function">print</span>(<span class="c-code__function">max</span>(numbers))     <span class="c-code__comment"># 9</span>
+<span class="c-code__function">print</span>(<span class="c-code__function">min</span>(numbers))     <span class="c-code__comment"># 1</span>
+<span class="c-code__function">print</span>(<span class="c-code__function">sum</span>(numbers))     <span class="c-code__comment"># 23</span>
+<span class="c-code__function">print</span>(<span class="c-code__function">sorted</span>(numbers))  <span class="c-code__comment"># Returns new sorted list</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">List Unpacking</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Basic unpacking</span>
+coordinates = [<span class="c-code__number">10</span>, <span class="c-code__number">20</span>, <span class="c-code__number">30</span>]
+x, y, z = coordinates
+<span class="c-code__function">print</span>(x, y, z)  <span class="c-code__comment"># 10 20 30</span>
+
+<span class="c-code__comment"># Unpacking with asterisk</span>
+numbers = [<span class="c-code__number">1</span>, <span class="c-code__number">2</span>, <span class="c-code__number">3</span>, <span class="c-code__number">4</span>, <span class="c-code__number">5</span>]
+first, *middle, last = numbers
+<span class="c-code__function">print</span>(first)   <span class="c-code__comment"># 1</span>
+<span class="c-code__function">print</span>(middle)  <span class="c-code__comment"># [2, 3, 4]</span>
+<span class="c-code__function">print</span>(last)    <span class="c-code__comment"># 5</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Tuples Section -->
+                <article id="tuples" class="c-section" data-section="tuples">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[03]</span>
+                            TUPLES
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Immutable Sequences</h3>
+                                <p class="c-card__text">
+                                    Tuples are immutable (unchangeable) ordered sequences. They are faster than lists and used for fixed data.
+                                </p>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Creating tuples</span>
+coordinates = (<span class="c-code__number">10</span>, <span class="c-code__number">20</span>)
+colors = <span class="c-code__string">"red"</span>, <span class="c-code__string">"green"</span>, <span class="c-code__string">"blue"</span>
+single = (<span class="c-code__number">42</span>,)  <span class="c-code__comment"># Comma required for single element</span>
+empty = ()
+
+<span class="c-code__comment"># Accessing elements</span>
+<span class="c-code__function">print</span>(coordinates[<span class="c-code__number">0</span>])  <span class="c-code__comment"># 10</span>
+<span class="c-code__function">print</span>(colors[-<span class="c-code__number">1</span>])     <span class="c-code__comment"># blue</span>
+
+<span class="c-code__comment"># Tuple unpacking</span>
+x, y = coordinates
+<span class="c-code__function">print</span>(<span class="c-code__string">f"X: {x}, Y: {y}"</span>)
+
+<span class="c-code__comment"># Swapping values</span>
+a, b = <span class="c-code__number">1</span>, <span class="c-code__number">2</span>
+a, b = b, a
+<span class="c-code__function">print</span>(a, b)  <span class="c-code__comment"># 2 1</span>
+
+<span class="c-code__comment"># Tuple methods</span>
+numbers = (<span class="c-code__number">1</span>, <span class="c-code__number">2</span>, <span class="c-code__number">2</span>, <span class="c-code__number">3</span>, <span class="c-code__number">2</span>, <span class="c-code__number">4</span>)
+<span class="c-code__function">print</span>(numbers.<span class="c-code__function">count</span>(<span class="c-code__number">2</span>))  <span class="c-code__comment"># 3</span>
+<span class="c-code__function">print</span>(numbers.<span class="c-code__function">index</span>(<span class="c-code__number">3</span>))  <span class="c-code__comment"># 3</span>
+
+<span class="c-code__comment"># Named tuples</span>
+<span class="c-code__keyword">from</span> collections <span class="c-code__keyword">import</span> namedtuple
+Point = <span class="c-code__function">namedtuple</span>(<span class="c-code__string">"Point"</span>, [<span class="c-code__string">"x"</span>, <span class="c-code__string">"y"</span>])
+p = <span class="c-code__function">Point</span>(<span class="c-code__number">10</span>, <span class="c-code__number">20</span>)
+<span class="c-code__function">print</span>(p.x, p.y)  <span class="c-code__comment"># 10 20</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Dictionaries Section -->
+                <article id="dictionaries" class="c-section" data-section="dictionaries">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[04]</span>
+                            DICTIONARIES
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Key-Value Pairs</h3>
+                                <p class="c-card__text">
+                                    Dictionaries are unordered (Python 3.7+: ordered) collections of key-value pairs.
+                                </p>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Creating dictionaries</span>
+person = {
+    <span class="c-code__string">"name"</span>: <span class="c-code__string">"Alice"</span>,
+    <span class="c-code__string">"age"</span>: <span class="c-code__number">30</span>,
+    <span class="c-code__string">"city"</span>: <span class="c-code__string">"New York"</span>
+}
+
+<span class="c-code__comment"># Alternative creation</span>
+person2 = <span class="c-code__function">dict</span>(name=<span class="c-code__string">"Bob"</span>, age=<span class="c-code__number">25</span>)
+
+<span class="c-code__comment"># Accessing values</span>
+<span class="c-code__function">print</span>(person[<span class="c-code__string">"name"</span>])      <span class="c-code__comment"># Alice</span>
+<span class="c-code__function">print</span>(person.<span class="c-code__function">get</span>(<span class="c-code__string">"age"</span>))   <span class="c-code__comment"># 30</span>
+<span class="c-code__function">print</span>(person.<span class="c-code__function">get</span>(<span class="c-code__string">"email"</span>, <span class="c-code__string">"N/A"</span>))  <span class="c-code__comment"># N/A</span>
+
+<span class="c-code__comment"># Modifying dictionaries</span>
+person[<span class="c-code__string">"email"</span>] = <span class="c-code__string">"alice@email.com"</span>
+person[<span class="c-code__string">"age"</span>] = <span class="c-code__number">31</span>
+
+<span class="c-code__comment"># Removing items</span>
+email = person.<span class="c-code__function">pop</span>(<span class="c-code__string">"email"</span>)
+<span class="c-code__keyword">del</span> person[<span class="c-code__string">"city"</span>]
+
+<span class="c-code__comment"># Dictionary methods</span>
+<span class="c-code__function">print</span>(person.<span class="c-code__function">keys</span>())    <span class="c-code__comment"># dict_keys(['name', 'age'])</span>
+<span class="c-code__function">print</span>(person.<span class="c-code__function">values</span>())  <span class="c-code__comment"># dict_values(['Alice', 31])</span>
+<span class="c-code__function">print</span>(person.<span class="c-code__function">items</span>())   <span class="c-code__comment"># dict_items([('name', 'Alice'), ...])</span>
+
+<span class="c-code__comment"># Iterating</span>
+<span class="c-code__keyword">for</span> key, value <span class="c-code__keyword">in</span> person.<span class="c-code__function">items</span>():
+    <span class="c-code__function">print</span>(<span class="c-code__string">f"{key}: {value}"</span>)
+
+<span class="c-code__comment"># Dictionary comprehension</span>
+squares = {x: x**<span class="c-code__number">2</span> <span class="c-code__keyword">for</span> x <span class="c-code__keyword">in</span> <span class="c-code__function">range</span>(<span class="c-code__number">5</span>)}
+<span class="c-code__function">print</span>(squares)  <span class="c-code__comment"># {0: 0, 1: 1, 2: 4, 3: 9, 4: 16}</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Sets Section -->
+                <article id="sets" class="c-section" data-section="sets">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[05]</span>
+                            SETS
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Unordered Unique Elements</h3>
+                                <p class="c-card__text">
+                                    Sets are unordered collections of unique elements. They support mathematical set operations.
+                                </p>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Creating sets</span>
+fruits = {<span class="c-code__string">"apple"</span>, <span class="c-code__string">"banana"</span>, <span class="c-code__string">"cherry"</span>}
+numbers = <span class="c-code__function">set</span>([<span class="c-code__number">1</span>, <span class="c-code__number">2</span>, <span class="c-code__number">2</span>, <span class="c-code__number">3</span>, <span class="c-code__number">3</span>, <span class="c-code__number">3</span>])
+<span class="c-code__function">print</span>(numbers)  <span class="c-code__comment"># {1, 2, 3}</span>
+
+<span class="c-code__comment"># Empty set (not {})</span>
+empty_set = <span class="c-code__function">set</span>()
+
+<span class="c-code__comment"># Set operations</span>
+set1 = {<span class="c-code__number">1</span>, <span class="c-code__number">2</span>, <span class="c-code__number">3</span>, <span class="c-code__number">4</span>}
+set2 = {<span class="c-code__number">3</span>, <span class="c-code__number">4</span>, <span class="c-code__number">5</span>, <span class="c-code__number">6</span>}
+
+<span class="c-code__comment"># Union</span>
+<span class="c-code__function">print</span>(set1 | set2)  <span class="c-code__comment"># {1, 2, 3, 4, 5, 6}</span>
+<span class="c-code__function">print</span>(set1.<span class="c-code__function">union</span>(set2))
+
+<span class="c-code__comment"># Intersection</span>
+<span class="c-code__function">print</span>(set1 & set2)  <span class="c-code__comment"># {3, 4}</span>
+<span class="c-code__function">print</span>(set1.<span class="c-code__function">intersection</span>(set2))
+
+<span class="c-code__comment"># Difference</span>
+<span class="c-code__function">print</span>(set1 - set2)  <span class="c-code__comment"># {1, 2}</span>
+<span class="c-code__function">print</span>(set1.<span class="c-code__function">difference</span>(set2))
+
+<span class="c-code__comment"># Symmetric difference</span>
+<span class="c-code__function">print</span>(set1 ^ set2)  <span class="c-code__comment"># {1, 2, 5, 6}</span>
+
+<span class="c-code__comment"># Set methods</span>
+set1.<span class="c-code__function">add</span>(<span class="c-code__number">5</span>)
+set1.<span class="c-code__function">remove</span>(<span class="c-code__number">1</span>)  <span class="c-code__comment"># Raises error if not found</span>
+set1.<span class="c-code__function">discard</span>(<span class="c-code__number">10</span>)  <span class="c-code__comment"># No error if not found</span>
+<span class="c-code__function">print</span>(<span class="c-code__number">3</span> <span class="c-code__keyword">in</span> set1)  <span class="c-code__comment"># True</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Arrays Section -->
+                <article id="arrays" class="c-section" data-section="arrays">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[06]</span>
+                            ARRAYS
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Array Module</h3>
+                                <p class="c-card__text">
+                                    Python's array module provides space-efficient storage for homogeneous data. For numerical computing, use NumPy arrays.
+                                </p>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__keyword">import</span> array
+
+<span class="c-code__comment"># Creating arrays</span>
+numbers = array.<span class="c-code__function">array</span>(<span class="c-code__string">"i"</span>, [<span class="c-code__number">1</span>, <span class="c-code__number">2</span>, <span class="c-code__number">3</span>, <span class="c-code__number">4</span>, <span class="c-code__number">5</span>])
+<span class="c-code__function">print</span>(numbers)  <span class="c-code__comment"># array('i', [1, 2, 3, 4, 5])</span>
+
+<span class="c-code__comment"># Type codes</span>
+<span class="c-code__comment"># 'i' - signed int, 'f' - float, 'd' - double, 'u' - unicode char</span>
+floats = array.<span class="c-code__function">array</span>(<span class="c-code__string">"f"</span>, [<span class="c-code__number">1.5</span>, <span class="c-code__number">2.5</span>, <span class="c-code__number">3.5</span>])
+
+<span class="c-code__comment"># Array operations</span>
+numbers.<span class="c-code__function">append</span>(<span class="c-code__number">6</span>)
+numbers.<span class="c-code__function">extend</span>([<span class="c-code__number">7</span>, <span class="c-code__number">8</span>])
+numbers.<span class="c-code__function">insert</span>(<span class="c-code__number">0</span>, <span class="c-code__number">0</span>)
+<span class="c-code__function">print</span>(numbers[<span class="c-code__number">0</span>])
+
+<span class="c-code__comment"># NumPy arrays (for data science)</span>
+<span class="c-code__keyword">import</span> numpy <span class="c-code__keyword">as</span> np
+
+np_array = np.<span class="c-code__function">array</span>([<span class="c-code__number">1</span>, <span class="c-code__number">2</span>, <span class="c-code__number">3</span>, <span class="c-code__number">4</span>, <span class="c-code__number">5</span>])
+<span class="c-code__function">print</span>(np_array * <span class="c-code__number">2</span>)  <span class="c-code__comment"># [2 4 6 8 10]</span>
+<span class="c-code__function">print</span>(np_array.<span class="c-code__function">mean</span>())  <span class="c-code__comment"># 3.0</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- List Comprehension Section -->
+                <article id="comprehension" class="c-section" data-section="comprehension">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[07]</span>
+                            LIST COMPREHENSION
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Concise List Creation</h3>
+                                <p class="c-card__text">
+                                    List comprehensions provide a concise way to create lists from iterables.
+                                </p>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Basic comprehension</span>
+squares = [x**<span class="c-code__number">2</span> <span class="c-code__keyword">for</span> x <span class="c-code__keyword">in</span> <span class="c-code__function">range</span>(<span class="c-code__number">10</span>)]
+<span class="c-code__function">print</span>(squares)  <span class="c-code__comment"># [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]</span>
+
+<span class="c-code__comment"># With condition</span>
+evens = [x <span class="c-code__keyword">for</span> x <span class="c-code__keyword">in</span> <span class="c-code__function">range</span>(<span class="c-code__number">20</span>) <span class="c-code__keyword">if</span> x % <span class="c-code__number">2</span> == <span class="c-code__number">0</span>]
+<span class="c-code__function">print</span>(evens)  <span class="c-code__comment"># [0, 2, 4, 6, 8, 10, 12, 14, 16, 18]</span>
+
+<span class="c-code__comment"># Nested comprehension</span>
+matrix = [[<span class="c-code__number">1</span>, <span class="c-code__number">2</span>, <span class="c-code__number">3</span>], [<span class="c-code__number">4</span>, <span class="c-code__number">5</span>, <span class="c-code__number">6</span>], [<span class="c-code__number">7</span>, <span class="c-code__number">8</span>, <span class="c-code__number">9</span>]]
+flattened = [num <span class="c-code__keyword">for</span> row <span class="c-code__keyword">in</span> matrix <span class="c-code__keyword">for</span> num <span class="c-code__keyword">in</span> row]
+<span class="c-code__function">print</span>(flattened)  <span class="c-code__comment"># [1, 2, 3, 4, 5, 6, 7, 8, 9]</span>
+
+<span class="c-code__comment"># With transformation</span>
+words = [<span class="c-code__string">"hello"</span>, <span class="c-code__string">"world"</span>, <span class="c-code__string">"python"</span>]
+uppercased = [word.<span class="c-code__function">upper</span>() <span class="c-code__keyword">for</span> word <span class="c-code__keyword">in</span> words]
+<span class="c-code__function">print</span>(uppercased)  <span class="c-code__comment"># ['HELLO', 'WORLD', 'PYTHON']</span>
+
+<span class="c-code__comment"># Dictionary comprehension</span>
+squares_dict = {x: x**<span class="c-code__number">2</span> <span class="c-code__keyword">for</span> x <span class="c-code__keyword">in</span> <span class="c-code__function">range</span>(<span class="c-code__number">5</span>)}
+
+<span class="c-code__comment"># Set comprehension</span>
+unique_squares = {x**<span class="c-code__number">2</span> <span class="c-code__keyword">for</span> x <span class="c-code__keyword">in</span> [-<span class="c-code__number">2</span>, -<span class="c-code__number">1</span>, <span class="c-code__number">0</span>, <span class="c-code__number">1</span>, <span class="c-code__number">2</span>]}</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Collections Module Section -->
+                <article id="collections" class="c-section" data-section="collections">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[08]</span>
+                            COLLECTIONS MODULE
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Specialized Container Types</h3>
+                                <p class="c-card__text">
+                                    The collections module provides specialized data structures as alternatives to Python's general-purpose built-ins.
+                                </p>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__keyword">from</span> collections <span class="c-code__keyword">import</span> Counter, deque, defaultdict, OrderedDict
+
+<span class="c-code__comment"># Counter - Count hashable objects</span>
+text = <span class="c-code__string">"hello world"</span>
+counter = <span class="c-code__function">Counter</span>(text)
+<span class="c-code__function">print</span>(counter)  <span class="c-code__comment"># Counter({'l': 3, 'o': 2, ...})</span>
+<span class="c-code__function">print</span>(counter.<span class="c-code__function">most_common</span>(<span class="c-code__number">2</span>))  <span class="c-code__comment"># [('l', 3), ('o', 2)]</span>
+
+<span class="c-code__comment"># Deque - Double-ended queue</span>
+d = <span class="c-code__function">deque</span>([<span class="c-code__number">1</span>, <span class="c-code__number">2</span>, <span class="c-code__number">3</span>])
+d.<span class="c-code__function">append</span>(<span class="c-code__number">4</span>)       <span class="c-code__comment"># Add to right</span>
+d.<span class="c-code__function">appendleft</span>(<span class="c-code__number">0</span>)   <span class="c-code__comment"># Add to left</span>
+d.<span class="c-code__function">pop</span>()           <span class="c-code__comment"># Remove from right</span>
+d.<span class="c-code__function">popleft</span>()       <span class="c-code__comment"># Remove from left</span>
+
+<span class="c-code__comment"># Defaultdict - Default values for missing keys</span>
+dd = <span class="c-code__function">defaultdict</span>(<span class="c-code__function">list</span>)
+dd[<span class="c-code__string">"fruits"</span>].<span class="c-code__function">append</span>(<span class="c-code__string">"apple"</span>)
+dd[<span class="c-code__string">"fruits"</span>].<span class="c-code__function">append</span>(<span class="c-code__string">"banana"</span>)
+<span class="c-code__function">print</span>(dd[<span class="c-code__string">"vegetables"</span>])  <span class="c-code__comment"># [] (no error)</span>
+
+<span class="c-code__comment"># OrderedDict - Maintains insertion order</span>
+od = <span class="c-code__function">OrderedDict</span>()
+od[<span class="c-code__string">"a"</span>] = <span class="c-code__number">1</span>
+od[<span class="c-code__string">"b"</span>] = <span class="c-code__number">2</span>
+od[<span class="c-code__string">"c"</span>] = <span class="c-code__number">3</span>
+<span class="c-code__function">print</span>(<span class="c-code__function">list</span>(od.<span class="c-code__function">keys</span>()))  <span class="c-code__comment"># ['a', 'b', 'c']</span>
+
+<span class="c-code__comment"># Heapq - Heap queue algorithm</span>
+<span class="c-code__keyword">import</span> heapq
+numbers = [<span class="c-code__number">3</span>, <span class="c-code__number">1</span>, <span class="c-code__number">4</span>, <span class="c-code__number">1</span>, <span class="c-code__number">5</span>, <span class="c-code__number">9</span>]
+heapq.<span class="c-code__function">heapify</span>(numbers)
+<span class="c-code__function">print</span>(heapq.<span class="c-code__function">heappop</span>(numbers))  <span class="c-code__comment"># 1 (smallest)</span>
+heapq.<span class="c-code__function">heappush</span>(numbers, <span class="c-code__number">0</span>)</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Quiz Section -->
+                <article id="quiz-data-structures" class="c-section c-section--quiz" data-section="quiz-data-structures">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[QUIZ]</span>
+                            DATA STRUCTURES
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-quiz">
+                            <div class="c-quiz__question">
+                                <p>Which data structure is immutable?</p>
+                                <div class="c-quiz__options">
+                                    <label class="c-option">
+                                        <input type="radio" name="q1" value="a">
+                                        <span class="c-option__text">List</span>
+                                    </label>
+                                    <label class="c-option">
+                                        <input type="radio" name="q1" value="b">
+                                        <span class="c-option__text">Dictionary</span>
+                                    </label>
+                                    <label class="c-option">
+                                        <input type="radio" name="q1" value="c">
+                                        <span class="c-option__text">Tuple</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <button class="c-btn c-btn--submit" id="submitQuiz">SUBMIT ANSWER</button>
+                            <div class="c-quiz__result" id="quizResult"></div>
+                        </div>
+                    </div>
+                </article>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="c-footer l-footer" role="contentinfo">
+            <div class="c-footer__content">
+                <p class="c-footer__text">
+                    <span class="c-footer__label">SYSTEM:</span> PYTHON TUTORIAL v3.12
+                    <span class="c-footer__separator">|</span>
+                    <span class="c-footer__label">MODULE:</span> DATA STRUCTURES
+                    <span class="c-footer__separator">|</span>
+                    <span class="c-footer__label">STATUS:</span>
+                    <span class="u-pulse u-pulse--green">●</span> OPERATIONAL
+                </p>
+                <div class="c-footer__meta">
+                    <span>DATA FRAGMENT: PY-DATASTRUCTURES-2026</span>
+                    <span>ENCRYPTION: AES-256</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Mouse Coordinates Display -->
+    <div class="c-coordinates" id="coordinates">
+        <span>X: 0000</span> | <span>Y: 0000</span>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

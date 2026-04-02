@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Python OOP Tutorial - Classes, Objects, Inheritance, Polymorphism">
+    <title>Python OOP | NEON TERMINAL</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="js-page-oop">
+    <div class="l-grid">
+        <!-- Scanline Overlay -->
+        <div class="c-scanlines"></div>
+        
+        <!-- Header -->
+        <header class="c-header l-header" role="banner">
+            <div class="c-header__grid-overlay"></div>
+            <div class="c-header__content">
+                <h1 class="c-header__title" data-text="PYTHON_TERMINAL">
+                    <span class="c-header__prefix">PY_</span>PYTHON_TERMINAL
+                </h1>
+                <div class="c-header__status">
+                    <span class="u-pulse u-pulse--cyan">●</span>
+                    <span class="c-header__status-text">MODULE: OOP | STATUS: ONLINE</span>
+                </div>
+            </div>
+            <nav class="c-header__nav" role="navigation" aria-label="Main navigation">
+                <a href="index.html" class="c-btn" aria-label="Back to main tutorial">
+                    <span class="c-btn__content">BACK</span>
+                    <span class="c-btn__glitch-layer"></span>
+                </a>
+                <button class="c-btn c-btn--theme" id="themeToggle" aria-label="Toggle theme">
+                    <span class="c-btn__content">THEME</span>
+                    <span class="c-btn__glitch-layer"></span>
+                </button>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="l-main" id="main-content" role="main">
+            <!-- Navigation Sidebar -->
+            <aside class="c-sidebar l-sidebar" role="complementary" aria-label="OOP navigation">
+                <div class="c-sidebar__section">
+                    <h2 class="c-sidebar__title">MODULE_04: OOP CONCEPTS</h2>
+                    <ul class="c-nav">
+                        <li><a href="#oop-basics" class="c-nav__link" data-section="oop-basics">[01] Python OOP Basics</a></li>
+                        <li><a href="#classes-objects" class="c-nav__link" data-section="classes-objects">[02] Classes & Objects</a></li>
+                        <li><a href="#inheritance" class="c-nav__link" data-section="inheritance">[03] Inheritance</a></li>
+                        <li><a href="#polymorphism" class="c-nav__link" data-section="polymorphism">[04] Polymorphism</a></li>
+                        <li><a href="#abstraction" class="c-nav__link" data-section="abstraction">[05] Abstraction</a></li>
+                        <li><a href="#encapsulation" class="c-nav__link" data-section="encapsulation">[06] Encapsulation</a></li>
+                        <li><a href="#iterators" class="c-nav__link" data-section="iterators">[07] Iterators</a></li>
+                    </ul>
+                </div>
+            </aside>
+
+            <!-- Content Area -->
+            <section class="c-content l-content" id="content-area">
+                <!-- OOP Basics Section -->
+                <article id="oop-basics" class="c-section is-active" data-section="oop-basics">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[01]</span>
+                            PYTHON OOP BASICS
+                        </h2>
+                        <div class="c-section__meta">
+                            <span class="c-tag">INTERMEDIATE</span>
+                            <span class="c-tag">MODULE_04</span>
+                        </div>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Object-Oriented Programming</h3>
+                                <p class="c-card__text">
+                                    Object-Oriented Programming (OOP) is a programming paradigm based on the concept of objects, which contain data (attributes) and code (methods). Python is an object-oriented language that supports classes and objects.
+                                </p>
+                                <div class="c-card__features">
+                                    <div class="c-feature">
+                                        <span class="u-pulse u-pulse--cyan">●</span>
+                                        <span>Encapsulation</span>
+                                    </div>
+                                    <div class="c-feature">
+                                        <span class="u-pulse u-pulse--magenta">●</span>
+                                        <span>Inheritance</span>
+                                    </div>
+                                    <div class="c-feature">
+                                        <span class="u-pulse u-pulse--green">●</span>
+                                        <span>Polymorphism</span>
+                                    </div>
+                                    <div class="c-feature">
+                                        <span class="u-pulse u-pulse--purple">●</span>
+                                        <span>Abstraction</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c-code-block">
+                            <div class="c-code-block__header">
+                                <span class="c-code-block__title">oop_example.py</span>
+                                <span class="c-code-block__lang">PYTHON</span>
+                            </div>
+                            <pre><code class="language-python"><span class="c-code__comment"># Everything in Python is an object</span>
+number = <span class="c-code__number">42</span>
+text = <span class="c-code__string">"Hello"</span>
+my_list = [<span class="c-code__number">1</span>, <span class="c-code__number">2</span>, <span class="c-code__number">3</span>]
+
+<span class="c-code__function">print</span>(<span class="c-code__function">type</span>(number))   <span class="c-code__comment"># &lt;class 'int'&gt;</span>
+<span class="c-code__function">print</span>(<span class="c-code__function">type</span>(text))     <span class="c-code__comment"># &lt;class 'str'&gt;</span>
+<span class="c-code__function">print</span>(<span class="c-code__function">type</span>(my_list))  <span class="c-code__comment"># &lt;class 'list'&gt;</span>
+
+<span class="c-code__comment"># Check if object is instance of a class</span>
+<span class="c-code__function">print</span>(<span class="c-code__function">isinstance</span>(number, <span class="c-code__function">int</span>))  <span class="c-code__comment"># True</span>
+<span class="c-code__function">print</span>(<span class="c-code__function">isinstance</span>(text, <span class="c-code__function">str</span>))    <span class="c-code__comment"># True</span></code></pre>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Classes and Objects Section -->
+                <article id="classes-objects" class="c-section" data-section="classes-objects">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[02]</span>
+                            CLASSES AND OBJECTS
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Creating Classes</h3>
+                                <p class="c-card__text">
+                                    A class is a blueprint for creating objects. It defines attributes and methods that the objects will have.
+                                </p>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__keyword">class</span> <span class="c-code__class">Person</span>:
+    <span class="c-code__string">"""Class representing a person"""</span>
+    
+    <span class="c-code__comment"># Class attribute (shared by all instances)</span>
+    species = <span class="c-code__string">"Homo sapiens"</span>
+    
+    <span class="c-code__comment"># Constructor (initializer)</span>
+    <span class="c-code__keyword">def</span> <span class="c-code__function">__init__</span>(self, name, age):
+        <span class="c-code__comment"># Instance attributes</span>
+        self.name = name
+        self.age = age
+    
+    <span class="c-code__comment"># Instance method</span>
+    <span class="c-code__keyword">def</span> <span class="c-code__function">greet</span>(self):
+        <span class="c-code__keyword">return</span> <span class="c-code__string">f"Hello, my name is {self.name}"</span>
+    
+    <span class="c-code__keyword">def</span> <span class="c-code__function">birthday</span>(self):
+        self.age += <span class="c-code__number">1</span>
+        <span class="c-code__keyword">return</span> <span class="c-code__string">f"Happy Birthday! Now I'm {self.age}"</span>
+    
+    <span class="c-code__comment"># String representation</span>
+    <span class="c-code__keyword">def</span> <span class="c-code__function">__str__</span>(self):
+        <span class="c-code__keyword">return</span> <span class="c-code__string">f"Person({self.name}, {self.age})"</span>
+
+<span class="c-code__comment"># Creating objects (instances)</span>
+person1 = <span class="c-code__function">Person</span>(<span class="c-code__string">"Alice"</span>, <span class="c-code__number">25</span>)
+person2 = <span class="c-code__function">Person</span>(<span class="c-code__string">"Bob"</span>, <span class="c-code__number">30</span>)
+
+<span class="c-code__function">print</span>(person1.name)        <span class="c-code__comment"># Alice</span>
+<span class="c-code__function">print</span>(person1.age)         <span class="c-code__comment"># 25</span>
+<span class="c-code__function">print</span>(person1.<span class="c-code__function">greet</span>())     <span class="c-code__comment"># Hello, my name is Alice</span>
+<span class="c-code__function">print</span>(person1.species)     <span class="c-code__comment"># Homo sapiens</span>
+<span class="c-code__function">print</span>(person1.<span class="c-code__function">birthday</span>())  <span class="c-code__comment"># Happy Birthday! Now I'm 26</span>
+<span class="c-code__function">print</span>(person2)             <span class="c-code__comment"># Person(Bob, 30)</span></code></pre>
+                                    </div>
+                            </div>
+                        </div>
+
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Class Methods and Static Methods</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__keyword">class</span> <span class="c-code__class">MathOperations</span>:
+    <span class="c-code__comment"># Class method (receives class as first argument)</span>
+    <span class="c-code__decorator">@classmethod</span>
+    <span class="c-code__keyword">def</span> <span class="c-code__function">from_string</span>(cls, string):
+        name, value = string.<span class="c-code__function">split</span>(<span class="c-code__string">"-"</span>)
+        <span class="c-code__keyword">return</span> <span class="c-code__function">cls</span>()
+    
+    <span class="c-code__comment"># Static method (no class or instance reference)</span>
+    <span class="c-code__decorator">@staticmethod</span>
+    <span class="c-code__keyword">def</span> <span class="c-code__function">add</span>(x, y):
+        <span class="c-code__keyword">return</span> x + y
+    
+    <span class="c-code__decorator">@staticmethod</span>
+    <span class="c-code__keyword">def</span> <span class="c-code__function">multiply</span>(x, y):
+        <span class="c-code__keyword">return</span> x * y
+
+<span class="c-code__function">print</span>(MathOperations.<span class="c-code__function">add</span>(<span class="c-code__number">5</span>, <span class="c-code__number">3</span>))      <span class="c-code__comment"># 8</span>
+<span class="c-code__function">print</span>(MathOperations.<span class="c-code__function">multiply</span>(<span class="c-code__number">4</span>, <span class="c-code__number">2</span>))  <span class="c-code__comment"># 8</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Special Methods (Magic/Dunder)</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__keyword">class</span> <span class="c-code__class">Vector</span>:
+    <span class="c-code__keyword">def</span> <span class="c-code__function">__init__</span>(self, x, y):
+        self.x = x
+        self.y = y
+    
+    <span class="c-code__keyword">def</span> <span class="c-code__function">__repr__</span>(self):
+        <span class="c-code__keyword">return</span> <span class="c-code__string">f"Vector({self.x}, {self.y})"</span>
+    
+    <span class="c-code__keyword">def</span> <span class="c-code__function">__str__</span>(self):
+        <span class="c-code__keyword">return</span> <span class="c-code__string">f"({self.x}, {self.y})"</span>
+    
+    <span class="c-code__keyword">def</span> <span class="c-code__function">__add__</span>(self, other):
+        <span class="c-code__keyword">return</span> <span class="c-code__function">Vector</span>(self.x + other.x, self.y + other.y)
+    
+    <span class="c-code__keyword">def</span> <span class="c-code__function">__mul__</span>(self, scalar):
+        <span class="c-code__keyword">return</span> <span class="c-code__function">Vector</span>(self.x * scalar, self.y * scalar)
+    
+    <span class="c-code__keyword">def</span> <span class="c-code__function">__eq__</span>(self, other):
+        <span class="c-code__keyword">return</span> self.x == other.x <span class="c-code__keyword">and</span> self.y == other.y
+    
+    <span class="c-code__keyword">def</span> <span class="c-code__function">__len__</span>(self):
+        <span class="c-code__keyword">return</span> <span class="c-code__function">int</span>((self.x**<span class="c-code__number">2</span> + self.y**<span class="c-code__number">2</span>)**<span class="c-code__number">0.5</span>)
+
+v1 = <span class="c-code__function">Vector</span>(<span class="c-code__number">2</span>, <span class="c-code__number">3</span>)
+v2 = <span class="c-code__function">Vector</span>(<span class="c-code__number">4</span>, <span class="c-code__number">1</span>)
+
+<span class="c-code__function">print</span>(v1 + v2)      <span class="c-code__comment"># (6, 4)</span>
+<span class="c-code__function">print</span>(v1 * <span class="c-code__number">3</span>)       <span class="c-code__comment"># (6, 9)</span>
+<span class="c-code__function">print</span>(<span class="c-code__function">len</span>(v1))      <span class="c-code__comment"># 3</span>
+<span class="c-code__function">print</span>(v1 == v2)     <span class="c-code__comment"># False</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Inheritance Section -->
+                <article id="inheritance" class="c-section" data-section="inheritance">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[03]</span>
+                            INHERITANCE
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Base and Derived Classes</h3>
+                                <p class="c-card__text">
+                                    Inheritance allows a class to inherit attributes and methods from another class. The child class can extend or override the parent's functionality.
+                                </p>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Parent class</span>
+<span class="c-code__keyword">class</span> <span class="c-code__class">Animal</span>:
+    <span class="c-code__keyword">def</span> <span class="c-code__function">__init__</span>(self, name):
+        self.name = name
+    
+    <span class="c-code__keyword">def</span> <span class="c-code__function">speak</span>(self):
+        <span class="c-code__keyword">raise</span> <span class="c-code__function">NotImplementedError</span>(<span class="c-code__string">"Subclass must implement this"</span>)
+    
+    <span class="c-code__keyword">def</span> <span class="c-code__function">info</span>(self):
+        <span class="c-code__keyword">return</span> <span class="c-code__string">f"I am {self.name}"</span>
+
+<span class="c-code__comment"># Child class</span>
+<span class="c-code__keyword">class</span> <span class="c-code__class">Dog</span>(Animal):
+    <span class="c-code__keyword">def</span> <span class="c-code__function">speak</span>(self):
+        <span class="c-code__keyword">return</span> <span class="c-code__string">"Woof!"</span>
+    
+    <span class="c-code__keyword">def</span> <span class="c-code__function">fetch</span>(self):
+        <span class="c-code__keyword">return</span> <span class="c-code__string">f"{self.name} is fetching the ball"</span>
+
+<span class="c-code__comment"># Another child class</span>
+<span class="c-code__keyword">class</span> <span class="c-code__class">Cat</span>(Animal):
+    <span class="c-code__keyword">def</span> <span class="c-code__function">speak</span>(self):
+        <span class="c-code__keyword">return</span> <span class="c-code__string">"Meow!"</span>
+    
+    <span class="c-code__keyword">def</span> <span class="c-code__function">climb</span>(self):
+        <span class="c-code__keyword">return</span> <span class="c-code__string">f"{self.name} is climbing a tree"</span>
+
+dog = <span class="c-code__function">Dog</span>(<span class="c-code__string">"Buddy"</span>)
+cat = <span class="c-code__function">Cat</span>(<span class="c-code__string">"Whiskers"</span>)
+
+<span class="c-code__function">print</span>(dog.<span class="c-code__function">info</span>())    <span class="c-code__comment"># I am Buddy</span>
+<span class="c-code__function">print</span>(dog.<span class="c-code__function">speak</span>())   <span class="c-code__comment"># Woof!</span>
+<span class="c-code__function">print</span>(dog.<span class="c-code__function">fetch</span>())   <span class="c-code__comment"># Buddy is fetching the ball</span>
+<span class="c-code__function">print</span>(cat.<span class="c-code__function">speak</span>())   <span class="c-code__comment"># Meow!</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Multiple Inheritance</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__keyword">class</span> <span class="c-code__class">Flyable</span>:
+    <span class="c-code__keyword">def</span> <span class="c-code__function">fly</span>(self):
+        <span class="c-code__keyword">return</span> <span class="c-code__string">"Flying high!"</span>
+
+<span class="c-code__keyword">class</span> <span class="c-code__class">Swimmable</span>:
+    <span class="c-code__keyword">def</span> <span class="c-code__function">swim</span>(self):
+        <span class="c-code__keyword">return</span> <span class="c-code__string">"Swimming deep!"</span>
+
+<span class="c-code__keyword">class</span> <span class="c-code__class">Duck</span>(Flyable, Swimmable):
+    <span class="c-code__keyword">def</span> <span class="c-code__function">__init__</span>(self, name):
+        self.name = name
+    
+    <span class="c-code__keyword">def</span> <span class="c-code__function">quack</span>(self):
+        <span class="c-code__keyword">return</span> <span class="c-code__string">"Quack!"</span>
+
+duck = <span class="c-code__function">Duck</span>(<span class="c-code__string">"Donald"</span>)
+<span class="c-code__function">print</span>(duck.<span class="c-code__function">fly</span>())    <span class="c-code__comment"># Flying high!</span>
+<span class="c-code__function">print</span>(duck.<span class="c-code__function">swim</span>())   <span class="c-code__comment"># Swimming deep!</span>
+<span class="c-code__function">print</span>(duck.<span class="c-code__function">quack</span>())  <span class="c-code__comment"># Quack!</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Super() Function</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__keyword">class</span> <span class="c-code__class">Employee</span>(Person):
+    <span class="c-code__keyword">def</span> <span class="c-code__function">__init__</span>(self, name, age, employee_id):
+        <span class="c-code__comment"># Call parent class constructor</span>
+        <span class="c-code__function">super</span>().<span class="c-code__function">__init__</span>(name, age)
+        self.employee_id = employee_id
+    
+    <span class="c-code__keyword">def</span> <span class="c-code__function">greet</span>(self):
+        <span class="c-code__comment"># Extend parent method</span>
+        base_greeting = <span class="c-code__function">super</span>().<span class="c-code__function">greet</span>()
+        <span class="c-code__keyword">return</span> <span class="c-code__string">f"{base_greeting}, ID: {self.employee_id}"</span>
+
+emp = <span class="c-code__function">Employee</span>(<span class="c-code__string">"Charlie"</span>, <span class="c-code__number">35</span>, <span class="c-code__string">"E123"</span>)
+<span class="c-code__function">print</span>(emp.<span class="c-code__function">greet</span>())  <span class="c-code__comment"># Hello, my name is Charlie, ID: E123</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Polymorphism Section -->
+                <article id="polymorphism" class="c-section" data-section="polymorphism">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[04]</span>
+                            POLYMORPHISM
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Many Forms</h3>
+                                <p class="c-card__text">
+                                    Polymorphism allows objects of different classes to be treated as objects of a common base class. The same method name can behave differently based on the object.
+                                </p>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Polymorphism with functions</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">animal_sound</span>(animal):
+    <span class="c-code__keyword">return</span> animal.<span class="c-code__function">speak</span>()
+
+dog = <span class="c-code__function">Dog</span>(<span class="c-code__string">"Buddy"</span>)
+cat = <span class="c-code__function">Cat</span>(<span class="c-code__string">"Whiskers"</span>)
+
+<span class="c-code__function">print</span>(<span class="c-code__function">animal_sound</span>(dog))  <span class="c-code__comment"># Woof!</span>
+<span class="c-code__function">print</span>(<span class="c-code__function">animal_sound</span>(cat))  <span class="c-code__comment"># Meow!</span>
+
+<span class="c-code__comment"># Polymorphism in loops</span>
+animals = [dog, cat]
+<span class="c-code__keyword">for</span> animal <span class="c-code__keyword">in</span> animals:
+    <span class="c-code__function">print</span>(<span class="c-code__string">f"{animal.name} says: {animal.speak()}"</span>)
+
+<span class="c-code__comment"># Operator polymorphism</span>
+<span class="c-code__function">print</span>(<span class="c-code__number">5</span> + <span class="c-code__number">3</span>)           <span class="c-code__comment"># 8 (integers)</span>
+<span class="c-code__function">print</span>(<span class="c-code__string">"Hello"</span> + <span class="c-code__string">" World"</span>)  <span class="c-code__comment"># Hello World (strings)</span>
+<span class="c-code__function">print</span>([<span class="c-code__number">1</span>, <span class="c-code__number">2</span>] + [<span class="c-code__number">3</span>, <span class="c-code__number">4</span>])    <span class="c-code__comment"># [1, 2, 3, 4] (lists)</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Duck Typing</h3>
+                                <p class="c-card__text">
+                                    "If it walks like a duck and quacks like a duck, it's a duck." Python doesn't care about the type, only that the object has the required methods.
+                                </p>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__keyword">class</span> <span class="c-code__class">Car</span>:
+    <span class="c-code__keyword">def</span> <span class="c-code__function">move</span>(self):
+        <span class="c-code__keyword">return</span> <span class="c-code__string">"Driving on the road"</span>
+
+<span class="c-code__keyword">class</span> <span class="c-code__class">Boat</span>:
+    <span class="c-code__keyword">def</span> <span class="c-code__function">move</span>(self):
+        <span class="c-code__keyword">return</span> <span class="c-code__string">"Sailing on water"</span>
+
+<span class="c-code__keyword">class</span> <span class="c-code__class">Plane</span>:
+    <span class="c-code__keyword">def</span> <span class="c-code__function">move</span>(self):
+        <span class="c-code__keyword">return</span> <span class="c-code__string">"Flying in the sky"</span>
+
+<span class="c-code__keyword">def</span> <span class="c-code__function">travel</span>(vehicle):
+    <span class="c-code__keyword">return</span> vehicle.<span class="c-code__function">move</span>()
+
+car = <span class="c-code__function">Car</span>()
+boat = <span class="c-code__function">Boat</span>()
+plane = <span class="c-code__function">Plane</span>()
+
+<span class="c-code__function">print</span>(<span class="c-code__function">travel</span>(car))    <span class="c-code__comment"># Driving on the road</span>
+<span class="c-code__function">print</span>(<span class="c-code__function">travel</span>(boat))   <span class="c-code__comment"># Sailing on water</span>
+<span class="c-code__function">print</span>(<span class="c-code__function">travel</span>(plane))  <span class="c-code__comment"># Flying in the sky</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Abstraction Section -->
+                <article id="abstraction" class="c-section" data-section="abstraction">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[05]</span>
+                            ABSTRACTION
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Hiding Implementation Details</h3>
+                                <p class="c-card__text">
+                                    Abstraction hides complex implementation details and shows only the essential features. Python uses abstract base classes (ABC) to define abstract methods.
+                                </p>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__keyword">from</span> abc <span class="c-code__keyword">import</span> ABC, abstractmethod
+
+<span class="c-code__keyword">class</span> <span class="c-code__class">Shape</span>(ABC):
+    <span class="c-code__decorator">@abstractmethod</span>
+    <span class="c-code__keyword">def</span> <span class="c-code__function">area</span>(self):
+        <span class="c-code__keyword">pass</span>
+    
+    <span class="c-code__decorator">@abstractmethod</span>
+    <span class="c-code__keyword">def</span> <span class="c-code__function">perimeter</span>(self):
+        <span class="c-code__keyword">pass</span>
+    
+    <span class="c-code__keyword">def</span> <span class="c-code__function">describe</span>(self):
+        <span class="c-code__keyword">return</span> <span class="c-code__string">"I am a geometric shape"</span>
+
+<span class="c-code__keyword">class</span> <span class="c-code__class">Rectangle</span>(Shape):
+    <span class="c-code__keyword">def</span> <span class="c-code__function">__init__</span>(self, width, height):
+        self.width = width
+        self.height = height
+    
+    <span class="c-code__keyword">def</span> <span class="c-code__function">area</span>(self):
+        <span class="c-code__keyword">return</span> self.width * self.height
+    
+    <span class="c-code__keyword">def</span> <span class="c-code__function">perimeter</span>(self):
+        <span class="c-code__keyword">return</span> <span class="c-code__number">2</span> * (self.width + self.height)
+
+<span class="c-code__keyword">class</span> <span class="c-code__class">Circle</span>(Shape):
+    <span class="c-code__keyword">def</span> <span class="c-code__function">__init__</span>(self, radius):
+        self.radius = radius
+    
+    <span class="c-code__keyword">def</span> <span class="c-code__function">area</span>(self):
+        <span class="c-code__keyword">return</span> <span class="c-code__number">3.14159</span> * self.radius ** <span class="c-code__number">2</span>
+    
+    <span class="c-code__keyword">def</span> <span class="c-code__function">perimeter</span>(self):
+        <span class="c-code__keyword">return</span> <span class="c-code__number">2</span> * <span class="c-code__number">3.14159</span> * self.radius
+
+rect = <span class="c-code__function">Rectangle</span>(<span class="c-code__number">5</span>, <span class="c-code__number">3</span>)
+circle = <span class="c-code__function">Circle</span>(<span class="c-code__number">4</span>)
+
+<span class="c-code__function">print</span>(rect.<span class="c-code__function">describe</span>())  <span class="c-code__comment"># I am a geometric shape</span>
+<span class="c-code__function">print</span>(rect.<span class="c-code__function">area</span>())      <span class="c-code__comment"># 15</span>
+<span class="c-code__function">print</span>(circle.<span class="c-code__function">area</span>())    <span class="c-code__comment"># 50.26544</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Encapsulation Section -->
+                <article id="encapsulation" class="c-section" data-section="encapsulation">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[06]</span>
+                            ENCAPSULATION
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Data Hiding</h3>
+                                <p class="c-card__text">
+                                    Encapsulation bundles data and methods that operate on that data within a single unit. It restricts direct access to some components using access modifiers.
+                                </p>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__keyword">class</span> <span class="c-code__class">BankAccount</span>:
+    <span class="c-code__keyword">def</span> <span class="c-code__function">__init__</span>(self, owner, balance=<span class="c-code__number">0</span>):
+        self.owner = owner          <span class="c-code__comment"># Public attribute</span>
+        self._balance = balance     <span class="c-code__comment"># Protected (convention)</span>
+        self.__password = <span class="c-code__string">"1234"</span>   <span class="c-code__comment"># Private (name mangling)</span>
+    
+    <span class="c-code__keyword">def</span> <span class="c-code__function">deposit</span>(self, amount):
+        <span class="c-code__keyword">if</span> amount > <span class="c-code__number">0</span>:
+            self._balance += amount
+            <span class="c-code__keyword">return</span> <span class="c-code__string">f"Deposited ${amount}. New balance: ${self._balance}"</span>
+        <span class="c-code__keyword">return</span> <span class="c-code__string">"Invalid amount"</span>
+    
+    <span class="c-code__keyword">def</span> <span class="c-code__function">withdraw</span>(self, amount):
+        <span class="c-code__keyword">if</span> <span class="c-code__number">0</span> < < amount <= self._balance:
+            self._balance -= amount
+            <span class="c-code__keyword">return</span> <span class="c-code__string">f"Withdrew ${amount}. Balance: ${self._balance}"</span>
+        <span class="c-code__keyword">return</span> <span class="c-code__string">"Insufficient funds"</span>
+    
+    <span class="c-code__keyword">def</span> <span class="c-code__function">get_balance</span>(self):
+        <span class="c-code__keyword">return</span> self._balance
+    
+    <span class="c-code__comment"># Property decorator for controlled access</span>
+    <span class="c-code__decorator">@property</span>
+    <span class="c-code__keyword">def</span> <span class="c-code__function">balance</span>(self):
+        <span class="c-code__keyword">return</span> self._balance
+    
+    <span class="c-code__decorator">@balance.setter</span>
+    <span class="c-code__keyword">def</span> <span class="c-code__function">balance</span>(self, value):
+        <span class="c-code__keyword">if</span> value >= <span class="c-code__number">0</span>:
+            self._balance = value
+        <span class="c-code__keyword">else</span>:
+            <span class="c-code__keyword">raise</span> <span class="c-code__function">ValueError</span>(<span class="c-code__string">"Balance cannot be negative"</span>)
+
+account = <span class="c-code__function">BankAccount</span>(<span class="c-code__string">"Alice"</span>, <span class="c-code__number">1000</span>)
+<span class="c-code__function">print</span>(account.<span class="c-code__function">deposit</span>(<span class="c-code__number">500</span>))    <span class="c-code__comment"># Deposited $500. New balance: $1500</span>
+<span class="c-code__function">print</span>(account.<span class="c-code__function">withdraw</span>(<span class="c-code__number">200</span>))   <span class="c-code__comment"># Withdrew $200. Balance: $1300</span>
+<span class="c-code__function">print</span>(account.balance)        <span class="c-code__comment"># 1300 (using property)</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Iterators Section -->
+                <article id="iterators" class="c-section" data-section="iterators">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[07]</span>
+                            ITERATORS
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Custom Iterators</h3>
+                                <p class="c-card__text">
+                                    Iterators are objects that implement the iterator protocol (__iter__() and __next__()). They allow iteration over a sequence of values.
+                                </p>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__keyword">class</span> <span class="c-code__class">Countdown</span>:
+    <span class="c-code__keyword">def</span> <span class="c-code__function">__init__</span>(self, start):
+        self.start = start
+    
+    <span class="c-code__keyword">def</span> <span class="c-code__function">__iter__</span>(self):
+        <span class="c-code__keyword">return</span> self
+    
+    <span class="c-code__keyword">def</span> <span class="c-code__function">__next__</span>(self):
+        <span class="c-code__keyword">if</span> self.start <= <span class="c-code__number">0</span>:
+            <span class="c-code__keyword">raise</span> <span class="c-code__function">StopIteration</span>
+        self.start -= <span class="c-code__number">1</span>
+        <span class="c-code__keyword">return</span> self.start + <span class="c-code__number">1</span>
+
+countdown = <span class="c-code__function">Countdown</span>(<span class="c-code__number">5</span>)
+<span class="c-code__keyword">for</span> num <span class="c-code__keyword">in</span> countdown:
+    <span class="c-code__function">print</span>(num)  <span class="c-code__comment"># 5, 4, 3, 2, 1</span>
+
+<span class="c-code__comment"># Generator function (simpler iterator)</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">countdown_generator</span>(start):
+    <span class="c-code__keyword">while</span> start > <span class="c-code__number">0</span>:
+        <span class="c-code__keyword">yield</span> start
+        start -= <span class="c-code__number">1</span>
+
+<span class="c-code__keyword">for</span> num <span class="c-code__keyword">in</span> <span class="c-code__function">countdown_generator</span>(<span class="c-code__number">5</span>):
+    <span class="c-code__function">print</span>(num)  <span class="c-code__comment"># 5, 4, 3, 2, 1</span>
+
+<span class="c-code__comment"># Infinite iterator</span>
+<span class="c-code__keyword">class</span> <span class="c-code__class">Fibonacci</span>:
+    <span class="c-code__keyword">def</span> <span class="c-code__function">__iter__</span>(self):
+        self.a, self.b = <span class="c-code__number">0</span>, <span class="c-code__number">1</span>
+        <span class="c-code__keyword">return</span> self
+    
+    <span class="c-code__keyword">def</span> <span class="c-code__function">__next__</span>(self):
+        result = self.a
+        self.a, self.b = self.b, self.a + self.b
+        <span class="c-code__keyword">return</span> result
+
+fib = <span class="c-code__function">Fibonacci</span>()
+<span class="c-code__keyword">for</span> i, num <span class="c-code__keyword">in</span> <span class="c-code__function">enumerate</span>(fib):
+    <span class="c-code__function">print</span>(num, end=<span class="c-code__string">" "</span>)  <span class="c-code__comment"># 0 1 1 2 3 5 8 13 21 34</span>
+    <span class="c-code__keyword">if</span> i >= <span class="c-code__number">9</span>:
+        <span class="c-code__keyword">break</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Quiz Section -->
+                <article id="quiz-oop" class="c-section c-section--quiz" data-section="quiz-oop">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[QUIZ]</span>
+                            OOP CONCEPTS
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-quiz">
+                            <div class="c-quiz__question">
+                                <p>Which keyword is used to create an abstract class?</p>
+                                <div class="c-quiz__options">
+                                    <label class="c-option">
+                                        <input type="radio" name="q1" value="a">
+                                        <span class="c-option__text">abstract</span>
+                                    </label>
+                                    <label class="c-option">
+                                        <input type="radio" name="q1" value="b">
+                                        <span class="c-option__text">ABC</span>
+                                    </label>
+                                    <label class="c-option">
+                                        <input type="radio" name="q1" value="c">
+                                        <span class="c-option__text">interface</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <button class="c-btn c-btn--submit" id="submitQuiz">SUBMIT ANSWER</button>
+                            <div class="c-quiz__result" id="quizResult"></div>
+                        </div>
+                    </div>
+                </article>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="c-footer l-footer" role="contentinfo">
+            <div class="c-footer__content">
+                <p class="c-footer__text">
+                    <span class="c-footer__label">SYSTEM:</span> PYTHON TUTORIAL v3.12
+                    <span class="c-footer__separator">|</span>
+                    <span class="c-footer__label">MODULE:</span> OOP
+                    <span class="c-footer__separator">|</span>
+                    <span class="c-footer__label">STATUS:</span>
+                    <span class="u-pulse u-pulse--green">●</span> OPERATIONAL
+                </p>
+                <div class="c-footer__meta">
+                    <span>DATA FRAGMENT: PY-OOP-2026</span>
+                    <span>ENCRYPTION: AES-256</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Mouse Coordinates Display -->
+    <div class="c-coordinates" id="coordinates">
+        <span>X: 0000</span> | <span>Y: 0000</span>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

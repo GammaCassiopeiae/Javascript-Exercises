@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Golang Algorithm Database — A comprehensive collection of Go algorithms rendered in neon-noir cyberpunk aesthetics.">
+  <title>GO_ALGO_TERMINAL // NEON-NOIR_v4.0</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="golang-algorithms-styles.css">
+</head>
+<body class="l-terminal">
+
+  <!-- BIOS Boot Sequence Overlay -->
+  <div class="c-boot" id="boot-screen">
+    <div class="c-boot__log" id="boot-log"></div>
+    <div class="c-boot__cursor">_</div>
+  </div>
+
+  <!-- Mouse Coordinate HUD -->
+  <div class="c-hud" id="mouse-hud">
+    X: <span id="hud-x">0000</span> | Y: <span id="hud-y">0000</span>
+  </div>
+
+  <!-- 12. Sticky Header Pattern -->
+  <header class="c-header">
+    <h1 class="c-header__title" data-text="GO_ALGO_DATABASE_v4.0">
+      GO_ALGO_DATABASE_v4.0
+    </h1>
+    <div class="c-header__meta">
+      <span class="u-pulse" style="color: var(--neon-magenta)">●</span>
+      UPLINK: STABLE | ENCRYPTION: AES-256 | GOPHER_v1.22
+    </div>
+  </header>
+
+  <!-- Filter & Search Controls -->
+  <nav class="c-controls" aria-label="Algorithm filters">
+    <div class="c-controls__search">
+      <label for="search-input" class="u-visually-hidden">Search algorithms</label>
+      <input type="text" id="search-input" class="c-input" placeholder=">> SEARCH_ALGORITHM..." autocomplete="off">
+    </div>
+    <div class="c-controls__filters" id="filter-buttons">
+      <button class="c-filter-btn is-active" data-filter="all">ALL_NODES</button>
+      <button class="c-filter-btn" data-filter="sorting">SORTING</button>
+      <button class="c-filter-btn" data-filter="searching">SEARCH</button>
+      <button class="c-filter-btn" data-filter="data-structure">DATA_STRUCT</button>
+      <button class="c-filter-btn" data-filter="graph">GRAPH</button>
+      <button class="c-filter-btn" data-filter="dynamic">DYN_PROG</button>
+    </div>
+    <div class="c-controls__stats">
+      <span id="node-count">NODES: 030</span> |
+      <span id="active-filter">FILTER: ALL</span>
+    </div>
+  </nav>
+
+  <main class="c-main" id="algo-grid">
+    <!-- Go Algorithm Nodes Injected via JS Engine -->
+  </main>
+
+  <footer class="c-footer">
+    <p>GO_SERVER_UPLINK // ACCESS_LEVEL: ROOT // GOPHER_PROTOCOL_v1.22 // <span class="u-pulse">LIVE</span></p>
+  </footer>
+
+  <script src="golang-algorithms-app.js"></script>
+</body>
+</html>

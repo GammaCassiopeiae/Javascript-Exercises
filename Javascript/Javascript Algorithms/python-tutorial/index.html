@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Comprehensive Python 3 Tutorial - From Basics to Advanced">
+    <title>Python Tutorial | NEON TERMINAL</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="js-page-home">
+    <div class="l-grid">
+        <!-- Scanline Overlay -->
+        <div class="c-scanlines"></div>
+        
+        <!-- Header -->
+        <header class="c-header l-header" role="banner">
+            <div class="c-header__grid-overlay"></div>
+            <div class="c-header__content">
+                <h1 class="c-header__title" data-text="PYTHON_TERMINAL">
+                    <span class="c-header__prefix">PY_</span>PYTHON_TERMINAL
+                </h1>
+                <div class="c-header__status">
+                    <span class="u-pulse u-pulse--cyan">●</span>
+                    <span class="c-header__status-text">VERSION: 3.12 | STATUS: ONLINE</span>
+                </div>
+            </div>
+            <nav class="c-header__nav" role="navigation" aria-label="Main navigation">
+                <button class="c-btn c-btn--theme" id="themeToggle" aria-label="Toggle theme">
+                    <span class="c-btn__content">THEME</span>
+                    <span class="c-btn__glitch-layer"></span>
+                </button>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="l-main" id="main-content" role="main">
+            <!-- Navigation Sidebar -->
+            <aside class="c-sidebar l-sidebar" role="complementary" aria-label="Tutorial navigation">
+                <div class="c-sidebar__section">
+                    <h2 class="c-sidebar__title">MODULE_01: BASICS</h2>
+                    <ul class="c-nav">
+                        <li><a href="#introduction" class="c-nav__link is-active" data-section="introduction">[01] Introduction</a></li>
+                        <li><a href="#applications" class="c-nav__link" data-section="applications">[02] Applications</a></li>
+                        <li><a href="#input-output" class="c-nav__link" data-section="input-output">[03] Input & Output</a></li>
+                        <li><a href="#variables" class="c-nav__link" data-section="variables">[04] Variables</a></li>
+                        <li><a href="#operators" class="c-nav__link" data-section="operators">[05] Operators</a></li>
+                        <li><a href="#keywords" class="c-nav__link" data-section="keywords">[06] Keywords</a></li>
+                        <li><a href="#data-types" class="c-nav__link" data-section="data-types">[07] Data Types</a></li>
+                        <li><a href="#conditional-statements" class="c-nav__link" data-section="conditional-statements">[08] Conditional Statements</a></li>
+                        <li><a href="#loops" class="c-nav__link" data-section="loops">[09] Loops</a></li>
+                    </ul>
+                </div>
+                <div class="c-sidebar__section">
+                    <h2 class="c-sidebar__title">MODULE_02: FUNCTIONS</h2>
+                    <ul class="c-nav">
+                        <li><a href="functions.html" class="c-nav__link">[01] Functions Basics</a></li>
+                        <li><a href="functions.html#pass-statement" class="c-nav__link">[02] Pass Statement</a></li>
+                        <li><a href="functions.html#scope" class="c-nav__link">[03] Variable Scope</a></li>
+                        <li><a href="functions.html#recursion" class="c-nav__link">[04] Recursion</a></li>
+                        <li><a href="functions.html#args-kwargs" class="c-nav__link">[05] *args & **kwargs</a></li>
+                        <li><a href="functions.html#lambda" class="c-nav__link">[06] Lambda Functions</a></li>
+                        <li><a href="functions.html#map-filter" class="c-nav__link">[07] Map & Filter</a></li>
+                        <li><a href="functions.html#decorators" class="c-nav__link">[08] Decorators</a></li>
+                    </ul>
+                </div>
+                <div class="c-sidebar__section">
+                    <h2 class="c-sidebar__title">MODULE_03: DATA STRUCTURES</h2>
+                    <ul class="c-nav">
+                        <li><a href="data-structures.html" class="c-nav__link">[01] Strings</a></li>
+                        <li><a href="data-structures.html#lists" class="c-nav__link">[02] Lists</a></li>
+                        <li><a href="data-structures.html#tuples" class="c-nav__link">[03] Tuples</a></li>
+                        <li><a href="data-structures.html#dictionaries" class="c-nav__link">[04] Dictionaries</a></li>
+                        <li><a href="data-structures.html#sets" class="c-nav__link">[05] Sets</a></li>
+                        <li><a href="data-structures.html#arrays" class="c-nav__link">[06] Arrays</a></li>
+                        <li><a href="data-structures.html#comprehension" class="c-nav__link">[07] List Comprehension</a></li>
+                        <li><a href="data-structures.html#collections" class="c-nav__link">[08] Collections Module</a></li>
+                    </ul>
+                </div>
+                <div class="c-sidebar__section">
+                    <h2 class="c-sidebar__title">MODULE_04: OOP</h2>
+                    <ul class="c-nav">
+                        <li><a href="oop.html" class="c-nav__link">[01] Classes & Objects</a></li>
+                        <li><a href="oop.html#inheritance" class="c-nav__link">[02] Inheritance</a></li>
+                        <li><a href="oop.html#polymorphism" class="c-nav__link">[03] Polymorphism</a></li>
+                        <li><a href="oop.html#abstraction" class="c-nav__link">[04] Abstraction</a></li>
+                        <li><a href="oop.html#encapsulation" class="c-nav__link">[05] Encapsulation</a></li>
+                        <li><a href="oop.html#iterators" class="c-nav__link">[06] Iterators</a></li>
+                    </ul>
+                </div>
+                <div class="c-sidebar__section">
+                    <h2 class="c-sidebar__title">MODULE_05: ADVANCED</h2>
+                    <ul class="c-nav">
+                        <li><a href="advanced.html" class="c-nav__link">[01] Exception Handling</a></li>
+                        <li><a href="advanced.html#file-handling" class="c-nav__link">[02] File Handling</a></li>
+                        <li><a href="advanced.html#os-module" class="c-nav__link">[03] OS Module</a></li>
+                        <li><a href="advanced.html#database" class="c-nav__link">[04] Database Handling</a></li>
+                        <li><a href="advanced.html#packages" class="c-nav__link">[05] Packages & Libraries</a></li>
+                    </ul>
+                </div>
+            </aside>
+
+            <!-- Content Area -->
+            <section class="c-content l-content" id="content-area">
+                <!-- Introduction Section -->
+                <article id="introduction" class="c-section is-active" data-section="introduction">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[01]</span>
+                            INTRODUCTION TO PYTHON
+                        </h2>
+                        <div class="c-section__meta">
+                            <span class="c-tag">BEGINNER</span>
+                            <span class="c-tag">MODULE_01</span>
+                        </div>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">What is Python?</h3>
+                                <p class="c-card__text">
+                                    Python is a high-level, interpreted, general-purpose programming language created by Guido van Rossum 
+                                    and first released in 1991. Python emphasizes code readability with significant indentation and 
+                                    supports multiple programming paradigms including procedural, object-oriented, and functional programming.
+                                </p>
+                                <div class="c-card__features">
+                                    <div class="c-feature">
+                                        <span class="u-pulse u-pulse--green">●</span>
+                                        <span>Easy to Learn</span>
+                                    </div>
+                                    <div class="c-feature">
+                                        <span class="u-pulse u-pulse--green">●</span>
+                                        <span>Versatile</span>
+                                    </div>
+                                    <div class="c-feature">
+                                        <span class="u-pulse u-pulse--green">●</span>
+                                        <span>Large Community</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c-code-block">
+                            <div class="c-code-block__header">
+                                <span class="c-code-block__title">hello_world.py</span>
+                                <span class="c-code-block__lang">PYTHON</span>
+                            </div>
+                            <pre><code class="language-python"><span class="c-code__comment"># Your first Python program</span>
+<span class="c-code__function">print</span>(<span class="c-code__string">"Hello, World!"</span>)
+
+<span class="c-code__comment"># Python uses indentation for code blocks</span>
+<span class="c-code__keyword">if</span> <span class="c-code__constant">True</span>:
+    <span class="c-code__function">print</span>(<span class="c-code__string">"This is indented"</span>)</code></pre>
+                        </div>
+
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Installing Python</h3>
+                                <ol class="c-steps">
+                                    <li class="c-steps__item">
+                                        <span class="c-steps__number">01</span>
+                                        <span class="c-steps__text">Download Python from <a href="https://python.org" class="c-link" target="_blank" rel="noopener noreferrer">python.org</a></span>
+                                    </li>
+                                    <li class="c-steps__item">
+                                        <span class="c-steps__number">02</span>
+                                        <span class="c-steps__text">Run the installer and check "Add Python to PATH"</span>
+                                    </li>
+                                    <li class="c-steps__item">
+                                        <span class="c-steps__number">03</span>
+                                        <span class="c-steps__text">Verify installation: <code class="c-inline-code">python --version</code></span>
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Applications Section -->
+                <article id="applications" class="c-section" data-section="applications">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[02]</span>
+                            PYTHON APPLICATIONS
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="l-grid-cards">
+                            <div class="c-card" data-serial="PY-WEB-01">
+                                <div class="c-card__header">
+                                    <span class="c-card__tag">WEB DEVELOPMENT</span>
+                                </div>
+                                <div class="c-card__body">
+                                    <h3 class="c-card__title">Web Frameworks</h3>
+                                    <p class="c-card__text">
+                                        Django, Flask, FastAPI for building robust web applications and APIs.
+                                    </p>
+                                    <div class="c-code-block c-code-block--small">
+                                        <pre><code class="language-python"><span class="c-code__keyword">from</span> flask <span class="c-code__keyword">import</span> Flask
+
+app = Flask(__name__)
+
+<span class="c-code__decorator">@app.route</span>(<span class="c-code__string">"/"</span>)
+<span class="c-code__keyword">def</span> <span class="c-code__function">home</span>():
+    <span class="c-code__keyword">return</span> <span class="c-code__string">"Hello, Web!"</span></code></pre>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="c-card" data-serial="PY-DS-02">
+                                <div class="c-card__header">
+                                    <span class="c-card__tag">DATA SCIENCE</span>
+                                </div>
+                                <div class="c-card__body">
+                                    <h3 class="c-card__title">Data Analysis</h3>
+                                    <p class="c-card__text">
+                                        NumPy, Pandas, Matplotlib for data manipulation and visualization.
+                                    </p>
+                                    <div class="c-code-block c-code-block--small">
+                                        <pre><code class="language-python"><span class="c-code__keyword">import</span> pandas <span class="c-code__keyword">as</span> pd
+
+df = pd.read_csv(<span class="c-code__string">"data.csv"</span>)
+<span class="c-code__function">print</span>(df.<span class="c-code__function">describe</span>())</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="c-card" data-serial="PY-ML-03">
+                                <div class="c-card__header">
+                                    <span class="c-card__tag">MACHINE LEARNING</span>
+                                </div>
+                                <div class="c-card__body">
+                                    <h3 class="c-card__title">AI & ML</h3>
+                                    <p class="c-card__text">
+                                        Scikit-learn, TensorFlow, PyTorch for machine learning and deep learning.
+                                    </p>
+                                    <div class="c-code-block c-code-block--small">
+                                        <pre><code class="language-python"><span class="c-code__keyword">from</span> sklearn <span class="c-code__keyword">import</span> linear_model
+
+model = linear_model.LinearRegression()
+model.fit(X_train, y_train)</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="c-card" data-serial="PY-AUTO-04">
+                                <div class="c-card__header">
+                                    <span class="c-card__tag">AUTOMATION</span>
+                                </div>
+                                <div class="c-card__body">
+                                    <h3 class="c-card__title">Scripting & Automation</h3>
+                                    <p class="c-card__text">
+                                        Automate repetitive tasks, web scraping, file operations.
+                                    </p>
+                                    <div class="c-code-block c-code-block--small">
+                                        <pre><code class="language-python"><span class="c-code__keyword">import</span> os
+
+<span class="c-code__keyword">for</span> file <span class="c-code__keyword">in</span> os.<span class="c-code__function">listdir</span>(<span class="c-code__string">"./"</span>):
+    <span class="c-code__function">print</span>(<span class="c-code__string">f"Found: {file}"</span>)</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Input & Output Section -->
+                <article id="input-output" class="c-section" data-section="input-output">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[03]</span>
+                            INPUT AND OUTPUT
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Output with print()</h3>
+                                <p class="c-card__text">
+                                    The <code class="c-inline-code">print()</code> function outputs data to the console.
+                                </p>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Basic print</span>
+<span class="c-code__function">print</span>(<span class="c-code__string">"Hello, Python!"</span>)
+
+<span class="c-code__comment"># Print multiple values</span>
+<span class="c-code__function">print</span>(<span class="c-code__string">"Name:"</span>, <span class="c-code__string">"Alice"</span>, <span class="c-code__string">"Age:"</span>, <span class="c-code__number">25</span>)
+
+<span class="c-code__comment"># Formatted output with f-strings</span>
+name = <span class="c-code__string">"Bob"</span>
+age = <span class="c-code__number">30</span>
+<span class="c-code__function">print</span>(<span class="c-code__string">f"{name} is {age} years old"</span>)
+
+<span class="c-code__comment"># Custom separator and end</span>
+<span class="c-code__function">print</span>(<span class="c-code__number">1</span>, <span class="c-code__number">2</span>, <span class="c-code__number">3</span>, sep=<span class="c-code__string">"-"</span>, end=<span class="c-code__string">"!\n"</span>)</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Input with input()</h3>
+                                <p class="c-card__text">
+                                    The <code class="c-inline-code">input()</code> function reads user input as a string.
+                                </p>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Basic input</span>
+name = <span class="c-code__function">input</span>(<span class="c-code__string">"Enter your name: "</span>)
+<span class="c-code__function">print</span>(<span class="c-code__string">f"Hello, {name}!"</span>)
+
+<span class="c-code__comment"># Converting input to numbers</span>
+age = <span class="c-code__function">int</span>(<span class="c-code__function">input</span>(<span class="c-code__string">"Enter your age: "</span>))
+height = <span class="c-code__function">float</span>(<span class="c-code__function">input</span>(<span class="c-code__string">"Enter height (m): "</span>))
+
+<span class="c-code__comment"># Input with validation</span>
+<span class="c-code__keyword">while</span> <span class="c-code__constant">True</span>:
+    user_input = <span class="c-code__function">input</span>(<span class="c-code__string">"Enter a number: "</span>)
+    <span class="c-code__keyword">if</span> user_input.<span class="c-code__function">isdigit</span>():
+        <span class="c-code__function">break</span>
+    <span class="c-code__function">print</span>(<span class="c-code__string">"Invalid input!"</span>)</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Variables Section -->
+                <article id="variables" class="c-section" data-section="variables">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[04]</span>
+                            VARIABLES
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Variable Declaration</h3>
+                                <p class="c-card__text">
+                                    Python variables are created when you assign a value to them. No explicit declaration needed.
+                                </p>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Variable assignment</span>
+x = <span class="c-code__number">5</span>
+y = <span class="c-code__string">"Hello"</span>
+pi = <span class="c-code__number">3.14159</span>
+is_active = <span class="c-code__constant">True</span>
+
+<span class="c-code__comment"># Multiple assignment</span>
+a, b, c = <span class="c-code__number">1</span>, <span class="c-code__number">2</span>, <span class="c-code__number">3</span>
+
+<span class="c-code__comment"># Same value to multiple variables</span>
+x = y = z = <span class="c-code__number">0</span>
+
+<span class="c-code__comment"># Swapping values</span>
+a, b = b, a
+
+<span class="c-code__comment"># Variable naming rules</span>
+user_name = <span class="c-code__string">"john"</span>  <span class="c-code__comment"># snake_case convention</span>
+MAX_VALUE = <span class="c-code__number">100</span>   <span class="c-code__comment"># Constants in UPPERCASE</span>
+_private = <span class="c-code__number">42</span>      <span class="c-code__comment"># Private by convention</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Variable Types & Type Checking</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Dynamic typing</span>
+x = <span class="c-code__number">5</span>           <span class="c-code__comment"># int</span>
+x = <span class="c-code__string">"hello"</span>     <span class="c-code__comment"># now str</span>
+x = <span class="c-code__number">3.14</span>        <span class="c-code__comment"># now float</span>
+
+<span class="c-code__comment"># Type checking</span>
+<span class="c-code__function">type</span>(x)          <span class="c-code__comment"># Returns: &lt;class 'float'&gt;</span>
+<span class="c-code__function">isinstance</span>(x, <span class="c-code__function">float</span>)  <span class="c-code__comment"># Returns: True</span>
+
+<span class="c-code__comment"># Type conversion</span>
+num_str = <span class="c-code__string">"123"</span>
+num_int = <span class="c-code__function">int</span>(num_str)
+num_float = <span class="c-code__function">float</span>(num_str)
+text = <span class="c-code__function">str</span>(<span class="c-code__number">456</span>)</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Operators Section -->
+                <article id="operators" class="c-section" data-section="operators">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[05]</span>
+                            OPERATORS
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Arithmetic Operators</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python">a, b = <span class="c-code__number">10</span>, <span class="c-code__number">3</span>
+
+<span class="c-code__function">print</span>(a + b)  <span class="c-code__comment"># Addition: 13</span>
+<span class="c-code__function">print</span>(a - b)  <span class="c-code__comment"># Subtraction: 7</span>
+<span class="c-code__function">print</span>(a * b)  <span class="c-code__comment"># Multiplication: 30</span>
+<span class="c-code__function">print</span>(a / b)  <span class="c-code__comment"># Division: 3.333...</span>
+<span class="c-code__function">print</span>(a // b) <span class="c-code__comment"># Floor Division: 3</span>
+<span class="c-code__function">print</span>(a % b)  <span class="c-code__comment"># Modulus: 1</span>
+<span class="c-code__function">print</span>(a ** b) <span class="c-code__comment"># Exponentiation: 1000</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Comparison & Logical Operators</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python">x, y = <span class="c-code__number">5</span>, <span class="c-code__number">10</span>
+
+<span class="c-code__comment"># Comparison</span>
+<span class="c-code__function">print</span>(x == y)  <span class="c-code__comment"># Equal: False</span>
+<span class="c-code__function">print</span>(x != y)  <span class="c-code__comment"># Not Equal: True</span>
+<span class="c-code__function">print</span>(x > y)   <span class="c-code__comment"># Greater: False</span>
+<span class="c-code__function">print</span>(x < y)    <span class="c-code__comment"># Less: True</span>
+<span class="c-code__function">print</span>(x >= <span class="c-code__number">5</span>)  <span class="c-code__comment"># Greater or Equal: True</span>
+
+<span class="c-code__comment"># Logical</span>
+<span class="c-code__function">print</span>(<span class="c-code__constant">True</span> <span class="c-code__keyword">and</span> <span class="c-code__constant">False</span>)  <span class="c-code__comment"># AND: False</span>
+<span class="c-code__function">print</span>(<span class="c-code__constant">True</span> <span class="c-code__keyword">or</span> <span class="c-code__constant">False</span>)   <span class="c-code__comment"># OR: True</span>
+<span class="c-code__function">print</span>(<span class="c-code__keyword">not</span> <span class="c-code__constant">True</span>)         <span class="c-code__comment"># NOT: False</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Assignment & Identity Operators</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python">x = <span class="c-code__number">10</span>
+x += <span class="c-code__number">5</span>   <span class="c-code__comment"># x = x + 5 → 15</span>
+x -= <span class="c-code__number">3</span>   <span class="c-code__comment"># x = x - 3 → 12</span>
+x *= <span class="c-code__number">2</span>   <span class="c-code__comment"># x = x * 2 → 24</span>
+x //= <span class="c-code__number">4</span>  <span class="c-code__comment"># x = x // 4 → 6</span>
+
+<span class="c-code__comment"># Identity operators</span>
+a = [<span class="c-code__number">1</span>, <span class="c-code__number">2</span>]
+b = [<span class="c-code__number">1</span>, <span class="c-code__number">2</span>]
+c = a
+
+<span class="c-code__function">print</span>(a <span class="c-code__keyword">is</span> b)    <span class="c-code__comment"># False (different objects)</span>
+<span class="c-code__function">print</span>(a <span class="c-code__keyword">is</span> c)    <span class="c-code__comment"># True (same object)</span>
+<span class="c-code__function">print</span>(a == b)    <span class="c-code__comment"># True (same values)</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Keywords Section -->
+                <article id="keywords" class="c-section" data-section="keywords">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[06]</span>
+                            KEYWORDS
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Python Reserved Keywords</h3>
+                                <p class="c-card__text">
+                                    Python has 35 reserved keywords that cannot be used as variable names.
+                                </p>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Control Flow</span>
+<span class="c-code__keyword">if</span>, <span class="c-code__keyword">elif</span>, <span class="c-code__keyword">else</span>
+<span class="c-code__keyword">for</span>, <span class="c-code__keyword">while</span>
+<span class="c-code__keyword">break</span>, <span class="c-code__keyword">continue</span>, <span class="c-code__keyword">pass</span>
+
+<span class="c-code__comment"># Function & Class</span>
+<span class="c-code__keyword">def</span>, <span class="c-code__keyword">return</span>, <span class="c-code__keyword">yield</span>
+<span class="c-code__keyword">class</span>, <span class="c-code__keyword">lambda</span>
+
+<span class="c-code__comment"># Import & Module</span>
+<span class="c-code__keyword">import</span>, <span class="c-code__keyword">from</span>, <span class="c-code__keyword">as</span>
+
+<span class="c-code__comment"># Exception Handling</span>
+<span class="c-code__keyword">try</span>, <span class="c-code__keyword">except</span>, <span class="c-code__keyword">finally</span>
+<span class="c-code__keyword">raise</span>, <span class="c-code__keyword">assert</span>
+
+<span class="c-code__comment"># Boolean & Constants</span>
+<span class="c-code__constant">True</span>, <span class="c-code__constant">False</span>, <span class="c-code__constant">None</span>
+
+<span class="c-code__comment"># Logical Operators</span>
+<span class="c-code__keyword">and</span>, <span class="c-code__keyword">or</span>, <span class="c-code__keyword">not</span>
+<span class="c-code__keyword">in</span>, <span class="c-code__keyword">is</span>
+
+<span class="c-code__comment"># View all keywords</span>
+<span class="c-code__keyword">import</span> keyword
+<span class="c-code__function">print</span>(keyword.kwlist)</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Data Types Section -->
+                <article id="data-types" class="c-section" data-section="data-types">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[07]</span>
+                            DATA TYPES
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Numeric Types</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Integer</span>
+age = <span class="c-code__number">25</span>
+count = -<span class="c-code__number">10</span>
+large_num = <span class="c-code__number">1_000_000</span>  <span class="c-code__comment"># Underscores for readability</span>
+
+<span class="c-code__comment"># Float</span>
+price = <span class="c-code__number">19.99</span>
+pi = <span class="c-code__number">3.14159</span>
+scientific = <span class="c-code__number">1.5e3</span>  <span class="c-code__comment"># 1500.0</span>
+
+<span class="c-code__comment"># Complex</span>
+z = <span class="c-code__number">3</span> + <span class="c-code__number">4j</span>
+<span class="c-code__function">print</span>(z.real)  <span class="c-code__comment"># 3.0</span>
+<span class="c-code__function">print</span>(z.imag)  <span class="c-code__comment"># 4.0</span>
+
+<span class="c-code__comment"># Boolean</span>
+is_valid = <span class="c-code__constant">True</span>
+is_empty = <span class="c-code__constant">False</span>
+<span class="c-code__function">print</span>(<span class="c-code__function">int</span>(is_valid))  <span class="c-code__comment"># 1</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Sequence Types</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># String</span>
+name = <span class="c-code__string">"Python"</span>
+multiline = <span class="c-code__string">"""Line 1
+Line 2
+Line 3"""</span>
+
+<span class="c-code__comment"># List (mutable)</span>
+fruits = [<span class="c-code__string">"apple"</span>, <span class="c-code__string">"banana"</span>, <span class="c-code__string">"cherry"</span>]
+mixed = [<span class="c-code__number">1</span>, <span class="c-code__string">"two"</span>, <span class="c-code__number">3.0</span>, <span class="c-code__constant">True</span>]
+
+<span class="c-code__comment"># Tuple (immutable)</span>
+coordinates = (<span class="c-code__number">10</span>, <span class="c-code__number">20</span>)
+single = (<span class="c-code__number">42</span>,)  <span class="c-code__comment"># Comma needed for single element</span>
+
+<span class="c-code__comment"># Range</span>
+numbers = <span class="c-code__function">range</span>(<span class="c-code__number">5</span>)        <span class="c-code__comment"># 0 to 4</span>
+numbers = <span class="c-code__function">range</span>(<span class="c-code__number">1</span>, <span class="c-code__number">10</span>)    <span class="c-code__comment"># 1 to 9</span>
+numbers = <span class="c-code__function">range</span>(<span class="c-code__number">0</span>, <span class="c-code__number">10</span>, <span class="c-code__number">2</span>) <span class="c-code__comment"># 0, 2, 4, 6, 8</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Mapping & Set Types</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Dictionary (key-value pairs)</span>
+person = {
+    <span class="c-code__string">"name"</span>: <span class="c-code__string">"Alice"</span>,
+    <span class="c-code__string">"age"</span>: <span class="c-code__number">30</span>,
+    <span class="c-code__string">"city"</span>: <span class="c-code__string">"New York"</span>
+}
+<span class="c-code__function">print</span>(person[<span class="c-code__string">"name"</span>])  <span class="c-code__comment"># Alice</span>
+
+<span class="c-code__comment"># Set (unordered, unique)</span>
+unique_nums = {<span class="c-code__number">1</span>, <span class="c-code__number">2</span>, <span class="c-code__number">3</span>, <span class="c-code__number">3</span>, <span class="c-code__number">2</span>}
+<span class="c-code__function">print</span>(unique_nums)  <span class="c-code__comment"># {1, 2, 3}</span>
+
+<span class="c-code__comment"># FrozenSet (immutable set)</span>
+immutable_set = <span class="c-code__function">frozenset</span>([<span class="c-code__number">1</span>, <span class="c-code__number">2</span>, <span class="c-code__number">3</span>])</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Conditional Statements Section -->
+                <article id="conditional-statements" class="c-section" data-section="conditional-statements">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[08]</span>
+                            CONDITIONAL STATEMENTS
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">If-Elif-Else Statements</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python">age = <span class="c-code__number">18</span>
+
+<span class="c-code__keyword">if</span> age < <span class="c-code__number">13</span>:
+    <span class="c-code__function">print</span>(<span class="c-code__string">"Child"</span>)
+<span class="c-code__keyword">elif</span> age < <span class="c-code__number">20</span>:
+    <span class="c-code__function">print</span>(<span class="c-code__string">"Teenager"</span>)
+<span class="c-code__keyword">else</span>:
+    <span class="c-code__function">print</span>(<span class="c-code__string">"Adult"</span>)
+
+<span class="c-code__comment"># Ternary operator</span>
+status = <span class="c-code__string">"active"</span> <span class="c-code__keyword">if</span> age >= <span class="c-code__number">18</span> <span class="c-code__keyword">else</span> <span class="c-code__string">"inactive"</span>
+
+<span class="c-code__comment"># Multiple conditions</span>
+score = <span class="c-code__number">85</span>
+<span class="c-code__keyword">if</span> score >= <span class="c-code__number">90</span>:
+    grade = <span class="c-code__string">"A"</span>
+<span class="c-code__keyword">elif</span> score >= <span class="c-code__number">80</span> <span class="c-code__keyword">and</span> score < <span class="c-code__number">90</span>:
+    grade = <span class="c-code__string">"B"</span>
+<span class="c-code__keyword">else</span>:
+    grade = <span class="c-code__string">"C"</span>
+
+<span class="c-code__comment"># Truthy/Falsy values</span>
+<span class="c-code__keyword">if</span> []:        <span class="c-code__comment"># False (empty list)</span>
+    <span class="c-code__function">print</span>(<span class="c-code__string">"Won't print"</span>)
+<span class="c-code__keyword">if</span> [<span class="c-code__number">1</span>]:      <span class="c-code__comment"># True (non-empty)</span>
+    <span class="c-code__function">print</span>(<span class="c-code__string">"Will print"</span>)</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Match-Case (Python 3.10+)</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python">day = <span class="c-code__string">"Monday"</span>
+
+<span class="c-code__keyword">match</span> day:
+    <span class="c-code__keyword">case</span> <span class="c-code__string">"Monday"</span>:
+        <span class="c-code__function">print</span>(<span class="c-code__string">"Start of week"</span>)
+    <span class="c-code__keyword">case</span> <span class="c-code__string">"Friday"</span>:
+        <span class="c-code__function">print</span>(<span class="c-code__string">"TGIF!"</span>)
+    <span class="c-code__keyword">case</span> <span class="c-code__string">"Saturday"</span> | <span class="c-code__string">"Sunday"</span>:
+        <span class="c-code__function">print</span>(<span class="c-code__string">"Weekend!"</span>)
+    <span class="c-code__keyword">case</span> _:
+        <span class="c-code__function">print</span>(<span class="c-code__string">"Weekday"</span>)</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Loops Section -->
+                <article id="loops" class="c-section" data-section="loops">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[09]</span>
+                            LOOPS
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">For Loop</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Iterate over sequence</span>
+fruits = [<span class="c-code__string">"apple"</span>, <span class="c-code__string">"banana"</span>, <span class="c-code__string">"cherry"</span>]
+<span class="c-code__keyword">for</span> fruit <span class="c-code__keyword">in</span> fruits:
+    <span class="c-code__function">print</span>(fruit)
+
+<span class="c-code__comment"># With index using enumerate()</span>
+<span class="c-code__keyword">for</span> i, fruit <span class="c-code__keyword">in</span> <span class="c-code__function">enumerate</span>(fruits):
+    <span class="c-code__function">print</span>(<span class="c-code__string">f"{i}: {fruit}"</span>)
+
+<span class="c-code__comment"># Using range()</span>
+<span class="c-code__keyword">for</span> i <span class="c-code__keyword">in</span> <span class="c-code__function">range</span>(<span class="c-code__number">5</span>):
+    <span class="c-code__function">print</span>(i)  <span class="c-code__comment"># 0 to 4</span>
+
+<span class="c-code__comment"># Nested loops</span>
+<span class="c-code__keyword">for</span> i <span class="c-code__keyword">in</span> <span class="c-code__function">range</span>(<span class="c-code__number">3</span>):
+    <span class="c-code__keyword">for</span> j <span class="c-code__keyword">in</span> <span class="c-code__function">range</span>(<span class="c-code__number">3</span>):
+        <span class="c-code__function">print</span>(<span class="c-code__string">f"({i},{j})"</span>, end=<span class="c-code__string">" "</span>)</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">While Loop</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Basic while loop</span>
+count = <span class="c-code__number">0</span>
+<span class="c-code__keyword">while</span> count < <span class="c-code__number">5</span>:
+    <span class="c-code__function">print</span>(count)
+    count += <span class="c-code__number">1</span>
+
+<span class="c-code__comment"># With else clause</span>
+num = <span class="c-code__number">0</span>
+<span class="c-code__keyword">while</span> num < <span class="c-code__number">3</span>:
+    <span class="c-code__function">print</span>(num)
+    num += <span class="c-code__number">1</span>
+<span class="c-code__keyword">else</span>:
+    <span class="c-code__function">print</span>(<span class="c-code__string">"Loop completed!"</span>)
+
+<span class="c-code__comment"># Infinite loop with break</span>
+<span class="c-code__keyword">while</span> <span class="c-code__constant">True</span>:
+    user_input = <span class="c-code__function">input</span>(<span class="c-code__string">"Enter 'quit' to exit: "</span>)
+    <span class="c-code__keyword">if</span> user_input == <span class="c-code__string">"quit"</span>:
+        <span class="c-code__keyword">break</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Loop Control: Break, Continue, Pass</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Break - exit loop</span>
+<span class="c-code__keyword">for</span> i <span class="c-code__keyword">in</span> <span class="c-code__function">range</span>(<span class="c-code__number">10</span>):
+    <span class="c-code__keyword">if</span> i == <span class="c-code__number">5</span>:
+        <span class="c-code__keyword">break</span>
+    <span class="c-code__function">print</span>(i)  <span class="c-code__comment"># 0 to 4</span>
+
+<span class="c-code__comment"># Continue - skip iteration</span>
+<span class="c-code__keyword">for</span> i <span class="c-code__keyword">in</span> <span class="c-code__function">range</span>(<span class="c-code__number">5</span>):
+    <span class="c-code__keyword">if</span> i == <span class="c-code__number">2</span>:
+        <span class="c-code__keyword">continue</span>
+    <span class="c-code__function">print</span>(i)  <span class="c-code__comment"># 0, 1, 3, 4</span>
+
+<span class="c-code__comment"># Pass - placeholder</span>
+<span class="c-code__keyword">for</span> i <span class="c-code__keyword">in</span> <span class="c-code__function">range</span>(<span class="c-code__number">5</span>):
+    <span class="c-code__keyword">pass</span>  <span class="c-code__comment"># TODO: implement later</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Quiz Section -->
+                <article id="quiz-basics" class="c-section c-section--quiz" data-section="quiz-basics">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[QUIZ]</span>
+                            BASICS & I/O
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-quiz">
+                            <div class="c-quiz__question">
+                                <p>What is the correct way to output text in Python?</p>
+                                <div class="c-quiz__options">
+                                    <label class="c-option">
+                                        <input type="radio" name="q1" value="a">
+                                        <span class="c-option__text">echo "Hello"</span>
+                                    </label>
+                                    <label class="c-option">
+                                        <input type="radio" name="q1" value="b">
+                                        <span class="c-option__text">print("Hello")</span>
+                                    </label>
+                                    <label class="c-option">
+                                        <input type="radio" name="q1" value="c">
+                                        <span class="c-option__text">console.log("Hello")</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <button class="c-btn c-btn--submit" id="submitQuiz">SUBMIT ANSWER</button>
+                            <div class="c-quiz__result" id="quizResult"></div>
+                        </div>
+                    </div>
+                </article>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="c-footer l-footer" role="contentinfo">
+            <div class="c-footer__content">
+                <p class="c-footer__text">
+                    <span class="c-footer__label">SYSTEM:</span> PYTHON TUTORIAL v3.12
+                    <span class="c-footer__separator">|</span>
+                    <span class="c-footer__label">STATUS:</span>
+                    <span class="u-pulse u-pulse--green">●</span> OPERATIONAL
+                </p>
+                <div class="c-footer__meta">
+                    <span>DATA FRAGMENT: PY-TUTORIAL-2026</span>
+                    <span>ENCRYPTION: AES-256</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Mouse Coordinates Display -->
+    <div class="c-coordinates" id="coordinates">
+        <span>X: 0000</span> | <span>Y: 0000</span>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

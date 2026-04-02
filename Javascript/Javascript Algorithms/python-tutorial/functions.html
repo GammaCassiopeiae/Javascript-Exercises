@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Python Functions Tutorial - Functions, Decorators, Lambda and More">
+    <title>Python Functions | NEON TERMINAL</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="js-page-functions">
+    <div class="l-grid">
+        <!-- Scanline Overlay -->
+        <div class="c-scanlines"></div>
+        
+        <!-- Header -->
+        <header class="c-header l-header" role="banner">
+            <div class="c-header__grid-overlay"></div>
+            <div class="c-header__content">
+                <h1 class="c-header__title" data-text="PYTHON_TERMINAL">
+                    <span class="c-header__prefix">PY_</span>PYTHON_TERMINAL
+                </h1>
+                <div class="c-header__status">
+                    <span class="u-pulse u-pulse--cyan">●</span>
+                    <span class="c-header__status-text">MODULE: FUNCTIONS | STATUS: ONLINE</span>
+                </div>
+            </div>
+            <nav class="c-header__nav" role="navigation" aria-label="Main navigation">
+                <a href="index.html" class="c-btn" aria-label="Back to main tutorial">
+                    <span class="c-btn__content">BACK</span>
+                    <span class="c-btn__glitch-layer"></span>
+                </a>
+                <button class="c-btn c-btn--theme" id="themeToggle" aria-label="Toggle theme">
+                    <span class="c-btn__content">THEME</span>
+                    <span class="c-btn__glitch-layer"></span>
+                </button>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="l-main" id="main-content" role="main">
+            <!-- Navigation Sidebar -->
+            <aside class="c-sidebar l-sidebar" role="complementary" aria-label="Functions navigation">
+                <div class="c-sidebar__section">
+                    <h2 class="c-sidebar__title">MODULE_02: FUNCTIONS</h2>
+                    <ul class="c-nav">
+                        <li><a href="#functions-basics" class="c-nav__link" data-section="functions-basics">[01] Functions Basics</a></li>
+                        <li><a href="#pass-statement" class="c-nav__link" data-section="pass-statement">[02] Pass Statement</a></li>
+                        <li><a href="#scope" class="c-nav__link" data-section="scope">[03] Variable Scope</a></li>
+                        <li><a href="#recursion" class="c-nav__link" data-section="recursion">[04] Recursion</a></li>
+                        <li><a href="#args-kwargs" class="c-nav__link" data-section="args-kwargs">[05] *args & **kwargs</a></li>
+                        <li><a href="#self-argument" class="c-nav__link" data-section="self-argument">[06] 'Self' as Default</a></li>
+                        <li><a href="#first-class" class="c-nav__link" data-section="first-class">[07] First Class Functions</a></li>
+                        <li><a href="#lambda" class="c-nav__link" data-section="lambda">[08] Lambda Functions</a></li>
+                        <li><a href="#map-filter" class="c-nav__link" data-section="map-filter">[09] Map & Filter</a></li>
+                        <li><a href="#inner-function" class="c-nav__link" data-section="inner-function">[10] Inner Functions</a></li>
+                        <li><a href="#decorators" class="c-nav__link" data-section="decorators">[11] Decorators</a></li>
+                    </ul>
+                </div>
+            </aside>
+
+            <!-- Content Area -->
+            <section class="c-content l-content" id="content-area">
+                <!-- Functions Basics Section -->
+                <article id="functions-basics" class="c-section is-active" data-section="functions-basics">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[01]</span>
+                            FUNCTIONS BASICS
+                        </h2>
+                        <div class="c-section__meta">
+                            <span class="c-tag">INTERMEDIATE</span>
+                            <span class="c-tag">MODULE_02</span>
+                        </div>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Defining Functions</h3>
+                                <p class="c-card__text">
+                                    Functions are reusable blocks of code that perform specific tasks. They are defined using the <code class="c-inline-code">def</code> keyword.
+                                </p>
+                                <div class="c-code-block">
+                                    <div class="c-code-block__header">
+                                        <span class="c-code-block__title">function_basics.py</span>
+                                        <span class="c-code-block__lang">PYTHON</span>
+                                    </div>
+                                    <pre><code class="language-python"><span class="c-code__comment"># Basic function definition</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">greet</span>():
+    <span class="c-code__string">"""Docstring: This function greets the user"""</span>
+    <span class="c-code__function">print</span>(<span class="c-code__string">"Hello, Python!"</span>)
+
+<span class="c-code__comment"># Calling the function</span>
+<span class="c-code__function">greet</span>()  <span class="c-code__comment"># Output: Hello, Python!</span>
+
+<span class="c-code__comment"># Function with parameters</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">greet_person</span>(name):
+    <span class="c-code__function">print</span>(<span class="c-code__string">f"Hello, {name}!"</span>)
+
+<span class="c-code__function">greet_person</span>(<span class="c-code__string">"Alice"</span>)  <span class="c-code__comment"># Output: Hello, Alice!</span>
+
+<span class="c-code__comment"># Function with default parameter</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">greet_default</span>(name=<span class="c-code__string">"Guest"</span>):
+    <span class="c-code__function">print</span>(<span class="c-code__string">f"Hello, {name}!"</span>)
+
+<span class="c-code__function">greet_default</span>()           <span class="c-code__comment"># Output: Hello, Guest!</span>
+<span class="c-code__function">greet_default</span>(<span class="c-code__string">"Bob"</span>)     <span class="c-code__comment"># Output: Hello, Bob!</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Return Values</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Function with return value</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">add</span>(a, b):
+    <span class="c-code__keyword">return</span> a + b
+
+result = <span class="c-code__function">add</span>(<span class="c-code__number">5</span>, <span class="c-code__number">3</span>)
+<span class="c-code__function">print</span>(result)  <span class="c-code__comment"># Output: 8</span>
+
+<span class="c-code__comment"># Multiple return values</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">get_coordinates</span>():
+    <span class="c-code__keyword">return</span> <span class="c-code__number">10</span>, <span class="c-code__number">20</span>
+
+x, y = <span class="c-code__function">get_coordinates</span>()
+<span class="c-code__function">print</span>(<span class="c-code__string">f"X: {x}, Y: {y}"</span>)  <span class="c-code__comment"># Output: X: 10, Y: 20</span>
+
+<span class="c-code__comment"># Returning None (implicit)</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">no_return</span>():
+    <span class="c-code__function">print</span>(<span class="c-code__string">"No return statement"</span>)
+
+result = <span class="c-code__function">no_return</span>()
+<span class="c-code__function">print</span>(result)  <span class="c-code__comment"># Output: None</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Function Parameters</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Positional arguments</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">describe_pet</span>(pet_name, animal_type):
+    <span class="c-code__function">print</span>(<span class="c-code__string">f"I have a {animal_type} named {pet_name}"</span>)
+
+<span class="c-code__function">describe_pet</span>(<span class="c-code__string">"Buddy"</span>, <span class="c-code__string">"dog"</span>)
+
+<span class="c-code__comment"># Keyword arguments</span>
+<span class="c-code__function">describe_pet</span>(animal_type=<span class="c-code__string">"cat"</span>, pet_name=<span class="c-code__string">"Whiskers"</span>)
+
+<span class="c-code__comment"># Mixed arguments</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">make_shirt</span>(size, message=<span class="c-code__string">"I love Python"</span>):
+    <span class="c-code__function">print</span>(<span class="c-code__string">f"Size: {size}, Message: {message}"</span>)
+
+<span class="c-code__function">make_shirt</span>(<span class="c-code__string">"L"</span>)
+<span class="c-code__function">make_shirt</span>(<span class="c-code__string">"M"</span>, <span class="c-code__string">"Hello World"</span>)</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Pass Statement Section -->
+                <article id="pass-statement" class="c-section" data-section="pass-statement">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[02]</span>
+                            PASS STATEMENT
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Using Pass as Placeholder</h3>
+                                <p class="c-card__text">
+                                    The <code class="c-inline-code">pass</code> statement is a null operation. It's used as a placeholder for future code.
+                                </p>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Empty function (would cause error without pass)</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">future_function</span>():
+    <span class="c-code__keyword">pass</span>  <span class="c-code__comment"># TODO: Implement later</span>
+
+<span class="c-code__comment"># Empty class</span>
+<span class="c-code__keyword">class</span> <span class="c-code__class">MyClass</span>:
+    <span class="c-code__keyword">pass</span>
+
+<span class="c-code__comment"># Conditional placeholder</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">process_data</span>(data):
+    <span class="c-code__keyword">if</span> data <span class="c-code__keyword">is</span> <span class="c-code__constant">None</span>:
+        <span class="c-code__keyword">pass</span>  <span class="c-code__comment"># TODO: Handle None case</span>
+    <span class="c-code__keyword">else</span>:
+        <span class="c-code__function">print</span>(<span class="c-code__string">f"Processing: {data}"</span>)
+
+<span class="c-code__comment"># In loops</span>
+<span class="c-code__keyword">for</span> i <span class="c-code__keyword">in</span> <span class="c-code__function">range</span>(<span class="c-code__number">5</span>):
+    <span class="c-code__keyword">if</span> i == <span class="c-code__number">2</span>:
+        <span class="c-code__keyword">pass</span>  <span class="c-code__comment"># Skip for now</span>
+    <span class="c-code__keyword">else</span>:
+        <span class="c-code__function">print</span>(i)</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Variable Scope Section -->
+                <article id="scope" class="c-section" data-section="scope">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[03]</span>
+                            GLOBAL AND LOCAL VARIABLES
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Scope Basics</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Global variable</span>
+global_var = <span class="c-code__string">"I'm global"</span>
+
+<span class="c-code__keyword">def</span> <span class="c-code__function">my_function</span>():
+    <span class="c-code__comment"># Local variable</span>
+    local_var = <span class="c-code__string">"I'm local"</span>
+    <span class="c-code__function">print</span>(global_var)  <span class="c-code__comment"># Accessible</span>
+    <span class="c-code__function">print</span>(local_var)   <span class="c-code__comment"># Accessible</span>
+
+<span class="c-code__function">my_function</span>()
+<span class="c-code__function">print</span>(global_var)  <span class="c-code__comment"># Accessible</span>
+<span class="c-code__comment"># print(local_var)  # Error: Not accessible</span>
+
+<span class="c-code__comment"># Using global keyword</span>
+counter = <span class="c-code__number">0</span>
+
+<span class="c-code__keyword">def</span> <span class="c-code__function">increment</span>():
+    <span class="c-code__keyword">global</span> counter
+    counter += <span class="c-code__number">1</span>
+
+<span class="c-code__function">increment</span>()
+<span class="c-code__function">print</span>(counter)  <span class="c-code__comment"># Output: 1</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Nonlocal Variables</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Nonlocal for nested functions</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">outer</span>():
+    x = <span class="c-code__string">"outer"</span>
+    
+    <span class="c-code__keyword">def</span> <span class="c-code__function">inner</span>():
+        <span class="c-code__keyword">nonlocal</span> x
+        x = <span class="c-code__string">"modified"</span>
+        <span class="c-code__function">print</span>(x)
+    
+    <span class="c-code__function">inner</span>()
+    <span class="c-code__function">print</span>(x)  <span class="c-code__comment"># Output: modified</span>
+
+<span class="c-code__function">outer</span>()</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Recursion Section -->
+                <article id="recursion" class="c-section" data-section="recursion">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[04]</span>
+                            RECURSION
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Recursive Functions</h3>
+                                <p class="c-card__text">
+                                    Recursion is when a function calls itself. Every recursive function needs a base case to stop.
+                                </p>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Factorial using recursion</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">factorial</span>(n):
+    <span class="c-code__keyword">if</span> n == <span class="c-code__number">0</span> <span class="c-code__keyword">or</span> n == <span class="c-code__number">1</span>:
+        <span class="c-code__keyword">return</span> <span class="c-code__number">1</span>
+    <span class="c-code__keyword">return</span> n * <span class="c-code__function">factorial</span>(n - <span class="c-code__number">1</span>)
+
+<span class="c-code__function">print</span>(<span class="c-code__function">factorial</span>(<span class="c-code__number">5</span>))  <span class="c-code__comment"># Output: 120</span>
+
+<span class="c-code__comment"># Fibonacci sequence</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">fibonacci</span>(n):
+    <span class="c-code__keyword">if</span> n <= <span class="c-code__number">1</span>:
+        <span class="c-code__keyword">return</span> n
+    <span class="c-code__keyword">return</span> <span class="c-code__function">fibonacci</span>(n - <span class="c-code__number">1</span>) + <span class="c-code__function">fibonacci</span>(n - <span class="c-code__number">2</span>)
+
+<span class="c-code__keyword">for</span> i <span class="c-code__keyword">in</span> <span class="c-code__function">range</span>(<span class="c-code__number">10</span>):
+    <span class="c-code__function">print</span>(<span class="c-code__function">fibonacci</span>(i), end=<span class="c-code__string">" "</span>)
+<span class="c-code__comment"># Output: 0 1 1 2 3 5 8 13 21 34</span>
+
+<span class="c-code__comment"># Sum of numbers from 1 to n</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">sum_to_n</span>(n):
+    <span class="c-code__keyword">if</span> n == <span class="c-code__number">1</span>:
+        <span class="c-code__keyword">return</span> <span class="c-code__number">1</span>
+    <span class="c-code__keyword">return</span> n + <span class="c-code__function">sum_to_n</span>(n - <span class="c-code__number">1</span>)
+
+<span class="c-code__function">print</span>(<span class="c-code__function">sum_to_n</span>(<span class="c-code__number">10</span>))  <span class="c-code__comment"># Output: 55</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Args Kwargs Section -->
+                <article id="args-kwargs" class="c-section" data-section="args-kwargs">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[05]</span>
+                            *ARGS AND **KWARGS
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Variable Arguments</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># *args - Variable positional arguments</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">sum_all</span>(*args):
+    <span class="c-code__function">print</span>(<span class="c-code__function">type</span>(args))  <span class="c-code__comment"># &lt;class 'tuple'&gt;</span>
+    <span class="c-code__keyword">return</span> <span class="c-code__function">sum</span>(args)
+
+<span class="c-code__function">print</span>(<span class="c-code__function">sum_all</span>(<span class="c-code__number">1</span>, <span class="c-code__number">2</span>, <span class="c-code__number">3</span>))      <span class="c-code__comment"># Output: 6</span>
+<span class="c-code__function">print</span>(<span class="c-code__function">sum_all</span>(<span class="c-code__number">1</span>, <span class="c-code__number">2</span>, <span class="c-code__number">3</span>, <span class="c-code__number">4</span>, <span class="c-code__number">5</span>))  <span class="c-code__comment"># Output: 15</span>
+
+<span class="c-code__comment"># **kwargs - Variable keyword arguments</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">print_info</span>(**kwargs):
+    <span class="c-code__function">print</span>(<span class="c-code__function">type</span>(kwargs))  <span class="c-code__comment"># &lt;class 'dict'&gt;</span>
+    <span class="c-code__keyword">for</span> key, value <span class="c-code__keyword">in</span> kwargs.<span class="c-code__function">items</span>():
+        <span class="c-code__function">print</span>(<span class="c-code__string">f"{key}: {value}"</span>)
+
+<span class="c-code__function">print_info</span>(name=<span class="c-code__string">"Alice"</span>, age=<span class="c-code__number">30</span>, city=<span class="c-code__string">"NYC"</span>)
+
+<span class="c-code__comment"># Combined usage</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">complete_function</span>(required, *args, **kwargs):
+    <span class="c-code__function">print</span>(<span class="c-code__string">f"Required: {required}"</span>)
+    <span class="c-code__function">print</span>(<span class="c-code__string">f"Args: {args}"</span>)
+    <span class="c-code__function">print</span>(<span class="c-code__string">f"Kwargs: {kwargs}"</span>)
+
+<span class="c-code__function">complete_function</span>(<span class="c-code__number">1</span>, <span class="c-code__number">2</span>, <span class="c-code__number">3</span>, <span class="c-code__number">4</span>, name=<span class="c-code__string">"Bob"</span>, score=<span class="c-code__number">95</span>)</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Self as Default Argument Section -->
+                <article id="self-argument" class="c-section" data-section="self-argument">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[06]</span>
+                            'SELF' AS DEFAULT ARGUMENT
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Understanding Self Parameter</h3>
+                                <p class="c-card__text">
+                                    The <code class="c-inline-code">self</code> parameter refers to the instance of the class. It's a convention (not a keyword) and must be the first parameter of instance methods.
+                                </p>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__keyword">class</span> <span class="c-code__class">Person</span>:
+    <span class="c-code__keyword">def</span> <span class="c-code__function">__init__</span>(self, name, age):
+        self.name = name
+        self.age = age
+    
+    <span class="c-code__keyword">def</span> <span class="c-code__function">greet</span>(self):
+        <span class="c-code__keyword">return</span> <span class="c-code__string">f"Hello, I'm {self.name}"</span>
+    
+    <span class="c-code__keyword">def</span> <span class="c-code__function">birthday</span>(self):
+        self.age += <span class="c-code__number">1</span>
+        <span class="c-code__keyword">return</span> <span class="c-code__string">f"Happy Birthday! Now {self.age}"</span>
+
+<span class="c-code__comment"># Creating instances</span>
+person1 = <span class="c-code__function">Person</span>(<span class="c-code__string">"Alice"</span>, <span class="c-code__number">25</span>)
+person2 = <span class="c-code__function">Person</span>(<span class="c-code__string">"Bob"</span>, <span class="c-code__number">30</span>)
+
+<span class="c-code__function">print</span>(person1.<span class="c-code__function">greet</span>())  <span class="c-code__comment"># Hello, I'm Alice</span>
+<span class="c-code__function">print</span>(person2.<span class="c-code__function">greet</span>())  <span class="c-code__comment"># Hello, I'm Bob</span>
+<span class="c-code__function">print</span>(person1.<span class="c-code__function">birthday</span>())  <span class="c-code__comment"># Happy Birthday! Now 26</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- First Class Functions Section -->
+                <article id="first-class" class="c-section" data-section="first-class">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[07]</span>
+                            FIRST CLASS FUNCTIONS
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Functions as Objects</h3>
+                                <p class="c-card__text">
+                                    In Python, functions are first-class citizens. They can be assigned to variables, passed as arguments, and returned from other functions.
+                                </p>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Assign function to variable</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">greet</span>(name):
+    <span class="c-code__keyword">return</span> <span class="c-code__string">f"Hello, {name}!"</span>
+
+say_hello = greet
+<span class="c-code__function">print</span>(<span class="c-code__function">say_hello</span>(<span class="c-code__string">"Alice"</span>))  <span class="c-code__comment"># Hello, Alice!</span>
+
+<span class="c-code__comment"># Function as argument</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">execute_function</span>(func, value):
+    <span class="c-code__keyword">return</span> <span class="c-code__function">func</span>(value)
+
+result = <span class="c-code__function">execute_function</span>(greet, <span class="c-code__string">"Bob"</span>)
+<span class="c-code__function">print</span>(result)  <span class="c-code__comment"># Hello, Bob!</span>
+
+<span class="c-code__comment"># Function returning function</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">create_multiplier</span>(n):
+    <span class="c-code__keyword">def</span> <span class="c-code__function">multiply</span>(x):
+        <span class="c-code__keyword">return</span> x * n
+    <span class="c-code__keyword">return</span> multiply
+
+double = <span class="c-code__function">create_multiplier</span>(<span class="c-code__number">2</span>)
+triple = <span class="c-code__function">create_multiplier</span>(<span class="c-code__number">3</span>)
+
+<span class="c-code__function">print</span>(<span class="c-code__function">double</span>(<span class="c-code__number">5</span>))  <span class="c-code__comment"># Output: 10</span>
+<span class="c-code__function">print</span>(<span class="c-code__function">triple</span>(<span class="c-code__number">5</span>))   <span class="c-code__comment"># Output: 15</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Lambda Functions Section -->
+                <article id="lambda" class="c-section" data-section="lambda">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[08]</span>
+                            LAMBDA FUNCTIONS
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Anonymous Functions</h3>
+                                <p class="c-card__text">
+                                    Lambda functions are small anonymous functions defined with the <code class="c-inline-code">lambda</code> keyword. They can have any number of arguments but only one expression.
+                                </p>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Basic lambda</span>
+add = <span class="c-code__keyword">lambda</span> x, y: x + y
+<span class="c-code__function">print</span>(<span class="c-code__function">add</span>(<span class="c-code__number">5</span>, <span class="c-code__number">3</span>))  <span class="c-code__comment"># Output: 8</span>
+
+<span class="c-code__comment"># Lambda vs regular function</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">square</span>(x):
+    <span class="c-code__keyword">return</span> x ** <span class="c-code__number">2</span>
+
+square_lambda = <span class="c-code__keyword">lambda</span> x: x ** <span class="c-code__number">2</span>
+
+<span class="c-code__function">print</span>(<span class="c-code__function">square</span>(<span class="c-code__number">5</span>))           <span class="c-code__comment"># Output: 25</span>
+<span class="c-code__function">print</span>(<span class="c-code__function">square_lambda</span>(<span class="c-code__number">5</span>))    <span class="c-code__comment"># Output: 25</span>
+
+<span class="c-code__comment"># Lambda with multiple arguments</span>
+multiply = <span class="c-code__keyword">lambda</span> x, y, z: x * y * z
+<span class="c-code__function">print</span>(<span class="c-code__function">multiply</span>(<span class="c-code__number">2</span>, <span class="c-code__number">3</span>, <span class="c-code__number">4</span>))  <span class="c-code__comment"># Output: 24</span>
+
+<span class="c-code__comment"># Lambda with conditional</span>
+max_value = <span class="c-code__keyword">lambda</span> x, y: x <span class="c-code__keyword">if</span> x > y <span class="c-code__keyword">else</span> y
+<span class="c-code__function">print</span>(<span class="c-code__function">max_value</span>(<span class="c-code__number">10</span>, <span class="c-code__number">20</span>))  <span class="c-code__comment"># Output: 20</span>
+
+<span class="c-code__comment"># Lambda in sorting</span>
+students = [
+    {<span class="c-code__string">"name"</span>: <span class="c-code__string">"Alice"</span>, <span class="c-code__string">"grade"</span>: <span class="c-code__number">85</span>},
+    {<span class="c-code__string">"name"</span>: <span class="c-code__string">"Bob"</span>, <span class="c-code__string">"grade"</span>: <span class="c-code__number">92</span>},
+    {<span class="c-code__string">"name"</span>: <span class="c-code__string">"Charlie"</span>, <span class="c-code__string">"grade"</span>: <span class="c-code__number">78</span>}
+]
+
+sorted_students = <span class="c-code__function">sorted</span>(students, key=<span class="c-code__keyword">lambda</span> x: x[<span class="c-code__string">"grade"</span>], reverse=<span class="c-code__constant">True</span>)
+<span class="c-code__keyword">for</span> student <span class="c-code__keyword">in</span> sorted_students:
+    <span class="c-code__function">print</span>(<span class="c-code__string">f"{student['name']}: {student['grade']}"</span>)</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Map Filter Reduce Section -->
+                <article id="map-filter" class="c-section" data-section="map-filter">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[09]</span>
+                            MAP, FILTER AND REDUCE
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Map Function</h3>
+                                <p class="c-card__text">
+                                    The <code class="c-inline-code">map()</code> function applies a function to all items in an iterable.
+                                </p>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Map with lambda</span>
+numbers = [<span class="c-code__number">1</span>, <span class="c-code__number">2</span>, <span class="c-code__number">3</span>, <span class="c-code__number">4</span>, <span class="c-code__number">5</span>]
+squared = <span class="c-code__function">map</span>(<span class="c-code__keyword">lambda</span> x: x ** <span class="c-code__number">2</span>, numbers)
+<span class="c-code__function">print</span>(<span class="c-code__function">list</span>(squared))  <span class="c-code__comment"># [1, 4, 9, 16, 25]</span>
+
+<span class="c-code__comment"># Map with multiple iterables</span>
+list1 = [<span class="c-code__number">1</span>, <span class="c-code__number">2</span>, <span class="c-code__number">3</span>]
+list2 = [<span class="c-code__number">10</span>, <span class="c-code__number">20</span>, <span class="c-code__number">30</span>]
+added = <span class="c-code__function">map</span>(<span class="c-code__keyword">lambda</span> x, y: x + y, list1, list2)
+<span class="c-code__function">print</span>(<span class="c-code__function">list</span>(added))  <span class="c-code__comment"># [11, 22, 33]</span>
+
+<span class="c-code__comment"># Map to convert types</span>
+str_numbers = [<span class="c-code__string">"1"</span>, <span class="c-code__string">"2"</span>, <span class="c-code__string">"3"</span>, <span class="c-code__string">"4"</span>]
+int_numbers = <span class="c-code__function">map</span>(<span class="c-code__function">int</span>, str_numbers)
+<span class="c-code__function">print</span>(<span class="c-code__function">list</span>(int_numbers))  <span class="c-code__comment"># [1, 2, 3, 4]</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Filter Function</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Filter even numbers</span>
+numbers = [<span class="c-code__number">1</span>, <span class="c-code__number">2</span>, <span class="c-code__number">3</span>, <span class="c-code__number">4</span>, <span class="c-code__number">5</span>, <span class="c-code__number">6</span>]
+evens = <span class="c-code__function">filter</span>(<span class="c-code__keyword">lambda</span> x: x % <span class="c-code__number">2</span> == <span class="c-code__number">0</span>, numbers)
+<span class="c-code__function">print</span>(<span class="c-code__function">list</span>(evens))  <span class="c-code__comment"># [2, 4, 6]</span>
+
+<span class="c-code__comment"># Filter positive numbers</span>
+mixed = [-<span class="c-code__number">5</span>, <span class="c-code__number">3</span>, -<span class="c-code__number">1</span>, <span class="c-code__number">0</span>, <span class="c-code__number">7</span>, -<span class="c-code__number">2</span>]
+positives = <span class="c-code__function">filter</span>(<span class="c-code__keyword">lambda</span> x: x > <span class="c-code__number">0</span>, mixed)
+<span class="c-code__function">print</span>(<span class="c-code__function">list</span>(positives))  <span class="c-code__comment"># [3, 7]</span>
+
+<span class="c-code__comment"># Filter strings by length</span>
+words = [<span class="c-code__string">"cat"</span>, <span class="c-code__string">"dog"</span>, <span class="c-code__string">"elephant"</span>, <span class="c-code__string">"fox"</span>]
+long_words = <span class="c-code__function">filter</span>(<span class="c-code__keyword">lambda</span> x: <span class="c-code__function">len</span>(x) > <span class="c-code__number">3</span>, words)
+<span class="c-code__function">print</span>(<span class="c-code__function">list</span>(long_words))  <span class="c-code__comment"># ['elephant']</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Reduce Function</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__keyword">from</span> functools <span class="c-code__keyword">import</span> reduce
+
+<span class="c-code__comment"># Reduce to sum all numbers</span>
+numbers = [<span class="c-code__number">1</span>, <span class="c-code__number">2</span>, <span class="c-code__number">3</span>, <span class="c-code__number">4</span>, <span class="c-code__number">5</span>]
+total = <span class="c-code__function">reduce</span>(<span class="c-code__keyword">lambda</span> x, y: x + y, numbers)
+<span class="c-code__function">print</span>(total)  <span class="c-code__comment"># Output: 15</span>
+
+<span class="c-code__comment"># Reduce to find maximum</span>
+max_num = <span class="c-code__function">reduce</span>(<span class="c-code__keyword">lambda</span> x, y: x <span class="c-code__keyword">if</span> x > y <span class="c-code__keyword">else</span> y, numbers)
+<span class="c-code__function">print</span>(max_num)  <span class="c-code__comment"># Output: 5</span>
+
+<span class="c-code__comment"># Reduce to calculate factorial</span>
+factorial = <span class="c-code__function">reduce</span>(<span class="c-code__keyword">lambda</span> x, y: x * y, <span class="c-code__function">range</span>(<span class="c-code__number">1</span>, <span class="c-code__number">6</span>))
+<span class="c-code__function">print</span>(factorial)  <span class="c-code__comment"># Output: 120</span>
+
+<span class="c-code__comment"># Reduce with initial value</span>
+concatenated = <span class="c-code__function">reduce</span>(<span class="c-code__keyword">lambda</span> x, y: x + y, [<span class="c-code__string">"Hello "</span>, <span class="c-code__string">"World"</span>], <span class="c-code__string">""</span>)
+<span class="c-code__function">print</span>(concatenated)  <span class="c-code__comment"># Output: Hello World</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Inner Functions Section -->
+                <article id="inner-function" class="c-section" data-section="inner-function">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[10]</span>
+                            INNER FUNCTIONS
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Nested Functions</h3>
+                                <p class="c-card__text">
+                                    Functions can be defined inside other functions. Inner functions are only accessible within their enclosing function.
+                                </p>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Basic inner function</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">outer</span>(message):
+    <span class="c-code__keyword">def</span> <span class="c-code__function">inner</span>():
+        <span class="c-code__keyword">return</span> <span class="c-code__string">f"Inner says: {message}"</span>
+    <span class="c-code__keyword">return</span> <span class="c-code__function">inner</span>()
+
+result = <span class="c-code__function">outer</span>(<span class="c-code__string">"Hello"</span>)
+<span class="c-code__function">print</span>(result)  <span class="c-code__comment"># Inner says: Hello</span>
+
+<span class="c-code__comment"># Inner function with closure</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">make_power</span>(n):
+    <span class="c-code__keyword">def</span> <span class="c-code__function">power</span>(x):
+        <span class="c-code__keyword">return</span> x ** n
+    <span class="c-code__keyword">return</span> power
+
+square = <span class="c-code__function">make_power</span>(<span class="c-code__number">2</span>)
+cube = <span class="c-code__function">make_power</span>(<span class="c-code__number">3</span>)
+
+<span class="c-code__function">print</span>(<span class="c-code__function">square</span>(<span class="c-code__number">5</span>))  <span class="c-code__comment"># Output: 25</span>
+<span class="c-code__function">print</span>(<span class="c-code__function">cube</span>(<span class="c-code__number">5</span>))    <span class="c-code__comment"># Output: 125</span>
+
+<span class="c-code__comment"># Multiple inner functions</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">calculator</span>(operation):
+    <span class="c-code__keyword">def</span> <span class="c-code__function">add</span>(x, y):
+        <span class="c-code__keyword">return</span> x + y
+    
+    <span class="c-code__keyword">def</span> <span class="c-code__function">subtract</span>(x, y):
+        <span class="c-code__keyword">return</span> x - y
+    
+    <span class="c-code__keyword">if</span> operation == <span class="c-code__string">"add"</span>:
+        <span class="c-code__keyword">return</span> add
+    <span class="c-code__keyword">else</span>:
+        <span class="c-code__keyword">return</span> subtract
+
+add_func = <span class="c-code__function">calculator</span>(<span class="c-code__string">"add"</span>)
+<span class="c-code__function">print</span>(<span class="c-code__function">add_func</span>(<span class="c-code__number">5</span>, <span class="c-code__number">3</span>))  <span class="c-code__comment"># Output: 8</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Decorators Section -->
+                <article id="decorators" class="c-section" data-section="decorators">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[11]</span>
+                            DECORATORS
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Function Decorators</h3>
+                                <p class="c-card__text">
+                                    Decorators are functions that modify the behavior of other functions. They use the <code class="c-inline-code">@</code> symbol.
+                                </p>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Basic decorator</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">my_decorator</span>(func):
+    <span class="c-code__keyword">def</span> <span class="c-code__function">wrapper</span>():
+        <span class="c-code__function">print</span>(<span class="c-code__string">"Before function call"</span>)
+        <span class="c-code__function">func</span>()
+        <span class="c-code__function">print</span>(<span class="c-code__string">"After function call"</span>)
+    <span class="c-code__keyword">return</span> wrapper
+
+<span class="c-code__decorator">@my_decorator</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">say_hello</span>():
+    <span class="c-code__function">print</span>(<span class="c-code__string">"Hello!"</span>)
+
+<span class="c-code__function">say_hello</span>()
+<span class="c-code__comment"># Output:
+<span class="c-code__comment"># Before function call
+<span class="c-code__comment"># Hello!
+<span class="c-code__comment"># After function call</span></span></span></span>
+
+<span class="c-code__comment"># Decorator with arguments</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">repeat</span>(times):
+    <span class="c-code__keyword">def</span> <span class="c-code__function">decorator</span>(func):
+        <span class="c-code__keyword">def</span> <span class="c-code__function">wrapper</span>(*args, **kwargs):
+            <span class="c-code__keyword">for</span> _ <span class="c-code__keyword">in</span> <span class="c-code__function">range</span>(times):
+                <span class="c-code__function">func</span>(*args, **kwargs)
+        <span class="c-code__keyword">return</span> wrapper
+    <span class="c-code__keyword">return</span> decorator
+
+<span class="c-code__decorator">@repeat</span>(<span class="c-code__number">3</span>)
+<span class="c-code__keyword">def</span> <span class="c-code__function">greet</span>(name):
+    <span class="c-code__function">print</span>(<span class="c-code__string">f"Hello, {name}!"</span>)
+
+<span class="c-code__function">greet</span>(<span class="c-code__string">"Alice"</span>)
+
+<span class="c-code__comment"># Multiple decorators</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">uppercase</span>(func):
+    <span class="c-code__keyword">def</span> <span class="c-code__function">wrapper</span>(*args, **kwargs):
+        result = <span class="c-code__function">func</span>(*args, **kwargs)
+        <span class="c-code__keyword">return</span> result.<span class="c-code__function">upper</span>()
+    <span class="c-code__keyword">return</span> wrapper
+
+<span class="c-code__keyword">def</span> <span class="c-code__function">exclaim</span>(func):
+    <span class="c-code__keyword">def</span> <span class="c-code__function">wrapper</span>(*args, **kwargs):
+        result = <span class="c-code__function">func</span>(*args, **kwargs)
+        <span class="c-code__keyword">return</span> result + <span class="c-code__string">"!"</span>
+    <span class="c-code__keyword">return</span> wrapper
+
+<span class="c-code__decorator">@uppercase</span>
+<span class="c-code__decorator">@exclaim</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">announce</span>(message):
+    <span class="c-code__keyword">return</span> message
+
+<span class="c-code__function">print</span>(<span class="c-code__function">announce</span>(<span class="c-code__string">"attention"</span>))  <span class="c-code__comment"># ATTENTION!</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Practical Decorator Examples</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__keyword">import</span> time
+<span class="c-code__keyword">from</span> functools <span class="c-code__keyword">import</span> wraps
+
+<span class="c-code__comment"># Timing decorator</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">timer</span>(func):
+    <span class="c-code__decorator">@wraps</span>(func)
+    <span class="c-code__keyword">def</span> <span class="c-code__function">wrapper</span>(*args, **kwargs):
+        start = time.<span class="c-code__function">time</span>()
+        result = <span class="c-code__function">func</span>(*args, **kwargs)
+        end = time.<span class="c-code__function">time</span>()
+        <span class="c-code__function">print</span>(<span class="c-code__string">f"{func.__name__} took {end - start:.4f}s"</span>)
+        <span class="c-code__keyword">return</span> result
+    <span class="c-code__keyword">return</span> wrapper
+
+<span class="c-code__decorator">@timer</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">slow_function</span>():
+    time.<span class="c-code__function">sleep</span>(<span class="c-code__number">1</span>)
+
+<span class="c-code__function">slow_function</span>()
+
+<span class="c-code__comment"># Logging decorator</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">log_call</span>(func):
+    <span class="c-code__decorator">@wraps</span>(func)
+    <span class="c-code__keyword">def</span> <span class="c-code__function">wrapper</span>(*args, **kwargs):
+        <span class="c-code__function">print</span>(<span class="c-code__string">f"Calling {func.__name__} with args: {args}, kwargs: {kwargs}"</span>)
+        result = <span class="c-code__function">func</span>(*args, **kwargs)
+        <span class="c-code__function">print</span>(<span class="c-code__string">f"{func.__name__} returned: {result}"</span>)
+        <span class="c-code__keyword">return</span> result
+    <span class="c-code__keyword">return</span> wrapper
+
+<span class="c-code__decorator">@log_call</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">multiply</span>(x, y):
+    <span class="c-code__keyword">return</span> x * y
+
+<span class="c-code__function">multiply</span>(<span class="c-code__number">5</span>, <span class="c-code__number">3</span>)</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Quiz Section -->
+                <article id="quiz-functions" class="c-section c-section--quiz" data-section="quiz-functions">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[QUIZ]</span>
+                            FUNCTIONS
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-quiz">
+                            <div class="c-quiz__question">
+                                <p>What keyword is used to define a function in Python?</p>
+                                <div class="c-quiz__options">
+                                    <label class="c-option">
+                                        <input type="radio" name="q1" value="a">
+                                        <span class="c-option__text">function</span>
+                                    </label>
+                                    <label class="c-option">
+                                        <input type="radio" name="q1" value="b">
+                                        <span class="c-option__text">def</span>
+                                    </label>
+                                    <label class="c-option">
+                                        <input type="radio" name="q1" value="c">
+                                        <span class="c-option__text">func</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <button class="c-btn c-btn--submit" id="submitQuiz">SUBMIT ANSWER</button>
+                            <div class="c-quiz__result" id="quizResult"></div>
+                        </div>
+                    </div>
+                </article>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="c-footer l-footer" role="contentinfo">
+            <div class="c-footer__content">
+                <p class="c-footer__text">
+                    <span class="c-footer__label">SYSTEM:</span> PYTHON TUTORIAL v3.12
+                    <span class="c-footer__separator">|</span>
+                    <span class="c-footer__label">MODULE:</span> FUNCTIONS
+                    <span class="c-footer__separator">|</span>
+                    <span class="c-footer__label">STATUS:</span>
+                    <span class="u-pulse u-pulse--green">●</span> OPERATIONAL
+                </p>
+                <div class="c-footer__meta">
+                    <span>DATA FRAGMENT: PY-FUNCTIONS-2026</span>
+                    <span>ENCRYPTION: AES-256</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Mouse Coordinates Display -->
+    <div class="c-coordinates" id="coordinates">
+        <span>X: 0000</span> | <span>Y: 0000</span>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Python Advanced Topics - Exception Handling, File Handling, OS Module, Database">
+    <title>Python Advanced | NEON TERMINAL</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="js-page-advanced">
+    <div class="l-grid">
+        <!-- Scanline Overlay -->
+        <div class="c-scanlines"></div>
+        
+        <!-- Header -->
+        <header class="c-header l-header" role="banner">
+            <div class="c-header__grid-overlay"></div>
+            <div class="c-header__content">
+                <h1 class="c-header__title" data-text="PYTHON_TERMINAL">
+                    <span class="c-header__prefix">PY_</span>PYTHON_TERMINAL
+                </h1>
+                <div class="c-header__status">
+                    <span class="u-pulse u-pulse--cyan">●</span>
+                    <span class="c-header__status-text">MODULE: ADVANCED | STATUS: ONLINE</span>
+                </div>
+            </div>
+            <nav class="c-header__nav" role="navigation" aria-label="Main navigation">
+                <a href="index.html" class="c-btn" aria-label="Back to main tutorial">
+                    <span class="c-btn__content">BACK</span>
+                    <span class="c-btn__glitch-layer"></span>
+                </a>
+                <button class="c-btn c-btn--theme" id="themeToggle" aria-label="Toggle theme">
+                    <span class="c-btn__content">THEME</span>
+                    <span class="c-btn__glitch-layer"></span>
+                </button>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="l-main" id="main-content" role="main">
+            <!-- Navigation Sidebar -->
+            <aside class="c-sidebar l-sidebar" role="complementary" aria-label="Advanced navigation">
+                <div class="c-sidebar__section">
+                    <h2 class="c-sidebar__title">MODULE_05: ADVANCED TOPICS</h2>
+                    <ul class="c-nav">
+                        <li><a href="#exception-handling" class="c-nav__link" data-section="exception-handling">[01] Exception Handling</a></li>
+                        <li><a href="#built-in-exceptions" class="c-nav__link" data-section="built-in-exceptions">[02] Built-in Exceptions</a></li>
+                        <li><a href="#user-defined-exceptions" class="c-nav__link" data-section="user-defined-exceptions">[03] User-defined Exceptions</a></li>
+                        <li><a href="#file-handling" class="c-nav__link" data-section="file-handling">[04] File Handling</a></li>
+                        <li><a href="#read-files" class="c-nav__link" data-section="read-files">[05] Reading Files</a></li>
+                        <li><a href="#write-files" class="c-nav__link" data-section="write-files">[06] Writing Files</a></li>
+                        <li><a href="#os-module" class="c-nav__link" data-section="os-module">[07] OS Module</a></li>
+                        <li><a href="#pathlib" class="c-nav__link" data-section="pathlib">[08] pathlib Module</a></li>
+                        <li><a href="#database" class="c-nav__link" data-section="database">[09] Database Handling</a></li>
+                        <li><a href="#packages" class="c-nav__link" data-section="packages">[10] Packages & Libraries</a></li>
+                    </ul>
+                </div>
+            </aside>
+
+            <!-- Content Area -->
+            <section class="c-content l-content" id="content-area">
+                <!-- Exception Handling Section -->
+                <article id="exception-handling" class="c-section is-active" data-section="exception-handling">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[01]</span>
+                            EXCEPTION HANDLING
+                        </h2>
+                        <div class="c-section__meta">
+                            <span class="c-tag">ADVANCED</span>
+                            <span class="c-tag">MODULE_05</span>
+                        </div>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Try-Except Blocks</h3>
+                                <p class="c-card__text">
+                                    Exception handling allows you to handle runtime errors gracefully. Python uses try-except blocks to catch and handle exceptions.
+                                </p>
+                                <div class="c-code-block">
+                                    <div class="c-code-block__header">
+                                        <span class="c-code-block__title">exceptions.py</span>
+                                        <span class="c-code-block__lang">PYTHON</span>
+                                    </div>
+                                    <pre><code class="language-python"><span class="c-code__comment"># Basic try-except</span>
+<span class="c-code__keyword">try</span>:
+    result = <span class="c-code__number">10</span> / <span class="c-code__number">0</span>
+<span class="c-code__keyword">except</span> ZeroDivisionError:
+    <span class="c-code__function">print</span>(<span class="c-code__string">"Cannot divide by zero!"</span>)
+
+<span class="c-code__comment"># Multiple exceptions</span>
+<span class="c-code__keyword">try</span>:
+    num = <span class="c-code__function">int</span>(<span class="c-code__function">input</span>(<span class="c-code__string">"Enter a number: "</span>))
+    result = <span class="c-code__number">10</span> / num
+<span class="c-code__keyword">except</span> ValueError:
+    <span class="c-code__function">print</span>(<span class="c-code__string">"Invalid input! Please enter a number."</span>)
+<span class="c-code__keyword">except</span> ZeroDivisionError:
+    <span class="c-code__function">print</span>(<span class="c-code__string">"Cannot divide by zero!"</span>)
+
+<span class="c-code__comment"># Catching multiple exceptions in one clause</span>
+<span class="c-code__keyword">try</span>:
+    risky_operation()
+<span class="c-code__keyword">except</span> (ValueError, TypeError, KeyError) <span class="c-code__keyword">as</span> e:
+    <span class="c-code__function">print</span>(<span class="c-code__string">f"Error occurred: {e}"</span>)
+
+<span class="c-code__comment"># Try-except-else</span>
+<span class="c-code__keyword">try</span>:
+    num = <span class="c-code__function">int</span>(<span class="c-code__function">input</span>(<span class="c-code__string">"Enter a number: "</span>))
+<span class="c-code__keyword">except</span> ValueError:
+    <span class="c-code__function">print</span>(<span class="c-code__string">"Invalid number!"</span>)
+<span class="c-code__keyword">else</span>:
+    <span class="c-code__function">print</span>(<span class="c-code__string">f"You entered: {num}"</span>)
+
+<span class="c-code__comment"># Try-except-finally</span>
+<span class="c-code__keyword">try</span>:
+    file = <span class="c-code__function">open</span>(<span class="c-code__string">"data.txt"</span>, <span class="c-code__string">"r"</span>)
+    content = file.<span class="c-code__function">read</span>()
+<span class="c-code__keyword">except</span> FileNotFoundError:
+    <span class="c-code__function">print</span>(<span class="c-code__string">"File not found!"</span>)
+<span class="c-code__keyword">finally</span>:
+    <span class="c-code__function">print</span>(<span class="c-code__string">"Execution complete"</span>)
+    <span class="c-code__keyword">if</span> <span class="c-code__string">"file"</span> <span class="c-code__keyword">in</span> <span class="c-code__function">locals</span>():
+        file.<span class="c-code__function">close</span>()</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Raising Exceptions</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Raising exceptions</span>
+<span class="c-code__keyword">def</span> <span class="c-code__function">validate_age</span>(age):
+    <span class="c-code__keyword">if</span> age < <span class="c-code__number">0</span>:
+        <span class="c-code__keyword">raise</span> <span class="c-code__function">ValueError</span>(<span class="c-code__string">"Age cannot be negative"</span>)
+    <span class="c-code__keyword">if</span> age > <span class="c-code__number">150</span>:
+        <span class="c-code__keyword">raise</span> <span class="c-code__function">ValueError</span>(<span class="c-code__string">"Age seems unrealistic"</span>)
+    <span class="c-code__keyword">return</span> <span class="c-code__string">f"Age validated: {age}"</span>
+
+<span class="c-code__keyword">try</span>:
+    <span class="c-code__function">print</span>(<span class="c-code__function">validate_age</span>(-<span class="c-code__number">5</span>))
+<span class="c-code__keyword">except</span> ValueError <span class="c-code__keyword">as</span> e:
+    <span class="c-code__function">print</span>(<span class="c-code__string">f"Validation error: {e}"</span>)
+
+<span class="c-code__comment"># Re-raising exceptions</span>
+<span class="c-code__keyword">try</span>:
+    <span class="c-code__number">1</span> / <span class="c-code__number">0</span>
+<span class="c-code__keyword">except</span> ZeroDivisionError <span class="c-code__keyword">as</span> e:
+    <span class="c-code__function">print</span>(<span class="c-code__string">"Caught exception"</span>)
+    <span class="c-code__keyword">raise</span>  <span class="c-code__comment"># Re-raise the same exception</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Built-in Exceptions Section -->
+                <article id="built-in-exceptions" class="c-section" data-section="built-in-exceptions">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[02]</span>
+                            BUILT-IN EXCEPTIONS
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Common Exception Types</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Common built-in exceptions</span>
+
+<span class="c-code__comment"># ArithmeticError - Base for arithmetic errors</span>
+<span class="c-code__number">10</span> / <span class="c-code__number">0</span>  <span class="c-code__comment"># ZeroDivisionError</span>
+
+<span class="c-code__comment"># AttributeError - Invalid attribute reference</span>
+text = <span class="c-code__string">"hello"</span>
+text.<span class="c-code__function">nonexistent_method</span>()
+
+<span class="c-code__comment"># FileNotFoundError - File not found</span>
+<span class="c-code__function">open</span>(<span class="c-code__string">"nonexistent.txt"</span>)
+
+<span class="c-code__comment"># IndexError - Invalid index</span>
+my_list = [<span class="c-code__number">1</span>, <span class="c-code__number">2</span>, <span class="c-code__number">3</span>]
+my_list[<span class="c-code__number">10</span>]
+
+<span class="c-code__comment"># KeyError - Invalid dictionary key</span>
+my_dict = {<span class="c-code__string">"a"</span>: <span class="c-code__number">1</span>}
+my_dict[<span class="c-code__string">"b"</span>]
+
+<span class="c-code__comment"># TypeError - Invalid type operation</span>
+<span class="c-code__string">"5"</span> + <span class="c-code__number">5</span>
+
+<span class="c-code__comment"># ValueError - Valid type, invalid value</span>
+<span class="c-code__function">int</span>(<span class="c-code__string">"abc"</span>)
+
+<span class="c-code__comment"># ImportError - Import failure</span>
+<span class="c-code__keyword">from</span> math <span class="c-code__keyword">import</span> nonexistent
+
+<span class="c-code__comment"># ModuleNotFoundError - Module not found</span>
+<span class="c-code__keyword">import</span> nonexistent_module
+
+<span class="c-code__comment"># RuntimeError - General runtime error</span>
+<span class="c-code__keyword">raise</span> <span class="c-code__function">RuntimeError</span>(<span class="c-code__string">"Something went wrong"</span>)
+
+<span class="c-code__comment"># StopIteration - Iterator exhausted</span>
+<span class="c-code__comment"># Raised automatically when next() reaches end</span>
+
+<span class="c-code__comment"># AssertionError - Assert statement failed</span>
+<span class="c-code__keyword">assert</span> <span class="c-code__constant">False</span>, <span class="c-code__string">"This always fails"</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- User-defined Exceptions Section -->
+                <article id="user-defined-exceptions" class="c-section" data-section="user-defined-exceptions">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[03]</span>
+                            USER-DEFINED EXCEPTIONS
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Custom Exception Classes</h3>
+                                <p class="c-card__text">
+                                    You can create your own exception classes by inheriting from the built-in Exception class.
+                                </p>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Custom exception base class</span>
+<span class="c-code__keyword">class</span> <span class="c-code__class">MyCustomError</span>(Exception):
+    <span class="c-code__string">"""Base class for custom exceptions"""</span>
+    <span class="c-code__keyword">pass</span>
+
+<span class="c-code__comment"># Specific custom exception</span>
+<span class="c-code__keyword">class</span> <span class="c-code__class">InvalidEmailError</span>(MyCustomError):
+    <span class="c-code__string">"""Raised when email format is invalid"""</span>
+    <span class="c-code__keyword">def</span> <span class="c-code__function">__init__</span>(self, email, message=<span class="c-code__string">"Invalid email format"</span>):
+        self.email = email
+        self.message = message
+        <span class="c-code__function">super</span>().<span class="c-code__function">__init__</span>(<span class="c-code__string">f"{self.message}: {self.email}"</span>)
+
+<span class="c-code__keyword">class</span> <span class="c-code__class">InsufficientFundsError</span>(MyCustomError):
+    <span class="c-code__string">"""Raised when account has insufficient funds"""</span>
+    <span class="c-code__keyword">def</span> <span class="c-code__function">__init__</span>(self, balance, amount):
+        self.balance = balance
+        self.amount = amount
+        <span class="c-code__function">super</span>().<span class="c-code__function">__init__</span>(
+            <span class="c-code__string">f"Balance ${balance} insufficient for ${amount} transaction"</span>
+        )
+
+<span class="c-code__keyword">def</span> <span class="c-code__function">validate_email</span>(email):
+    <span class="c-code__keyword">if</span> <span class="c-code__string">"@"</span> <span class="c-code__keyword">not</span> <span class="c-code__keyword">in</span> email:
+        <span class="c-code__keyword">raise</span> <span class="c-code__function">InvalidEmailError</span>(email)
+    <span class="c-code__keyword">return</span> <span class="c-code__string">"Email valid"</span>
+
+<span class="c-code__keyword">try</span>:
+    <span class="c-code__function">validate_email</span>(<span class="c-code__string">"invalid-email"</span>)
+<span class="c-code__keyword">except</span> InvalidEmailError <span class="c-code__keyword">as</span> e:
+    <span class="c-code__function">print</span>(e)</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- File Handling Section -->
+                <article id="file-handling" class="c-section" data-section="file-handling">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[04]</span>
+                            FILE HANDLING
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Opening Files</h3>
+                                <p class="c-card__text">
+                                    Python provides built-in functions for file operations. Always close files after use or use context managers.
+                                </p>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># File modes</span>
+<span class="c-code__comment"># 'r' - Read (default)</span>
+<span class="c-code__comment"># 'w' - Write (overwrites)</span>
+<span class="c-code__comment"># 'a' - Append</span>
+<span class="c-code__comment"># 'x' - Exclusive creation</span>
+<span class="c-code__comment"># 'b' - Binary mode</span>
+<span class="c-code__comment"># 't' - Text mode (default)</span>
+<span class="c-code__comment"># '+' - Read and write</span>
+
+<span class="c-code__comment"># Basic file opening</span>
+file = <span class="c-code__function">open</span>(<span class="c-code__string">"example.txt"</span>, <span class="c-code__string">"r"</span>)
+content = file.<span class="c-code__function">read</span>()
+file.<span class="c-code__function">close</span>()
+
+<span class="c-code__comment"># Using context manager (recommended)</span>
+<span class="c-code__keyword">with</span> <span class="c-code__function">open</span>(<span class="c-code__string">"example.txt"</span>, <span class="c-code__string">"r"</span>) <span class="c-code__keyword">as</span> file:
+    content = file.<span class="c-code__function">read</span>()
+<span class="c-code__comment"># File automatically closed</span>
+
+<span class="c-code__comment"># Reading with encoding</span>
+<span class="c-code__keyword">with</span> <span class="c-code__function">open</span>(<span class="c-code__string">"unicode.txt"</span>, <span class="c-code__string">"r"</span>, encoding=<span class="c-code__string">"utf-8"</span>) <span class="c-code__keyword">as</span> file:
+    content = file.<span class="c-code__function">read</span>()</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Read Files Section -->
+                <article id="read-files" class="c-section" data-section="read-files">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[05]</span>
+                            READING FILES
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Read Methods</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Read entire file</span>
+<span class="c-code__keyword">with</span> <span class="c-code__function">open</span>(<span class="c-code__string">"file.txt"</span>, <span class="c-code__string">"r"</span>) <span class="c-code__keyword">as</span> f:
+    content = f.<span class="c-code__function">read</span>()
+    <span class="c-code__function">print</span>(content)
+
+<span class="c-code__comment"># Read specific number of characters</span>
+<span class="c-code__keyword">with</span> <span class="c-code__function">open</span>(<span class="c-code__string">"file.txt"</span>, <span class="c-code__string">"r"</span>) <span class="c-code__keyword">as</span> f:
+    content = f.<span class="c-code__function">read</span>(<span class="c-code__number">100</span>)  <span class="c-code__comment"># Read first 100 chars</span>
+
+<span class="c-code__comment"># Read line by line</span>
+<span class="c-code__keyword">with</span> <span class="c-code__function">open</span>(<span class="c-code__string">"file.txt"</span>, <span class="c-code__string">"r"</span>) <span class="c-code__keyword">as</span> f:
+    <span class="c-code__keyword">for</span> line <span class="c-code__keyword">in</span> f:
+        <span class="c-code__function">print</span>(line.<span class="c-code__function">strip</span>())
+
+<span class="c-code__comment"># Read all lines into list</span>
+<span class="c-code__keyword">with</span> <span class="c-code__function">open</span>(<span class="c-code__string">"file.txt"</span>, <span class="c-code__string">"r"</span>) <span class="c-code__keyword">as</span> f:
+    lines = f.<span class="c-code__function">readlines</span>()
+    <span class="c-code__function">print</span>(lines)
+
+<span class="c-code__comment"># Read single line</span>
+<span class="c-code__keyword">with</span> <span class="c-code__function">open</span>(<span class="c-code__string">"file.txt"</span>, <span class="c-code__string">"r"</span>) <span class="c-code__keyword">as</span> f:
+    first_line = f.<span class="c-code__function">readline</span>()
+    second_line = f.<span class="c-code__function">readline</span>()
+
+<span class="c-code__comment"># Read binary file</span>
+<span class="c-code__keyword">with</span> <span class="c-code__function">open</span>(<span class="c-code__string">"image.png"</span>, <span class="c-code__string">"rb"</span>) <span class="c-code__keyword">as</span> f:
+    binary_data = f.<span class="c-code__function">read</span>()</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Write Files Section -->
+                <article id="write-files" class="c-section" data-section="write-files">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[06]</span>
+                            WRITING FILES
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Write and Append</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Write to file (overwrites existing)</span>
+<span class="c-code__keyword">with</span> <span class="c-code__function">open</span>(<span class="c-code__string">"output.txt"</span>, <span class="c-code__string">"w"</span>) <span class="c-code__keyword">as</span> f:
+    f.<span class="c-code__function">write</span>(<span class="c-code__string">"Hello, World!\n"</span>)
+    f.<span class="c-code__function">write</span>(<span class="c-code__string">"Second line\n"</span>)
+
+<span class="c-code__comment"># Write multiple lines</span>
+lines = [<span class="c-code__string">"Line 1\n"</span>, <span class="c-code__string">"Line 2\n"</span>, <span class="c-code__string">"Line 3\n"</span>]
+<span class="c-code__keyword">with</span> <span class="c-code__function">open</span>(<span class="c-code__string">"output.txt"</span>, <span class="c-code__string">"w"</span>) <span class="c-code__keyword">as</span> f:
+    f.<span class="c-code__function">writelines</span>(lines)
+
+<span class="c-code__comment"># Append to file</span>
+<span class="c-code__keyword">with</span> <span class="c-code__function">open</span>(<span class="c-code__string">"output.txt"</span>, <span class="c-code__string">"a"</span>) <span class="c-code__keyword">as</span> f:
+    f.<span class="c-code__function">write</span>(<span class="c-code__string">"Appended line\n"</span>)
+
+<span class="c-code__comment"># Write with formatting</span>
+data = {<span class="c-code__string">"name"</span>: <span class="c-code__string">"Alice"</span>, <span class="c-code__string">"age"</span>: <span class="c-code__number">30</span>}
+<span class="c-code__keyword">with</span> <span class="c-code__function">open</span>(<span class="c-code__string">"data.txt"</span>, <span class="c-code__string">"w"</span>) <span class="c-code__keyword">as</span> f:
+    <span class="c-code__keyword">for</span> key, value <span class="c-code__keyword">in</span> data.<span class="c-code__function">items</span>():
+        f.<span class="c-code__function">write</span>(<span class="c-code__string">f"{key}: {value}\n"</span>)
+
+<span class="c-code__comment"># Write binary data</span>
+data = <span class="c-code__function">bytes</span>([<span class="c-code__number">0x00</span>, <span class="c-code__number">0x01</span>, <span class="c-code__number">0x02</span>, <span class="c-code__number">0x03</span>])
+<span class="c-code__keyword">with</span> <span class="c-code__function">open</span>(<span class="c-code__string">"binary.bin"</span>, <span class="c-code__string">"wb"</span>) <span class="c-code__keyword">as</span> f:
+    f.<span class="c-code__function">write</span>(data)</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- OS Module Section -->
+                <article id="os-module" class="c-section" data-section="os-module">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[07]</span>
+                            OS MODULE
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Operating System Interface</h3>
+                                <p class="c-card__text">
+                                    The os module provides functions for interacting with the operating system.
+                                </p>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__keyword">import</span> os
+
+<span class="c-code__comment"># Get current working directory</span>
+cwd = os.<span class="c-code__function">getcwd</span>()
+<span class="c-code__function">print</span>(<span class="c-code__string">f"Current directory: {cwd}"</span>)
+
+<span class="c-code__comment"># Change directory</span>
+os.<span class="c-code__function">chdir</span>(<span class="c-code__string">"/path/to/directory"</span>)
+
+<span class="c-code__comment"># List directory contents</span>
+files = os.<span class="c-code__function">listdir</span>(<span class="c-code__string">"."</span>)
+<span class="c-code__function">print</span>(files)
+
+<span class="c-code__comment"># Create directory</span>
+os.<span class="c-code__function">mkdir</span>(<span class="c-code__string">"new_folder"</span>)
+os.<span class="c-code__function">makedirs</span>(<span class="c-code__string">"parent/child/grandchild"</span>)  <span class="c-code__comment"># Recursive</span>
+
+<span class="c-code__comment"># Remove directory</span>
+os.<span class="c-code__function">rmdir</span>(<span class="c-code__string">"empty_folder"</span>)
+os.<span class="c-code__function">removedirs</span>(<span class="c-code__string">"parent/child/grandchild"</span>)
+
+<span class="c-code__comment"># Remove file</span>
+os.<span class="c-code__function">remove</span>(<span class="c-code__string">"file.txt"</span>)
+os.<span class="c-code__function">unlink</span>(<span class="c-code__string">"file.txt"</span>)  <span class="c-code__comment"># Same as remove</span>
+
+<span class="c-code__comment"># Rename file/directory</span>
+os.<span class="c-code__function">rename</span>(<span class="c-code__string">"old_name.txt"</span>, <span class="c-code__string">"new_name.txt"</span>)
+
+<span class="c-code__comment"># Get file info</span>
+stat_info = os.<span class="c-code__function">stat</span>(<span class="c-code__string">"file.txt"</span>)
+<span class="c-code__function">print</span>(<span class="c-code__string">f"Size: {stat_info.st_size} bytes"</span>)
+
+<span class="c-code__comment"># Check if path exists</span>
+<span class="c-code__function">print</span>(os.<span class="c-code__function">path</span>.<span class="c-code__function">exists</span>(<span class="c-code__string">"file.txt"</span>))
+<span class="c-code__function">print</span>(os.<span class="c-code__function">path</span>.<span class="c-code__function">isfile</span>(<span class="c-code__string">"file.txt"</span>))
+<span class="c-code__function">print</span>(os.<span class="c-code__function">path</span>.<span class="c-code__function">isdir</span>(<span class="c-code__string">"folder"</span>))
+
+<span class="c-code__comment"># Join paths</span>
+full_path = os.<span class="c-code__function">path</span>.<span class="c-code__function">join</span>(<span class="c-code__string">"folder"</span>, <span class="c-code__string">"subfolder"</span>, <span class="c-code__string">"file.txt"</span>)
+
+<span class="c-code__comment"># Get absolute path</span>
+abs_path = os.<span class="c-code__function">path</span>.<span class="c-code__function">abspath</span>(<span class="c-code__string">"relative/path"</span>)
+
+<span class="c-code__comment"># Split path</span>
+directory, filename = os.<span class="c-code__function">path</span>.<span class="c-code__function">split</span>(<span class="c-code__string">"/path/to/file.txt"</span>)
+name, ext = os.<span class="c-code__function">path</span>.<span class="c-code__function">splitext</span>(<span class="c-code__string">"file.txt"</span>)
+
+<span class="c-code__comment"># Environment variables</span>
+path = os.<span class="c-code__function">environ</span>.<span class="c-code__function">get</span>(<span class="c-code__string">"PATH"</span>)
+os.<span class="c-code__function">environ</span>[<span class="c-code__string">"MY_VAR"</span>] = <span class="c-code__string">"value"</span>
+
+<span class="c-code__comment"># Run system command</span>
+os.<span class="c-code__function">system</span>(<span class="c-code__string">"dir"</span>)  <span class="c-code__comment"># Windows</span>
+result = os.<span class="c-code__function">popen</span>(<span class="c-code__string">"dir"</span>).<span class="c-code__function">read</span>()</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- pathlib Module Section -->
+                <article id="pathlib" class="c-section" data-section="pathlib">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[08]</span>
+                            PATHLIB MODULE
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Object-Oriented Path Handling</h3>
+                                <p class="c-card__text">
+                                    The pathlib module provides a more modern, object-oriented approach to handling filesystem paths.
+                                </p>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__keyword">from</span> pathlib <span class="c-code__keyword">import</span> Path, PurePath
+
+<span class="c-code__comment"># Create Path object</span>
+p = <span class="c-code__function">Path</span>(<span class="c-code__string">"folder/file.txt"</span>)
+
+<span class="c-code__comment"># Current directory</span>
+cwd = Path.<span class="c-code__function">cwd</span>()
+
+<span class="c-code__comment"># Home directory</span>
+home = Path.<span class="c-code__function">home</span>()
+
+<span class="c-code__comment"># Path parts</span>
+<span class="c-code__function">print</span>(p.parent)      <span class="c-code__comment"># folder</span>
+<span class="c-code__function">print</span>(p.name)        <span class="c-code__comment"># file.txt</span>
+<span class="c-code__function">print</span>(p.stem)        <span class="c-code__comment"># file</span>
+<span class="c-code__function">print</span>(p.suffix)      <span class="c-code__comment"># .txt</span>
+<span class="c-code__function">print</span>(p.anchor)      <span class="c-code__comment"># Drive letter on Windows</span>
+
+<span class="c-code__comment"># Join paths</span>
+new_path = p.parent / <span class="c-code__string">"new_folder"</span> / <span class="c-code__string">"new_file.txt"</span>
+
+<span class="c-code__comment"># Check existence</span>
+<span class="c-code__function">print</span>(p.<span class="c-code__function">exists</span>())
+<span class="c-code__function">print</span>(p.<span class="c-code__function">is_file</span>())
+<span class="c-code__function">print</span>(p.<span class="c-code__function">is_dir</span>())
+
+<span class="c-code__comment"># Read file</span>
+content = p.<span class="c-code__function">read_text</span>()
+binary = p.<span class="c-code__function">read_bytes</span>()
+
+<span class="c-code__comment"># Write file</span>
+p.<span class="c-code__function">write_text</span>(<span class="c-code__string">"Hello, World!"</span>)
+p.<span class="c-code__function">write_bytes</span>(<span class="c-code__function">bytes</span>([<span class="c-code__number">0</span>, <span class="c-code__number">1</span>, <span class="c-code__number">2</span>]))
+
+<span class="c-code__comment"># Create directory</span>
+Path(<span class="c-code__string">"new_folder"</span>).<span class="c-code__function">mkdir</span>()
+Path(<span class="c-code__string">"a/b/c"</span>).<span class="c-code__function">mkdir</span>(parents=<span class="c-code__constant">True</span>, exist_ok=<span class="c-code__constant">True</span>)
+
+<span class="c-code__comment"># Iterate directory</span>
+<span class="c-code__keyword">for</span> item <span class="c-code__keyword">in</span> Path(<span class="c-code__string">"."</span>).<span class="c-code__function">iterdir</span>():
+    <span class="c-code__function">print</span>(item)
+
+<span class="c-code__comment"># Glob patterns</span>
+python_files = <span class="c-code__function">list</span>(Path(<span class="c-code__string">"."</span>).<span class="c-code__function">glob</span>(<span class="c-code__string">"*.py"</span>))
+all_files = <span class="c-code__function">list</span>(Path(<span class="c-code__string">"."</span>).<span class="c-code__function">rglob</span>(<span class="c-code__string">"*"</span>))  <span class="c-code__comment"># Recursive</span>
+
+<span class="c-code__comment"># Move/rename</span>
+p.<span class="c-code__function">rename</span>(<span class="c-code__string">"new_name.txt"</span>)
+
+<span class="c-code__comment"># Delete</span>
+p.<span class="c-code__function">unlink</span>()  <span class="c-code__comment"># Delete file</span>
+p.parent.<span class="c-code__function">rmdir</span>()  <span class="c-code__comment"># Delete empty directory</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Database Handling Section -->
+                <article id="database" class="c-section" data-section="database">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[09]</span>
+                            DATABASE HANDLING
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">SQLite Database</h3>
+                                <p class="c-card__text">
+                                    Python has built-in support for SQLite databases through the sqlite3 module.
+                                </p>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__keyword">import</span> sqlite3
+
+<span class="c-code__comment"># Connect to database (creates if doesn't exist)</span>
+conn = sqlite3.<span class="c-code__function">connect</span>(<span class="c-code__string">"example.db"</span>)
+cursor = conn.<span class="c-code__function">cursor</span>()
+
+<span class="c-code__comment"># Create table</span>
+cursor.<span class="c-code__function">execute</span>(<span class="c-code__string">"""
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY,
+        name TEXT NOT NULL,
+        email TEXT UNIQUE,
+        age INTEGER
+    )
+"""</span>)
+
+<span class="c-code__comment"># Insert data</span>
+cursor.<span class="c-code__function">execute</span>(
+    <span class="c-code__string">"INSERT INTO users (name, email, age) VALUES (?, ?, ?)"</span>,
+    (<span class="c-code__string">"Alice"</span>, <span class="c-code__string">"alice@email.com"</span>, <span class="c-code__number">30</span>)
+)
+
+<span class="c-code__comment"># Insert multiple</span>
+users = [
+    (<span class="c-code__string">"Bob"</span>, <span class="c-code__string">"bob@email.com"</span>, <span class="c-code__number">25</span>),
+    (<span class="c-code__string">"Charlie"</span>, <span class="c-code__string">"charlie@email.com"</span>, <span class="c-code__number">35</span>)
+]
+cursor.<span class="c-code__function">executemany</span>(
+    <span class="c-code__string">"INSERT INTO users (name, email, age) VALUES (?, ?, ?)"</span>,
+    users
+)
+
+<span class="c-code__comment"># Commit changes</span>
+conn.<span class="c-code__function">commit</span>()
+
+<span class="c-code__comment"># Query data</span>
+cursor.<span class="c-code__function">execute</span>(<span class="c-code__string">"SELECT * FROM users"</span>)
+all_users = cursor.<span class="c-code__function">fetchall</span>()
+
+cursor.<span class="c-code__function">execute</span>(<span class="c-code__string">"SELECT * FROM users WHERE age > ?"</span>, (<span class="c-code__number">28</span>,))
+filtered = cursor.<span class="c-code__function">fetchall</span>()
+
+<span class="c-code__comment"># Update data</span>
+cursor.<span class="c-code__function">execute</span>(
+    <span class="c-code__string">"UPDATE users SET age = ? WHERE name = ?"</span>,
+    (<span class="c-code__number">31</span>, <span class="c-code__string">"Alice"</span>)
+)
+
+<span class="c-code__comment"># Delete data</span>
+cursor.<span class="c-code__function">execute</span>(<span class="c-code__string">"DELETE FROM users WHERE age < ?"</span>, (<span class="c-code__number">30</span>,))
+
+conn.<span class="c-code__function">commit</span>()
+
+<span class="c-code__comment"># Close connection</span>
+conn.<span class="c-code__function">close</span>()
+
+<span class="c-code__comment"># Using context manager</span>
+<span class="c-code__keyword">with</span> sqlite3.<span class="c-code__function">connect</span>(<span class="c-code__string">"example.db"</span>) <span class="c-code__keyword">as</span> conn:
+    cursor = conn.<span class="c-code__function">cursor</span>()
+    cursor.<span class="c-code__function">execute</span>(<span class="c-code__string">"SELECT * FROM users"</span>)
+    <span class="c-code__keyword">for</span> row <span class="c-code__keyword">in</span> cursor:
+        <span class="c-code__function">print</span>(row)</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">MongoDB Introduction</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># MongoDB with pymongo (pip install pymongo)</span>
+<span class="c-code__keyword">from</span> pymongo <span class="c-code__keyword">import</span> MongoClient
+
+<span class="c-code__comment"># Connect to MongoDB</span>
+client = <span class="c-code__function">MongoClient</span>(<span class="c-code__string">"mongodb://localhost:27017/"</span>)
+
+<span class="c-code__comment"># Select database</span>
+db = client[<span class="c-code__string">"my_database"</span>]
+
+<span class="c-code__comment"># Select collection</span>
+collection = db[<span class="c-code__string">"users"</span>]
+
+<span class="c-code__comment"># Insert document</span>
+user = {<span class="c-code__string">"name"</span>: <span class="c-code__string">"Alice"</span>, <span class="c-code__string">"age"</span>: <span class="c-code__number">30</span>, <span class="c-code__string">"city"</span>: <span class="c-code__string">"NYC"</span>}
+result = collection.<span class="c-code__function">insert_one</span>(user)
+<span class="c-code__function">print</span>(result.inserted_id)
+
+<span class="c-code__comment"># Insert many</span>
+users = [
+    {<span class="c-code__string">"name"</span>: <span class="c-code__string">"Bob"</span>, <span class="c-code__string">"age"</span>: <span class="c-code__number">25</span>},
+    {<span class="c-code__string">"name"</span>: <span class="c-code__string">"Charlie"</span>, <span class="c-code__string">"age"</span>: <span class="c-code__number">35</span>}
+]
+collection.<span class="c-code__function">insert_many</span>(users)
+
+<span class="c-code__comment"># Find documents</span>
+<span class="c-code__keyword">for</span> doc <span class="c-code__keyword">in</span> collection.<span class="c-code__function">find</span>({<span class="c-code__string">"age"</span>: {<span class="c-code__string">"$gt"</span>: <span class="c-code__number">28</span>}}):
+    <span class="c-code__function">print</span>(doc)
+
+<span class="c-code__comment"># Update document</span>
+collection.<span class="c-code__function">update_one</span>(
+    {<span class="c-code__string">"name"</span>: <span class="c-code__string">"Alice"</span>},
+    {<span class="c-code__string">"$set"</span>: {<span class="c-code__string">"age"</span>: <span class="c-code__number">31</span>}}
+)
+
+<span class="c-code__comment"># Delete document</span>
+collection.<span class="c-code__function">delete_one</span>({<span class="c-code__string">"name"</span>: <span class="c-code__string">"Bob"</span>})</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">MySQL Introduction</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># MySQL with mysql-connector (pip install mysql-connector-python)</span>
+<span class="c-code__keyword">import</span> mysql.connector
+
+<span class="c-code__comment"># Connect to MySQL</span>
+conn = mysql.connector.<span class="c-code__function">connect</span>(
+    host=<span class="c-code__string">"localhost"</span>,
+    user=<span class="c-code__string">"root"</span>,
+    password=<span class="c-code__string">"password"</span>,
+    database=<span class="c-code__string">"mydb"</span>
+)
+cursor = conn.<span class="c-code__function">cursor</span>()
+
+<span class="c-code__comment"># Create table</span>
+cursor.<span class="c-code__function">execute</span>(<span class="c-code__string">"""
+    CREATE TABLE employees (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(100),
+        salary DECIMAL(10, 2)
+    )
+"""</span>)
+
+<span class="c-code__comment"># Insert</span>
+cursor.<span class="c-code__function">execute</span>(
+    <span class="c-code__string">"INSERT INTO employees (name, salary) VALUES (%s, %s)"</span>,
+    (<span class="c-code__string">"John"</span>, <span class="c-code__number">50000</span>)
+)
+conn.<span class="c-code__function">commit</span>()
+
+<span class="c-code__comment"># Query</span>
+cursor.<span class="c-code__function">execute</span>(<span class="c-code__string">"SELECT * FROM employees"</span>)
+<span class="c-code__keyword">for</span> row <span class="c-code__keyword">in</span> cursor:
+    <span class="c-code__function">print</span>(row)
+
+conn.<span class="c-code__function">close</span>()</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Packages Section -->
+                <article id="packages" class="c-section" data-section="packages">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[10]</span>
+                            PACKAGES AND LIBRARIES
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Python Package Ecosystem</h3>
+                                <p class="c-card__text">
+                                    Python has a rich ecosystem of packages and libraries. Use pip to install packages from PyPI (Python Package Index).
+                                </p>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Common pip commands</span>
+<span class="c-code__comment"># pip install package_name</span>
+<span class="c-code__comment"># pip uninstall package_name</span>
+<span class="c-code__comment"># pip list</span>
+<span class="c-code__comment"># pip freeze > requirements.txt</span>
+<span class="c-code__comment"># pip install -r requirements.txt</span>
+<span class="c-code__comment"># pip install --upgrade package_name</span>
+
+<span class="c-code__comment"># Creating a package structure</span>
+<span class="c-code__comment"># mypackage/
+<span class="c-code__comment">#     __init__.py
+<span class="c-code__comment">#     module1.py
+<span class="c-code__comment">#     module2.py
+<span class="c-code__comment">#     subpackage/
+<span class="c-code__comment">#         __init__.py
+<span class="c-code__comment">#         module3.py</span></span></span></span></span></span>
+
+<span class="c-code__comment"># __init__.py example</span>
+<span class="c-code__string">"""My Package - A useful collection"""</span>
+__version__ = <span class="c-code__string">"1.0.0"</span>
+
+<span class="c-code__keyword">from</span> .module1 <span class="c-code__keyword">import</span> function1
+<span class="c-code__keyword">from</span> .module2 <span class="c-code__keyword">import</span> Class2
+
+__all__ = [<span class="c-code__string">"function1"</span>, <span class="c-code__string">"Class2"</span>]</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Popular Libraries by Category</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># DATA SCIENCE</span>
+<span class="c-code__keyword">import</span> numpy <span class="c-code__keyword">as</span> np          <span class="c-code__comment"># Numerical computing</span>
+<span class="c-code__keyword">import</span> pandas <span class="c-code__keyword">as</span> pd         <span class="c-code__comment"># Data manipulation</span>
+<span class="c-code__keyword">import</span> matplotlib.pyplot <span class="c-code__keyword">as</span> plt  <span class="c-code__comment"># Visualization</span>
+<span class="c-code__keyword">import</span> seaborn <span class="c-code__keyword">as</span> sns       <span class="c-code__comment"># Statistical viz</span>
+
+<span class="c-code__comment"># MACHINE LEARNING</span>
+<span class="c-code__keyword">from</span> sklearn <span class="c-code__keyword">import</span> linear_model, metrics
+<span class="c-code__keyword">import</span> tensorflow <span class="c-code__keyword">as</span> tf     <span class="c-code__comment"># Deep learning</span>
+<span class="c-code__keyword">import</span> torch                <span class="c-code__comment"># PyTorch</span>
+
+<span class="c-code__comment"># WEB DEVELOPMENT</span>
+<span class="c-code__keyword">from</span> flask <span class="c-code__keyword">import</span> Flask, request, jsonify
+<span class="c-code__keyword">from</span> django.http <span class="c-code__keyword">import</span> HttpResponse
+
+<span class="c-code__comment"># AUTOMATION & SCRIPTING</span>
+<span class="c-code__keyword">import</span> requests             <span class="c-code__comment"># HTTP requests</span>
+<span class="c-code__keyword">from</span> bs4 <span class="c-code__keyword">import</span> BeautifulSoup  <span class="c-code__comment"># Web scraping</span>
+<span class="c-code__keyword">import</span> selenium             <span class="c-code__comment"># Browser automation</span>
+
+<span class="c-code__comment"># UTILITIES</span>
+<span class="c-code__keyword">import</span> json
+<span class="c-code__keyword">import</span> datetime
+<span class="c-code__keyword">import</span> re                   <span class="c-code__comment"># Regular expressions</span>
+<span class="c-code__keyword">from</span> collections <span class="c-code__keyword">import</span> Counter, defaultdict</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c-card">
+                            <div class="c-card__body">
+                                <h3 class="c-card__title">Virtual Environments</h3>
+                                <div class="c-code-block">
+                                    <pre><code class="language-python"><span class="c-code__comment"># Create virtual environment</span>
+<span class="c-code__comment"># python -m venv venv</span>
+
+<span class="c-code__comment"># Activate on Windows</span>
+<span class="c-code__comment"># venv\Scripts\activate</span>
+
+<span class="c-code__comment"># Activate on macOS/Linux</span>
+<span class="c-code__comment"># source venv/bin/activate</span>
+
+<span class="c-code__comment"># Install packages in venv</span>
+<span class="c-code__comment"># pip install package_name</span>
+
+<span class="c-code__comment"># Deactivate</span>
+<span class="c-code__comment"># deactivate</span>
+
+<span class="c-code__comment"># requirements.txt example</span>
+<span class="c-code__comment"># numpy==1.24.0
+<span class="c-code__comment"># pandas==2.0.0
+<span class="c-code__comment"># requests==2.31.0
+<span class="c-code__comment"># flask==2.3.0</span></span></span></span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Quiz Section -->
+                <article id="quiz-advanced" class="c-section c-section--quiz" data-section="quiz-advanced">
+                    <header class="c-section__header">
+                        <h2 class="c-section__title">
+                            <span class="c-section__number">[QUIZ]</span>
+                            ADVANCED TOPICS
+                        </h2>
+                    </header>
+                    <div class="c-section__body">
+                        <div class="c-quiz">
+                            <div class="c-quiz__question">
+                                <p>Which keyword is used to ensure proper resource management with files?</p>
+                                <div class="c-quiz__options">
+                                    <label class="c-option">
+                                        <input type="radio" name="q1" value="a">
+                                        <span class="c-option__text">using</span>
+                                    </label>
+                                    <label class="c-option">
+                                        <input type="radio" name="q1" value="b">
+                                        <span class="c-option__text">with</span>
+                                    </label>
+                                    <label class="c-option">
+                                        <input type="radio" name="q1" value="c">
+                                        <span class="c-option__text">manage</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <button class="c-btn c-btn--submit" id="submitQuiz">SUBMIT ANSWER</button>
+                            <div class="c-quiz__result" id="quizResult"></div>
+                        </div>
+                    </div>
+                </article>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="c-footer l-footer" role="contentinfo">
+            <div class="c-footer__content">
+                <p class="c-footer__text">
+                    <span class="c-footer__label">SYSTEM:</span> PYTHON TUTORIAL v3.12
+                    <span class="c-footer__separator">|</span>
+                    <span class="c-footer__label">MODULE:</span> ADVANCED
+                    <span class="c-footer__separator">|</span>
+                    <span class="c-footer__label">STATUS:</span>
+                    <span class="u-pulse u-pulse--green">●</span> OPERATIONAL
+                </p>
+                <div class="c-footer__meta">
+                    <span>DATA FRAGMENT: PY-ADVANCED-2026</span>
+                    <span>ENCRYPTION: AES-256</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Mouse Coordinates Display -->
+    <div class="c-coordinates" id="coordinates">
+        <span>X: 0000</span> | <span>Y: 0000</span>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

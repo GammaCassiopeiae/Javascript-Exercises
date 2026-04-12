@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JAVA ALGORITHMS // NEURAL_LINK v2.0</title>
+    <meta name="description" content="Comprehensive Java Algorithms Tutorial - Neon-Noir Interactive Learning Platform">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="l-grid">
+        <!-- Scanline Overlay -->
+        <div class="u-scanlines" aria-hidden="true"></div>
+        <!-- Film Grain -->
+        <div class="u-grain" aria-hidden="true"></div>
+
+        <!-- Header -->
+        <header class="c-header l-header" role="banner">
+            <div class="c-header__glitch-bg" aria-hidden="true"></div>
+            <div class="c-header__content">
+                <div class="c-header__branding">
+                    <h1 class="c-header__title" data-text="JAVA_ALGORITHMS">
+                        <span class="c-header__prefix">[</span>JAVA_ALGORITHMS<span class="c-header__suffix">]</span>
+                    </h1>
+                    <div class="c-header__meta">
+                        <span class="u-pulse">●</span>
+                        <span class="c-header__status">SYSTEM::ONLINE</span>
+                        <span class="c-header__divider">|</span>
+                        <span class="c-header__version">v2.0.76</span>
+                        <span class="c-header__divider">|</span>
+                        <span class="c-header__modules">127_MODULES_LOADED</span>
+                    </div>
+                </div>
+                <div class="c-header__controls">
+                    <button class="c-btn c-btn--icon" id="themeToggle" aria-label="Toggle theme" title="Toggle Dark/Light Mode">
+                        <span class="c-btn__icon">◐</span>
+                    </button>
+                    <button class="c-btn c-btn--icon" id="searchToggle" aria-label="Toggle search" title="Search Algorithms">
+                        <span class="c-btn__icon">⌕</span>
+                    </button>
+                </div>
+            </div>
+            <nav class="c-header__nav" aria-label="Main navigation">
+                <ul class="c-nav-list">
+                    <li><a href="#home" class="c-nav-link is-active" data-section="home">HOME</a></li>
+                    <li><a href="#leetcode" class="c-nav-link" data-section="leetcode">LEETCODE</a></li>
+                    <li><a href="#searching" class="c-nav-link" data-section="searching">SEARCHING</a></li>
+                    <li><a href="#sorting" class="c-nav-link" data-section="sorting">SORTING</a></li>
+                    <li><a href="#graphs" class="c-nav-link" data-section="graphs">GRAPHS</a></li>
+                    <li><a href="#trees" class="c-nav-link" data-section="trees">TREES</a></li>
+                    <li><a href="#dp" class="c-nav-link" data-section="dp">DYNAMIC_PROG</a></li>
+                    <li><a href="#strings" class="c-nav-link" data-section="strings">STRINGS</a></li>
+                    <li><a href="#math" class="c-nav-link" data-section="math">MATH</a></li>
+                    <li><a href="#ml" class="c-nav-link" data-section="ml">ML_ALGORITHMS</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <!-- Search Overlay -->
+        <div class="c-search-overlay" id="searchOverlay" role="search" aria-label="Search algorithms">
+            <div class="c-search__container">
+                <label for="searchInput" class="u-visually-hidden">Search algorithms</label>
+                <input type="search" id="searchInput" class="c-search__input" placeholder="> SEARCH_ALGORITHMS..." autocomplete="off">
+                <button class="c-btn c-btn--close" id="searchClose" aria-label="Close search">×</button>
+                <div class="c-search__results" id="searchResults" role="listbox" aria-live="polite"></div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="l-main" role="main" id="mainContent">
+            <!-- HOME SECTION -->
+            <section class="c-section is-active" id="home" data-section="home">
+                <div class="c-hero">
+                    <div class="c-hero__content">
+                        <h2 class="c-hero__title">MASTER_JAVA_ALGORITHMS</h2>
+                        <p class="c-hero__subtitle">Interactive Tutorial // Data Structures & Algorithm Implementation</p>
+                        <div class="c-hero__stats">
+                            <div class="c-stat">
+                                <span class="c-stat__value">127</span>
+                                <span class="c-stat__label">ALGORITHMS</span>
+                            </div>
+                            <div class="c-stat">
+                                <span class="c-stat__value">10</span>
+                                <span class="c-stat__label">CATEGORIES</span>
+                            </div>
+                            <div class="c-stat">
+                                <span class="c-stat__value">31</span>
+                                <span class="c-stat__label">LEETCODE</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="l-categories">
+                    <!-- LeetCode Problems -->
+                    <article class="c-card" data-category="leetcode">
+                        <div class="c-card__header">
+                            <span class="c-card__tag">LEETCODE</span>
+                            <div class="c-card__indicator"></div>
+                        </div>
+                        <div class="c-card__body">
+                            <h3 class="c-card__title">31 Essential Problems</h3>
+                            <p class="c-card__desc">Two Sum, Valid Parentheses, Merge Intervals, Trapping Rain Water, and more interview-critical algorithms.</p>
+                        </div>
+                        <div class="c-card__footer">
+                            <a href="#leetcode" class="c-btn-action" data-section="leetcode">INITIALIZE</a>
+                            <div class="c-card__stats">PROBLEMS: 31 // DIFFICULTY: EASY-HARD</div>
+                        </div>
+                    </article>
+
+                    <!-- Searching Algorithms -->
+                    <article class="c-card" data-category="searching">
+                        <div class="c-card__header">
+                            <span class="c-card__tag">SEARCHING</span>
+                            <div class="c-card__indicator"></div>
+                        </div>
+                        <div class="c-card__body">
+                            <h3 class="c-card__title">9 Search Algorithms</h3>
+                            <p class="c-card__desc">Linear, Binary, Ternary, Jump, Exponential, Interpolation, Fibonacci, BFS, DFS, Best-First Search.</p>
+                        </div>
+                        <div class="c-card__footer">
+                            <a href="#searching" class="c-btn-action" data-section="searching">INITIALIZE</a>
+                            <div class="c-card__stats">ALGORITHMS: 9 // TYPE: FUNDAMENTAL</div>
+                        </div>
+                    </article>
+
+                    <!-- Sorting Algorithms -->
+                    <article class="c-card" data-category="sorting">
+                        <div class="c-card__header">
+                            <span class="c-card__tag">SORTING</span>
+                            <div class="c-card__indicator"></div>
+                        </div>
+                        <div class="c-card__body">
+                            <h3 class="c-card__title">12 Sort Algorithms</h3>
+                            <p class="c-card__desc">Bubble, Selection, Insertion, Merge, Quick, Heap, Shell, Counting, Radix, Bucket, Timsort, Comb, Pigeonhole, Cycle, Cocktail Shaker.</p>
+                        </div>
+                        <div class="c-card__footer">
+                            <a href="#sorting" class="c-btn-action" data-section="sorting">INITIALIZE</a>
+                            <div class="c-card__stats">ALGORITHMS: 15 // COMPLEXITY: O(n log n)</div>
+                        </div>
+                    </article>
+
+                    <!-- Graph Algorithms -->
+                    <article class="c-card" data-category="graphs">
+                        <div class="c-card__header">
+                            <span class="c-card__tag">GRAPHS</span>
+                            <div class="c-card__indicator"></div>
+                        </div>
+                        <div class="c-card__body">
+                            <h3 class="c-card__title">15 Graph Algorithms</h3>
+                            <p class="c-card__desc">Dijkstra, Bellman-Ford, Floyd-Warshall, Kruskal, Prim, Topological Sort, A*, Ford-Fulkerson, Bridges, and more.</p>
+                        </div>
+                        <div class="c-card__footer">
+                            <a href="#graphs" class="c-btn-action" data-section="graphs">INITIALIZE</a>
+                            <div class="c-card__stats">ALGORITHMS: 15 // TYPE: ADVANCED</div>
+                        </div>
+                    </article>
+
+                    <!-- Tree Algorithms -->
+                    <article class="c-card" data-category="trees">
+                        <div class="c-card__header">
+                            <span class="c-card__tag">TREES</span>
+                            <div class="c-card__indicator"></div>
+                        </div>
+                        <div class="c-card__body">
+                            <h3 class="c-card__title">10 Tree Algorithms</h3>
+                            <p class="c-card__desc">Traversals, LCA, Fenwick Tree, Segment Tree, AVL, Red-Black, B-Tree, Splay Tree, Huffman Coding.</p>
+                        </div>
+                        <div class="c-card__footer">
+                            <a href="#trees" class="c-btn-action" data-section="trees">INITIALIZE</a>
+                            <div class="c-card__stats">ALGORITHMS: 10 // STRUCTURE: HIERARCHICAL</div>
+                        </div>
+                    </article>
+
+                    <!-- Dynamic Programming -->
+                    <article class="c-card" data-category="dp">
+                        <div class="c-card__header">
+                            <span class="c-card__tag">DYNAMIC_PROGRAMMING</span>
+                            <div class="c-card__indicator"></div>
+                        </div>
+                        <div class="c-card__body">
+                            <h3 class="c-card__title">9 DP Algorithms</h3>
+                            <p class="c-card__desc">Knapsack, LCS, LIS, Edit Distance, Matrix Chain, Kadane's, Coin Change, TSP, Floyd's Cycle Detection.</p>
+                        </div>
+                        <div class="c-card__footer">
+                            <a href="#dp" class="c-btn-action" data-section="dp">INITIALIZE</a>
+                            <div class="c-card__stats">ALGORITHMS: 9 // PARADIGM: OPTIMAL_SUBSTRUCTURE</div>
+                        </div>
+                    </article>
+
+                    <!-- String Algorithms -->
+                    <article class="c-card" data-category="strings">
+                        <div class="c-card__header">
+                            <span class="c-card__tag">STRINGS</span>
+                            <div class="c-card__indicator"></div>
+                        </div>
+                        <div class="c-card__body">
+                            <h3 class="c-card__title">10 String Algorithms</h3>
+                            <p class="c-card__desc">KMP, Rabin-Karp, Boyer-Moore, Z Algorithm, Aho-Corasick, Manacher's, Ukkonen's, Longest Palindrome, Soundex, Wagner-Fischer.</p>
+                        </div>
+                        <div class="c-card__footer">
+                            <a href="#strings" class="c-btn-action" data-section="strings">INITIALIZE</a>
+                            <div class="c-card__stats">ALGORITHMS: 10 // DOMAIN: PATTERN_MATCHING</div>
+                        </div>
+                    </article>
+
+                    <!-- Mathematical Algorithms -->
+                    <article class="c-card" data-category="math">
+                        <div class="c-card__header">
+                            <span class="c-card__tag">MATHEMATICAL</span>
+                            <div class="c-card__indicator"></div>
+                        </div>
+                        <div class="c-card__body">
+                            <h3 class="c-card__title">14 Math Algorithms</h3>
+                            <p class="c-card__desc">Euclidean GCD, Sieve of Eratosthenes, FFT, Newton-Raphson, Karatsuba, Strassen's, Miller-Rabin, Gaussian Elimination, Monte Carlo, and more.</p>
+                        </div>
+                        <div class="c-card__footer">
+                            <a href="#math" class="c-btn-action" data-section="math">INITIALIZE</a>
+                            <div class="c-card__stats">ALGORITHMS: 14 // FIELD: COMPUTATIONAL_MATH</div>
+                        </div>
+                    </article>
+
+                    <!-- ML Algorithms -->
+                    <article class="c-card" data-category="ml">
+                        <div class="c-card__header">
+                            <span class="c-card__tag">MACHINE_LEARNING</span>
+                            <div class="c-card__indicator"></div>
+                        </div>
+                        <div class="c-card__body">
+                            <h3 class="c-card__title">15 ML Algorithms</h3>
+                            <p class="c-card__desc">Linear/Logistic Regression, KNN, K-Means, SVM, Decision Trees, Random Forest, Backpropagation, Naive Bayes, PCA, PageRank, Q-Learning, and more.</p>
+                        </div>
+                        <div class="c-card__footer">
+                            <a href="#ml" class="c-btn-action" data-section="ml">INITIALIZE</a>
+                            <div class="c-card__stats">ALGORITHMS: 15 // DOMAIN: STATISTICAL_LEARNING</div>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <!-- Algorithm sections will be dynamically loaded here -->
+        </main>
+
+        <!-- Footer -->
+        <footer class="l-footer" role="contentinfo">
+            <div class="c-footer__content">
+                <div class="c-footer__trace">
+                    <span class="c-footer__line"></span>
+                    <span class="c-footer__label">CIRCUIT_PATH_01</span>
+                </div>
+                <p class="c-footer__text">JAVA_ALGORITHMS_TUTORIAL // NEON_NOIR_EDITION // 2026</p>
+                <div class="c-footer__meta">
+                    <span>MODULES: 127</span>
+                    <span>|</span>
+                    <span>CATEGORIES: 10</span>
+                    <span>|</span>
+                    <span>STATUS: <span class="u-pulse">ACTIVE</span></span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Mouse Coordinates Display -->
+    <div class="c-coords" id="coords" aria-hidden="true">
+        <span class="c-coords__label">X/Y:</span>
+        <span class="c-coords__value">0000/0000</span>
+    </div>
+
+    <script src="js/algorithms-data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

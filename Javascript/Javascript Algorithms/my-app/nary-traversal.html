@@ -1,30 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>N-ary Tree - Traversal</title>
     <style>
-        :root { --neon-primary: #00f3ff; --neon-secondary: #ff00ff; --bg-dark: #050505; --bg-card: rgba(255,255,255,0.05); --border-neon: 1px solid rgba(0,243,255,0.3); --ease-out: cubic-bezier(0.16,1,0.3,1); }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: system-ui, sans-serif; background: var(--bg-dark); color: #fff; min-height: 100vh; }
-        .l-header { position: sticky; top: 0; z-index: 1000; background: rgba(5,5,5,0.9); backdrop-filter: blur(10px); border-bottom: var(--border-neon); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
-        .header__title { font-size: 1.5rem; color: var(--neon-primary); text-shadow: 0 0 5px var(--neon-primary); }
-        .header__back { color: var(--neon-secondary); text-decoration: none; padding: 0.5rem 1rem; border: var(--border-neon); border-radius: 8px; transition: all 0.3s var(--ease-out); }
-        .header__back:hover { box-shadow: 0 0 10px var(--neon-secondary); }
-        .l-main { display: grid; grid-template-columns: 1fr 350px; gap: 1rem; padding: 1rem; max-width: 1600px; margin: 0 auto; }
-        @media (max-width: 900px) { .l-main { grid-template-columns: 1fr; } }
-        .canvas-container { background: var(--bg-card); border: var(--border-neon); border-radius: 12px; padding: 1rem; backdrop-filter: blur(10px); overflow: auto; }
-        #treeCanvas { width: 100%; height: 400px; display: block; }
-        .controls { background: var(--bg-card); border: var(--border-neon); border-radius: 12px; padding: 1.5rem; backdrop-filter: blur(10px); }
-        .controls__section { margin-bottom: 1.5rem; }
-        .controls__title { color: var(--neon-secondary); font-size: 1.1rem; margin-bottom: 1rem; text-shadow: 0 0 5px var(--neon-secondary); }
-        .btn { padding: 0.8rem 1.5rem; background: rgba(0,243,255,0.1); border: var(--border-neon); border-radius: 8px; color: var(--neon-primary); cursor: pointer; font-size: 1rem; transition: all 0.3s var(--ease-out); width: 100%; margin-bottom: 0.5rem; }
-        .btn:hover { background: rgba(0,243,255,0.2); box-shadow: 0 0 15px var(--neon-primary); }
-        .result-box { background: rgba(0,0,0,0.3); border-radius: 8px; padding: 1rem; margin-top: 1rem; font-family: monospace; font-size: 0.9rem; min-height: 60px; }
-        .result-label { color: var(--neon-secondary); margin-bottom: 0.5rem; font-size: 0.85rem; }
+        :root {
+            --neon-primary: #00f3ff;
+            --neon-secondary: #ff00ff;
+            --bg-dark: #050505;
+            --bg-card: rgba(255, 255, 255, 0.05);
+            --border-neon: 1px solid rgba(0, 243, 255, 0.3);
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, sans-serif;
+            background: var(--bg-dark);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .l-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(5, 5, 5, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: var(--border-neon);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header__title {
+            font-size: 1.5rem;
+            color: var(--neon-primary);
+            text-shadow: 0 0 5px var(--neon-primary);
+        }
+
+        .header__back {
+            color: var(--neon-secondary);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border: var(--border-neon);
+            border-radius: 8px;
+            transition: all 0.3s var(--ease-out);
+        }
+
+        .header__back:hover {
+            box-shadow: 0 0 10px var(--neon-secondary);
+        }
+
+        .l-main {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 1rem;
+            padding: 1rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 900px) {
+            .l-main {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .canvas-container {
+            background: var(--bg-card);
+            border: var(--border-neon);
+            border-radius: 12px;
+            padding: 1rem;
+            backdrop-filter: blur(10px);
+            overflow: auto;
+        }
+
+        #treeCanvas {
+            width: 100%;
+            height: 400px;
+            display: block;
+        }
+
+        .controls {
+            background: var(--bg-card);
+            border: var(--border-neon);
+            border-radius: 12px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .controls__section {
+            margin-bottom: 1.5rem;
+        }
+
+        .controls__title {
+            color: var(--neon-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 5px var(--neon-secondary);
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            background: rgba(0, 243, 255, 0.1);
+            border: var(--border-neon);
+            border-radius: 8px;
+            color: var(--neon-primary);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s var(--ease-out);
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn:hover {
+            background: rgba(0, 243, 255, 0.2);
+            box-shadow: 0 0 15px var(--neon-primary);
+        }
+
+        .result-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-family: monospace;
+            font-size: 0.9rem;
+            min-height: 60px;
+        }
+
+        .result-label {
+            color: var(--neon-secondary);
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+        }
     </style>
 </head>
+
 <body>
     <header class="l-header">
         <h1 class="header__title">N-ary Tree - Traversal</h1>
@@ -53,7 +173,12 @@
     <script>
         const canvas = document.getElementById('treeCanvas');
         const ctx = canvas.getContext('2d');
-        function resizeCanvas() { const container = canvas.parentElement; canvas.width = Math.max(container.clientWidth, 800); canvas.height = 400; }
+
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            canvas.width = Math.max(container.clientWidth, 800);
+            canvas.height = 400;
+        }
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
         class NaryNode {
@@ -108,21 +233,26 @@
         const tree = new NaryTree();
         let animationQueue = [];
         let animationIndex = 0;
+
         function drawTree(highlightedId = -1) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             if (!tree.root) return;
             const nodes = [];
             collectNodes(tree.root, nodes, 0, null);
             const levels = {};
-            nodes.forEach(n => { if (!levels[n.depth]) levels[n.depth] = []; levels[n.depth].push(n); });
+            nodes.forEach(n => {
+                if (!levels[n.depth]) levels[n.depth] = [];
+                levels[n.depth].push(n);
+            });
             const levelHeight = 80;
-            Object.keys(levels).sort((a,b) => a-b).forEach((depth) => {
+            Object.keys(levels).sort((a, b) => a - b).forEach((depth) => {
                 const levelNodes = levels[depth];
                 const spacing = canvas.width / (levelNodes.length + 1);
                 levelNodes.forEach((node, i) => {
                     const x = (i + 1) * spacing;
                     const y = 50 + depth * levelHeight;
-                    node.x = x; node.y = y;
+                    node.x = x;
+                    node.y = y;
                     if (node.parent) {
                         ctx.beginPath();
                         ctx.moveTo(node.parent.x, node.parent.y + 20);
@@ -150,10 +280,17 @@
                 });
             });
         }
+
         function collectNodes(node, arr, depth, parent) {
-            arr.push({ value: node.value, id: node.id, depth, parent });
+            arr.push({
+                value: node.value,
+                id: node.id,
+                depth,
+                parent
+            });
             node.children.forEach(child => collectNodes(child, arr, depth + 1, arr[arr.length - 1]));
         }
+
         function animateTraversal(order) {
             animationQueue = order.map(v => {
                 for (const [id, node] of tree.nodes) {
@@ -164,6 +301,7 @@
             animationIndex = 0;
             animate();
         }
+
         function animate() {
             if (animationIndex < animationQueue.length) {
                 drawTree(animationQueue[animationIndex]);
@@ -171,24 +309,28 @@
                 setTimeout(animate, 500);
             }
         }
+
         function preorder() {
             const result = tree.preorder();
             document.getElementById('traversalType').textContent = 'Preorder (Root → Children)';
             document.getElementById('traversalResult').textContent = result.join(' → ');
             animateTraversal(result);
         }
+
         function postorder() {
             const result = tree.postorder();
             document.getElementById('traversalType').textContent = 'Postorder (Children → Root)';
             document.getElementById('traversalResult').textContent = result.join(' → ');
             animateTraversal(result);
         }
+
         function levelorder() {
             const result = tree.levelorder();
             document.getElementById('traversalType').textContent = 'Level Order (BFS)';
             document.getElementById('traversalResult').textContent = result.join(' → ');
             animateTraversal(result);
         }
+
         function randomTree() {
             tree.root = null;
             tree.nodes.clear();
@@ -209,4 +351,5 @@
         randomTree();
     </script>
 </body>
+
 </html>

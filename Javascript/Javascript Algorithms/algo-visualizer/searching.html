@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body class="l-body">
     <a href="#main-content" class="u-skip-link">Skip to main content</a>
     <div id="wrapper" class="l-wrapper">
@@ -45,7 +47,11 @@
                         <span>Searching Algorithms</span>
                     </div>
                 </div>
-                <nav><ul class="c-topbar__nav"><li><a href="index.html" class="c-topbar__nav-link"><i class="fas fa-th-large"></i></a></li></ul></nav>
+                <nav>
+                    <ul class="c-topbar__nav">
+                        <li><a href="index.html" class="c-topbar__nav-link"><i class="fas fa-th-large"></i></a></li>
+                    </ul>
+                </nav>
             </header>
             <main id="main-content" class="l-main">
                 <nav class="c-breadcrumbs">
@@ -82,12 +88,14 @@
                             </div>
                             <div class="c-visualization"><canvas id="linearSearchCanvas" class="c-visualization__canvas"></canvas></div>
                             <div class="c-stats" id="linearStats"></div>
-                            <div class="c-code-block"><pre><code>function linearSearch(arr, target) {
+                            <div class="c-code-block">
+                                <pre><code>function linearSearch(arr, target) {
     for (let i = 0; i < arr.length; i++) {
         if (arr[i] === target) return i;
     }
     return -1;
-}</code></pre></div>
+}</code></pre>
+                            </div>
                         </div>
                     </article>
                     <!-- Binary Search -->
@@ -114,7 +122,8 @@
                             </div>
                             <div class="c-visualization"><canvas id="binarySearchCanvas" class="c-visualization__canvas"></canvas></div>
                             <div class="c-stats" id="binaryStats"></div>
-                            <div class="c-code-block"><pre><code>function binarySearch(arr, target) {
+                            <div class="c-code-block">
+                                <pre><code>function binarySearch(arr, target) {
     let left = 0, right = arr.length - 1;
     while (left <= right) {
         const mid = Math.floor((left + right) / 2);
@@ -123,7 +132,8 @@
         else right = mid - 1;
     }
     return -1;
-}</code></pre></div>
+}</code></pre>
+                            </div>
                         </div>
                     </article>
                     <!-- Jump Search -->
@@ -150,7 +160,8 @@
                             </div>
                             <div class="c-visualization"><canvas id="jumpSearchCanvas" class="c-visualization__canvas"></canvas></div>
                             <div class="c-stats" id="jumpStats"></div>
-                            <div class="c-code-block"><pre><code>function jumpSearch(arr, target) {
+                            <div class="c-code-block">
+                                <pre><code>function jumpSearch(arr, target) {
     const step = Math.floor(Math.sqrt(arr.length));
     let prev = 0;
     while (arr[Math.min(step, arr.length) - 1] < target) {
@@ -159,7 +170,8 @@
     }
     while (arr[prev] < target) prev++;
     return arr[prev] === target ? prev : -1;
-}</code></pre></div>
+}</code></pre>
+                            </div>
                         </div>
                     </article>
                     <!-- Exponential Search -->
@@ -186,207 +198,294 @@
                             </div>
                             <div class="c-visualization"><canvas id="expSearchCanvas" class="c-visualization__canvas"></canvas></div>
                             <div class="c-stats" id="expStats"></div>
-                            <div class="c-code-block"><pre><code>function exponentialSearch(arr, target) {
+                            <div class="c-code-block">
+                                <pre><code>function exponentialSearch(arr, target) {
     if (arr[0] === target) return 0;
     let i = 1;
     while (i < arr.length && arr[i] <= target) i *= 2;
     return binarySearch(arr.slice(i/2, Math.min(i+1, arr.length)), target);
-}</code></pre></div>
+}</code></pre>
+                            </div>
                         </div>
                     </article>
                 </div>
             </main>
-            <footer class="c-footer"><div class="c-footer__content"><span>Copyright &copy; AlgoViz Platform 2026</span></div></footer>
+            <footer class="c-footer">
+                <div class="c-footer__content"><span>Copyright &copy; AlgoViz Platform 2026</span></div>
+            </footer>
         </div>
     </div>
     <script src="js/utils.js"></script>
     <script>
-    (function() {
-        'use strict';
-        class SearchVisualizer {
-            constructor(canvasId, statsId, targetId, speedId, type) {
-                this.canvas = document.getElementById(canvasId);
-                this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
-                this.statsContainer = document.getElementById(statsId);
-                this.targetInput = document.getElementById(targetId);
-                this.speedSlider = document.getElementById(speedId);
-                this.type = type;
-                this.array = [];
-                this.stats = new AlgoViz.StatsTracker();
-                this.animation = new AlgoViz.AnimationController();
-                this.setupCanvas();
-                this.bindEvents();
-                this.generate();
-            }
-            setupCanvas() {
-                if (!this.canvas) return;
-                const setup = AlgoViz.setupCanvas(this.canvas.id);
-                if (setup) { this.width = setup.width; this.height = setup.height; this.ctx = setup.ctx; }
-            }
-            bindEvents() {
-                if (this.speedSlider) this.speedSlider.addEventListener('input', (e) => this.animation.setSpeed(501 - e.target.value));
-                this.animation.onStep = (step) => this.render(step);
-                this.animation.onComplete = () => this.stats.updateDisplay(this.statsContainer.id);
-            }
-            generate() {
-                this.animation.stop();
-                this.array = AlgoViz.generateRandomArray(20, 1, 100).sort((a, b) => a - b);
-                this.stats.start();
-                this.render({ array: this.array, currentIndex: -1 });
-            }
-            start() {
-                if (this.animation.isRunning) return;
-                this.stats.start();
-                this.runAlgorithm();
-            }
-            render(step) {
-                if (!this.ctx) return;
-                AlgoViz.clearCanvas(this.ctx, this.width, this.height);
-                const target = parseInt(this.targetInput?.value) || 50;
-                const boxes = step.array.length;
-                const boxSize = Math.min(40, (this.width - 40) / boxes - 4);
-                const padding = 20;
-                const startX = (this.width - boxes * (boxSize + 4)) / 2;
-                const centerY = this.height / 2;
-                step.array.forEach((value, i) => {
-                    const x = startX + i * (boxSize + 4);
-                    const y = centerY - boxSize / 2;
-                    let color = 'rgba(0, 243, 255, 0.3)';
-                    let glow = 0;
-                    if (i === step.currentIndex) { color = value === target ? '#1cc88a' : '#ff00ff'; glow = 15; }
-                    else if (step.searched?.includes(i)) { color = 'rgba(255, 255, 255, 0.1)'; }
-                    this.ctx.shadowColor = color;
-                    this.ctx.shadowBlur = glow;
-                    this.ctx.fillStyle = color;
-                    this.ctx.beginPath();
-                    this.ctx.roundRect(x, y, boxSize, boxSize, 5);
-                    this.ctx.fill();
-                    this.ctx.shadowBlur = 0;
-                    this.ctx.fillStyle = '#ffffff';
-                    this.ctx.font = '12px Rajdhani';
-                    this.ctx.textAlign = 'center';
-                    this.ctx.textBaseline = 'middle';
-                    this.ctx.fillText(value.toString(), x + boxSize / 2, y + boxSize / 2);
-                });
-                if (step.found !== undefined) {
-                    AlgoViz.drawText(this.ctx, step.found >= 0 ? `Found at index ${step.found}` : 'Not found', this.width / 2, 30, 16, step.found >= 0 ? '#1cc88a' : '#e74a3b');
+        (function() {
+            'use strict';
+            class SearchVisualizer {
+                constructor(canvasId, statsId, targetId, speedId, type) {
+                    this.canvas = document.getElementById(canvasId);
+                    this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
+                    this.statsContainer = document.getElementById(statsId);
+                    this.targetInput = document.getElementById(targetId);
+                    this.speedSlider = document.getElementById(speedId);
+                    this.type = type;
+                    this.array = [];
+                    this.stats = new AlgoViz.StatsTracker();
+                    this.animation = new AlgoViz.AnimationController();
+                    this.setupCanvas();
+                    this.bindEvents();
+                    this.generate();
                 }
-            }
-        }
-        class LinearSearchVisualizer extends SearchVisualizer {
-            async runAlgorithm() {
-                const arr = [...this.array];
-                const target = parseInt(this.targetInput?.value) || 50;
-                const steps = [];
-                for (let i = 0; i < arr.length; i++) {
-                    this.stats.recordComparison();
-                    steps.push({ array: [...arr], currentIndex: i, searched: Array.from({ length: i }, (_, k) => k) });
-                    if (arr[i] === target) {
-                        steps.push({ array: [...arr], currentIndex: i, found: i });
-                        this.stats.stop();
-                        this.animation.run(steps);
-                        return;
+                setupCanvas() {
+                    if (!this.canvas) return;
+                    const setup = AlgoViz.setupCanvas(this.canvas.id);
+                    if (setup) {
+                        this.width = setup.width;
+                        this.height = setup.height;
+                        this.ctx = setup.ctx;
                     }
                 }
-                steps.push({ array: [...arr], currentIndex: -1, found: -1 });
-                this.stats.stop();
-                this.animation.run(steps);
-            }
-        }
-        class BinarySearchVisualizer extends SearchVisualizer {
-            async runAlgorithm() {
-                const arr = [...this.array];
-                const target = parseInt(this.targetInput?.value) || 50;
-                const steps = [];
-                let left = 0, right = arr.length - 1;
-                while (left <= right) {
-                    this.stats.recordComparison();
-                    const mid = Math.floor((left + right) / 2);
-                    steps.push({ array: [...arr], currentIndex: mid, searched: Array.from({ length: arr.length }, (_, i) => i).filter(i => i < left || i > right) });
-                    if (arr[mid] === target) {
-                        steps.push({ array: [...arr], currentIndex: mid, found: mid });
-                        this.stats.stop();
-                        this.animation.run(steps);
-                        return;
+                bindEvents() {
+                    if (this.speedSlider) this.speedSlider.addEventListener('input', (e) => this.animation.setSpeed(501 - e.target.value));
+                    this.animation.onStep = (step) => this.render(step);
+                    this.animation.onComplete = () => this.stats.updateDisplay(this.statsContainer.id);
+                }
+                generate() {
+                    this.animation.stop();
+                    this.array = AlgoViz.generateRandomArray(20, 1, 100).sort((a, b) => a - b);
+                    this.stats.start();
+                    this.render({
+                        array: this.array,
+                        currentIndex: -1
+                    });
+                }
+                start() {
+                    if (this.animation.isRunning) return;
+                    this.stats.start();
+                    this.runAlgorithm();
+                }
+                render(step) {
+                    if (!this.ctx) return;
+                    AlgoViz.clearCanvas(this.ctx, this.width, this.height);
+                    const target = parseInt(this.targetInput?.value) || 50;
+                    const boxes = step.array.length;
+                    const boxSize = Math.min(40, (this.width - 40) / boxes - 4);
+                    const padding = 20;
+                    const startX = (this.width - boxes * (boxSize + 4)) / 2;
+                    const centerY = this.height / 2;
+                    step.array.forEach((value, i) => {
+                        const x = startX + i * (boxSize + 4);
+                        const y = centerY - boxSize / 2;
+                        let color = 'rgba(0, 243, 255, 0.3)';
+                        let glow = 0;
+                        if (i === step.currentIndex) {
+                            color = value === target ? '#1cc88a' : '#ff00ff';
+                            glow = 15;
+                        } else if (step.searched?.includes(i)) {
+                            color = 'rgba(255, 255, 255, 0.1)';
+                        }
+                        this.ctx.shadowColor = color;
+                        this.ctx.shadowBlur = glow;
+                        this.ctx.fillStyle = color;
+                        this.ctx.beginPath();
+                        this.ctx.roundRect(x, y, boxSize, boxSize, 5);
+                        this.ctx.fill();
+                        this.ctx.shadowBlur = 0;
+                        this.ctx.fillStyle = '#ffffff';
+                        this.ctx.font = '12px Rajdhani';
+                        this.ctx.textAlign = 'center';
+                        this.ctx.textBaseline = 'middle';
+                        this.ctx.fillText(value.toString(), x + boxSize / 2, y + boxSize / 2);
+                    });
+                    if (step.found !== undefined) {
+                        AlgoViz.drawText(this.ctx, step.found >= 0 ? `Found at index ${step.found}` : 'Not found', this.width / 2, 30, 16, step.found >= 0 ? '#1cc88a' : '#e74a3b');
                     }
-                    if (arr[mid] < target) left = mid + 1;
-                    else right = mid - 1;
                 }
-                steps.push({ array: [...arr], currentIndex: -1, found: -1 });
-                this.stats.stop();
-                this.animation.run(steps);
             }
-        }
-        class JumpSearchVisualizer extends SearchVisualizer {
-            async runAlgorithm() {
-                const arr = [...this.array];
-                const target = parseInt(this.targetInput?.value) || 50;
-                const steps = [];
-                const n = arr.length;
-                const step = Math.floor(Math.sqrt(n));
-                let prev = 0;
-                while (prev < n && arr[Math.min(step, n) - 1] < target) {
-                    this.stats.recordComparison();
-                    steps.push({ array: [...arr], currentIndex: Math.min(step, n) - 1, searched: Array.from({ length: prev }, (_, i) => i) });
-                    prev = step;
-                    step += Math.floor(Math.sqrt(n));
-                }
-                while (prev < n && arr[prev] < target) {
-                    this.stats.recordComparison();
-                    steps.push({ array: [...arr], currentIndex: prev, searched: Array.from({ length: prev }, (_, i) => i) });
-                    prev++;
-                }
-                if (prev < n && arr[prev] === target) {
-                    steps.push({ array: [...arr], currentIndex: prev, found: prev });
-                } else {
-                    steps.push({ array: [...arr], currentIndex: -1, found: -1 });
-                }
-                this.stats.stop();
-                this.animation.run(steps);
-            }
-        }
-        class ExpSearchVisualizer extends SearchVisualizer {
-            async runAlgorithm() {
-                const arr = [...this.array];
-                const target = parseInt(this.targetInput?.value) || 50;
-                const steps = [];
-                if (arr[0] === target) {
-                    steps.push({ array: [...arr], currentIndex: 0, found: 0 });
+            class LinearSearchVisualizer extends SearchVisualizer {
+                async runAlgorithm() {
+                    const arr = [...this.array];
+                    const target = parseInt(this.targetInput?.value) || 50;
+                    const steps = [];
+                    for (let i = 0; i < arr.length; i++) {
+                        this.stats.recordComparison();
+                        steps.push({
+                            array: [...arr],
+                            currentIndex: i,
+                            searched: Array.from({
+                                length: i
+                            }, (_, k) => k)
+                        });
+                        if (arr[i] === target) {
+                            steps.push({
+                                array: [...arr],
+                                currentIndex: i,
+                                found: i
+                            });
+                            this.stats.stop();
+                            this.animation.run(steps);
+                            return;
+                        }
+                    }
+                    steps.push({
+                        array: [...arr],
+                        currentIndex: -1,
+                        found: -1
+                    });
                     this.stats.stop();
                     this.animation.run(steps);
-                    return;
                 }
-                let i = 1;
-                while (i < arr.length && arr[i] <= target) {
-                    this.stats.recordComparison();
-                    steps.push({ array: [...arr], currentIndex: i, searched: Array.from({ length: i }, (_, k) => k).filter(k => (k & (k-1)) === 0) });
-                    i *= 2;
+            }
+            class BinarySearchVisualizer extends SearchVisualizer {
+                async runAlgorithm() {
+                    const arr = [...this.array];
+                    const target = parseInt(this.targetInput?.value) || 50;
+                    const steps = [];
+                    let left = 0,
+                        right = arr.length - 1;
+                    while (left <= right) {
+                        this.stats.recordComparison();
+                        const mid = Math.floor((left + right) / 2);
+                        steps.push({
+                            array: [...arr],
+                            currentIndex: mid,
+                            searched: Array.from({
+                                length: arr.length
+                            }, (_, i) => i).filter(i => i < left || i > right)
+                        });
+                        if (arr[mid] === target) {
+                            steps.push({
+                                array: [...arr],
+                                currentIndex: mid,
+                                found: mid
+                            });
+                            this.stats.stop();
+                            this.animation.run(steps);
+                            return;
+                        }
+                        if (arr[mid] < target) left = mid + 1;
+                        else right = mid - 1;
+                    }
+                    steps.push({
+                        array: [...arr],
+                        currentIndex: -1,
+                        found: -1
+                    });
+                    this.stats.stop();
+                    this.animation.run(steps);
                 }
-                let left = Math.floor(i / 2), right = Math.min(i, arr.length - 1);
-                while (left <= right) {
-                    this.stats.recordComparison();
-                    const mid = Math.floor((left + right) / 2);
-                    steps.push({ array: [...arr], currentIndex: mid });
-                    if (arr[mid] === target) {
-                        steps.push({ array: [...arr], currentIndex: mid, found: mid });
+            }
+            class JumpSearchVisualizer extends SearchVisualizer {
+                async runAlgorithm() {
+                    const arr = [...this.array];
+                    const target = parseInt(this.targetInput?.value) || 50;
+                    const steps = [];
+                    const n = arr.length;
+                    const step = Math.floor(Math.sqrt(n));
+                    let prev = 0;
+                    while (prev < n && arr[Math.min(step, n) - 1] < target) {
+                        this.stats.recordComparison();
+                        steps.push({
+                            array: [...arr],
+                            currentIndex: Math.min(step, n) - 1,
+                            searched: Array.from({
+                                length: prev
+                            }, (_, i) => i)
+                        });
+                        prev = step;
+                        step += Math.floor(Math.sqrt(n));
+                    }
+                    while (prev < n && arr[prev] < target) {
+                        this.stats.recordComparison();
+                        steps.push({
+                            array: [...arr],
+                            currentIndex: prev,
+                            searched: Array.from({
+                                length: prev
+                            }, (_, i) => i)
+                        });
+                        prev++;
+                    }
+                    if (prev < n && arr[prev] === target) {
+                        steps.push({
+                            array: [...arr],
+                            currentIndex: prev,
+                            found: prev
+                        });
+                    } else {
+                        steps.push({
+                            array: [...arr],
+                            currentIndex: -1,
+                            found: -1
+                        });
+                    }
+                    this.stats.stop();
+                    this.animation.run(steps);
+                }
+            }
+            class ExpSearchVisualizer extends SearchVisualizer {
+                async runAlgorithm() {
+                    const arr = [...this.array];
+                    const target = parseInt(this.targetInput?.value) || 50;
+                    const steps = [];
+                    if (arr[0] === target) {
+                        steps.push({
+                            array: [...arr],
+                            currentIndex: 0,
+                            found: 0
+                        });
                         this.stats.stop();
                         this.animation.run(steps);
                         return;
                     }
-                    if (arr[mid] < target) left = mid + 1;
-                    else right = mid - 1;
+                    let i = 1;
+                    while (i < arr.length && arr[i] <= target) {
+                        this.stats.recordComparison();
+                        steps.push({
+                            array: [...arr],
+                            currentIndex: i,
+                            searched: Array.from({
+                                length: i
+                            }, (_, k) => k).filter(k => (k & (k - 1)) === 0)
+                        });
+                        i *= 2;
+                    }
+                    let left = Math.floor(i / 2),
+                        right = Math.min(i, arr.length - 1);
+                    while (left <= right) {
+                        this.stats.recordComparison();
+                        const mid = Math.floor((left + right) / 2);
+                        steps.push({
+                            array: [...arr],
+                            currentIndex: mid
+                        });
+                        if (arr[mid] === target) {
+                            steps.push({
+                                array: [...arr],
+                                currentIndex: mid,
+                                found: mid
+                            });
+                            this.stats.stop();
+                            this.animation.run(steps);
+                            return;
+                        }
+                        if (arr[mid] < target) left = mid + 1;
+                        else right = mid - 1;
+                    }
+                    steps.push({
+                        array: [...arr],
+                        currentIndex: -1,
+                        found: -1
+                    });
+                    this.stats.stop();
+                    this.animation.run(steps);
                 }
-                steps.push({ array: [...arr], currentIndex: -1, found: -1 });
-                this.stats.stop();
-                this.animation.run(steps);
             }
-        }
-        window.linearSearchViz = new LinearSearchVisualizer('linearSearchCanvas', 'linearStats', 'linearTarget', 'linearSpeed', 'linear');
-        window.binarySearchViz = new BinarySearchVisualizer('binarySearchCanvas', 'binaryStats', 'binaryTarget', 'binarySpeed', 'binary');
-        window.jumpSearchViz = new JumpSearchVisualizer('jumpSearchCanvas', 'jumpStats', 'jumpTarget', 'jumpSpeed', 'jump');
-        window.expSearchViz = new ExpSearchVisualizer('expSearchCanvas', 'expStats', 'expTarget', 'expSpeed', 'exp');
-    })();
+            window.linearSearchViz = new LinearSearchVisualizer('linearSearchCanvas', 'linearStats', 'linearTarget', 'linearSpeed', 'linear');
+            window.binarySearchViz = new BinarySearchVisualizer('binarySearchCanvas', 'binaryStats', 'binaryTarget', 'binarySpeed', 'binary');
+            window.jumpSearchViz = new JumpSearchVisualizer('jumpSearchCanvas', 'jumpStats', 'jumpTarget', 'jumpSpeed', 'jump');
+            window.expSearchViz = new ExpSearchVisualizer('expSearchCanvas', 'expStats', 'expTarget', 'expSpeed', 'exp');
+        })();
     </script>
     <script src="js/main.js"></script>
 </body>
+
 </html>

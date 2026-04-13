@@ -1,32 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Algorithm Visualizer - Interactive learning platform for computer science algorithms">
     <meta name="theme-color" content="#050505">
     <title>AlgoViz - Algorithm Visualizer</title>
-    
+
     <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
+
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-    
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- Main Stylesheet -->
     <link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body class="l-body">
     <!-- Skip Link for Accessibility -->
     <a href="#main-content" class="u-skip-link">Skip to main content</a>
-    
+
     <!-- Page Wrapper -->
     <div id="wrapper" class="l-wrapper">
-        
+
         <!-- Sidebar -->
         <aside id="sidebar" class="c-sidebar" aria-label="Main navigation">
             <!-- Sidebar Brand -->
@@ -35,7 +37,7 @@
                     <i class="fas fa-brain"></i> AlgoViz
                 </h1>
             </div>
-            
+
             <!-- Sidebar Nav -->
             <nav class="c-sidebar__nav">
                 <ul class="c-sidebar__menu">
@@ -45,74 +47,74 @@
                             <span>Dashboard</span>
                         </a>
                     </li>
-                    
+
                     <hr class="c-sidebar__divider" />
-                    
+
                     <li class="c-sidebar__heading">Algorithm Categories</li>
-                    
+
                     <li class="c-sidebar__item">
                         <a href="sorting.html" class="c-sidebar__link">
                             <i class="fas fa-sort"></i>
                             <span>Sorting Algorithms</span>
                         </a>
                     </li>
-                    
+
                     <li class="c-sidebar__item">
                         <a href="searching.html" class="c-sidebar__link">
                             <i class="fas fa-search"></i>
                             <span>Searching Algorithms</span>
                         </a>
                     </li>
-                    
+
                     <li class="c-sidebar__item">
                         <a href="trees.html" class="c-sidebar__link">
                             <i class="fas fa-project-diagram"></i>
                             <span>Tree Algorithms</span>
                         </a>
                     </li>
-                    
+
                     <li class="c-sidebar__item">
                         <a href="graphs.html" class="c-sidebar__link">
                             <i class="fas fa-network-wired"></i>
                             <span>Graph Algorithms</span>
                         </a>
                     </li>
-                    
+
                     <li class="c-sidebar__item">
                         <a href="dynamic-programming.html" class="c-sidebar__link">
                             <i class="fas fa-layer-group"></i>
                             <span>Dynamic Programming</span>
                         </a>
                     </li>
-                    
+
                     <li class="c-sidebar__item">
                         <a href="data-structures.html" class="c-sidebar__link">
                             <i class="fas fa-cubes"></i>
                             <span>Data Structures</span>
                         </a>
                     </li>
-                    
+
                     <li class="c-sidebar__item">
                         <a href="pathfinding.html" class="c-sidebar__link">
                             <i class="fas fa-route"></i>
                             <span>Pathfinding</span>
                         </a>
                     </li>
-                    
+
                     <li class="c-sidebar__item">
                         <a href="recursion.html" class="c-sidebar__link">
                             <i class="fas fa-sync-alt"></i>
                             <span>Recursion</span>
                         </a>
                     </li>
-                    
+
                     <li class="c-sidebar__item">
                         <a href="strings.html" class="c-sidebar__link">
                             <i class="fas fa-font"></i>
                             <span>String Algorithms</span>
                         </a>
                     </li>
-                    
+
                     <li class="c-sidebar__item">
                         <a href="advanced.html" class="c-sidebar__link">
                             <i class="fas fa-graduation-cap"></i>
@@ -122,10 +124,10 @@
                 </ul>
             </nav>
         </aside>
-        
+
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="l-content-wrapper">
-            
+
             <!-- Topbar -->
             <header id="topbar" class="c-topbar">
                 <div class="c-topbar__brand">
@@ -139,7 +141,7 @@
                         <span>AlgoViz Platform</span>
                     </div>
                 </div>
-                
+
                 <nav>
                     <ul class="c-topbar__nav">
                         <li>
@@ -155,10 +157,10 @@
                     </ul>
                 </nav>
             </header>
-            
+
             <!-- Main Content -->
             <main id="main-content" class="l-main">
-                
+
                 <!-- Page Header -->
                 <header class="c-page-header">
                     <h1 class="c-page-header__title">Algorithm Visualizer</h1>
@@ -166,10 +168,10 @@
                         Interactive visualizations for 40+ computer science algorithms. Select a category to explore.
                     </p>
                 </header>
-                
+
                 <!-- Categories Grid -->
                 <div class="l-algo-grid">
-                    
+
                     <!-- Sorting Card -->
                     <article class="c-algo-card">
                         <header class="c-algo-card__header">
@@ -180,7 +182,7 @@
                         </header>
                         <div class="c-algo-card__body">
                             <p class="c-algo-card__description">
-                                Visualize how different sorting algorithms arrange data. Compare Bubble Sort, Quick Sort, 
+                                Visualize how different sorting algorithms arrange data. Compare Bubble Sort, Quick Sort,
                                 Merge Sort, and Heap Sort performance in real-time.
                             </p>
                             <div class="c-visualization">
@@ -207,7 +209,7 @@
                             </div>
                         </div>
                     </article>
-                    
+
                     <!-- Searching Card -->
                     <article class="c-algo-card">
                         <header class="c-algo-card__header">
@@ -218,7 +220,7 @@
                         </header>
                         <div class="c-algo-card__body">
                             <p class="c-algo-card__description">
-                                Learn how algorithms find elements in data structures. Explore Linear Search, 
+                                Learn how algorithms find elements in data structures. Explore Linear Search,
                                 Binary Search, Jump Search, and Exponential Search techniques.
                             </p>
                             <div class="c-visualization">
@@ -245,7 +247,7 @@
                             </div>
                         </div>
                     </article>
-                    
+
                     <!-- Trees Card -->
                     <article class="c-algo-card">
                         <header class="c-algo-card__header">
@@ -256,7 +258,7 @@
                         </header>
                         <div class="c-algo-card__body">
                             <p class="c-algo-card__description">
-                                Understand tree traversal algorithms. Visualize Inorder, Preorder, Postorder, 
+                                Understand tree traversal algorithms. Visualize Inorder, Preorder, Postorder,
                                 and Level Order traversals on binary trees.
                             </p>
                             <div class="c-visualization">
@@ -283,7 +285,7 @@
                             </div>
                         </div>
                     </article>
-                    
+
                     <!-- Graphs Card -->
                     <article class="c-algo-card">
                         <header class="c-algo-card__header">
@@ -294,7 +296,7 @@
                         </header>
                         <div class="c-algo-card__body">
                             <p class="c-algo-card__description">
-                                Explore graph algorithms including BFS, DFS, Dijkstra's shortest path, 
+                                Explore graph algorithms including BFS, DFS, Dijkstra's shortest path,
                                 and A* pathfinding. Visualize nodes, edges, and traversal paths.
                             </p>
                             <div class="c-visualization">
@@ -321,7 +323,7 @@
                             </div>
                         </div>
                     </article>
-                    
+
                     <!-- Dynamic Programming Card -->
                     <article class="c-algo-card">
                         <header class="c-algo-card__header">
@@ -332,7 +334,7 @@
                         </header>
                         <div class="c-algo-card__body">
                             <p class="c-algo-card__description">
-                                Master dynamic programming with visualizations of Fibonacci, Knapsack, 
+                                Master dynamic programming with visualizations of Fibonacci, Knapsack,
                                 Longest Common Subsequence, and Coin Change problems.
                             </p>
                             <div class="c-visualization">
@@ -359,7 +361,7 @@
                             </div>
                         </div>
                     </article>
-                    
+
                     <!-- Data Structures Card -->
                     <article class="c-algo-card">
                         <header class="c-algo-card__header">
@@ -370,7 +372,7 @@
                         </header>
                         <div class="c-algo-card__body">
                             <p class="c-algo-card__description">
-                                Visualize fundamental data structures in action: Stack (LIFO), Queue (FIFO), 
+                                Visualize fundamental data structures in action: Stack (LIFO), Queue (FIFO),
                                 Linked List operations, and Hash Table collisions.
                             </p>
                             <div class="c-visualization">
@@ -397,7 +399,7 @@
                             </div>
                         </div>
                     </article>
-                    
+
                     <!-- Pathfinding Card -->
                     <article class="c-algo-card">
                         <header class="c-algo-card__header">
@@ -408,7 +410,7 @@
                         </header>
                         <div class="c-algo-card__body">
                             <p class="c-algo-card__description">
-                                Find optimal paths through mazes and grids. Compare Dijkstra, A*, BFS, 
+                                Find optimal paths through mazes and grids. Compare Dijkstra, A*, BFS,
                                 and DFS pathfinding algorithms with obstacle avoidance.
                             </p>
                             <div class="c-visualization">
@@ -435,7 +437,7 @@
                             </div>
                         </div>
                     </article>
-                    
+
                     <!-- Recursion Card -->
                     <article class="c-algo-card">
                         <header class="c-algo-card__header">
@@ -446,7 +448,7 @@
                         </header>
                         <div class="c-algo-card__body">
                             <p class="c-algo-card__description">
-                                Understand recursive algorithms through visualization. Explore Factorial, 
+                                Understand recursive algorithms through visualization. Explore Factorial,
                                 Tower of Hanoi, Permutations, and Subset generation.
                             </p>
                             <div class="c-visualization">
@@ -473,7 +475,7 @@
                             </div>
                         </div>
                     </article>
-                    
+
                     <!-- Strings Card -->
                     <article class="c-algo-card">
                         <header class="c-algo-card__header">
@@ -484,7 +486,7 @@
                         </header>
                         <div class="c-algo-card__body">
                             <p class="c-algo-card__description">
-                                Master string pattern matching with KMP, Rabin-Karp, Z-Algorithm, 
+                                Master string pattern matching with KMP, Rabin-Karp, Z-Algorithm,
                                 and Manacher's algorithm for palindrome detection.
                             </p>
                             <div class="c-visualization">
@@ -511,7 +513,7 @@
                             </div>
                         </div>
                     </article>
-                    
+
                     <!-- Advanced Card -->
                     <article class="c-algo-card">
                         <header class="c-algo-card__header">
@@ -522,7 +524,7 @@
                         </header>
                         <div class="c-algo-card__body">
                             <p class="c-algo-card__description">
-                                Dive into advanced data structures: Segment Trees, Fenwick Trees (BIT), 
+                                Dive into advanced data structures: Segment Trees, Fenwick Trees (BIT),
                                 Tries, and Suffix Arrays for competitive programming.
                             </p>
                             <div class="c-visualization">
@@ -549,23 +551,24 @@
                             </div>
                         </div>
                     </article>
-                    
+
                 </div>
-                
+
             </main>
-            
+
             <!-- Footer -->
             <footer class="c-footer">
                 <div class="c-footer__content">
                     <span>Copyright &copy; AlgoViz Platform 2026 | Built with Vanilla JS & Canvas API</span>
                 </div>
             </footer>
-            
+
         </div>
     </div>
-    
+
     <!-- Main JavaScript -->
     <script src="js/utils.js"></script>
     <script src="js/main.js"></script>
 </body>
+
 </html>

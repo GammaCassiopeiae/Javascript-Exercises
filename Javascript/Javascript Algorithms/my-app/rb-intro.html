@@ -1,37 +1,191 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Red-Black Tree - Introduction</title>
     <style>
-        :root { --neon-primary: #00f3ff; --neon-secondary: #ff00ff; --bg-dark: #050505; --bg-card: rgba(255,255,255,0.05); --border-neon: 1px solid rgba(0,243,255,0.3); --ease-out: cubic-bezier(0.16,1,0.3,1); --rb-red: #ff4444; --rb-black: #444444; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: system-ui, sans-serif; background: var(--bg-dark); color: #fff; min-height: 100vh; }
-        .l-header { position: sticky; top: 0; z-index: 1000; background: rgba(5,5,5,0.9); backdrop-filter: blur(10px); border-bottom: var(--border-neon); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
-        .header__title { font-size: 1.5rem; color: var(--neon-primary); text-shadow: 0 0 5px var(--neon-primary); }
-        .header__back { color: var(--neon-secondary); text-decoration: none; padding: 0.5rem 1rem; border: var(--border-neon); border-radius: 8px; transition: all 0.3s var(--ease-out); }
-        .header__back:hover { box-shadow: 0 0 10px var(--neon-secondary); }
-        .l-main { display: grid; grid-template-columns: 1fr 350px; gap: 1rem; padding: 1rem; max-width: 1600px; margin: 0 auto; }
-        @media (max-width: 900px) { .l-main { grid-template-columns: 1fr; } }
-        .canvas-container { background: var(--bg-card); border: var(--border-neon); border-radius: 12px; padding: 1rem; backdrop-filter: blur(10px); }
-        #treeCanvas { width: 100%; height: 500px; display: block; }
-        .controls { background: var(--bg-card); border: var(--border-neon); border-radius: 12px; padding: 1.5rem; backdrop-filter: blur(10px); }
-        .controls__section { margin-bottom: 1.5rem; }
-        .controls__title { color: var(--neon-secondary); font-size: 1.1rem; margin-bottom: 1rem; text-shadow: 0 0 5px var(--neon-secondary); }
-        .input-group { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
-        .input-group input { flex: 1; padding: 0.8rem; background: rgba(0,0,0,0.3); border: var(--border-neon); border-radius: 8px; color: #fff; font-size: 1rem; caret-color: var(--neon-primary); }
-        .input-group input:focus { outline: none; box-shadow: 0 0 10px var(--neon-primary); }
-        .btn { padding: 0.8rem 1.5rem; background: rgba(0,243,255,0.1); border: var(--border-neon); border-radius: 8px; color: var(--neon-primary); cursor: pointer; font-size: 1rem; transition: all 0.3s var(--ease-out); }
-        .btn:hover { background: rgba(0,243,255,0.2); box-shadow: 0 0 15px var(--neon-primary); }
-        .info-box { background: rgba(0,0,0,0.3); border-radius: 8px; padding: 1rem; margin-top: 1rem; }
-        .info-box p { margin-bottom: 0.5rem; font-size: 0.9rem; }
-        .info-box span { color: var(--neon-primary); }
-        .legend { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; }
-        .legend__item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; }
-        .legend__color { width: 20px; height: 20px; border-radius: 50%; }
+        :root {
+            --neon-primary: #00f3ff;
+            --neon-secondary: #ff00ff;
+            --bg-dark: #050505;
+            --bg-card: rgba(255, 255, 255, 0.05);
+            --border-neon: 1px solid rgba(0, 243, 255, 0.3);
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+            --rb-red: #ff4444;
+            --rb-black: #444444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, sans-serif;
+            background: var(--bg-dark);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .l-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(5, 5, 5, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: var(--border-neon);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header__title {
+            font-size: 1.5rem;
+            color: var(--neon-primary);
+            text-shadow: 0 0 5px var(--neon-primary);
+        }
+
+        .header__back {
+            color: var(--neon-secondary);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border: var(--border-neon);
+            border-radius: 8px;
+            transition: all 0.3s var(--ease-out);
+        }
+
+        .header__back:hover {
+            box-shadow: 0 0 10px var(--neon-secondary);
+        }
+
+        .l-main {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 1rem;
+            padding: 1rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 900px) {
+            .l-main {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .canvas-container {
+            background: var(--bg-card);
+            border: var(--border-neon);
+            border-radius: 12px;
+            padding: 1rem;
+            backdrop-filter: blur(10px);
+        }
+
+        #treeCanvas {
+            width: 100%;
+            height: 500px;
+            display: block;
+        }
+
+        .controls {
+            background: var(--bg-card);
+            border: var(--border-neon);
+            border-radius: 12px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .controls__section {
+            margin-bottom: 1.5rem;
+        }
+
+        .controls__title {
+            color: var(--neon-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 5px var(--neon-secondary);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 0.8rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: var(--border-neon);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+            caret-color: var(--neon-primary);
+        }
+
+        .input-group input:focus {
+            outline: none;
+            box-shadow: 0 0 10px var(--neon-primary);
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            background: rgba(0, 243, 255, 0.1);
+            border: var(--border-neon);
+            border-radius: 8px;
+            color: var(--neon-primary);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s var(--ease-out);
+        }
+
+        .btn:hover {
+            background: rgba(0, 243, 255, 0.2);
+            box-shadow: 0 0 15px var(--neon-primary);
+        }
+
+        .info-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .info-box p {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .info-box span {
+            color: var(--neon-primary);
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .legend__item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .legend__color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
     </style>
 </head>
+
 <body>
     <header class="l-header">
         <h1 class="header__title">Red-Black Tree - Introduction</h1>
@@ -89,10 +243,16 @@
     <script>
         const canvas = document.getElementById('treeCanvas');
         const ctx = canvas.getContext('2d');
-        function resizeCanvas() { const container = canvas.parentElement; canvas.width = container.clientWidth; canvas.height = 500; }
+
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = 500;
+        }
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
-        const RED = true, BLACK = false;
+        const RED = true,
+            BLACK = false;
         class RBNode {
             constructor(value) {
                 this.value = value;
@@ -103,7 +263,9 @@
             }
         }
         class RBTree {
-            constructor() { this.root = null; }
+            constructor() {
+                this.root = null;
+            }
             insert(value) {
                 const node = new RBNode(value);
                 if (!this.root) {
@@ -114,10 +276,18 @@
                 let curr = this.root;
                 while (true) {
                     if (value < curr.value) {
-                        if (!curr.left) { curr.left = node; node.parent = curr; break; }
+                        if (!curr.left) {
+                            curr.left = node;
+                            node.parent = curr;
+                            break;
+                        }
                         curr = curr.left;
                     } else {
-                        if (!curr.right) { curr.right = node; node.parent = curr; break; }
+                        if (!curr.right) {
+                            curr.right = node;
+                            node.parent = curr;
+                            break;
+                        }
                         curr = curr.right;
                     }
                 }
@@ -183,9 +353,16 @@
                 x.right = y;
                 y.parent = x;
             }
-            getNodeCount() { return this.countRec(this.root); }
-            countRec(node) { if (!node) return 0; return 1 + this.countRec(node.left) + this.countRec(node.right); }
-            getBlackHeight() { return this.bhRec(this.root); }
+            getNodeCount() {
+                return this.countRec(this.root);
+            }
+            countRec(node) {
+                if (!node) return 0;
+                return 1 + this.countRec(node.left) + this.countRec(node.right);
+            }
+            getBlackHeight() {
+                return this.bhRec(this.root);
+            }
             bhRec(node) {
                 if (!node) return 1;
                 const left = this.bhRec(node.left);
@@ -195,25 +372,36 @@
             }
         }
         const tree = new RBTree();
+
         function drawTree() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             if (tree.root) drawNode(tree.root, canvas.width / 2, 50, canvas.width / 4);
             updateInfo();
         }
+
         function drawNode(node, x, y, offset) {
             if (!node) return;
             if (node.left) {
-                ctx.beginPath(); ctx.moveTo(x, y + 20); ctx.lineTo(x - offset, y + 70);
-                ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 2; ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(x, y + 20);
+                ctx.lineTo(x - offset, y + 70);
+                ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
                 drawNode(node.left, x - offset, y + 70, offset / 2);
             }
             if (node.right) {
-                ctx.beginPath(); ctx.moveTo(x, y + 20); ctx.lineTo(x + offset, y + 70);
-                ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 2; ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(x, y + 20);
+                ctx.lineTo(x + offset, y + 70);
+                ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
                 drawNode(node.right, x + offset, y + 70, offset / 2);
             }
             const isRed = node.color === RED;
-            ctx.beginPath(); ctx.arc(x, y, 20, 0, Math.PI * 2);
+            ctx.beginPath();
+            ctx.arc(x, y, 20, 0, Math.PI * 2);
             ctx.fillStyle = isRed ? 'rgba(255, 68, 68, 0.5)' : 'rgba(68, 68, 68, 0.8)';
             ctx.fill();
             ctx.strokeStyle = isRed ? '#ff4444' : '#888';
@@ -228,23 +416,37 @@
             ctx.textBaseline = 'middle';
             ctx.fillText(node.value, x, y);
         }
+
         function updateInfo() {
             document.getElementById('nodeCount').textContent = tree.getNodeCount();
             document.getElementById('blackHeight').textContent = tree.getBlackHeight();
         }
+
         function insertNode() {
             const input = document.getElementById('insertInput');
             const value = parseInt(input.value);
-            if (!isNaN(value)) { tree.insert(value); input.value = ''; drawTree(); }
+            if (!isNaN(value)) {
+                tree.insert(value);
+                input.value = '';
+                drawTree();
+            }
         }
-        function clearTree() { tree.root = null; drawTree(); }
+
+        function clearTree() {
+            tree.root = null;
+            drawTree();
+        }
+
         function generateRandom() {
             clearTree();
             for (let i = 0; i < 7; i++) tree.insert(Math.floor(Math.random() * 100) + 1);
             drawTree();
         }
-        document.getElementById('insertInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') insertNode(); });
+        document.getElementById('insertInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') insertNode();
+        });
         drawTree();
     </script>
 </body>
+
 </html>

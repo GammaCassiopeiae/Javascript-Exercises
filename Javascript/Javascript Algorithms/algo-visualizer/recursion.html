@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,15 +11,19 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body class="l-body">
     <a href="#main-content" class="u-skip-link">Skip to main content</a>
     <div id="wrapper" class="l-wrapper">
         <aside id="sidebar" class="c-sidebar">
-            <div class="c-sidebar__brand"><h1 class="c-sidebar__title"><i class="fas fa-brain"></i> AlgoViz</h1></div>
+            <div class="c-sidebar__brand">
+                <h1 class="c-sidebar__title"><i class="fas fa-brain"></i> AlgoViz</h1>
+            </div>
             <nav class="c-sidebar__nav">
                 <ul class="c-sidebar__menu">
                     <li class="c-sidebar__item"><a href="index.html" class="c-sidebar__link"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
-                    <hr class="c-sidebar__divider"><li class="c-sidebar__heading">Categories</li>
+                    <hr class="c-sidebar__divider">
+                    <li class="c-sidebar__heading">Categories</li>
                     <li class="c-sidebar__item"><a href="sorting.html" class="c-sidebar__link"><i class="fas fa-sort"></i><span>Sorting</span></a></li>
                     <li class="c-sidebar__item"><a href="searching.html" class="c-sidebar__link"><i class="fas fa-search"></i><span>Searching</span></a></li>
                     <li class="c-sidebar__item"><a href="trees.html" class="c-sidebar__link"><i class="fas fa-project-diagram"></i><span>Trees</span></a></li>
@@ -36,9 +41,15 @@
             <header id="topbar" class="c-topbar">
                 <div class="c-topbar__brand">
                     <button id="sidebarToggle" class="c-topbar__toggle"><i class="fas fa-bars"></i></button>
-                    <div class="c-topbar__logo"><div class="c-topbar__logo-icon"><i class="fas fa-sync-alt"></i></div><span>Recursion</span></div>
+                    <div class="c-topbar__logo">
+                        <div class="c-topbar__logo-icon"><i class="fas fa-sync-alt"></i></div><span>Recursion</span>
+                    </div>
                 </div>
-                <nav><ul class="c-topbar__nav"><li><a href="index.html" class="c-topbar__nav-link"><i class="fas fa-th-large"></i></a></li></ul></nav>
+                <nav>
+                    <ul class="c-topbar__nav">
+                        <li><a href="index.html" class="c-topbar__nav-link"><i class="fas fa-th-large"></i></a></li>
+                    </ul>
+                </nav>
             </header>
             <main id="main-content" class="l-main">
                 <nav class="c-breadcrumbs"><span class="c-breadcrumbs__item"><a href="index.html">Home</a></span><span class="c-breadcrumbs__separator">/</span><span class="c-breadcrumbs__item c-breadcrumbs__item--current">Recursion</span></nav>
@@ -49,7 +60,9 @@
                 <div class="l-algo-grid">
                     <!-- Factorial -->
                     <article class="c-algo-card">
-                        <header class="c-algo-card__header"><h2 class="c-algo-card__title">Factorial</h2><span class="c-algo-card__tag">O(n)</span></header>
+                        <header class="c-algo-card__header">
+                            <h2 class="c-algo-card__title">Factorial</h2><span class="c-algo-card__tag">O(n)</span>
+                        </header>
                         <div class="c-algo-card__body">
                             <p class="c-algo-card__description">Classic recursion: n! = n × (n-1)! with base case 0! = 1.</p>
                             <div class="c-controls">
@@ -61,15 +74,19 @@
                             </div>
                             <div class="c-visualization"><canvas id="factorialCanvas" class="c-visualization__canvas"></canvas></div>
                             <div class="c-stats" id="factorialStats"></div>
-                            <div class="c-code-block"><pre><code>function factorial(n) {
+                            <div class="c-code-block">
+                                <pre><code>function factorial(n) {
     if (n <= 1) return 1;
     return n * factorial(n - 1);
-}</code></pre></div>
+}</code></pre>
+                            </div>
                         </div>
                     </article>
                     <!-- Tower of Hanoi -->
                     <article class="c-algo-card">
-                        <header class="c-algo-card__header"><h2 class="c-algo-card__title">Tower of Hanoi</h2><span class="c-algo-card__tag">O(2ⁿ)</span></header>
+                        <header class="c-algo-card__header">
+                            <h2 class="c-algo-card__title">Tower of Hanoi</h2><span class="c-algo-card__tag">O(2ⁿ)</span>
+                        </header>
                         <div class="c-algo-card__body">
                             <p class="c-algo-card__description">Move n disks from source to destination using auxiliary peg.</p>
                             <div class="c-controls">
@@ -82,7 +99,8 @@
                             </div>
                             <div class="c-visualization"><canvas id="hanoiCanvas" class="c-visualization__canvas"></canvas></div>
                             <div class="c-stats" id="hanoiStats"></div>
-                            <div class="c-code-block"><pre><code>function hanoi(n, source, aux, dest) {
+                            <div class="c-code-block">
+                                <pre><code>function hanoi(n, source, aux, dest) {
     if (n === 1) {
         move(source, dest);
         return;
@@ -90,12 +108,15 @@
     hanoi(n-1, source, dest, aux);
     move(source, dest);
     hanoi(n-1, aux, source, dest);
-}</code></pre></div>
+}</code></pre>
+                            </div>
                         </div>
                     </article>
                     <!-- Permutations -->
                     <article class="c-algo-card">
-                        <header class="c-algo-card__header"><h2 class="c-algo-card__title">Permutations</h2><span class="c-algo-card__tag">O(n!)</span></header>
+                        <header class="c-algo-card__header">
+                            <h2 class="c-algo-card__title">Permutations</h2><span class="c-algo-card__tag">O(n!)</span>
+                        </header>
                         <div class="c-algo-card__body">
                             <p class="c-algo-card__description">Generate all possible arrangements of n elements.</p>
                             <div class="c-controls">
@@ -107,7 +128,8 @@
                             </div>
                             <div class="c-visualization"><canvas id="permCanvas" class="c-visualization__canvas"></canvas></div>
                             <div class="c-stats" id="permStats"></div>
-                            <div class="c-code-block"><pre><code>function permute(arr, start = 0) {
+                            <div class="c-code-block">
+                                <pre><code>function permute(arr, start = 0) {
     if (start === arr.length - 1) {
         result.push([...arr]);
         return;
@@ -117,12 +139,15 @@
         permute(arr, start + 1);
         [arr[start], arr[i]] = [arr[i], arr[start]];
     }
-}</code></pre></div>
+}</code></pre>
+                            </div>
                         </div>
                     </article>
                     <!-- Subsets -->
                     <article class="c-algo-card">
-                        <header class="c-algo-card__header"><h2 class="c-algo-card__title">Subsets (Power Set)</h2><span class="c-algo-card__tag">O(2ⁿ)</span></header>
+                        <header class="c-algo-card__header">
+                            <h2 class="c-algo-card__title">Subsets (Power Set)</h2><span class="c-algo-card__tag">O(2ⁿ)</span>
+                        </header>
                         <div class="c-algo-card__body">
                             <p class="c-algo-card__description">Generate all possible subsets of a set.</p>
                             <div class="c-controls">
@@ -134,7 +159,8 @@
                             </div>
                             <div class="c-visualization"><canvas id="subsetCanvas" class="c-visualization__canvas"></canvas></div>
                             <div class="c-stats" id="subsetStats"></div>
-                            <div class="c-code-block"><pre><code>function subsets(nums, index = 0, current = []) {
+                            <div class="c-code-block">
+                                <pre><code>function subsets(nums, index = 0, current = []) {
     if (index === nums.length) {
         result.push([...current]);
         return;
@@ -145,366 +171,335 @@
     // Exclude nums[index]
     current.pop();
     subsets(nums, index + 1, current);
-}</code></pre></div>
+}</code></pre>
+                            </div>
                         </div>
                     </article>
                 </div>
             </main>
-            <footer class="c-footer"><div class="c-footer__content"><span>Copyright &copy; AlgoViz Platform 2026</span></div></footer>
+            <footer class="c-footer">
+                <div class="c-footer__content"><span>Copyright &copy; AlgoViz Platform 2026</span></div>
+            </footer>
         </div>
     </div>
     <script src="js/utils.js"></script>
     <script>
-    (function() {
-        'use strict';
-        // Factorial Visualizer
-        class FactorialVisualizer {
-            constructor() {
-                this.canvas = document.getElementById('factorialCanvas');
-                this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
-                this.statsContainer = document.getElementById('factorialStats');
-                this.nInput = document.getElementById('factorialN');
-                this.speedSlider = document.getElementById('factorialSpeed');
-                this.stats = new AlgoViz.StatsTracker();
-                this.animation = new AlgoViz.AnimationController();
-                this.setupCanvas();
-                this.bindEvents();
-                this.render({ stack: [], result: null });
-            }
-            setupCanvas() {
-                if (!this.canvas) return;
-                const setup = AlgoViz.setupCanvas(this.canvas.id);
-                if (setup) { this.width = setup.width; this.height = setup.height; this.ctx = setup.ctx; }
-            }
-            bindEvents() {
-                if (this.speedSlider) this.speedSlider.addEventListener('input', (e) => this.animation.setSpeed(501 - e.target.value));
-                this.animation.onStep = (step) => this.render(step);
-                this.animation.onComplete = () => this.stats.updateDisplay(this.statsContainer.id);
-            }
-            render(step) {
-                if (!this.ctx) return;
-                AlgoViz.clearCanvas(this.ctx, this.width, this.height);
-                const stack = step.stack || [];
-                const boxWidth = 200;
-                const boxHeight = 45;
-                const gap = 10;
-                const totalHeight = stack.length * (boxHeight + gap);
-                const startX = (this.width - boxWidth) / 2;
-                const startY = (this.height - totalHeight) / 2 - 30;
-                // Draw title
-                this.ctx.fillStyle = '#00f3ff';
-                this.ctx.font = '18px Rajdhani';
-                this.ctx.textAlign = 'center';
-                this.ctx.fillText('CALL STACK', this.width / 2, 40);
-                // Draw stack frames
-                stack.forEach((frame, i) => {
-                    const x = startX;
-                    const y = startY + i * (boxHeight + gap);
-                    const isTop = i === stack.length - 1;
-                    this.ctx.shadowColor = isTop ? '#00f3ff' : 'transparent';
-                    this.ctx.shadowBlur = isTop ? 15 : 0;
-                    this.ctx.fillStyle = isTop ? 'rgba(0, 243, 255, 0.3)' : 'rgba(255, 255, 255, 0.05)';
-                    this.ctx.strokeStyle = isTop ? '#00f3ff' : 'rgba(255, 255, 255, 0.2)';
-                    this.ctx.lineWidth = 2;
-                    this.ctx.beginPath();
-                    this.ctx.roundRect(x, y, boxWidth, boxHeight, 5);
-                    this.ctx.fill();
-                    this.ctx.stroke();
-                    this.ctx.shadowBlur = 0;
-                    this.ctx.fillStyle = '#ffffff';
-                    this.ctx.font = '16px Rajdhani';
-                    this.ctx.textAlign = 'center';
-                    this.ctx.textBaseline = 'middle';
-                    this.ctx.fillText(`factorial(${frame.n})`, x + boxWidth / 2, y + boxHeight / 2 - 8);
-                    if (frame.returning !== undefined) {
-                        this.ctx.fillStyle = '#1cc88a';
-                        this.ctx.font = '14px Rajdhani';
-                        this.ctx.fillText(`= ${frame.returning}`, x + boxWidth / 2, y + boxHeight / 2 + 12);
-                    }
-                });
-                if (step.result !== undefined) {
-                    this.ctx.fillStyle = '#1cc88a';
-                    this.ctx.font = 'bold 24px Rajdhani';
-                    this.ctx.fillText(`Result: ${step.n}! = ${step.result}`, this.width / 2, this.height - 40);
-                }
-                if (this.statsContainer && step.stack) {
-                    this.statsContainer.innerHTML = `<div class="c-stat"><div class="c-stat__value">${step.stack.length}</div><div class="c-stat__label">Depth</div></div><div class="c-stat"><div class="c-stat__value">${this.stats.iterations || 0}</div><div class="c-stat__label">Calls</div></div>`;
-                }
-            }
-            start() {
-                this.animation.stop();
-                const n = parseInt(this.nInput?.value) || 5;
-                this.stats.start();
-                const steps = [];
-                const stack = [];
-                const compute = (num) => {
-                    stack.push({ n: num });
-                    steps.push({ stack: stack.map(s => ({...s})), n });
-                    this.stats.recordIteration();
-                    if (num <= 1) {
-                        stack[stack.length - 1].returning = 1;
-                        steps.push({ stack: stack.map(s => ({...s})), n });
-                        stack.pop();
-                        return 1;
-                    }
-                    const result = num * compute(num - 1);
-                    stack[stack.length - 1].returning = result;
-                    steps.push({ stack: stack.map(s => ({...s})), n });
-                    stack.pop();
-                    return result;
-                };
-                const result = compute(n);
-                steps[steps.length - 1].result = result;
-                this.stats.stop();
-                this.animation.run(steps);
-            }
-        }
-        // Tower of Hanoi Visualizer
-        class HanoiVisualizer {
-            constructor() {
-                this.canvas = document.getElementById('hanoiCanvas');
-                this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
-                this.statsContainer = document.getElementById('hanoiStats');
-                this.nInput = document.getElementById('hanoiN');
-                this.speedSlider = document.getElementById('hanoiSpeed');
-                this.towers = [[], [], []];
-                this.moveCount = 0;
-                this.stats = new AlgoViz.StatsTracker();
-                this.animation = new AlgoViz.AnimationController();
-                this.setupCanvas();
-                this.bindEvents();
-                this.generate();
-            }
-            setupCanvas() {
-                if (!this.canvas) return;
-                const setup = AlgoViz.setupCanvas(this.canvas.id);
-                if (setup) { this.width = setup.width; this.height = setup.height; this.ctx = setup.ctx; }
-            }
-            bindEvents() {
-                if (this.speedSlider) this.speedSlider.addEventListener('input', (e) => this.animation.setSpeed(501 - e.target.value));
-                this.animation.onStep = (step) => this.render(step);
-                this.animation.onComplete = () => this.stats.updateDisplay(this.statsContainer.id);
-            }
-            generate() {
-                this.animation.stop();
-                const n = parseInt(this.nInput?.value) || 4;
-                this.towers = [Array.from({ length: n }, (_, i) => n - i), [], []];
-                this.moveCount = 0;
-                this.render({ towers: this.towers, from: -1, to: -1, disk: -1 });
-            }
-            render(step) {
-                if (!this.ctx) return;
-                AlgoViz.clearCanvas(this.ctx, this.width, this.height);
-                const towers = step.towers || this.towers;
-                const towerWidth = 120;
-                const towerHeight = 200;
-                const gap = (this.width - 3 * towerWidth) / 4;
-                const baseY = this.height - 50;
-                // Draw base
-                this.ctx.fillStyle = 'rgba(0, 243, 255, 0.2)';
-                this.ctx.fillRect(20, baseY, this.width - 40, 10);
-                // Draw towers and disks
-                towers.forEach((tower, ti) => {
-                    const towerX = gap + ti * (towerWidth + gap);
-                    const towerCenterX = towerX + towerWidth / 2;
-                    // Draw pole
-                    this.ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-                    this.ctx.fillRect(towerCenterX - 3, baseY - towerHeight, 6, towerHeight);
-                    // Draw tower label
-                    this.ctx.fillStyle = '#00f3ff';
-                    this.ctx.font = '16px Rajdhani';
-                    this.ctx.textAlign = 'center';
-                    this.ctx.fillText(['Source', 'Auxiliary', 'Destination'][ti], towerCenterX, baseY + 25);
-                    // Draw disks
-                    tower.forEach((diskSize, di) => {
-                        const diskWidth = (diskSize / towers[0].length) * towerWidth * 0.8 + 20;
-                        const diskHeight = 18;
-                        const diskY = baseY - towerHeight + di * diskHeight;
-                        const isMoving = step.from === ti && step.disk === diskSize;
-                        this.ctx.shadowColor = isMoving ? '#ff00ff' : `hsl(${diskSize * 60}, 80%, 60%)`;
-                        this.ctx.shadowBlur = isMoving ? 15 : 5;
-                        this.ctx.fillStyle = isMoving ? '#ff00ff' : `hsl(${diskSize * 60}, 80%, 60%)`;
-                        this.ctx.beginPath();
-                        this.ctx.roundRect(towerCenterX - diskWidth / 2, diskY, diskWidth, diskHeight - 2, 3);
-                        this.ctx.fill();
-                        this.ctx.shadowBlur = 0;
+        (function() {
+            'use strict';
+            // Factorial Visualizer
+            class FactorialVisualizer {
+                constructor() {
+                    this.canvas = document.getElementById('factorialCanvas');
+                    this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
+                    this.statsContainer = document.getElementById('factorialStats');
+                    this.nInput = document.getElementById('factorialN');
+                    this.speedSlider = document.getElementById('factorialSpeed');
+                    this.stats = new AlgoViz.StatsTracker();
+                    this.animation = new AlgoViz.AnimationController();
+                    this.setupCanvas();
+                    this.bindEvents();
+                    this.render({
+                        stack: [],
+                        result: null
                     });
-                });
-                // Draw move info
-                if (step.moveText) {
-                    this.ctx.fillStyle = '#1cc88a';
+                }
+                setupCanvas() {
+                    if (!this.canvas) return;
+                    const setup = AlgoViz.setupCanvas(this.canvas.id);
+                    if (setup) {
+                        this.width = setup.width;
+                        this.height = setup.height;
+                        this.ctx = setup.ctx;
+                    }
+                }
+                bindEvents() {
+                    if (this.speedSlider) this.speedSlider.addEventListener('input', (e) => this.animation.setSpeed(501 - e.target.value));
+                    this.animation.onStep = (step) => this.render(step);
+                    this.animation.onComplete = () => this.stats.updateDisplay(this.statsContainer.id);
+                }
+                render(step) {
+                    if (!this.ctx) return;
+                    AlgoViz.clearCanvas(this.ctx, this.width, this.height);
+                    const stack = step.stack || [];
+                    const boxWidth = 200;
+                    const boxHeight = 45;
+                    const gap = 10;
+                    const totalHeight = stack.length * (boxHeight + gap);
+                    const startX = (this.width - boxWidth) / 2;
+                    const startY = (this.height - totalHeight) / 2 - 30;
+                    // Draw title
+                    this.ctx.fillStyle = '#00f3ff';
                     this.ctx.font = '18px Rajdhani';
                     this.ctx.textAlign = 'center';
-                    this.ctx.fillText(step.moveText, this.width / 2, 30);
+                    this.ctx.fillText('CALL STACK', this.width / 2, 40);
+                    // Draw stack frames
+                    stack.forEach((frame, i) => {
+                        const x = startX;
+                        const y = startY + i * (boxHeight + gap);
+                        const isTop = i === stack.length - 1;
+                        this.ctx.shadowColor = isTop ? '#00f3ff' : 'transparent';
+                        this.ctx.shadowBlur = isTop ? 15 : 0;
+                        this.ctx.fillStyle = isTop ? 'rgba(0, 243, 255, 0.3)' : 'rgba(255, 255, 255, 0.05)';
+                        this.ctx.strokeStyle = isTop ? '#00f3ff' : 'rgba(255, 255, 255, 0.2)';
+                        this.ctx.lineWidth = 2;
+                        this.ctx.beginPath();
+                        this.ctx.roundRect(x, y, boxWidth, boxHeight, 5);
+                        this.ctx.fill();
+                        this.ctx.stroke();
+                        this.ctx.shadowBlur = 0;
+                        this.ctx.fillStyle = '#ffffff';
+                        this.ctx.font = '16px Rajdhani';
+                        this.ctx.textAlign = 'center';
+                        this.ctx.textBaseline = 'middle';
+                        this.ctx.fillText(`factorial(${frame.n})`, x + boxWidth / 2, y + boxHeight / 2 - 8);
+                        if (frame.returning !== undefined) {
+                            this.ctx.fillStyle = '#1cc88a';
+                            this.ctx.font = '14px Rajdhani';
+                            this.ctx.fillText(`= ${frame.returning}`, x + boxWidth / 2, y + boxHeight / 2 + 12);
+                        }
+                    });
+                    if (step.result !== undefined) {
+                        this.ctx.fillStyle = '#1cc88a';
+                        this.ctx.font = 'bold 24px Rajdhani';
+                        this.ctx.fillText(`Result: ${step.n}! = ${step.result}`, this.width / 2, this.height - 40);
+                    }
+                    if (this.statsContainer && step.stack) {
+                        this.statsContainer.innerHTML = `<div class="c-stat"><div class="c-stat__value">${step.stack.length}</div><div class="c-stat__label">Depth</div></div><div class="c-stat"><div class="c-stat__value">${this.stats.iterations || 0}</div><div class="c-stat__label">Calls</div></div>`;
+                    }
                 }
-                if (this.statsContainer) {
-                    this.statsContainer.innerHTML = `<div class="c-stat"><div class="c-stat__value">${this.moveCount}</div><div class="c-stat__label">Moves</div></div><div class="c-stat"><div class="c-stat__value">${Math.pow(2, parseInt(this.nInput?.value) || 4) - 1}</div><div class="c-stat__label">Min Moves</div></div>`;
+                start() {
+                    this.animation.stop();
+                    const n = parseInt(this.nInput?.value) || 5;
+                    this.stats.start();
+                    const steps = [];
+                    const stack = [];
+                    const compute = (num) => {
+                        stack.push({
+                            n: num
+                        });
+                        steps.push({
+                            stack: stack.map(s => ({
+                                ...s
+                            })),
+                            n
+                        });
+                        this.stats.recordIteration();
+                        if (num <= 1) {
+                            stack[stack.length - 1].returning = 1;
+                            steps.push({
+                                stack: stack.map(s => ({
+                                    ...s
+                                })),
+                                n
+                            });
+                            stack.pop();
+                            return 1;
+                        }
+                        const result = num * compute(num - 1);
+                        stack[stack.length - 1].returning = result;
+                        steps.push({
+                            stack: stack.map(s => ({
+                                ...s
+                            })),
+                            n
+                        });
+                        stack.pop();
+                        return result;
+                    };
+                    const result = compute(n);
+                    steps[steps.length - 1].result = result;
+                    this.stats.stop();
+                    this.animation.run(steps);
                 }
             }
-            start() {
-                this.animation.stop();
-                const n = parseInt(this.nInput?.value) || 4;
-                this.towers = [Array.from({ length: n }, (_, i) => n - i), [], []];
-                this.moveCount = 0;
-                this.stats.start();
-                const steps = [];
-                const move = (n, source, aux, dest) => {
-                    if (n === 1) {
+            // Tower of Hanoi Visualizer
+            class HanoiVisualizer {
+                constructor() {
+                    this.canvas = document.getElementById('hanoiCanvas');
+                    this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
+                    this.statsContainer = document.getElementById('hanoiStats');
+                    this.nInput = document.getElementById('hanoiN');
+                    this.speedSlider = document.getElementById('hanoiSpeed');
+                    this.towers = [
+                        [],
+                        [],
+                        []
+                    ];
+                    this.moveCount = 0;
+                    this.stats = new AlgoViz.StatsTracker();
+                    this.animation = new AlgoViz.AnimationController();
+                    this.setupCanvas();
+                    this.bindEvents();
+                    this.generate();
+                }
+                setupCanvas() {
+                    if (!this.canvas) return;
+                    const setup = AlgoViz.setupCanvas(this.canvas.id);
+                    if (setup) {
+                        this.width = setup.width;
+                        this.height = setup.height;
+                        this.ctx = setup.ctx;
+                    }
+                }
+                bindEvents() {
+                    if (this.speedSlider) this.speedSlider.addEventListener('input', (e) => this.animation.setSpeed(501 - e.target.value));
+                    this.animation.onStep = (step) => this.render(step);
+                    this.animation.onComplete = () => this.stats.updateDisplay(this.statsContainer.id);
+                }
+                generate() {
+                    this.animation.stop();
+                    const n = parseInt(this.nInput?.value) || 4;
+                    this.towers = [Array.from({
+                            length: n
+                        }, (_, i) => n - i), [],
+                        []
+                    ];
+                    this.moveCount = 0;
+                    this.render({
+                        towers: this.towers,
+                        from: -1,
+                        to: -1,
+                        disk: -1
+                    });
+                }
+                render(step) {
+                    if (!this.ctx) return;
+                    AlgoViz.clearCanvas(this.ctx, this.width, this.height);
+                    const towers = step.towers || this.towers;
+                    const towerWidth = 120;
+                    const towerHeight = 200;
+                    const gap = (this.width - 3 * towerWidth) / 4;
+                    const baseY = this.height - 50;
+                    // Draw base
+                    this.ctx.fillStyle = 'rgba(0, 243, 255, 0.2)';
+                    this.ctx.fillRect(20, baseY, this.width - 40, 10);
+                    // Draw towers and disks
+                    towers.forEach((tower, ti) => {
+                        const towerX = gap + ti * (towerWidth + gap);
+                        const towerCenterX = towerX + towerWidth / 2;
+                        // Draw pole
+                        this.ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                        this.ctx.fillRect(towerCenterX - 3, baseY - towerHeight, 6, towerHeight);
+                        // Draw tower label
+                        this.ctx.fillStyle = '#00f3ff';
+                        this.ctx.font = '16px Rajdhani';
+                        this.ctx.textAlign = 'center';
+                        this.ctx.fillText(['Source', 'Auxiliary', 'Destination'][ti], towerCenterX, baseY + 25);
+                        // Draw disks
+                        tower.forEach((diskSize, di) => {
+                            const diskWidth = (diskSize / towers[0].length) * towerWidth * 0.8 + 20;
+                            const diskHeight = 18;
+                            const diskY = baseY - towerHeight + di * diskHeight;
+                            const isMoving = step.from === ti && step.disk === diskSize;
+                            this.ctx.shadowColor = isMoving ? '#ff00ff' : `hsl(${diskSize * 60}, 80%, 60%)`;
+                            this.ctx.shadowBlur = isMoving ? 15 : 5;
+                            this.ctx.fillStyle = isMoving ? '#ff00ff' : `hsl(${diskSize * 60}, 80%, 60%)`;
+                            this.ctx.beginPath();
+                            this.ctx.roundRect(towerCenterX - diskWidth / 2, diskY, diskWidth, diskHeight - 2, 3);
+                            this.ctx.fill();
+                            this.ctx.shadowBlur = 0;
+                        });
+                    });
+                    // Draw move info
+                    if (step.moveText) {
+                        this.ctx.fillStyle = '#1cc88a';
+                        this.ctx.font = '18px Rajdhani';
+                        this.ctx.textAlign = 'center';
+                        this.ctx.fillText(step.moveText, this.width / 2, 30);
+                    }
+                    if (this.statsContainer) {
+                        this.statsContainer.innerHTML = `<div class="c-stat"><div class="c-stat__value">${this.moveCount}</div><div class="c-stat__label">Moves</div></div><div class="c-stat"><div class="c-stat__value">${Math.pow(2, parseInt(this.nInput?.value) || 4) - 1}</div><div class="c-stat__label">Min Moves</div></div>`;
+                    }
+                }
+                start() {
+                    this.animation.stop();
+                    const n = parseInt(this.nInput?.value) || 4;
+                    this.towers = [Array.from({
+                            length: n
+                        }, (_, i) => n - i), [],
+                        []
+                    ];
+                    this.moveCount = 0;
+                    this.stats.start();
+                    const steps = [];
+                    const move = (n, source, aux, dest) => {
+                        if (n === 1) {
+                            const disk = this.towers[source].pop();
+                            this.towers[dest].push(disk);
+                            this.moveCount++;
+                            this.stats.recordIteration();
+                            steps.push({
+                                towers: this.towers.map(t => [...t]),
+                                from: source,
+                                to: dest,
+                                disk,
+                                moveText: `Move disk ${disk} from ${['A','B','C'][source]} to ${['A','B','C'][dest]}`
+                            });
+                            return;
+                        }
+                        move(n - 1, source, dest, aux);
                         const disk = this.towers[source].pop();
                         this.towers[dest].push(disk);
                         this.moveCount++;
                         this.stats.recordIteration();
-                        steps.push({ towers: this.towers.map(t => [...t]), from: source, to: dest, disk, moveText: `Move disk ${disk} from ${['A','B','C'][source]} to ${['A','B','C'][dest]}` });
-                        return;
-                    }
-                    move(n-1, source, dest, aux);
-                    const disk = this.towers[source].pop();
-                    this.towers[dest].push(disk);
-                    this.moveCount++;
-                    this.stats.recordIteration();
-                    steps.push({ towers: this.towers.map(t => [...t]), from: source, to: dest, disk, moveText: `Move disk ${disk} from ${['A','B','C'][source]} to ${['A','B','C'][dest]}` });
-                    move(n-1, aux, source, dest);
-                };
-                move(n, 0, 1, 2);
-                this.stats.stop();
-                this.animation.run(steps);
-            }
-        }
-        // Permutations Visualizer
-        class PermutationsVisualizer {
-            constructor() {
-                this.canvas = document.getElementById('permCanvas');
-                this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
-                this.statsContainer = document.getElementById('permStats');
-                this.nInput = document.getElementById('permN');
-                this.speedSlider = document.getElementById('permSpeed');
-                this.stats = new AlgoViz.StatsTracker();
-                this.animation = new AlgoViz.AnimationController();
-                this.setupCanvas();
-                this.bindEvents();
-                this.render({ current: [], permutations: [] });
-            }
-            setupCanvas() {
-                if (!this.canvas) return;
-                const setup = AlgoViz.setupCanvas(this.canvas.id);
-                if (setup) { this.width = setup.width; this.height = setup.height; this.ctx = setup.ctx; }
-            }
-            bindEvents() {
-                if (this.speedSlider) this.speedSlider.addEventListener('input', (e) => this.animation.setSpeed(501 - e.target.value));
-                this.animation.onStep = (step) => this.render(step);
-                this.animation.onComplete = () => this.stats.updateDisplay(this.statsContainer.id);
-            }
-            render(step) {
-                if (!this.ctx) return;
-                AlgoViz.clearCanvas(this.ctx, this.width, this.height);
-                // Draw current permutation
-                const current = step.current || [];
-                const boxSize = 50;
-                const gap = 10;
-                const totalWidth = current.length * (boxSize + gap);
-                const startX = (this.width - totalWidth) / 2;
-                this.ctx.fillStyle = '#00f3ff';
-                this.ctx.font = '16px Rajdhani';
-                this.ctx.textAlign = 'center';
-                this.ctx.fillText('Current Permutation', this.width / 2, 40);
-                current.forEach((val, i) => {
-                    const x = startX + i * (boxSize + gap);
-                    this.ctx.shadowColor = '#00f3ff';
-                    this.ctx.shadowBlur = 10;
-                    this.ctx.fillStyle = 'rgba(0, 243, 255, 0.3)';
-                    this.ctx.beginPath();
-                    this.ctx.roundRect(x, 60, boxSize, boxSize, 5);
-                    this.ctx.fill();
-                    this.ctx.shadowBlur = 0;
-                    this.ctx.fillStyle = '#ffffff';
-                    this.ctx.font = 'bold 20px Rajdhani';
-                    this.ctx.textAlign = 'center';
-                    this.ctx.textBaseline = 'middle';
-                    this.ctx.fillText(val.toString(), x + boxSize / 2, 60 + boxSize / 2);
-                });
-                // Draw permutations count
-                if (step.permutations && step.permutations.length > 0) {
-                    this.ctx.fillStyle = '#1cc88a';
-                    this.ctx.font = '18px Rajdhani';
-                    this.ctx.textAlign = 'center';
-                    this.ctx.fillText(`Total: ${step.permutations.length} permutations`, this.width / 2, this.height - 30);
-                }
-                if (this.statsContainer) {
-                    this.statsContainer.innerHTML = `<div class="c-stat"><div class="c-stat__value">${step.permutations?.length || 0}</div><div class="c-stat__label">Permutations</div></div><div class="c-stat"><div class="c-stat__value">${this.stats.iterations || 0}</div><div class="c-stat__label">Steps</div></div>`;
+                        steps.push({
+                            towers: this.towers.map(t => [...t]),
+                            from: source,
+                            to: dest,
+                            disk,
+                            moveText: `Move disk ${disk} from ${['A','B','C'][source]} to ${['A','B','C'][dest]}`
+                        });
+                        move(n - 1, aux, source, dest);
+                    };
+                    move(n, 0, 1, 2);
+                    this.stats.stop();
+                    this.animation.run(steps);
                 }
             }
-            start() {
-                this.animation.stop();
-                const n = parseInt(this.nInput?.value) || 3;
-                const arr = Array.from({ length: n }, (_, i) => i + 1);
-                this.stats.start();
-                const steps = [];
-                const result = [];
-                const permute = (start) => {
-                    if (start === arr.length - 1) {
-                        result.push([...arr]);
-                        steps.push({ current: [...arr], permutations: [...result] });
-                        this.stats.recordIteration();
-                        return;
+            // Permutations Visualizer
+            class PermutationsVisualizer {
+                constructor() {
+                    this.canvas = document.getElementById('permCanvas');
+                    this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
+                    this.statsContainer = document.getElementById('permStats');
+                    this.nInput = document.getElementById('permN');
+                    this.speedSlider = document.getElementById('permSpeed');
+                    this.stats = new AlgoViz.StatsTracker();
+                    this.animation = new AlgoViz.AnimationController();
+                    this.setupCanvas();
+                    this.bindEvents();
+                    this.render({
+                        current: [],
+                        permutations: []
+                    });
+                }
+                setupCanvas() {
+                    if (!this.canvas) return;
+                    const setup = AlgoViz.setupCanvas(this.canvas.id);
+                    if (setup) {
+                        this.width = setup.width;
+                        this.height = setup.height;
+                        this.ctx = setup.ctx;
                     }
-                    for (let i = start; i < arr.length; i++) {
-                        [arr[start], arr[i]] = [arr[i], arr[start]];
-                        steps.push({ current: [...arr], permutations: [...result] });
-                        permute(start + 1);
-                        [arr[start], arr[i]] = [arr[i], arr[start]];
-                    }
-                };
-                permute(0);
-                this.stats.stop();
-                this.animation.run(steps);
-            }
-        }
-        // Subsets Visualizer
-        class SubsetsVisualizer {
-            constructor() {
-                this.canvas = document.getElementById('subsetCanvas');
-                this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
-                this.statsContainer = document.getElementById('subsetStats');
-                this.nInput = document.getElementById('subsetN');
-                this.speedSlider = document.getElementById('subsetSpeed');
-                this.stats = new AlgoViz.StatsTracker();
-                this.animation = new AlgoViz.AnimationController();
-                this.setupCanvas();
-                this.bindEvents();
-                this.render({ current: [], subsets: [] });
-            }
-            setupCanvas() {
-                if (!this.canvas) return;
-                const setup = AlgoViz.setupCanvas(this.canvas.id);
-                if (setup) { this.width = setup.width; this.height = setup.height; this.ctx = setup.ctx; }
-            }
-            bindEvents() {
-                if (this.speedSlider) this.speedSlider.addEventListener('input', (e) => this.animation.setSpeed(501 - e.target.value));
-                this.animation.onStep = (step) => this.render(step);
-                this.animation.onComplete = () => this.stats.updateDisplay(this.statsContainer.id);
-            }
-            render(step) {
-                if (!this.ctx) return;
-                AlgoViz.clearCanvas(this.ctx, this.width, this.height);
-                // Draw current subset
-                const current = step.current || [];
-                const boxSize = 45;
-                const gap = 8;
-                const totalWidth = Math.max(current.length * (boxSize + gap), 100);
-                const startX = (this.width - totalWidth) / 2;
-                this.ctx.fillStyle = '#00f3ff';
-                this.ctx.font = '16px Rajdhani';
-                this.ctx.textAlign = 'center';
-                this.ctx.fillText('Current Subset', this.width / 2, 40);
-                if (current.length === 0) {
-                    this.ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-                    this.ctx.beginPath();
-                    this.ctx.roundRect(startX, 60, 100, 40, 5);
-                    this.ctx.fill();
-                    this.ctx.fillStyle = '#858796';
-                    this.ctx.font = '14px Rajdhani';
-                    this.ctx.fillText('∅', startX + 50, 60 + 20);
-                } else {
+                }
+                bindEvents() {
+                    if (this.speedSlider) this.speedSlider.addEventListener('input', (e) => this.animation.setSpeed(501 - e.target.value));
+                    this.animation.onStep = (step) => this.render(step);
+                    this.animation.onComplete = () => this.stats.updateDisplay(this.statsContainer.id);
+                }
+                render(step) {
+                    if (!this.ctx) return;
+                    AlgoViz.clearCanvas(this.ctx, this.width, this.height);
+                    // Draw current permutation
+                    const current = step.current || [];
+                    const boxSize = 50;
+                    const gap = 10;
+                    const totalWidth = current.length * (boxSize + gap);
+                    const startX = (this.width - totalWidth) / 2;
+                    this.ctx.fillStyle = '#00f3ff';
+                    this.ctx.font = '16px Rajdhani';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.fillText('Current Permutation', this.width / 2, 40);
                     current.forEach((val, i) => {
                         const x = startX + i * (boxSize + gap);
                         this.ctx.shadowColor = '#00f3ff';
@@ -515,55 +510,180 @@
                         this.ctx.fill();
                         this.ctx.shadowBlur = 0;
                         this.ctx.fillStyle = '#ffffff';
-                        this.ctx.font = 'bold 18px Rajdhani';
+                        this.ctx.font = 'bold 20px Rajdhani';
                         this.ctx.textAlign = 'center';
                         this.ctx.textBaseline = 'middle';
                         this.ctx.fillText(val.toString(), x + boxSize / 2, 60 + boxSize / 2);
                     });
-                }
-                // Draw subsets count
-                if (step.subsets && step.subsets.length > 0) {
-                    this.ctx.fillStyle = '#1cc88a';
-                    this.ctx.font = '18px Rajdhani';
-                    this.ctx.textAlign = 'center';
-                    this.ctx.fillText(`Total: ${step.subsets.length} subsets`, this.width / 2, this.height - 30);
-                }
-                if (this.statsContainer) {
-                    this.statsContainer.innerHTML = `<div class="c-stat"><div class="c-stat__value">${step.subsets?.length || 0}</div><div class="c-stat__label">Subsets</div></div><div class="c-stat"><div class="c-stat__value">${this.stats.iterations || 0}</div><div class="c-stat__label">Steps</div></div>`;
-                }
-            }
-            start() {
-                this.animation.stop();
-                const n = parseInt(this.nInput?.value) || 3;
-                const arr = Array.from({ length: n }, (_, i) => i + 1);
-                this.stats.start();
-                const steps = [];
-                const result = [];
-                const subsets = (index, current) => {
-                    if (index === arr.length) {
-                        result.push([...current]);
-                        steps.push({ current: [...current], subsets: [...result] });
-                        this.stats.recordIteration();
-                        return;
+                    // Draw permutations count
+                    if (step.permutations && step.permutations.length > 0) {
+                        this.ctx.fillStyle = '#1cc88a';
+                        this.ctx.font = '18px Rajdhani';
+                        this.ctx.textAlign = 'center';
+                        this.ctx.fillText(`Total: ${step.permutations.length} permutations`, this.width / 2, this.height - 30);
                     }
-                    current.push(arr[index]);
-                    steps.push({ current: [...current], subsets: [...result] });
-                    subsets(index + 1, current);
-                    current.pop();
-                    steps.push({ current: [...current], subsets: [...result] });
-                    subsets(index + 1, current);
-                };
-                subsets(0, []);
-                this.stats.stop();
-                this.animation.run(steps);
+                    if (this.statsContainer) {
+                        this.statsContainer.innerHTML = `<div class="c-stat"><div class="c-stat__value">${step.permutations?.length || 0}</div><div class="c-stat__label">Permutations</div></div><div class="c-stat"><div class="c-stat__value">${this.stats.iterations || 0}</div><div class="c-stat__label">Steps</div></div>`;
+                    }
+                }
+                start() {
+                    this.animation.stop();
+                    const n = parseInt(this.nInput?.value) || 3;
+                    const arr = Array.from({
+                        length: n
+                    }, (_, i) => i + 1);
+                    this.stats.start();
+                    const steps = [];
+                    const result = [];
+                    const permute = (start) => {
+                        if (start === arr.length - 1) {
+                            result.push([...arr]);
+                            steps.push({
+                                current: [...arr],
+                                permutations: [...result]
+                            });
+                            this.stats.recordIteration();
+                            return;
+                        }
+                        for (let i = start; i < arr.length; i++) {
+                            [arr[start], arr[i]] = [arr[i], arr[start]];
+                            steps.push({
+                                current: [...arr],
+                                permutations: [...result]
+                            });
+                            permute(start + 1);
+                            [arr[start], arr[i]] = [arr[i], arr[start]];
+                        }
+                    };
+                    permute(0);
+                    this.stats.stop();
+                    this.animation.run(steps);
+                }
             }
-        }
-        window.factorialViz = new FactorialVisualizer();
-        window.hanoiViz = new HanoiVisualizer();
-        window.permViz = new PermutationsVisualizer();
-        window.subsetViz = new SubsetsVisualizer();
-    })();
+            // Subsets Visualizer
+            class SubsetsVisualizer {
+                constructor() {
+                    this.canvas = document.getElementById('subsetCanvas');
+                    this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
+                    this.statsContainer = document.getElementById('subsetStats');
+                    this.nInput = document.getElementById('subsetN');
+                    this.speedSlider = document.getElementById('subsetSpeed');
+                    this.stats = new AlgoViz.StatsTracker();
+                    this.animation = new AlgoViz.AnimationController();
+                    this.setupCanvas();
+                    this.bindEvents();
+                    this.render({
+                        current: [],
+                        subsets: []
+                    });
+                }
+                setupCanvas() {
+                    if (!this.canvas) return;
+                    const setup = AlgoViz.setupCanvas(this.canvas.id);
+                    if (setup) {
+                        this.width = setup.width;
+                        this.height = setup.height;
+                        this.ctx = setup.ctx;
+                    }
+                }
+                bindEvents() {
+                    if (this.speedSlider) this.speedSlider.addEventListener('input', (e) => this.animation.setSpeed(501 - e.target.value));
+                    this.animation.onStep = (step) => this.render(step);
+                    this.animation.onComplete = () => this.stats.updateDisplay(this.statsContainer.id);
+                }
+                render(step) {
+                    if (!this.ctx) return;
+                    AlgoViz.clearCanvas(this.ctx, this.width, this.height);
+                    // Draw current subset
+                    const current = step.current || [];
+                    const boxSize = 45;
+                    const gap = 8;
+                    const totalWidth = Math.max(current.length * (boxSize + gap), 100);
+                    const startX = (this.width - totalWidth) / 2;
+                    this.ctx.fillStyle = '#00f3ff';
+                    this.ctx.font = '16px Rajdhani';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.fillText('Current Subset', this.width / 2, 40);
+                    if (current.length === 0) {
+                        this.ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                        this.ctx.beginPath();
+                        this.ctx.roundRect(startX, 60, 100, 40, 5);
+                        this.ctx.fill();
+                        this.ctx.fillStyle = '#858796';
+                        this.ctx.font = '14px Rajdhani';
+                        this.ctx.fillText('∅', startX + 50, 60 + 20);
+                    } else {
+                        current.forEach((val, i) => {
+                            const x = startX + i * (boxSize + gap);
+                            this.ctx.shadowColor = '#00f3ff';
+                            this.ctx.shadowBlur = 10;
+                            this.ctx.fillStyle = 'rgba(0, 243, 255, 0.3)';
+                            this.ctx.beginPath();
+                            this.ctx.roundRect(x, 60, boxSize, boxSize, 5);
+                            this.ctx.fill();
+                            this.ctx.shadowBlur = 0;
+                            this.ctx.fillStyle = '#ffffff';
+                            this.ctx.font = 'bold 18px Rajdhani';
+                            this.ctx.textAlign = 'center';
+                            this.ctx.textBaseline = 'middle';
+                            this.ctx.fillText(val.toString(), x + boxSize / 2, 60 + boxSize / 2);
+                        });
+                    }
+                    // Draw subsets count
+                    if (step.subsets && step.subsets.length > 0) {
+                        this.ctx.fillStyle = '#1cc88a';
+                        this.ctx.font = '18px Rajdhani';
+                        this.ctx.textAlign = 'center';
+                        this.ctx.fillText(`Total: ${step.subsets.length} subsets`, this.width / 2, this.height - 30);
+                    }
+                    if (this.statsContainer) {
+                        this.statsContainer.innerHTML = `<div class="c-stat"><div class="c-stat__value">${step.subsets?.length || 0}</div><div class="c-stat__label">Subsets</div></div><div class="c-stat"><div class="c-stat__value">${this.stats.iterations || 0}</div><div class="c-stat__label">Steps</div></div>`;
+                    }
+                }
+                start() {
+                    this.animation.stop();
+                    const n = parseInt(this.nInput?.value) || 3;
+                    const arr = Array.from({
+                        length: n
+                    }, (_, i) => i + 1);
+                    this.stats.start();
+                    const steps = [];
+                    const result = [];
+                    const subsets = (index, current) => {
+                        if (index === arr.length) {
+                            result.push([...current]);
+                            steps.push({
+                                current: [...current],
+                                subsets: [...result]
+                            });
+                            this.stats.recordIteration();
+                            return;
+                        }
+                        current.push(arr[index]);
+                        steps.push({
+                            current: [...current],
+                            subsets: [...result]
+                        });
+                        subsets(index + 1, current);
+                        current.pop();
+                        steps.push({
+                            current: [...current],
+                            subsets: [...result]
+                        });
+                        subsets(index + 1, current);
+                    };
+                    subsets(0, []);
+                    this.stats.stop();
+                    this.animation.run(steps);
+                }
+            }
+            window.factorialViz = new FactorialVisualizer();
+            window.hanoiViz = new HanoiVisualizer();
+            window.permViz = new PermutationsVisualizer();
+            window.subsetViz = new SubsetsVisualizer();
+        })();
     </script>
     <script src="js/main.js"></script>
 </body>
+
 </html>

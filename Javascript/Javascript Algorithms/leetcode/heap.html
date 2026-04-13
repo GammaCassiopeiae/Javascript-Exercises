@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Heap Algorithms</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <a href="index.html" class="back-link">Back to Hub</a>
     <h1>Heap / PriorityQueue Algorithms</h1>
@@ -14,18 +16,18 @@
     <div class="algorithm-section">
         <h2>1. Kth Largest Element in a Stream</h2>
         <div class="code-block" id="code-kthLargest">
-class KthLargest {
-    constructor(k, nums) {
-        this.k = k;
-        this.heap = new MinHeap();
-        for (let num of nums) this.add(num);
-    }
-    add(val) {
-        this.heap.push(val);
-        if (this.heap.size() > this.k) this.heap.pop();
-        return this.heap.peek();
-    }
-}</div>
+            class KthLargest {
+            constructor(k, nums) {
+            this.k = k;
+            this.heap = new MinHeap();
+            for (let num of nums) this.add(num);
+            }
+            add(val) {
+            this.heap.push(val);
+            if (this.heap.size() > this.k) this.heap.pop();
+            return this.heap.peek();
+            }
+            }</div>
         <button onclick="runKthLargest()">Run Example</button>
         <div class="result-block" id="result-kthLargest">Result: ...</div>
     </div>
@@ -34,74 +36,80 @@ class KthLargest {
     <div class="algorithm-section">
         <h2>2. Top K Frequent Elements</h2>
         <div class="code-block" id="code-topK">
-function topKFrequent(nums, k) {
-    let count = {};
-    for (let num of nums) count[num] = (count[num] || 0) + 1;
-    let freq = Array.from({ length: nums.length + 1 }, () => []);
-    for (let num in count) freq[count[num]].push(num);
-    let res = [];
-    for (let i = freq.length - 1; i >= 0 && res.length < k; i--) {
-        if (freq[i]) res.push(...freq[i]);
-    }
-    return res.slice(0, k);
-}</div>
-        <button onclick="runTopK()">Run Example</button>
-        <div class="result-block" id="result-topK">Result: ...</div>
-    </div>
+            function topKFrequent(nums, k) {
+            let count = {};
+            for (let num of nums) count[num] = (count[num] || 0) + 1;
+            let freq = Array.from({ length: nums.length + 1 }, () => []);
+            for (let num in count) freq[count[num]].push(num);
+            let res = [];
+            for (let i = freq.length - 1; i >= 0 && res.length < k; i--) { if (freq[i]) res.push(...freq[i]); } return res.slice(0, k); }</div>
+                <button onclick="runTopK()">Run Example</button>
+                <div class="result-block" id="result-topK">Result: ...</div>
+        </div>
 
-    <script>
-        class MinHeap {
-            constructor() { this.heap = []; }
-            push(val) {
-                this.heap.push(val);
-                this.bubbleUp();
-            }
-            pop() {
-                if (this.size() === 1) return this.heap.pop();
-                const min = this.heap[0];
-                this.heap[0] = this.heap.pop();
-                this.bubbleDown();
-                return min;
-            }
-            peek() { return this.heap[0]; }
-            size() { return this.heap.length; }
-            bubbleUp() {
-                let index = this.heap.length - 1;
-                while (index > 0) {
-                    let parent = Math.floor((index - 1) / 2);
-                    if (this.heap[parent] <= this.heap[index]) break;
-                    [this.heap[parent], this.heap[index]] = [this.heap[index], this.heap[parent]];
-                    index = parent;
+        <script>
+            class MinHeap {
+                constructor() {
+                    this.heap = [];
+                }
+                push(val) {
+                    this.heap.push(val);
+                    this.bubbleUp();
+                }
+                pop() {
+                    if (this.size() === 1) return this.heap.pop();
+                    const min = this.heap[0];
+                    this.heap[0] = this.heap.pop();
+                    this.bubbleDown();
+                    return min;
+                }
+                peek() {
+                    return this.heap[0];
+                }
+                size() {
+                    return this.heap.length;
+                }
+                bubbleUp() {
+                    let index = this.heap.length - 1;
+                    while (index > 0) {
+                        let parent = Math.floor((index - 1) / 2);
+                        if (this.heap[parent] <= this.heap[index]) break;
+                        [this.heap[parent], this.heap[index]] = [this.heap[index], this.heap[parent]];
+                        index = parent;
+                    }
+                }
+                bubbleDown() {
+                    let index = 0;
+                    while (true) {
+                        let left = 2 * index + 1,
+                            right = 2 * index + 2,
+                            smallest = index;
+                        if (left < this.size() && this.heap[left] < this.heap[smallest]) smallest = left;
+                        if (right < this.size() && this.heap[right] < this.heap[smallest]) smallest = right;
+                        if (smallest === index) break;
+                        [this.heap[index], this.heap[smallest]] = [this.heap[smallest], this.heap[index]];
+                        index = smallest;
+                    }
                 }
             }
-            bubbleDown() {
-                let index = 0;
-                while (true) {
-                    let left = 2 * index + 1, right = 2 * index + 2, smallest = index;
-                    if (left < this.size() && this.heap[left] < this.heap[smallest]) smallest = left;
-                    if (right < this.size() && this.heap[right] < this.heap[smallest]) smallest = right;
-                    if (smallest === index) break;
-                    [this.heap[index], this.heap[smallest]] = [this.heap[smallest], this.heap[index]];
-                    index = smallest;
-                }
+
+            function runKthLargest() {
+                let kth = new KthLargest(3, [4, 5, 8, 2]);
+                let r1 = kth.add(3);
+                let r2 = kth.add(5);
+                let r3 = kth.add(10);
+                document.getElementById('result-kthLargest').innerText = "Added [3, 5, 10]... 3rd largest values: " + [r1, r2, r3].join(", ");
             }
-        }
 
-        function runKthLargest() {
-            let kth = new KthLargest(3, [4, 5, 8, 2]);
-            let r1 = kth.add(3);
-            let r2 = kth.add(5);
-            let r3 = kth.add(10);
-            document.getElementById('result-kthLargest').innerText = "Added [3, 5, 10]... 3rd largest values: " + [r1, r2, r3].join(", ");
-        }
+            function runTopK() {
+                let nums = [1, 1, 1, 2, 2, 3],
+                    k = 2;
+                document.getElementById('result-topK').innerText = "Input: " + JSON.stringify(nums) + " | Top " + k + ": " + JSON.stringify(topKFrequent(nums, k));
+            }
 
-        function runTopK() {
-            let nums = [1, 1, 1, 2, 2, 3], k = 2;
-            document.getElementById('result-topK').innerText = "Input: " + JSON.stringify(nums) + " | Top " + k + ": " + JSON.stringify(topKFrequent(nums, k));
-        }
-
-        eval(document.getElementById('code-kthLargest').innerText);
-        eval(document.getElementById('code-topK').innerText);
-    </script>
+            eval(document.getElementById('code-kthLargest').innerText);
+            eval(document.getElementById('code-topK').innerText);
+        </script>
 </body>
+
 </html>

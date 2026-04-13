@@ -95,7 +95,9 @@
 }
 
 /* === BOX MODEL RESET === */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
 }
 
@@ -156,15 +158,11 @@ body {
 .u-scanlines {
     position: fixed;
     inset: 0;
-    background: linear-gradient(
-        rgba(18, 16, 16, 0) 50%,
-        rgba(0, 0, 0, 0.15) 50%
-    ), linear-gradient(
-        90deg,
-        rgba(255, 0, 0, 0.03),
-        rgba(0, 255, 0, 0.01),
-        rgba(0, 0, 255, 0.03)
-    );
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%,
+            rgba(0, 0, 0, 0.15) 50%), linear-gradient(90deg,
+            rgba(255, 0, 0, 0.03),
+            rgba(0, 255, 0, 0.01),
+            rgba(0, 0, 255, 0.03));
     background-size: 100% 4px, 3px 100%;
     pointer-events: none;
     z-index: var(--z-overlay);
@@ -200,8 +198,15 @@ body {
 }
 
 @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.3;
+    }
 }
 
 /* === GRID LAYOUT === */
@@ -458,7 +463,9 @@ body {
 }
 
 @keyframes blink {
-    50% { opacity: 0; }
+    50% {
+        opacity: 0;
+    }
 }
 
 .c-card__body {
@@ -560,8 +567,15 @@ body {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* === ALGORITHM DETAIL === */
@@ -665,19 +679,61 @@ body {
 }
 
 /* Syntax Highlighting */
-.kw { color: var(--neon-magenta); } /* Keywords */
-.tp { color: var(--neon-cyan); } /* Types */
-.st { color: var(--neon-green); } /* Strings */
-.cm { color: var(--text-dim); font-style: italic; } /* Comments */
-.nm { color: var(--neon-amber); } /* Numbers */
-.fn { color: var(--neon-purple); } /* Functions */
+.kw {
+    color: var(--neon-magenta);
+}
 
-[data-theme="light"] .kw { color: #990099; }
-[data-theme="light"] .tp { color: #007a80; }
-[data-theme="light"] .st { color: #008050; }
-[data-theme="light"] .cm { color: #666; }
-[data-theme="light"] .nm { color: #cc8800; }
-[data-theme="light"] .fn { color: #7000a0; }
+/* Keywords */
+.tp {
+    color: var(--neon-cyan);
+}
+
+/* Types */
+.st {
+    color: var(--neon-green);
+}
+
+/* Strings */
+.cm {
+    color: var(--text-dim);
+    font-style: italic;
+}
+
+/* Comments */
+.nm {
+    color: var(--neon-amber);
+}
+
+/* Numbers */
+.fn {
+    color: var(--neon-purple);
+}
+
+/* Functions */
+
+[data-theme="light"] .kw {
+    color: #990099;
+}
+
+[data-theme="light"] .tp {
+    color: #007a80;
+}
+
+[data-theme="light"] .st {
+    color: #008050;
+}
+
+[data-theme="light"] .cm {
+    color: #666;
+}
+
+[data-theme="light"] .nm {
+    color: #cc8800;
+}
+
+[data-theme="light"] .fn {
+    color: #7000a0;
+}
 
 /* === SEARCH OVERLAY === */
 .c-search.overlay {
@@ -923,12 +979,29 @@ body {
 } */
 
 @keyframes glitch-anim {
-    0% { clip: rect(31px, 9999px, 94px, 0); }
-    20% { clip: rect(62px, 9999px, 42px, 0); }
-    40% { clip: rect(15px, 9999px, 78px, 0); }
-    60% { clip: rect(85px, 9999px, 20px, 0); }
-    80% { clip: rect(45px, 9999px, 55px, 0); }
-    100% { clip: rect(10px, 9999px, 90px, 0); }
+    0% {
+        clip: rect(31px, 9999px, 94px, 0);
+    }
+
+    20% {
+        clip: rect(62px, 9999px, 42px, 0);
+    }
+
+    40% {
+        clip: rect(15px, 9999px, 78px, 0);
+    }
+
+    60% {
+        clip: rect(85px, 9999px, 20px, 0);
+    }
+
+    80% {
+        clip: rect(45px, 9999px, 55px, 0);
+    }
+
+    100% {
+        clip: rect(10px, 9999px, 90px, 0);
+    }
 }
 
 /* === RESPONSIVE ADJUSTMENTS === */

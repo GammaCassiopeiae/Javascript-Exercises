@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tree Algorithms</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <a href="index.html" class="back-link">Back to Hub</a>
     <h1>Tree & BST Algorithms</h1>
@@ -14,10 +16,10 @@
     <div class="algorithm-section">
         <h2>1. Maximum Depth of Binary Tree</h2>
         <div class="code-block" id="code-maxDepth">
-function maxDepth(root) {
-    if (!root) return 0;
-    return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));
-}</div>
+            function maxDepth(root) {
+            if (!root) return 0;
+            return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));
+            }</div>
         <button onclick="runMaxDepth()">Run Example</button>
         <div class="result-block" id="result-maxDepth">Result: ...</div>
     </div>
@@ -26,63 +28,55 @@ function maxDepth(root) {
     <div class="algorithm-section">
         <h2>2. Binary Tree Level Order Traversal</h2>
         <div class="code-block" id="code-levelOrder">
-function levelOrder(root) {
-    if (!root) return [];
-    let result = [], queue = [root];
-    while (queue.length > 0) {
-        let level = [], size = queue.length;
-        for (let i = 0; i < size; i++) {
-            let node = queue.shift();
-            level.push(node.val);
-            if (node.left) queue.push(node.left);
-            if (node.right) queue.push(node.right);
-        }
-        result.push(level);
-    }
-    return result;
-}</div>
-        <button onclick="runLevelOrder()">Run Example</button>
-        <div class="result-block" id="result-levelOrder">Result: ...</div>
-    </div>
+            function levelOrder(root) {
+            if (!root) return [];
+            let result = [], queue = [root];
+            while (queue.length > 0) {
+            let level = [], size = queue.length;
+            for (let i = 0; i < size; i++) { let node=queue.shift(); level.push(node.val); if (node.left) queue.push(node.left); if (node.right) queue.push(node.right); } result.push(level); } return result; }</div>
+                <button onclick="runLevelOrder()">Run Example</button>
+                <div class="result-block" id="result-levelOrder">Result: ...</div>
+        </div>
 
-    <!-- Validate Binary Search Tree -->
-    <div class="algorithm-section">
-        <h2>3. Validate Binary Search Tree</h2>
-        <div class="code-block" id="code-validateBst">
-function isValidBST(root, min = -Infinity, max = Infinity) {
-    if (!root) return true;
-    if (root.val <= min || root.val >= max) return false;
-    return isValidBST(root.left, min, root.val) && isValidBST(root.right, root.val, max);
-}</div>
-        <button onclick="runValidateBST()">Run Example</button>
-        <div class="result-block" id="result-validateBst">Result: ...</div>
-    </div>
+        <!-- Validate Binary Search Tree -->
+        <div class="algorithm-section">
+            <h2>3. Validate Binary Search Tree</h2>
+            <div class="code-block" id="code-validateBst">
+                function isValidBST(root, min = -Infinity, max = Infinity) {
+                if (!root) return true;
+                if (root.val <= min || root.val>= max) return false;
+                    return isValidBST(root.left, min, root.val) && isValidBST(root.right, root.val, max);
+                    }</div>
+            <button onclick="runValidateBST()">Run Example</button>
+            <div class="result-block" id="result-validateBst">Result: ...</div>
+        </div>
 
-    <script>
-        function TreeNode(val, left, right) {
-            this.val = (val===undefined ? 0 : val)
-            this.left = (left===undefined ? null : left)
-            this.right = (right===undefined ? null : right)
-        }
+        <script>
+            function TreeNode(val, left, right) {
+                this.val = (val === undefined ? 0 : val)
+                this.left = (left === undefined ? null : left)
+                this.right = (right === undefined ? null : right)
+            }
 
-        function runMaxDepth() {
-            let root = new TreeNode(3, new TreeNode(9), new TreeNode(20, new TreeNode(15), new TreeNode(7)));
-            document.getElementById('result-maxDepth').innerText = "Max Depth: " + maxDepth(root);
-        }
+            function runMaxDepth() {
+                let root = new TreeNode(3, new TreeNode(9), new TreeNode(20, new TreeNode(15), new TreeNode(7)));
+                document.getElementById('result-maxDepth').innerText = "Max Depth: " + maxDepth(root);
+            }
 
-        function runLevelOrder() {
-            let root = new TreeNode(3, new TreeNode(9), new TreeNode(20, new TreeNode(15), new TreeNode(7)));
-            document.getElementById('result-levelOrder').innerText = "Level Order: " + JSON.stringify(levelOrder(root));
-        }
+            function runLevelOrder() {
+                let root = new TreeNode(3, new TreeNode(9), new TreeNode(20, new TreeNode(15), new TreeNode(7)));
+                document.getElementById('result-levelOrder').innerText = "Level Order: " + JSON.stringify(levelOrder(root));
+            }
 
-        function runValidateBST() {
-            let root = new TreeNode(2, new TreeNode(1), new TreeNode(3));
-            document.getElementById('result-validateBst').innerText = "Is valid BST: " + isValidBST(root);
-        }
+            function runValidateBST() {
+                let root = new TreeNode(2, new TreeNode(1), new TreeNode(3));
+                document.getElementById('result-validateBst').innerText = "Is valid BST: " + isValidBST(root);
+            }
 
-        eval(document.getElementById('code-maxDepth').innerText);
-        eval(document.getElementById('code-levelOrder').innerText);
-        eval(document.getElementById('code-validateBst').innerText);
-    </script>
+            eval(document.getElementById('code-maxDepth').innerText);
+            eval(document.getElementById('code-levelOrder').innerText);
+            eval(document.getElementById('code-validateBst').innerText);
+        </script>
 </body>
+
 </html>

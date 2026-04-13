@@ -1,32 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Sorting Algorithms Visualization - Bubble Sort, Quick Sort, Merge Sort, Heap Sort">
     <meta name="theme-color" content="#050505">
     <title>Sorting Algorithms - AlgoViz</title>
-    
+
     <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
+
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-    
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- Main Stylesheet -->
     <link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body class="l-body">
     <!-- Skip Link for Accessibility -->
     <a href="#main-content" class="u-skip-link">Skip to main content</a>
-    
+
     <!-- Page Wrapper -->
     <div id="wrapper" class="l-wrapper">
-        
+
         <!-- Sidebar -->
         <aside id="sidebar" class="c-sidebar" aria-label="Main navigation">
             <!-- Sidebar Brand -->
@@ -35,7 +37,7 @@
                     <i class="fas fa-brain"></i> AlgoViz
                 </h1>
             </div>
-            
+
             <!-- Sidebar Nav -->
             <nav class="c-sidebar__nav">
                 <ul class="c-sidebar__menu">
@@ -45,74 +47,74 @@
                             <span>Dashboard</span>
                         </a>
                     </li>
-                    
+
                     <hr class="c-sidebar__divider" />
-                    
+
                     <li class="c-sidebar__heading">Algorithm Categories</li>
-                    
+
                     <li class="c-sidebar__item c-sidebar__item--active">
                         <a href="sorting.html" class="c-sidebar__link">
                             <i class="fas fa-sort"></i>
                             <span>Sorting Algorithms</span>
                         </a>
                     </li>
-                    
+
                     <li class="c-sidebar__item">
                         <a href="searching.html" class="c-sidebar__link">
                             <i class="fas fa-search"></i>
                             <span>Searching Algorithms</span>
                         </a>
                     </li>
-                    
+
                     <li class="c-sidebar__item">
                         <a href="trees.html" class="c-sidebar__link">
                             <i class="fas fa-project-diagram"></i>
                             <span>Tree Algorithms</span>
                         </a>
                     </li>
-                    
+
                     <li class="c-sidebar__item">
                         <a href="graphs.html" class="c-sidebar__link">
                             <i class="fas fa-network-wired"></i>
                             <span>Graph Algorithms</span>
                         </a>
                     </li>
-                    
+
                     <li class="c-sidebar__item">
                         <a href="dynamic-programming.html" class="c-sidebar__link">
                             <i class="fas fa-layer-group"></i>
                             <span>Dynamic Programming</span>
                         </a>
                     </li>
-                    
+
                     <li class="c-sidebar__item">
                         <a href="data-structures.html" class="c-sidebar__link">
                             <i class="fas fa-cubes"></i>
                             <span>Data Structures</span>
                         </a>
                     </li>
-                    
+
                     <li class="c-sidebar__item">
                         <a href="pathfinding.html" class="c-sidebar__link">
                             <i class="fas fa-route"></i>
                             <span>Pathfinding</span>
                         </a>
                     </li>
-                    
+
                     <li class="c-sidebar__item">
                         <a href="recursion.html" class="c-sidebar__link">
                             <i class="fas fa-sync-alt"></i>
                             <span>Recursion</span>
                         </a>
                     </li>
-                    
+
                     <li class="c-sidebar__item">
                         <a href="strings.html" class="c-sidebar__link">
                             <i class="fas fa-font"></i>
                             <span>String Algorithms</span>
                         </a>
                     </li>
-                    
+
                     <li class="c-sidebar__item">
                         <a href="advanced.html" class="c-sidebar__link">
                             <i class="fas fa-graduation-cap"></i>
@@ -122,10 +124,10 @@
                 </ul>
             </nav>
         </aside>
-        
+
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="l-content-wrapper">
-            
+
             <!-- Topbar -->
             <header id="topbar" class="c-topbar">
                 <div class="c-topbar__brand">
@@ -139,7 +141,7 @@
                         <span>Sorting Algorithms</span>
                     </div>
                 </div>
-                
+
                 <nav>
                     <ul class="c-topbar__nav">
                         <li>
@@ -151,17 +153,17 @@
                     </ul>
                 </nav>
             </header>
-            
+
             <!-- Main Content -->
             <main id="main-content" class="l-main">
-                
+
                 <!-- Breadcrumbs -->
                 <nav class="c-breadcrumbs" aria-label="Breadcrumb">
                     <span class="c-breadcrumbs__item"><a href="index.html">Home</a></span>
                     <span class="c-breadcrumbs__separator">/</span>
                     <span class="c-breadcrumbs__item c-breadcrumbs__item--current">Sorting Algorithms</span>
                 </nav>
-                
+
                 <!-- Page Header -->
                 <header class="c-page-header">
                     <h1 class="c-page-header__title">
@@ -171,10 +173,10 @@
                         Visualize how different sorting algorithms arrange data. Compare time complexity and performance.
                     </p>
                 </header>
-                
+
                 <!-- Algorithm Cards Grid -->
                 <div class="l-algo-grid">
-                    
+
                     <!-- Bubble Sort -->
                     <article class="c-algo-card">
                         <header class="c-algo-card__header">
@@ -185,7 +187,7 @@
                             <p class="c-algo-card__description">
                                 Simple comparison-based algorithm that repeatedly swaps adjacent elements if they are in wrong order.
                             </p>
-                            
+
                             <div class="c-controls">
                                 <div class="c-control-group">
                                     <label class="c-control-label">Size:</label>
@@ -196,7 +198,7 @@
                                     <input type="range" class="c-slider" id="bubbleSpeed" min="1" max="500" value="100">
                                 </div>
                             </div>
-                            
+
                             <div class="c-controls">
                                 <button class="c-btn c-btn--primary c-btn--sm" onclick="bubbleSortVisualizer.generate()">
                                     <i class="fas fa-random"></i> New Array
@@ -211,13 +213,13 @@
                                     <i class="fas fa-stop"></i> Stop
                                 </button>
                             </div>
-                            
+
                             <div class="c-visualization">
                                 <canvas id="bubbleSortCanvas" class="c-visualization__canvas"></canvas>
                             </div>
-                            
+
                             <div class="c-stats" id="bubbleStats"></div>
-                            
+
                             <div class="c-legend">
                                 <div class="c-legend__item">
                                     <div class="c-legend__color c-legend__color--default"></div>
@@ -236,7 +238,7 @@
                                     <span>Sorted</span>
                                 </div>
                             </div>
-                            
+
                             <div class="c-code-block">
                                 <pre><code>function bubbleSort(arr) {
     for (let i = 0; i < arr.length; i++) {
@@ -251,7 +253,7 @@
                             </div>
                         </div>
                     </article>
-                    
+
                     <!-- Quick Sort -->
                     <article class="c-algo-card">
                         <header class="c-algo-card__header">
@@ -262,7 +264,7 @@
                             <p class="c-algo-card__description">
                                 Divide-and-conquer algorithm that selects a pivot and partitions array around it.
                             </p>
-                            
+
                             <div class="c-controls">
                                 <div class="c-control-group">
                                     <label class="c-control-label">Size:</label>
@@ -273,7 +275,7 @@
                                     <input type="range" class="c-slider" id="quickSpeed" min="1" max="500" value="100">
                                 </div>
                             </div>
-                            
+
                             <div class="c-controls">
                                 <button class="c-btn c-btn--primary c-btn--sm" onclick="quickSortVisualizer.generate()">
                                     <i class="fas fa-random"></i> New Array
@@ -288,13 +290,13 @@
                                     <i class="fas fa-stop"></i> Stop
                                 </button>
                             </div>
-                            
+
                             <div class="c-visualization">
                                 <canvas id="quickSortCanvas" class="c-visualization__canvas"></canvas>
                             </div>
-                            
+
                             <div class="c-stats" id="quickStats"></div>
-                            
+
                             <div class="c-legend">
                                 <div class="c-legend__item">
                                     <div class="c-legend__color c-legend__color--default"></div>
@@ -309,7 +311,7 @@
                                     <span>Sorted</span>
                                 </div>
                             </div>
-                            
+
                             <div class="c-code-block">
                                 <pre><code>function quickSort(arr, low, high) {
     if (low < high) {
@@ -321,7 +323,7 @@
                             </div>
                         </div>
                     </article>
-                    
+
                     <!-- Merge Sort -->
                     <article class="c-algo-card">
                         <header class="c-algo-card__header">
@@ -332,7 +334,7 @@
                             <p class="c-algo-card__description">
                                 Divide-and-conquer algorithm that divides array into halves, sorts them, and merges.
                             </p>
-                            
+
                             <div class="c-controls">
                                 <div class="c-control-group">
                                     <label class="c-control-label">Size:</label>
@@ -343,7 +345,7 @@
                                     <input type="range" class="c-slider" id="mergeSpeed" min="1" max="500" value="100">
                                 </div>
                             </div>
-                            
+
                             <div class="c-controls">
                                 <button class="c-btn c-btn--primary c-btn--sm" onclick="mergeSortVisualizer.generate()">
                                     <i class="fas fa-random"></i> New Array
@@ -358,13 +360,13 @@
                                     <i class="fas fa-stop"></i> Stop
                                 </button>
                             </div>
-                            
+
                             <div class="c-visualization">
                                 <canvas id="mergeSortCanvas" class="c-visualization__canvas"></canvas>
                             </div>
-                            
+
                             <div class="c-stats" id="mergeStats"></div>
-                            
+
                             <div class="c-legend">
                                 <div class="c-legend__item">
                                     <div class="c-legend__color c-legend__color--default"></div>
@@ -379,7 +381,7 @@
                                     <span>Sorted</span>
                                 </div>
                             </div>
-                            
+
                             <div class="c-code-block">
                                 <pre><code>function mergeSort(arr) {
     if (arr.length <= 1) return arr;
@@ -393,7 +395,7 @@
                             </div>
                         </div>
                     </article>
-                    
+
                     <!-- Heap Sort -->
                     <article class="c-algo-card">
                         <header class="c-algo-card__header">
@@ -404,7 +406,7 @@
                             <p class="c-algo-card__description">
                                 Comparison-based algorithm using binary heap data structure for efficient sorting.
                             </p>
-                            
+
                             <div class="c-controls">
                                 <div class="c-control-group">
                                     <label class="c-control-label">Size:</label>
@@ -415,7 +417,7 @@
                                     <input type="range" class="c-slider" id="heapSpeed" min="1" max="500" value="100">
                                 </div>
                             </div>
-                            
+
                             <div class="c-controls">
                                 <button class="c-btn c-btn--primary c-btn--sm" onclick="heapSortVisualizer.generate()">
                                     <i class="fas fa-random"></i> New Array
@@ -430,13 +432,13 @@
                                     <i class="fas fa-stop"></i> Stop
                                 </button>
                             </div>
-                            
+
                             <div class="c-visualization">
                                 <canvas id="heapSortCanvas" class="c-visualization__canvas"></canvas>
                             </div>
-                            
+
                             <div class="c-stats" id="heapStats"></div>
-                            
+
                             <div class="c-legend">
                                 <div class="c-legend__item">
                                     <div class="c-legend__color c-legend__color--default"></div>
@@ -451,7 +453,7 @@
                                     <span>Sorted</span>
                                 </div>
                             </div>
-                            
+
                             <div class="c-code-block">
                                 <pre><code>function heapSort(arr) {
     const n = arr.length;
@@ -469,24 +471,24 @@
                             </div>
                         </div>
                     </article>
-                    
+
                 </div>
-                
+
             </main>
-            
+
             <!-- Footer -->
             <footer class="c-footer">
                 <div class="c-footer__content">
                     <span>Copyright &copy; AlgoViz Platform 2026 | Built with Vanilla JS & Canvas API</span>
                 </div>
             </footer>
-            
+
         </div>
     </div>
-    
+
     <!-- Shared Utilities -->
     <script src="js/utils.js"></script>
-    
+
     <!-- Sorting Algorithms Visualizer -->
     <script>
         /**
@@ -506,19 +508,19 @@
                     this.statsContainer = document.getElementById(statsId);
                     this.sizeSlider = document.getElementById(sizeSliderId);
                     this.speedSlider = document.getElementById(speedSliderId);
-                    
+
                     this.array = [];
                     this.stats = new AlgoViz.StatsTracker();
                     this.animation = new AlgoViz.AnimationController();
-                    
+
                     this.setupCanvas();
                     this.bindEvents();
                     this.generate();
                 }
-                
+
                 setupCanvas() {
                     if (!this.canvas) return;
-                    
+
                     const setup = AlgoViz.setupCanvas(this.canvas.id);
                     if (setup) {
                         this.width = setup.width;
@@ -526,7 +528,7 @@
                         this.ctx = setup.ctx;
                     }
                 }
-                
+
                 bindEvents() {
                     if (this.sizeSlider) {
                         this.sizeSlider.addEventListener('change', () => this.generate());
@@ -536,39 +538,41 @@
                             this.animation.setSpeed(501 - e.target.value);
                         });
                     }
-                    
+
                     this.animation.onStep = (step) => this.render(step);
                     this.animation.onComplete = () => this.stats.updateDisplay(this.statsContainer.id);
                 }
-                
+
                 generate() {
                     this.animation.stop();
                     const size = this.sizeSlider ? parseInt(this.sizeSlider.value) : 15;
                     this.array = AlgoViz.generateRandomArray(size, 10, 100);
                     this.stats.start();
-                    this.render({ array: this.array });
+                    this.render({
+                        array: this.array
+                    });
                 }
-                
+
                 start() {
                     if (this.animation.isRunning) return;
                     this.stats.start();
                     this.runAlgorithm();
                 }
-                
+
                 pause() {
                     this.animation.togglePause();
                 }
-                
+
                 stop() {
                     this.animation.stop();
                     this.generate();
                 }
-                
+
                 render(step) {
                     if (!this.ctx) return;
-                    
+
                     AlgoViz.clearCanvas(this.ctx, this.width, this.height);
-                    
+
                     AlgoViz.drawBars(this.ctx, step.array || this.array, this.width, this.height, {}, {
                         compareIndices: step.compare || [],
                         swapIndices: step.swap || [],
@@ -576,7 +580,7 @@
                         currentIndex: step.current !== undefined ? step.current : -1
                     });
                 }
-                
+
                 async runAlgorithm() {
                     // Override in subclass
                 }
@@ -590,7 +594,7 @@
                     const arr = [...this.array];
                     const n = arr.length;
                     const steps = [];
-                    
+
                     for (let i = 0; i < n - 1; i++) {
                         for (let j = 0; j < n - i - 1; j++) {
                             this.stats.recordComparison();
@@ -598,7 +602,7 @@
                                 array: [...arr],
                                 compare: [j, j + 1]
                             });
-                            
+
                             if (arr[j] > arr[j + 1]) {
                                 this.stats.recordSwap();
                                 [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
@@ -610,15 +614,19 @@
                         }
                         steps.push({
                             array: [...arr],
-                            sorted: Array.from({ length: i + 1 }, (_, k) => n - 1 - k)
+                            sorted: Array.from({
+                                length: i + 1
+                            }, (_, k) => n - 1 - k)
                         });
                     }
-                    
+
                     steps.push({
                         array: [...arr],
-                        sorted: Array.from({ length: n }, (_, i) => i)
+                        sorted: Array.from({
+                            length: n
+                        }, (_, i) => i)
                     });
-                    
+
                     this.stats.stop();
                     this.animation.run(steps);
                 }
@@ -631,16 +639,16 @@
                 async runAlgorithm() {
                     const arr = [...this.array];
                     const steps = [];
-                    
+
                     const partition = async (low, high) => {
                         const pivot = arr[high];
                         let i = low - 1;
-                        
+
                         steps.push({
                             array: [...arr],
                             current: high
                         });
-                        
+
                         for (let j = low; j < high; j++) {
                             this.stats.recordComparison();
                             steps.push({
@@ -648,7 +656,7 @@
                                 compare: [j, high],
                                 current: high
                             });
-                            
+
                             if (arr[j] < pivot) {
                                 i++;
                                 this.stats.recordSwap();
@@ -660,7 +668,7 @@
                                 });
                             }
                         }
-                        
+
                         [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
                         this.stats.recordSwap();
                         steps.push({
@@ -668,10 +676,10 @@
                             swap: [i + 1, high],
                             sorted: [i + 1]
                         });
-                        
+
                         return i + 1;
                     };
-                    
+
                     const quickSort = async (low, high) => {
                         if (low < high) {
                             const pi = await partition(low, high);
@@ -684,14 +692,16 @@
                             });
                         }
                     };
-                    
+
                     await quickSort(0, arr.length - 1);
-                    
+
                     steps.push({
                         array: [...arr],
-                        sorted: Array.from({ length: arr.length }, (_, i) => i)
+                        sorted: Array.from({
+                            length: arr.length
+                        }, (_, i) => i)
                     });
-                    
+
                     this.stats.stop();
                     this.animation.run(steps);
                 }
@@ -704,20 +714,22 @@
                 async runAlgorithm() {
                     const arr = [...this.array];
                     const steps = [];
-                    
+
                     const merge = async (left, mid, right) => {
                         const leftArr = arr.slice(left, mid + 1);
                         const rightArr = arr.slice(mid + 1, right + 1);
-                        
-                        let i = 0, j = 0, k = left;
-                        
+
+                        let i = 0,
+                            j = 0,
+                            k = left;
+
                         while (i < leftArr.length && j < rightArr.length) {
                             this.stats.recordComparison();
                             steps.push({
                                 array: [...arr],
                                 current: k
                             });
-                            
+
                             if (leftArr[i] <= rightArr[j]) {
                                 arr[k] = leftArr[i];
                                 i++;
@@ -732,24 +744,30 @@
                             });
                             k++;
                         }
-                        
+
                         while (i < leftArr.length) {
                             arr[k] = leftArr[i];
                             this.stats.recordSwap();
-                            steps.push({ array: [...arr], current: k });
+                            steps.push({
+                                array: [...arr],
+                                current: k
+                            });
                             i++;
                             k++;
                         }
-                        
+
                         while (j < rightArr.length) {
                             arr[k] = rightArr[j];
                             this.stats.recordSwap();
-                            steps.push({ array: [...arr], current: k });
+                            steps.push({
+                                array: [...arr],
+                                current: k
+                            });
                             j++;
                             k++;
                         }
                     };
-                    
+
                     const mergeSort = async (left, right) => {
                         if (left < right) {
                             const mid = Math.floor((left + right) / 2);
@@ -763,14 +781,16 @@
                             });
                         }
                     };
-                    
+
                     await mergeSort(0, arr.length - 1);
-                    
+
                     steps.push({
                         array: [...arr],
-                        sorted: Array.from({ length: arr.length }, (_, i) => i)
+                        sorted: Array.from({
+                            length: arr.length
+                        }, (_, i) => i)
                     });
-                    
+
                     this.stats.stop();
                     this.animation.run(steps);
                 }
@@ -784,31 +804,31 @@
                     const arr = [...this.array];
                     const steps = [];
                     const n = arr.length;
-                    
+
                     const heapify = async (size, root) => {
                         let largest = root;
                         const left = 2 * root + 1;
                         const right = 2 * root + 2;
-                        
+
                         steps.push({
                             array: [...arr],
                             current: root
                         });
-                        
+
                         if (left < size) {
                             this.stats.recordComparison();
                             if (arr[left] > arr[largest]) {
                                 largest = left;
                             }
                         }
-                        
+
                         if (right < size) {
                             this.stats.recordComparison();
                             if (arr[right] > arr[largest]) {
                                 largest = right;
                             }
                         }
-                        
+
                         if (largest !== root) {
                             this.stats.recordSwap();
                             [arr[root], arr[largest]] = [arr[largest], arr[root]];
@@ -819,12 +839,12 @@
                             await heapify(size, largest);
                         }
                     };
-                    
+
                     // Build max heap
                     for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
                         await heapify(n, i);
                     }
-                    
+
                     // Extract elements
                     for (let i = n - 1; i > 0; i--) {
                         this.stats.recordSwap();
@@ -836,12 +856,14 @@
                         });
                         await heapify(i, 0);
                     }
-                    
+
                     steps.push({
                         array: [...arr],
-                        sorted: Array.from({ length: arr.length }, (_, i) => i)
+                        sorted: Array.from({
+                            length: arr.length
+                        }, (_, i) => i)
                     });
-                    
+
                     this.stats.stop();
                     this.animation.run(steps);
                 }
@@ -853,22 +875,23 @@
             window.bubbleSortVisualizer = new BubbleSortVisualizer(
                 'bubbleSortCanvas', 'bubbleStats', 'bubbleSize', 'bubbleSpeed'
             );
-            
+
             window.quickSortVisualizer = new QuickSortVisualizer(
                 'quickSortCanvas', 'quickStats', 'quickSize', 'quickSpeed'
             );
-            
+
             window.mergeSortVisualizer = new MergeSortVisualizer(
                 'mergeSortCanvas', 'mergeStats', 'mergeSize', 'mergeSpeed'
             );
-            
+
             window.heapSortVisualizer = new HeapSortVisualizer(
                 'heapSortCanvas', 'heapStats', 'heapSize', 'heapSpeed'
             );
         })();
     </script>
-    
+
     <!-- Main JavaScript -->
     <script src="js/main.js"></script>
 </body>
+
 </html>

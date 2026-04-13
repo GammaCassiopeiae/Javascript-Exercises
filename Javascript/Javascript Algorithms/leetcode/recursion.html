@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recursion Algorithms</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <a href="index.html" class="back-link">Back to Hub</a>
     <h1>Recursion Algorithms</h1>
@@ -14,47 +16,43 @@
     <div class="algorithm-section">
         <h2>1. Pow(x, n)</h2>
         <div class="code-block" id="code-pow">
-function myPow(x, n) {
-    if (n === 0) return 1;
-    if (n < 0) { x = 1 / x; n = -n; }
-    if (n % 2 === 0) {
-        let half = myPow(x, n / 2);
-        return half * half;
-    } else {
-        return x * myPow(x, n - 1);
-    }
-}</div>
-        <button onclick="runPow()">Run Example</button>
-        <div class="result-block" id="result-pow">Result: ...</div>
-    </div>
+            function myPow(x, n) {
+            if (n === 0) return 1;
+            if (n < 0) { x=1 / x; n=-n; } if (n % 2===0) { let half=myPow(x, n / 2); return half * half; } else { return x * myPow(x, n - 1); } }</div>
+                <button onclick="runPow()">Run Example</button>
+                <div class="result-block" id="result-pow">Result: ...</div>
+        </div>
 
-    <!-- K-th Symbol in Grammar -->
-    <div class="algorithm-section">
-        <h2>2. K-th Symbol in Grammar</h2>
-        <div class="code-block" id="code-kthSymbol">
-function kthGrammar(n, k) {
-    if (n === 1) return 0;
-    let parent = kthGrammar(n - 1, Math.ceil(k / 2));
-    if (parent === 0) return k % 2 === 1 ? 0 : 1;
-    else return k % 2 === 1 ? 1 : 0;
-}</div>
-        <button onclick="runKthSymbol()">Run Example</button>
-        <div class="result-block" id="result-kthSymbol">Result: ...</div>
-    </div>
+        <!-- K-th Symbol in Grammar -->
+        <div class="algorithm-section">
+            <h2>2. K-th Symbol in Grammar</h2>
+            <div class="code-block" id="code-kthSymbol">
+                function kthGrammar(n, k) {
+                if (n === 1) return 0;
+                let parent = kthGrammar(n - 1, Math.ceil(k / 2));
+                if (parent === 0) return k % 2 === 1 ? 0 : 1;
+                else return k % 2 === 1 ? 1 : 0;
+                }</div>
+            <button onclick="runKthSymbol()">Run Example</button>
+            <div class="result-block" id="result-kthSymbol">Result: ...</div>
+        </div>
 
-    <script>
-        function runPow() {
-            let x = 2, n = 10;
-            document.getElementById('result-pow').innerText = "2^10 = " + myPow(x, n);
-        }
+        <script>
+            function runPow() {
+                let x = 2,
+                    n = 10;
+                document.getElementById('result-pow').innerText = "2^10 = " + myPow(x, n);
+            }
 
-        function runKthSymbol() {
-            let n = 2, k = 1;
-            document.getElementById('result-kthSymbol').innerText = "N=2, K=1 | K-th Symbol: " + kthGrammar(n, k);
-        }
+            function runKthSymbol() {
+                let n = 2,
+                    k = 1;
+                document.getElementById('result-kthSymbol').innerText = "N=2, K=1 | K-th Symbol: " + kthGrammar(n, k);
+            }
 
-        eval(document.getElementById('code-pow').innerText);
-        eval(document.getElementById('code-kthSymbol').innerText);
-    </script>
+            eval(document.getElementById('code-pow').innerText);
+            eval(document.getElementById('code-kthSymbol').innerText);
+        </script>
 </body>
+
 </html>

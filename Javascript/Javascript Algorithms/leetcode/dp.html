@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dynamic Programming Algorithms</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <a href="index.html" class="back-link">Back to Hub</a>
     <h1>Dynamic Programming Algorithms</h1>
@@ -14,16 +16,14 @@
     <div class="algorithm-section">
         <h2>1. Longest Increasing Subsequence</h2>
         <div class="code-block" id="code-lis">
-function lengthOfLIS(nums) {
-    if (!nums.length) return 0;
-    let dp = new Array(nums.length).fill(1);
-    for (let i = 1; i < nums.length; i++) {
-        for (let j = 0; j < i; j++) {
-            if (nums[i] > nums[j]) dp[i] = Math.max(dp[i], dp[j] + 1);
-        }
-    }
-    return Math.max(...dp);
-}</div>
+            function lengthOfLIS(nums) {
+            if (!nums.length) return 0;
+            let dp = new Array(nums.length).fill(1);
+            for (let i = 1; i < nums.length; i++) { for (let j=0; j < i; j++) { if (nums[i]> nums[j]) dp[i] = Math.max(dp[i], dp[j] + 1);
+                }
+                }
+                return Math.max(...dp);
+                }</div>
         <button onclick="runLIS()">Run Example</button>
         <div class="result-block" id="result-lis">Result: ...</div>
     </div>
@@ -32,55 +32,47 @@ function lengthOfLIS(nums) {
     <div class="algorithm-section">
         <h2>2. Maximum Subarray (Kadane's)</h2>
         <div class="code-block" id="code-maxSub">
-function maxSubArray(nums) {
-    let currSum = nums[0], maxSum = nums[0];
-    for (let i = 1; i < nums.length; i++) {
-        currSum = Math.max(nums[i], currSum + nums[i]);
-        maxSum = Math.max(maxSum, currSum);
-    }
-    return maxSum;
-}</div>
-        <button onclick="runMaxSub()">Run Example</button>
-        <div class="result-block" id="result-maxSub">Result: ...</div>
-    </div>
+            function maxSubArray(nums) {
+            let currSum = nums[0], maxSum = nums[0];
+            for (let i = 1; i < nums.length; i++) { currSum=Math.max(nums[i], currSum + nums[i]); maxSum=Math.max(maxSum, currSum); } return maxSum; }</div>
+                <button onclick="runMaxSub()">Run Example</button>
+                <div class="result-block" id="result-maxSub">Result: ...</div>
+        </div>
 
-    <!-- Coin Change -->
-    <div class="algorithm-section">
-        <h2>3. Coin Change</h2>
-        <div class="code-block" id="code-coinChange">
-function coinChange(coins, amount) {
-    let dp = new Array(amount + 1).fill(Infinity);
-    dp[0] = 0;
-    for (let coin of coins) {
-        for (let i = coin; i <= amount; i++) {
-            dp[i] = Math.min(dp[i], dp[i - coin] + 1);
-        }
-    }
-    return dp[amount] === Infinity ? -1 : dp[amount];
-}</div>
-        <button onclick="runCoinChange()">Run Example</button>
-        <div class="result-block" id="result-coinChange">Result: ...</div>
-    </div>
+        <!-- Coin Change -->
+        <div class="algorithm-section">
+            <h2>3. Coin Change</h2>
+            <div class="code-block" id="code-coinChange">
+                function coinChange(coins, amount) {
+                let dp = new Array(amount + 1).fill(Infinity);
+                dp[0] = 0;
+                for (let coin of coins) {
+                for (let i = coin; i <= amount; i++) { dp[i]=Math.min(dp[i], dp[i - coin] + 1); } } return dp[amount]===Infinity ? -1 : dp[amount]; }</div>
+                    <button onclick="runCoinChange()">Run Example</button>
+                    <div class="result-block" id="result-coinChange">Result: ...</div>
+            </div>
 
-    <script>
-        function runLIS() {
-            let nums = [10, 9, 2, 5, 3, 7, 101, 18];
-            document.getElementById('result-lis').innerText = "Output: " + lengthOfLIS(nums);
-        }
+            <script>
+                function runLIS() {
+                    let nums = [10, 9, 2, 5, 3, 7, 101, 18];
+                    document.getElementById('result-lis').innerText = "Output: " + lengthOfLIS(nums);
+                }
 
-        function runMaxSub() {
-            let nums = [-2,1,-3,4,-1,2,1,-5,4];
-            document.getElementById('result-maxSub').innerText = "Max Sum: " + maxSubArray(nums);
-        }
+                function runMaxSub() {
+                    let nums = [-2, 1, -3, 4, -1, 2, 1, -5, 4];
+                    document.getElementById('result-maxSub').innerText = "Max Sum: " + maxSubArray(nums);
+                }
 
-        function runCoinChange() {
-            let coins = [1, 2, 5], amount = 11;
-            document.getElementById('result-coinChange').innerText = "Coins: " + amount + " | Min coins: " + coinChange(coins, amount);
-        }
+                function runCoinChange() {
+                    let coins = [1, 2, 5],
+                        amount = 11;
+                    document.getElementById('result-coinChange').innerText = "Coins: " + amount + " | Min coins: " + coinChange(coins, amount);
+                }
 
-        eval(document.getElementById('code-lis').innerText);
-        eval(document.getElementById('code-maxSub').innerText);
-        eval(document.getElementById('code-coinChange').innerText);
-    </script>
+                eval(document.getElementById('code-lis').innerText);
+                eval(document.getElementById('code-maxSub').innerText);
+                eval(document.getElementById('code-coinChange').innerText);
+            </script>
 </body>
+
 </html>

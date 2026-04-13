@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stack Algorithms</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <a href="index.html" class="back-link">Back to Hub</a>
     <h1>Stack Algorithms</h1>
@@ -14,19 +16,19 @@
     <div class="algorithm-section">
         <h2>1. Valid Parentheses</h2>
         <div class="code-block" id="code-parentheses">
-function isValid(s) {
-    let stack = [];
-    let mapping = { ')': '(', '}': '{', ']': '[' };
-    for (let char of s) {
-        if (mapping[char]) {
+            function isValid(s) {
+            let stack = [];
+            let mapping = { ')': '(', '}': '{', ']': '[' };
+            for (let char of s) {
+            if (mapping[char]) {
             let topElement = stack.length === 0 ? '#' : stack.pop();
             if (topElement !== mapping[char]) return false;
-        } else {
+            } else {
             stack.push(char);
-        }
-    }
-    return stack.length === 0;
-}</div>
+            }
+            }
+            return stack.length === 0;
+            }</div>
         <button onclick="runParentheses()">Run Example</button>
         <div class="result-block" id="result-parentheses">Result: ...</div>
     </div>
@@ -35,24 +37,24 @@ function isValid(s) {
     <div class="algorithm-section">
         <h2>2. Reverse Linked List</h2>
         <div class="code-block" id="code-reverse">
-function reverseList(head) {
-    let prev = null, curr = head;
-    while (curr) {
-        let nextTemp = curr.next;
-        curr.next = prev;
-        prev = curr;
-        curr = nextTemp;
-    }
-    return prev;
-}</div>
+            function reverseList(head) {
+            let prev = null, curr = head;
+            while (curr) {
+            let nextTemp = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = nextTemp;
+            }
+            return prev;
+            }</div>
         <button onclick="runReverse()">Run Example</button>
         <div class="result-block" id="result-reverse">Result: ...</div>
     </div>
 
     <script>
         function ListNode(val, next) {
-            this.val = (val===undefined ? 0 : val)
-            this.next = (next===undefined ? null : next)
+            this.val = (val === undefined ? 0 : val)
+            this.next = (next === undefined ? null : next)
         }
 
         function listToArray(head) {
@@ -89,4 +91,5 @@ function reverseList(head) {
         eval(document.getElementById('code-reverse').innerText);
     </script>
 </body>
+
 </html>

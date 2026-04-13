@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,11 +11,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body class="l-body">
     <a href="#main-content" class="u-skip-link">Skip to main content</a>
     <div id="wrapper" class="l-wrapper">
         <aside id="sidebar" class="c-sidebar">
-            <div class="c-sidebar__brand"><h1 class="c-sidebar__title"><i class="fas fa-brain"></i> AlgoViz</h1></div>
+            <div class="c-sidebar__brand">
+                <h1 class="c-sidebar__title"><i class="fas fa-brain"></i> AlgoViz</h1>
+            </div>
             <nav class="c-sidebar__nav">
                 <ul class="c-sidebar__menu">
                     <li class="c-sidebar__item"><a href="index.html" class="c-sidebar__link"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
@@ -37,9 +41,15 @@
             <header id="topbar" class="c-topbar">
                 <div class="c-topbar__brand">
                     <button id="sidebarToggle" class="c-topbar__toggle"><i class="fas fa-bars"></i></button>
-                    <div class="c-topbar__logo"><div class="c-topbar__logo-icon"><i class="fas fa-project-diagram"></i></div><span>Tree Algorithms</span></div>
+                    <div class="c-topbar__logo">
+                        <div class="c-topbar__logo-icon"><i class="fas fa-project-diagram"></i></div><span>Tree Algorithms</span>
+                    </div>
                 </div>
-                <nav><ul class="c-topbar__nav"><li><a href="index.html" class="c-topbar__nav-link"><i class="fas fa-th-large"></i></a></li></ul></nav>
+                <nav>
+                    <ul class="c-topbar__nav">
+                        <li><a href="index.html" class="c-topbar__nav-link"><i class="fas fa-th-large"></i></a></li>
+                    </ul>
+                </nav>
             </header>
             <main id="main-content" class="l-main">
                 <nav class="c-breadcrumbs"><span class="c-breadcrumbs__item"><a href="index.html">Home</a></span><span class="c-breadcrumbs__separator">/</span><span class="c-breadcrumbs__item c-breadcrumbs__item--current">Trees</span></nav>
@@ -50,7 +60,9 @@
                 <div class="l-algo-grid">
                     <!-- Inorder Traversal -->
                     <article class="c-algo-card">
-                        <header class="c-algo-card__header"><h2 class="c-algo-card__title">Inorder Traversal</h2><span class="c-algo-card__tag">O(n)</span></header>
+                        <header class="c-algo-card__header">
+                            <h2 class="c-algo-card__title">Inorder Traversal</h2><span class="c-algo-card__tag">O(n)</span>
+                        </header>
                         <div class="c-algo-card__body">
                             <p class="c-algo-card__description">Left → Root → Right. Produces sorted output for BSTs.</p>
                             <div class="c-controls">
@@ -62,17 +74,21 @@
                             </div>
                             <div class="c-visualization"><canvas id="inorderCanvas" class="c-visualization__canvas c-visualization__canvas--tree"></canvas></div>
                             <div class="c-stats" id="inorderStats"></div>
-                            <div class="c-code-block"><pre><code>function inorder(node) {
+                            <div class="c-code-block">
+                                <pre><code>function inorder(node) {
     if (!node) return;
     inorder(node.left);
     visit(node);
     inorder(node.right);
-}</code></pre></div>
+}</code></pre>
+                            </div>
                         </div>
                     </article>
                     <!-- Preorder Traversal -->
                     <article class="c-algo-card">
-                        <header class="c-algo-card__header"><h2 class="c-algo-card__title">Preorder Traversal</h2><span class="c-algo-card__tag">O(n)</span></header>
+                        <header class="c-algo-card__header">
+                            <h2 class="c-algo-card__title">Preorder Traversal</h2><span class="c-algo-card__tag">O(n)</span>
+                        </header>
                         <div class="c-algo-card__body">
                             <p class="c-algo-card__description">Root → Left → Right. Used for tree copying.</p>
                             <div class="c-controls">
@@ -84,17 +100,21 @@
                             </div>
                             <div class="c-visualization"><canvas id="preorderCanvas" class="c-visualization__canvas c-visualization__canvas--tree"></canvas></div>
                             <div class="c-stats" id="preorderStats"></div>
-                            <div class="c-code-block"><pre><code>function preorder(node) {
+                            <div class="c-code-block">
+                                <pre><code>function preorder(node) {
     if (!node) return;
     visit(node);
     preorder(node.left);
     preorder(node.right);
-}</code></pre></div>
+}</code></pre>
+                            </div>
                         </div>
                     </article>
                     <!-- Postorder Traversal -->
                     <article class="c-algo-card">
-                        <header class="c-algo-card__header"><h2 class="c-algo-card__title">Postorder Traversal</h2><span class="c-algo-card__tag">O(n)</span></header>
+                        <header class="c-algo-card__header">
+                            <h2 class="c-algo-card__title">Postorder Traversal</h2><span class="c-algo-card__tag">O(n)</span>
+                        </header>
                         <div class="c-algo-card__body">
                             <p class="c-algo-card__description">Left → Right → Root. Used for tree deletion.</p>
                             <div class="c-controls">
@@ -106,17 +126,21 @@
                             </div>
                             <div class="c-visualization"><canvas id="postorderCanvas" class="c-visualization__canvas c-visualization__canvas--tree"></canvas></div>
                             <div class="c-stats" id="postorderStats"></div>
-                            <div class="c-code-block"><pre><code>function postorder(node) {
+                            <div class="c-code-block">
+                                <pre><code>function postorder(node) {
     if (!node) return;
     postorder(node.left);
     postorder(node.right);
     visit(node);
-}</code></pre></div>
+}</code></pre>
+                            </div>
                         </div>
                     </article>
                     <!-- Level Order Traversal -->
                     <article class="c-algo-card">
-                        <header class="c-algo-card__header"><h2 class="c-algo-card__title">Level Order (BFS)</h2><span class="c-algo-card__tag">O(n)</span></header>
+                        <header class="c-algo-card__header">
+                            <h2 class="c-algo-card__title">Level Order (BFS)</h2><span class="c-algo-card__tag">O(n)</span>
+                        </header>
                         <div class="c-algo-card__body">
                             <p class="c-algo-card__description">Level by level using queue. Breadth-first approach.</p>
                             <div class="c-controls">
@@ -128,7 +152,8 @@
                             </div>
                             <div class="c-visualization"><canvas id="levelorderCanvas" class="c-visualization__canvas c-visualization__canvas--tree"></canvas></div>
                             <div class="c-stats" id="levelorderStats"></div>
-                            <div class="c-code-block"><pre><code>function levelOrder(root) {
+                            <div class="c-code-block">
+                                <pre><code>function levelOrder(root) {
     const queue = [root];
     while (queue.length) {
         const node = queue.shift();
@@ -136,206 +161,241 @@
         if (node.left) queue.push(node.left);
         if (node.right) queue.push(node.right);
     }
-}</code></pre></div>
+}</code></pre>
+                            </div>
                         </div>
                     </article>
                 </div>
             </main>
-            <footer class="c-footer"><div class="c-footer__content"><span>Copyright &copy; AlgoViz Platform 2026</span></div></footer>
+            <footer class="c-footer">
+                <div class="c-footer__content"><span>Copyright &copy; AlgoViz Platform 2026</span></div>
+            </footer>
         </div>
     </div>
     <script src="js/utils.js"></script>
     <script>
-    (function() {
-        'use strict';
-        class TreeNode {
-            constructor(value) { this.value = value; this.left = null; this.right = null; }
-        }
-        class TreeVisualizer {
-            constructor(canvasId, statsId, speedId) {
-                this.canvas = document.getElementById(canvasId);
-                this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
-                this.statsContainer = document.getElementById(statsId);
-                this.speedSlider = document.getElementById(speedId);
-                this.root = null;
-                this.nodePositions = {};
-                this.stats = new AlgoViz.StatsTracker();
-                this.animation = new AlgoViz.AnimationController();
-                this.setupCanvas();
-                this.bindEvents();
-                this.generate();
+        (function() {
+            'use strict';
+            class TreeNode {
+                constructor(value) {
+                    this.value = value;
+                    this.left = null;
+                    this.right = null;
+                }
             }
-            setupCanvas() {
-                if (!this.canvas) return;
-                const setup = AlgoViz.setupCanvas(this.canvas.id);
-                if (setup) { this.width = setup.width; this.height = setup.height; this.ctx = setup.ctx; }
-            }
-            bindEvents() {
-                if (this.speedSlider) this.speedSlider.addEventListener('input', (e) => this.animation.setSpeed(501 - e.target.value));
-                this.animation.onStep = (step) => this.render(step);
-                this.animation.onComplete = () => this.stats.updateDisplay(this.statsContainer.id);
-            }
-            generate() {
-                this.animation.stop();
-                this.root = this.generateBST();
-                this.calculatePositions();
-                this.stats.start();
-                this.render({ currentNode: null, visited: [] });
-            }
-            generateBST() {
-                const values = AlgoViz.shuffleArray([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]).slice(0, 7 + Math.floor(Math.random() * 4));
-                let root = null;
-                values.forEach(v => root = this.insert(root, v));
-                return root;
-            }
-            insert(node, value) {
-                if (!node) return new TreeNode(value);
-                if (value < node.value) node.left = this.insert(node.left, value);
-                else node.right = this.insert(node.right, value);
-                return node;
-            }
-            calculatePositions() {
-                this.nodePositions = {};
-                if (!this.root) return;
-                const assign = (node, x, y, level, offset) => {
-                    if (!node) return;
-                    this.nodePositions[node.value] = { x, y, level };
-                    const newOffset = offset / 2;
-                    assign(node.left, x - newOffset, y + 70, level + 1, newOffset);
-                    assign(node.right, x + newOffset, y + 70, level + 1, newOffset);
-                };
-                assign(this.root, this.width / 2, 50, 0, this.width / 4);
-            }
-            render(step) {
-                if (!this.ctx) return;
-                AlgoViz.clearCanvas(this.ctx, this.width, this.height);
-                // Draw edges
-                this.ctx.strokeStyle = 'rgba(0, 243, 255, 0.3)';
-                this.ctx.lineWidth = 2;
-                const drawEdges = (node) => {
-                    if (!node) return;
-                    const pos = this.nodePositions[node.value];
-                    if (node.left && this.nodePositions[node.left.value]) {
-                        const leftPos = this.nodePositions[node.left.value];
-                        this.ctx.beginPath();
-                        this.ctx.moveTo(pos.x, pos.y + 20);
-                        this.ctx.lineTo(leftPos.x, leftPos.y - 20);
-                        this.ctx.stroke();
-                        drawEdges(node.left);
+            class TreeVisualizer {
+                constructor(canvasId, statsId, speedId) {
+                    this.canvas = document.getElementById(canvasId);
+                    this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
+                    this.statsContainer = document.getElementById(statsId);
+                    this.speedSlider = document.getElementById(speedId);
+                    this.root = null;
+                    this.nodePositions = {};
+                    this.stats = new AlgoViz.StatsTracker();
+                    this.animation = new AlgoViz.AnimationController();
+                    this.setupCanvas();
+                    this.bindEvents();
+                    this.generate();
+                }
+                setupCanvas() {
+                    if (!this.canvas) return;
+                    const setup = AlgoViz.setupCanvas(this.canvas.id);
+                    if (setup) {
+                        this.width = setup.width;
+                        this.height = setup.height;
+                        this.ctx = setup.ctx;
                     }
-                    if (node.right && this.nodePositions[node.right.value]) {
-                        const rightPos = this.nodePositions[node.right.value];
-                        this.ctx.beginPath();
-                        this.ctx.moveTo(pos.x, pos.y + 20);
-                        this.ctx.lineTo(rightPos.x, rightPos.y - 20);
-                        this.ctx.stroke();
-                        drawEdges(node.right);
-                    }
-                };
-                drawEdges(this.root);
-                // Draw nodes
-                Object.entries(this.nodePositions).forEach(([value, pos]) => {
-                    const numValue = parseInt(value);
-                    const isCurrent = step.currentNode === numValue;
-                    const isVisited = step.visited?.includes(numValue);
-                    const radius = isCurrent ? 25 : 20;
-                    this.ctx.shadowColor = isCurrent ? '#00f3ff' : (isVisited ? '#1cc88a' : 'transparent');
-                    this.ctx.shadowBlur = isCurrent ? 20 : (isVisited ? 10 : 0);
-                    this.ctx.beginPath();
-                    this.ctx.arc(pos.x, pos.y, radius, 0, Math.PI * 2);
-                    this.ctx.fillStyle = isCurrent ? '#00f3ff' : (isVisited ? '#1cc88a' : 'rgba(0, 243, 255, 0.3)');
-                    this.ctx.fill();
-                    this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                }
+                bindEvents() {
+                    if (this.speedSlider) this.speedSlider.addEventListener('input', (e) => this.animation.setSpeed(501 - e.target.value));
+                    this.animation.onStep = (step) => this.render(step);
+                    this.animation.onComplete = () => this.stats.updateDisplay(this.statsContainer.id);
+                }
+                generate() {
+                    this.animation.stop();
+                    this.root = this.generateBST();
+                    this.calculatePositions();
+                    this.stats.start();
+                    this.render({
+                        currentNode: null,
+                        visited: []
+                    });
+                }
+                generateBST() {
+                    const values = AlgoViz.shuffleArray([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]).slice(0, 7 + Math.floor(Math.random() * 4));
+                    let root = null;
+                    values.forEach(v => root = this.insert(root, v));
+                    return root;
+                }
+                insert(node, value) {
+                    if (!node) return new TreeNode(value);
+                    if (value < node.value) node.left = this.insert(node.left, value);
+                    else node.right = this.insert(node.right, value);
+                    return node;
+                }
+                calculatePositions() {
+                    this.nodePositions = {};
+                    if (!this.root) return;
+                    const assign = (node, x, y, level, offset) => {
+                        if (!node) return;
+                        this.nodePositions[node.value] = {
+                            x,
+                            y,
+                            level
+                        };
+                        const newOffset = offset / 2;
+                        assign(node.left, x - newOffset, y + 70, level + 1, newOffset);
+                        assign(node.right, x + newOffset, y + 70, level + 1, newOffset);
+                    };
+                    assign(this.root, this.width / 2, 50, 0, this.width / 4);
+                }
+                render(step) {
+                    if (!this.ctx) return;
+                    AlgoViz.clearCanvas(this.ctx, this.width, this.height);
+                    // Draw edges
+                    this.ctx.strokeStyle = 'rgba(0, 243, 255, 0.3)';
                     this.ctx.lineWidth = 2;
-                    this.ctx.stroke();
-                    this.ctx.shadowBlur = 0;
-                    this.ctx.fillStyle = '#ffffff';
-                    this.ctx.font = '14px Rajdhani';
-                    this.ctx.textAlign = 'center';
-                    this.ctx.textBaseline = 'middle';
-                    this.ctx.fillText(value, pos.x, pos.y);
-                });
-                // Draw traversal order
-                if (step.visited && step.visited.length > 0) {
-                    AlgoViz.drawText(this.ctx, 'Order: ' + step.visited.join(' → '), this.width / 2, this.height - 30, 14, '#00f3ff');
+                    const drawEdges = (node) => {
+                        if (!node) return;
+                        const pos = this.nodePositions[node.value];
+                        if (node.left && this.nodePositions[node.left.value]) {
+                            const leftPos = this.nodePositions[node.left.value];
+                            this.ctx.beginPath();
+                            this.ctx.moveTo(pos.x, pos.y + 20);
+                            this.ctx.lineTo(leftPos.x, leftPos.y - 20);
+                            this.ctx.stroke();
+                            drawEdges(node.left);
+                        }
+                        if (node.right && this.nodePositions[node.right.value]) {
+                            const rightPos = this.nodePositions[node.right.value];
+                            this.ctx.beginPath();
+                            this.ctx.moveTo(pos.x, pos.y + 20);
+                            this.ctx.lineTo(rightPos.x, rightPos.y - 20);
+                            this.ctx.stroke();
+                            drawEdges(node.right);
+                        }
+                    };
+                    drawEdges(this.root);
+                    // Draw nodes
+                    Object.entries(this.nodePositions).forEach(([value, pos]) => {
+                        const numValue = parseInt(value);
+                        const isCurrent = step.currentNode === numValue;
+                        const isVisited = step.visited?.includes(numValue);
+                        const radius = isCurrent ? 25 : 20;
+                        this.ctx.shadowColor = isCurrent ? '#00f3ff' : (isVisited ? '#1cc88a' : 'transparent');
+                        this.ctx.shadowBlur = isCurrent ? 20 : (isVisited ? 10 : 0);
+                        this.ctx.beginPath();
+                        this.ctx.arc(pos.x, pos.y, radius, 0, Math.PI * 2);
+                        this.ctx.fillStyle = isCurrent ? '#00f3ff' : (isVisited ? '#1cc88a' : 'rgba(0, 243, 255, 0.3)');
+                        this.ctx.fill();
+                        this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                        this.ctx.lineWidth = 2;
+                        this.ctx.stroke();
+                        this.ctx.shadowBlur = 0;
+                        this.ctx.fillStyle = '#ffffff';
+                        this.ctx.font = '14px Rajdhani';
+                        this.ctx.textAlign = 'center';
+                        this.ctx.textBaseline = 'middle';
+                        this.ctx.fillText(value, pos.x, pos.y);
+                    });
+                    // Draw traversal order
+                    if (step.visited && step.visited.length > 0) {
+                        AlgoViz.drawText(this.ctx, 'Order: ' + step.visited.join(' → '), this.width / 2, this.height - 30, 14, '#00f3ff');
+                    }
+                }
+                start() {
+                    if (this.animation.isRunning) return;
+                    this.stats.start();
+                    this.runTraversal();
                 }
             }
-            start() { if (this.animation.isRunning) return; this.stats.start(); this.runTraversal(); }
-        }
-        class InorderVisualizer extends TreeVisualizer {
-            async runTraversal() {
-                const steps = [];
-                const visited = [];
-                const traverse = (node) => {
-                    if (!node) return;
-                    traverse(node.left);
-                    this.stats.recordIteration();
-                    visited.push(node.value);
-                    steps.push({ currentNode: node.value, visited: [...visited] });
-                    traverse(node.right);
-                };
-                traverse(this.root);
-                this.stats.stop();
-                this.animation.run(steps);
-            }
-        }
-        class PreorderVisualizer extends TreeVisualizer {
-            async runTraversal() {
-                const steps = [];
-                const visited = [];
-                const traverse = (node) => {
-                    if (!node) return;
-                    this.stats.recordIteration();
-                    visited.push(node.value);
-                    steps.push({ currentNode: node.value, visited: [...visited] });
-                    traverse(node.left);
-                    traverse(node.right);
-                };
-                traverse(this.root);
-                this.stats.stop();
-                this.animation.run(steps);
-            }
-        }
-        class PostorderVisualizer extends TreeVisualizer {
-            async runTraversal() {
-                const steps = [];
-                const visited = [];
-                const traverse = (node) => {
-                    if (!node) return;
-                    traverse(node.left);
-                    traverse(node.right);
-                    this.stats.recordIteration();
-                    visited.push(node.value);
-                    steps.push({ currentNode: node.value, visited: [...visited] });
-                };
-                traverse(this.root);
-                this.stats.stop();
-                this.animation.run(steps);
-            }
-        }
-        class LevelorderVisualizer extends TreeVisualizer {
-            async runTraversal() {
-                const steps = [];
-                const visited = [];
-                const queue = [this.root];
-                while (queue.length) {
-                    const node = queue.shift();
-                    this.stats.recordIteration();
-                    visited.push(node.value);
-                    steps.push({ currentNode: node.value, visited: [...visited] });
-                    if (node.left) queue.push(node.left);
-                    if (node.right) queue.push(node.right);
+            class InorderVisualizer extends TreeVisualizer {
+                async runTraversal() {
+                    const steps = [];
+                    const visited = [];
+                    const traverse = (node) => {
+                        if (!node) return;
+                        traverse(node.left);
+                        this.stats.recordIteration();
+                        visited.push(node.value);
+                        steps.push({
+                            currentNode: node.value,
+                            visited: [...visited]
+                        });
+                        traverse(node.right);
+                    };
+                    traverse(this.root);
+                    this.stats.stop();
+                    this.animation.run(steps);
                 }
-                this.stats.stop();
-                this.animation.run(steps);
             }
-        }
-        window.inorderViz = new InorderVisualizer('inorderCanvas', 'inorderStats', 'inorderSpeed');
-        window.preorderViz = new PreorderVisualizer('preorderCanvas', 'preorderStats', 'preorderSpeed');
-        window.postorderViz = new PostorderVisualizer('postorderCanvas', 'postorderStats', 'postorderSpeed');
-        window.levelorderViz = new LevelorderVisualizer('levelorderCanvas', 'levelorderStats', 'levelorderSpeed');
-    })();
+            class PreorderVisualizer extends TreeVisualizer {
+                async runTraversal() {
+                    const steps = [];
+                    const visited = [];
+                    const traverse = (node) => {
+                        if (!node) return;
+                        this.stats.recordIteration();
+                        visited.push(node.value);
+                        steps.push({
+                            currentNode: node.value,
+                            visited: [...visited]
+                        });
+                        traverse(node.left);
+                        traverse(node.right);
+                    };
+                    traverse(this.root);
+                    this.stats.stop();
+                    this.animation.run(steps);
+                }
+            }
+            class PostorderVisualizer extends TreeVisualizer {
+                async runTraversal() {
+                    const steps = [];
+                    const visited = [];
+                    const traverse = (node) => {
+                        if (!node) return;
+                        traverse(node.left);
+                        traverse(node.right);
+                        this.stats.recordIteration();
+                        visited.push(node.value);
+                        steps.push({
+                            currentNode: node.value,
+                            visited: [...visited]
+                        });
+                    };
+                    traverse(this.root);
+                    this.stats.stop();
+                    this.animation.run(steps);
+                }
+            }
+            class LevelorderVisualizer extends TreeVisualizer {
+                async runTraversal() {
+                    const steps = [];
+                    const visited = [];
+                    const queue = [this.root];
+                    while (queue.length) {
+                        const node = queue.shift();
+                        this.stats.recordIteration();
+                        visited.push(node.value);
+                        steps.push({
+                            currentNode: node.value,
+                            visited: [...visited]
+                        });
+                        if (node.left) queue.push(node.left);
+                        if (node.right) queue.push(node.right);
+                    }
+                    this.stats.stop();
+                    this.animation.run(steps);
+                }
+            }
+            window.inorderViz = new InorderVisualizer('inorderCanvas', 'inorderStats', 'inorderSpeed');
+            window.preorderViz = new PreorderVisualizer('preorderCanvas', 'preorderStats', 'preorderSpeed');
+            window.postorderViz = new PostorderVisualizer('postorderCanvas', 'postorderStats', 'postorderSpeed');
+            window.levelorderViz = new LevelorderVisualizer('levelorderCanvas', 'levelorderStats', 'levelorderSpeed');
+        })();
     </script>
     <script src="js/main.js"></script>
 </body>
+
 </html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,15 +11,19 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body class="l-body">
     <a href="#main-content" class="u-skip-link">Skip to main content</a>
     <div id="wrapper" class="l-wrapper">
         <aside id="sidebar" class="c-sidebar">
-            <div class="c-sidebar__brand"><h1 class="c-sidebar__title"><i class="fas fa-brain"></i> AlgoViz</h1></div>
+            <div class="c-sidebar__brand">
+                <h1 class="c-sidebar__title"><i class="fas fa-brain"></i> AlgoViz</h1>
+            </div>
             <nav class="c-sidebar__nav">
                 <ul class="c-sidebar__menu">
                     <li class="c-sidebar__item"><a href="index.html" class="c-sidebar__link"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
-                    <hr class="c-sidebar__divider"><li class="c-sidebar__heading">Categories</li>
+                    <hr class="c-sidebar__divider">
+                    <li class="c-sidebar__heading">Categories</li>
                     <li class="c-sidebar__item"><a href="sorting.html" class="c-sidebar__link"><i class="fas fa-sort"></i><span>Sorting</span></a></li>
                     <li class="c-sidebar__item"><a href="searching.html" class="c-sidebar__link"><i class="fas fa-search"></i><span>Searching</span></a></li>
                     <li class="c-sidebar__item"><a href="trees.html" class="c-sidebar__link"><i class="fas fa-project-diagram"></i><span>Trees</span></a></li>
@@ -36,9 +41,15 @@
             <header id="topbar" class="c-topbar">
                 <div class="c-topbar__brand">
                     <button id="sidebarToggle" class="c-topbar__toggle"><i class="fas fa-bars"></i></button>
-                    <div class="c-topbar__logo"><div class="c-topbar__logo-icon"><i class="fas fa-font"></i></div><span>String Algorithms</span></div>
+                    <div class="c-topbar__logo">
+                        <div class="c-topbar__logo-icon"><i class="fas fa-font"></i></div><span>String Algorithms</span>
+                    </div>
                 </div>
-                <nav><ul class="c-topbar__nav"><li><a href="index.html" class="c-topbar__nav-link"><i class="fas fa-th-large"></i></a></li></ul></nav>
+                <nav>
+                    <ul class="c-topbar__nav">
+                        <li><a href="index.html" class="c-topbar__nav-link"><i class="fas fa-th-large"></i></a></li>
+                    </ul>
+                </nav>
             </header>
             <main id="main-content" class="l-main">
                 <nav class="c-breadcrumbs"><span class="c-breadcrumbs__item"><a href="index.html">Home</a></span><span class="c-breadcrumbs__separator">/</span><span class="c-breadcrumbs__item c-breadcrumbs__item--current">Strings</span></nav>
@@ -49,7 +60,9 @@
                 <div class="l-algo-grid">
                     <!-- KMP Algorithm -->
                     <article class="c-algo-card">
-                        <header class="c-algo-card__header"><h2 class="c-algo-card__title">KMP Algorithm</h2><span class="c-algo-card__tag">O(n+m)</span></header>
+                        <header class="c-algo-card__header">
+                            <h2 class="c-algo-card__title">KMP Algorithm</h2><span class="c-algo-card__tag">O(n+m)</span>
+                        </header>
                         <div class="c-algo-card__body">
                             <p class="c-algo-card__description">Knuth-Morris-Pratt uses failure function for efficient pattern matching.</p>
                             <div class="c-controls">
@@ -62,7 +75,8 @@
                             </div>
                             <div class="c-visualization"><canvas id="kmpCanvas" class="c-visualization__canvas"></canvas></div>
                             <div class="c-stats" id="kmpStats"></div>
-                            <div class="c-code-block"><pre><code>function KMP(text, pattern) {
+                            <div class="c-code-block">
+                                <pre><code>function KMP(text, pattern) {
     const lps = computeLPS(pattern);
     let i = 0, j = 0;
     while (i < text.length) {
@@ -77,12 +91,15 @@
         }
     }
     return -1;
-}</code></pre></div>
+}</code></pre>
+                            </div>
                         </div>
                     </article>
                     <!-- Rabin-Karp -->
                     <article class="c-algo-card">
-                        <header class="c-algo-card__header"><h2 class="c-algo-card__title">Rabin-Karp</h2><span class="c-algo-card__tag">O(n+m)</span></header>
+                        <header class="c-algo-card__header">
+                            <h2 class="c-algo-card__title">Rabin-Karp</h2><span class="c-algo-card__tag">O(n+m)</span>
+                        </header>
                         <div class="c-algo-card__body">
                             <p class="c-algo-card__description">Uses rolling hash for efficient pattern matching.</p>
                             <div class="c-controls">
@@ -95,7 +112,8 @@
                             </div>
                             <div class="c-visualization"><canvas id="rkCanvas" class="c-visualization__canvas"></canvas></div>
                             <div class="c-stats" id="rkStats"></div>
-                            <div class="c-code-block"><pre><code>function rabinKarp(text, pattern) {
+                            <div class="c-code-block">
+                                <pre><code>function rabinKarp(text, pattern) {
     const d = 256, q = 101;
     const m = pattern.length, n = text.length;
     let p = 0, t = 0, h = 1;
@@ -112,12 +130,15 @@
         }
     }
     return -1;
-}</code></pre></div>
+}</code></pre>
+                            </div>
                         </div>
                     </article>
                     <!-- Z-Algorithm -->
                     <article class="c-algo-card">
-                        <header class="c-algo-card__header"><h2 class="c-algo-card__title">Z-Algorithm</h2><span class="c-algo-card__tag">O(n+m)</span></header>
+                        <header class="c-algo-card__header">
+                            <h2 class="c-algo-card__title">Z-Algorithm</h2><span class="c-algo-card__tag">O(n+m)</span>
+                        </header>
                         <div class="c-algo-card__body">
                             <p class="c-algo-card__description">Computes Z-array for linear time pattern matching.</p>
                             <div class="c-controls">
@@ -130,7 +151,8 @@
                             </div>
                             <div class="c-visualization"><canvas id="zCanvas" class="c-visualization__canvas"></canvas></div>
                             <div class="c-stats" id="zStats"></div>
-                            <div class="c-code-block"><pre><code>function zAlgorithm(text, pattern) {
+                            <div class="c-code-block">
+                                <pre><code>function zAlgorithm(text, pattern) {
     const concat = pattern + '$' + text;
     const z = computeZ(concat);
     for (let i = pattern.length + 1; i < concat.length; i++) {
@@ -139,12 +161,15 @@
         }
     }
     return -1;
-}</code></pre></div>
+}</code></pre>
+                            </div>
                         </div>
                     </article>
                     <!-- Manacher's Algorithm -->
                     <article class="c-algo-card">
-                        <header class="c-algo-card__header"><h2 class="c-algo-card__title">Manacher's (Longest Palindrome)</h2><span class="c-algo-card__tag">O(n)</span></header>
+                        <header class="c-algo-card__header">
+                            <h2 class="c-algo-card__title">Manacher's (Longest Palindrome)</h2><span class="c-algo-card__tag">O(n)</span>
+                        </header>
                         <div class="c-algo-card__body">
                             <p class="c-algo-card__description">Finds longest palindromic substring in linear time.</p>
                             <div class="c-controls">
@@ -156,7 +181,8 @@
                             </div>
                             <div class="c-visualization"><canvas id="manacherCanvas" class="c-visualization__canvas"></canvas></div>
                             <div class="c-stats" id="manacherStats"></div>
-                            <div class="c-code-block"><pre><code>function manacher(s) {
+                            <div class="c-code-block">
+                                <pre><code>function manacher(s) {
     const t = '#' + s.split('').join('#') + '#';
     const p = Array(t.length).fill(0);
     let c = 0, r = 0;
@@ -167,482 +193,547 @@
         if (i + p[i] > r) { c = i; r = i + p[i]; }
     }
     return Math.max(...p);
-}</code></pre></div>
+}</code></pre>
+                            </div>
                         </div>
                     </article>
                 </div>
             </main>
-            <footer class="c-footer"><div class="c-footer__content"><span>Copyright &copy; AlgoViz Platform 2026</span></div></footer>
+            <footer class="c-footer">
+                <div class="c-footer__content"><span>Copyright &copy; AlgoViz Platform 2026</span></div>
+            </footer>
         </div>
     </div>
     <script src="js/utils.js"></script>
     <script>
-    (function() {
-        'use strict';
-        // KMP Visualizer
-        class KMPVisualizer {
-            constructor() {
-                this.canvas = document.getElementById('kmpCanvas');
-                this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
-                this.statsContainer = document.getElementById('kmpStats');
-                this.textInput = document.getElementById('kmpText');
-                this.patternInput = document.getElementById('kmpPattern');
-                this.speedSlider = document.getElementById('kmpSpeed');
-                this.stats = new AlgoViz.StatsTracker();
-                this.animation = new AlgoViz.AnimationController();
-                this.setupCanvas();
-                this.bindEvents();
-            }
-            setupCanvas() {
-                if (!this.canvas) return;
-                const setup = AlgoViz.setupCanvas(this.canvas.id);
-                if (setup) { this.width = setup.width; this.height = setup.height; this.ctx = setup.ctx; }
-            }
-            bindEvents() {
-                if (this.speedSlider) this.speedSlider.addEventListener('input', (e) => this.animation.setSpeed(501 - e.target.value));
-                this.animation.onStep = (step) => this.render(step);
-                this.animation.onComplete = () => this.stats.updateDisplay(this.statsContainer.id);
-            }
-            computeLPS(pattern) {
-                const lps = Array(pattern.length).fill(0);
-                let len = 0, i = 1;
-                while (i < pattern.length) {
-                    this.stats.recordComparison();
-                    if (pattern[i] === pattern[len]) {
-                        len++;
-                        lps[i] = len;
-                        i++;
-                    } else if (len !== 0) {
-                        len = lps[len - 1];
-                    } else {
-                        lps[i] = 0;
-                        i++;
+        (function() {
+            'use strict';
+            // KMP Visualizer
+            class KMPVisualizer {
+                constructor() {
+                    this.canvas = document.getElementById('kmpCanvas');
+                    this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
+                    this.statsContainer = document.getElementById('kmpStats');
+                    this.textInput = document.getElementById('kmpText');
+                    this.patternInput = document.getElementById('kmpPattern');
+                    this.speedSlider = document.getElementById('kmpSpeed');
+                    this.stats = new AlgoViz.StatsTracker();
+                    this.animation = new AlgoViz.AnimationController();
+                    this.setupCanvas();
+                    this.bindEvents();
+                }
+                setupCanvas() {
+                    if (!this.canvas) return;
+                    const setup = AlgoViz.setupCanvas(this.canvas.id);
+                    if (setup) {
+                        this.width = setup.width;
+                        this.height = setup.height;
+                        this.ctx = setup.ctx;
                     }
                 }
-                return lps;
-            }
-            render(step) {
-                if (!this.ctx) return;
-                AlgoViz.clearCanvas(this.ctx, this.width, this.height);
-                const text = this.textInput?.value || 'ABABDABACDABABCABAB';
-                const pattern = this.patternInput?.value || 'ABABCABAB';
-                const cellSize = 35;
-                const gap = 3;
-                // Draw text
-                const textStartX = (this.width - text.length * (cellSize + gap)) / 2;
-                this.ctx.fillStyle = '#00f3ff';
-                this.ctx.font = '14px Rajdhani';
-                this.ctx.textAlign = 'center';
-                this.ctx.fillText('Text', textStartX + text.length * (cellSize + gap) / 2, 40);
-                for (let i = 0; i < text.length; i++) {
-                    const x = textStartX + i * (cellSize + gap);
-                    const isMatch = step.textIndex === i;
-                    const isFound = step.found !== undefined && i >= step.found && i < step.found + pattern.length;
-                    this.ctx.shadowColor = isFound ? '#1cc88a' : (isMatch ? '#ff00ff' : 'transparent');
-                    this.ctx.shadowBlur = isFound || isMatch ? 10 : 0;
-                    this.ctx.fillStyle = isFound ? '#1cc88a' : (isMatch ? 'rgba(255, 0, 255, 0.3)' : 'rgba(0, 243, 255, 0.1)');
-                    this.ctx.fillRect(x + 1, 55, cellSize - 2, cellSize - 2);
-                    this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-                    this.ctx.strokeRect(x, 55, cellSize, cellSize);
-                    this.ctx.shadowBlur = 0;
-                    this.ctx.fillStyle = '#ffffff';
-                    this.ctx.font = 'bold 16px Rajdhani';
-                    this.ctx.textBaseline = 'middle';
-                    this.ctx.fillText(text[i], x + cellSize / 2, 55 + cellSize / 2);
+                bindEvents() {
+                    if (this.speedSlider) this.speedSlider.addEventListener('input', (e) => this.animation.setSpeed(501 - e.target.value));
+                    this.animation.onStep = (step) => this.render(step);
+                    this.animation.onComplete = () => this.stats.updateDisplay(this.statsContainer.id);
                 }
-                // Draw pattern
-                const patternStartX = (this.width - pattern.length * (cellSize + gap)) / 2;
-                this.ctx.fillStyle = '#ff00ff';
-                this.ctx.fillText('Pattern', patternStartX + pattern.length * (cellSize + gap) / 2, 130);
-                for (let i = 0; i < pattern.length; i++) {
-                    const x = patternStartX + i * (cellSize + gap);
-                    const isCompare = step.patternIndex === i;
-                    this.ctx.shadowColor = isCompare ? '#ff00ff' : 'transparent';
-                    this.ctx.shadowBlur = isCompare ? 10 : 0;
-                    this.ctx.fillStyle = isCompare ? 'rgba(255, 0, 255, 0.5)' : 'rgba(255, 0, 255, 0.2)';
-                    this.ctx.fillRect(x + 1, 145, cellSize - 2, cellSize - 2);
-                    this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-                    this.ctx.strokeRect(x, 145, cellSize, cellSize);
-                    this.ctx.shadowBlur = 0;
-                    this.ctx.fillStyle = '#ffffff';
-                    this.ctx.font = 'bold 16px Rajdhani';
-                    this.ctx.textBaseline = 'middle';
-                    this.ctx.fillText(pattern[i], x + cellSize / 2, 145 + cellSize / 2);
-                }
-                // Draw result
-                if (step.found !== undefined) {
-                    this.ctx.fillStyle = step.found >= 0 ? '#1cc88a' : '#e74a3b';
-                    this.ctx.font = 'bold 20px Rajdhani';
-                    this.ctx.textAlign = 'center';
-                    this.ctx.fillText(step.found >= 0 ? `Found at index ${step.found}` : 'Not found', this.width / 2, this.height - 40);
-                }
-                // Draw LPS array
-                if (step.lps) {
-                    this.ctx.fillStyle = '#858796';
-                    this.ctx.font = '12px Rajdhani';
-                    this.ctx.fillText('LPS: [' + step.lps.join(', ') + ']', this.width / 2, this.height - 15);
-                }
-            }
-            start() {
-                this.animation.stop();
-                const text = this.textInput?.value || 'ABABDABACDABABCABAB';
-                const pattern = this.patternInput?.value || 'ABABCABAB';
-                this.stats.start();
-                const steps = [];
-                const lps = this.computeLPS(pattern);
-                steps.push({ lps: [...lps] });
-                let i = 0, j = 0;
-                while (i < text.length) {
-                    this.stats.recordComparison();
-                    steps.push({ textIndex: i, patternIndex: j, lps: [...lps] });
-                    if (pattern[j] === text[i]) {
-                        i++; j++;
+                computeLPS(pattern) {
+                    const lps = Array(pattern.length).fill(0);
+                    let len = 0,
+                        i = 1;
+                    while (i < pattern.length) {
+                        this.stats.recordComparison();
+                        if (pattern[i] === pattern[len]) {
+                            len++;
+                            lps[i] = len;
+                            i++;
+                        } else if (len !== 0) {
+                            len = lps[len - 1];
+                        } else {
+                            lps[i] = 0;
+                            i++;
+                        }
                     }
-                    if (j === pattern.length) {
-                        steps.push({ textIndex: i - 1, patternIndex: j - 1, found: i - j, lps: [...lps] });
-                        this.stats.stop();
-                        this.animation.run(steps);
-                        return;
-                    } else if (i < text.length && pattern[j] !== text[i]) {
-                        if (j !== 0) j = lps[j - 1];
-                        else i++;
-                    }
+                    return lps;
                 }
-                steps.push({ found: -1, lps: [...lps] });
-                this.stats.stop();
-                this.animation.run(steps);
-            }
-        }
-        // Rabin-Karp Visualizer
-        class RKVisualizer {
-            constructor() {
-                this.canvas = document.getElementById('rkCanvas');
-                this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
-                this.statsContainer = document.getElementById('rkStats');
-                this.textInput = document.getElementById('rkText');
-                this.patternInput = document.getElementById('rkPattern');
-                this.speedSlider = document.getElementById('rkSpeed');
-                this.stats = new AlgoViz.StatsTracker();
-                this.animation = new AlgoViz.AnimationController();
-                this.setupCanvas();
-                this.bindEvents();
-            }
-            setupCanvas() {
-                if (!this.canvas) return;
-                const setup = AlgoViz.setupCanvas(this.canvas.id);
-                if (setup) { this.width = setup.width; this.height = setup.height; this.ctx = setup.ctx; }
-            }
-            bindEvents() {
-                if (this.speedSlider) this.speedSlider.addEventListener('input', (e) => this.animation.setSpeed(501 - e.target.value));
-                this.animation.onStep = (step) => this.render(step);
-                this.animation.onComplete = () => this.stats.updateDisplay(this.statsContainer.id);
-            }
-            render(step) {
-                if (!this.ctx) return;
-                AlgoViz.clearCanvas(this.ctx, this.width, this.height);
-                const text = this.textInput?.value || 'HELLOWORLD';
-                const pattern = this.patternInput?.value || 'WORLD';
-                const cellSize = 45;
-                const gap = 3;
-                // Draw text with current window highlighted
-                const textStartX = (this.width - text.length * (cellSize + gap)) / 2;
-                for (let i = 0; i < text.length; i++) {
-                    const x = textStartX + i * (cellSize + gap);
-                    const inWindow = step.windowStart !== undefined && i >= step.windowStart && i < step.windowStart + pattern.length;
-                    const isFound = step.found !== undefined && i >= step.found && i < step.found + pattern.length;
-                    this.ctx.shadowColor = isFound ? '#1cc88a' : (inWindow ? '#f6c23e' : 'transparent');
-                    this.ctx.shadowBlur = isFound || inWindow ? 10 : 0;
-                    this.ctx.fillStyle = isFound ? '#1cc88a' : (inWindow ? 'rgba(246, 194, 62, 0.4)' : 'rgba(0, 243, 255, 0.1)');
-                    this.ctx.fillRect(x + 1, 80, cellSize - 2, cellSize - 2);
-                    this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-                    this.ctx.strokeRect(x, 80, cellSize, cellSize);
-                    this.ctx.shadowBlur = 0;
-                    this.ctx.fillStyle = '#ffffff';
-                    this.ctx.font = 'bold 18px Rajdhani';
-                    this.ctx.textAlign = 'center';
-                    this.ctx.textBaseline = 'middle';
-                    this.ctx.fillText(text[i], x + cellSize / 2, 80 + cellSize / 2);
-                }
-                // Draw pattern
-                const patternStartX = (this.width - pattern.length * (cellSize + gap)) / 2;
-                for (let i = 0; i < pattern.length; i++) {
-                    const x = patternStartX + i * (cellSize + gap);
-                    this.ctx.fillStyle = 'rgba(255, 0, 255, 0.2)';
-                    this.ctx.fillRect(x + 1, 30, cellSize - 2, cellSize - 2);
-                    this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-                    this.ctx.strokeRect(x, 30, cellSize, cellSize);
-                    this.ctx.fillStyle = '#ffffff';
-                    this.ctx.font = 'bold 18px Rajdhani';
-                    this.ctx.textBaseline = 'middle';
-                    this.ctx.fillText(pattern[i], x + cellSize / 2, 30 + cellSize / 2);
-                }
-                // Draw hash values
-                if (step.textHash !== undefined) {
-                    this.ctx.fillStyle = '#858796';
+                render(step) {
+                    if (!this.ctx) return;
+                    AlgoViz.clearCanvas(this.ctx, this.width, this.height);
+                    const text = this.textInput?.value || 'ABABDABACDABABCABAB';
+                    const pattern = this.patternInput?.value || 'ABABCABAB';
+                    const cellSize = 35;
+                    const gap = 3;
+                    // Draw text
+                    const textStartX = (this.width - text.length * (cellSize + gap)) / 2;
+                    this.ctx.fillStyle = '#00f3ff';
                     this.ctx.font = '14px Rajdhani';
                     this.ctx.textAlign = 'center';
-                    this.ctx.fillText(`Text Hash: ${step.textHash}`, this.width / 2 - 60, this.height - 40);
-                    this.ctx.fillText(`Pattern Hash: ${step.patternHash}`, this.width / 2 + 60, this.height - 40);
+                    this.ctx.fillText('Text', textStartX + text.length * (cellSize + gap) / 2, 40);
+                    for (let i = 0; i < text.length; i++) {
+                        const x = textStartX + i * (cellSize + gap);
+                        const isMatch = step.textIndex === i;
+                        const isFound = step.found !== undefined && i >= step.found && i < step.found + pattern.length;
+                        this.ctx.shadowColor = isFound ? '#1cc88a' : (isMatch ? '#ff00ff' : 'transparent');
+                        this.ctx.shadowBlur = isFound || isMatch ? 10 : 0;
+                        this.ctx.fillStyle = isFound ? '#1cc88a' : (isMatch ? 'rgba(255, 0, 255, 0.3)' : 'rgba(0, 243, 255, 0.1)');
+                        this.ctx.fillRect(x + 1, 55, cellSize - 2, cellSize - 2);
+                        this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+                        this.ctx.strokeRect(x, 55, cellSize, cellSize);
+                        this.ctx.shadowBlur = 0;
+                        this.ctx.fillStyle = '#ffffff';
+                        this.ctx.font = 'bold 16px Rajdhani';
+                        this.ctx.textBaseline = 'middle';
+                        this.ctx.fillText(text[i], x + cellSize / 2, 55 + cellSize / 2);
+                    }
+                    // Draw pattern
+                    const patternStartX = (this.width - pattern.length * (cellSize + gap)) / 2;
+                    this.ctx.fillStyle = '#ff00ff';
+                    this.ctx.fillText('Pattern', patternStartX + pattern.length * (cellSize + gap) / 2, 130);
+                    for (let i = 0; i < pattern.length; i++) {
+                        const x = patternStartX + i * (cellSize + gap);
+                        const isCompare = step.patternIndex === i;
+                        this.ctx.shadowColor = isCompare ? '#ff00ff' : 'transparent';
+                        this.ctx.shadowBlur = isCompare ? 10 : 0;
+                        this.ctx.fillStyle = isCompare ? 'rgba(255, 0, 255, 0.5)' : 'rgba(255, 0, 255, 0.2)';
+                        this.ctx.fillRect(x + 1, 145, cellSize - 2, cellSize - 2);
+                        this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+                        this.ctx.strokeRect(x, 145, cellSize, cellSize);
+                        this.ctx.shadowBlur = 0;
+                        this.ctx.fillStyle = '#ffffff';
+                        this.ctx.font = 'bold 16px Rajdhani';
+                        this.ctx.textBaseline = 'middle';
+                        this.ctx.fillText(pattern[i], x + cellSize / 2, 145 + cellSize / 2);
+                    }
+                    // Draw result
+                    if (step.found !== undefined) {
+                        this.ctx.fillStyle = step.found >= 0 ? '#1cc88a' : '#e74a3b';
+                        this.ctx.font = 'bold 20px Rajdhani';
+                        this.ctx.textAlign = 'center';
+                        this.ctx.fillText(step.found >= 0 ? `Found at index ${step.found}` : 'Not found', this.width / 2, this.height - 40);
+                    }
+                    // Draw LPS array
+                    if (step.lps) {
+                        this.ctx.fillStyle = '#858796';
+                        this.ctx.font = '12px Rajdhani';
+                        this.ctx.fillText('LPS: [' + step.lps.join(', ') + ']', this.width / 2, this.height - 15);
+                    }
                 }
-                // Draw result
-                if (step.found !== undefined) {
-                    this.ctx.fillStyle = step.found >= 0 ? '#1cc88a' : '#e74a3b';
-                    this.ctx.font = 'bold 20px Rajdhani';
-                    this.ctx.textAlign = 'center';
-                    this.ctx.fillText(step.found >= 0 ? `Found at index ${step.found}` : 'Not found', this.width / 2, this.height - 80);
-                }
-            }
-            start() {
-                this.animation.stop();
-                const text = this.textInput?.value || 'HELLOWORLD';
-                const pattern = this.patternInput?.value || 'WORLD';
-                this.stats.start();
-                const steps = [];
-                const d = 256, q = 101;
-                const m = pattern.length, n = text.length;
-                let p = 0, t = 0, h = 1;
-                for (let i = 0; i < m - 1; i++) h = (h * d) % q;
-                for (let i = 0; i < m; i++) {
-                    p = (d * p + pattern.charCodeAt(i)) % q;
-                    t = (d * t + text.charCodeAt(i)) % q;
-                }
-                for (let i = 0; i <= n - m; i++) {
-                    this.stats.recordComparison();
-                    steps.push({ windowStart: i, textHash: t, patternHash: p });
-                    if (p === t) {
-                        let match = true;
-                        for (let j = 0; j < m; j++) {
-                            this.stats.recordComparison();
-                            if (text[i + j] !== pattern[j]) { match = false; break; }
+                start() {
+                    this.animation.stop();
+                    const text = this.textInput?.value || 'ABABDABACDABABCABAB';
+                    const pattern = this.patternInput?.value || 'ABABCABAB';
+                    this.stats.start();
+                    const steps = [];
+                    const lps = this.computeLPS(pattern);
+                    steps.push({
+                        lps: [...lps]
+                    });
+                    let i = 0,
+                        j = 0;
+                    while (i < text.length) {
+                        this.stats.recordComparison();
+                        steps.push({
+                            textIndex: i,
+                            patternIndex: j,
+                            lps: [...lps]
+                        });
+                        if (pattern[j] === text[i]) {
+                            i++;
+                            j++;
                         }
-                        if (match) {
-                            steps.push({ windowStart: i, textHash: t, patternHash: p, found: i });
+                        if (j === pattern.length) {
+                            steps.push({
+                                textIndex: i - 1,
+                                patternIndex: j - 1,
+                                found: i - j,
+                                lps: [...lps]
+                            });
                             this.stats.stop();
                             this.animation.run(steps);
                             return;
+                        } else if (i < text.length && pattern[j] !== text[i]) {
+                            if (j !== 0) j = lps[j - 1];
+                            else i++;
                         }
                     }
-                    if (i < n - m) {
-                        t = (d * (t - text.charCodeAt(i) * h) + text.charCodeAt(i + m)) % q;
-                        if (t < 0) t += q;
+                    steps.push({
+                        found: -1,
+                        lps: [...lps]
+                    });
+                    this.stats.stop();
+                    this.animation.run(steps);
+                }
+            }
+            // Rabin-Karp Visualizer
+            class RKVisualizer {
+                constructor() {
+                    this.canvas = document.getElementById('rkCanvas');
+                    this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
+                    this.statsContainer = document.getElementById('rkStats');
+                    this.textInput = document.getElementById('rkText');
+                    this.patternInput = document.getElementById('rkPattern');
+                    this.speedSlider = document.getElementById('rkSpeed');
+                    this.stats = new AlgoViz.StatsTracker();
+                    this.animation = new AlgoViz.AnimationController();
+                    this.setupCanvas();
+                    this.bindEvents();
+                }
+                setupCanvas() {
+                    if (!this.canvas) return;
+                    const setup = AlgoViz.setupCanvas(this.canvas.id);
+                    if (setup) {
+                        this.width = setup.width;
+                        this.height = setup.height;
+                        this.ctx = setup.ctx;
                     }
                 }
-                steps.push({ found: -1 });
-                this.stats.stop();
-                this.animation.run(steps);
-            }
-        }
-        // Z-Algorithm Visualizer
-        class ZVisualizer {
-            constructor() {
-                this.canvas = document.getElementById('zCanvas');
-                this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
-                this.statsContainer = document.getElementById('zStats');
-                this.textInput = document.getElementById('zText');
-                this.patternInput = document.getElementById('zPattern');
-                this.speedSlider = document.getElementById('zSpeed');
-                this.stats = new AlgoViz.StatsTracker();
-                this.animation = new AlgoViz.AnimationController();
-                this.setupCanvas();
-                this.bindEvents();
-            }
-            setupCanvas() {
-                if (!this.canvas) return;
-                const setup = AlgoViz.setupCanvas(this.canvas.id);
-                if (setup) { this.width = setup.width; this.height = setup.height; this.ctx = setup.ctx; }
-            }
-            bindEvents() {
-                if (this.speedSlider) this.speedSlider.addEventListener('input', (e) => this.animation.setSpeed(501 - e.target.value));
-                this.animation.onStep = (step) => this.render(step);
-                this.animation.onComplete = () => this.stats.updateDisplay(this.statsContainer.id);
-            }
-            render(step) {
-                if (!this.ctx) return;
-                AlgoViz.clearCanvas(this.ctx, this.width, this.height);
-                const text = this.textInput?.value || 'AABCAABXAAB';
-                const pattern = this.patternInput?.value || 'AAB';
-                const concat = pattern + '$' + text;
-                const cellSize = 30;
-                const gap = 2;
-                const startX = (this.width - concat.length * (cellSize + gap)) / 2;
-                // Draw concatenated string
-                for (let i = 0; i < concat.length; i++) {
-                    const x = startX + i * (cellSize + gap);
-                    const isPattern = i < pattern.length;
-                    const isSeparator = i === pattern.length;
-                    const isZValue = step.currentIndex === i;
-                    this.ctx.shadowColor = isZValue ? '#00f3ff' : (isPattern ? '#ff00ff' : 'transparent');
-                    this.ctx.shadowBlur = isZValue || isPattern ? 10 : 0;
-                    this.ctx.fillStyle = isSeparator ? '#e74a3b' : (isPattern ? 'rgba(255, 0, 255, 0.2)' : (isZValue ? 'rgba(0, 243, 255, 0.4)' : 'rgba(0, 243, 255, 0.1)'));
-                    this.ctx.fillRect(x + 1, 80, cellSize - 2, cellSize - 2);
-                    this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-                    this.ctx.strokeRect(x, 80, cellSize, cellSize);
-                    this.ctx.shadowBlur = 0;
-                    this.ctx.fillStyle = isSeparator ? '#ffffff' : '#ffffff';
-                    this.ctx.font = 'bold 14px Rajdhani';
-                    this.ctx.textAlign = 'center';
-                    this.ctx.textBaseline = 'middle';
-                    this.ctx.fillText(concat[i], x + cellSize / 2, 80 + cellSize / 2);
-                    // Draw Z value
-                    if (step.zArray && step.zArray[i] !== undefined) {
-                        this.ctx.fillStyle = step.zArray[i] === pattern.length ? '#1cc88a' : '#858796';
-                        this.ctx.font = '10px Rajdhani';
-                        this.ctx.fillText(step.zArray[i].toString(), x + cellSize / 2, 80 + cellSize + 12);
+                bindEvents() {
+                    if (this.speedSlider) this.speedSlider.addEventListener('input', (e) => this.animation.setSpeed(501 - e.target.value));
+                    this.animation.onStep = (step) => this.render(step);
+                    this.animation.onComplete = () => this.stats.updateDisplay(this.statsContainer.id);
+                }
+                render(step) {
+                    if (!this.ctx) return;
+                    AlgoViz.clearCanvas(this.ctx, this.width, this.height);
+                    const text = this.textInput?.value || 'HELLOWORLD';
+                    const pattern = this.patternInput?.value || 'WORLD';
+                    const cellSize = 45;
+                    const gap = 3;
+                    // Draw text with current window highlighted
+                    const textStartX = (this.width - text.length * (cellSize + gap)) / 2;
+                    for (let i = 0; i < text.length; i++) {
+                        const x = textStartX + i * (cellSize + gap);
+                        const inWindow = step.windowStart !== undefined && i >= step.windowStart && i < step.windowStart + pattern.length;
+                        const isFound = step.found !== undefined && i >= step.found && i < step.found + pattern.length;
+                        this.ctx.shadowColor = isFound ? '#1cc88a' : (inWindow ? '#f6c23e' : 'transparent');
+                        this.ctx.shadowBlur = isFound || inWindow ? 10 : 0;
+                        this.ctx.fillStyle = isFound ? '#1cc88a' : (inWindow ? 'rgba(246, 194, 62, 0.4)' : 'rgba(0, 243, 255, 0.1)');
+                        this.ctx.fillRect(x + 1, 80, cellSize - 2, cellSize - 2);
+                        this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+                        this.ctx.strokeRect(x, 80, cellSize, cellSize);
+                        this.ctx.shadowBlur = 0;
+                        this.ctx.fillStyle = '#ffffff';
+                        this.ctx.font = 'bold 18px Rajdhani';
+                        this.ctx.textAlign = 'center';
+                        this.ctx.textBaseline = 'middle';
+                        this.ctx.fillText(text[i], x + cellSize / 2, 80 + cellSize / 2);
+                    }
+                    // Draw pattern
+                    const patternStartX = (this.width - pattern.length * (cellSize + gap)) / 2;
+                    for (let i = 0; i < pattern.length; i++) {
+                        const x = patternStartX + i * (cellSize + gap);
+                        this.ctx.fillStyle = 'rgba(255, 0, 255, 0.2)';
+                        this.ctx.fillRect(x + 1, 30, cellSize - 2, cellSize - 2);
+                        this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+                        this.ctx.strokeRect(x, 30, cellSize, cellSize);
+                        this.ctx.fillStyle = '#ffffff';
+                        this.ctx.font = 'bold 18px Rajdhani';
+                        this.ctx.textBaseline = 'middle';
+                        this.ctx.fillText(pattern[i], x + cellSize / 2, 30 + cellSize / 2);
+                    }
+                    // Draw hash values
+                    if (step.textHash !== undefined) {
+                        this.ctx.fillStyle = '#858796';
+                        this.ctx.font = '14px Rajdhani';
+                        this.ctx.textAlign = 'center';
+                        this.ctx.fillText(`Text Hash: ${step.textHash}`, this.width / 2 - 60, this.height - 40);
+                        this.ctx.fillText(`Pattern Hash: ${step.patternHash}`, this.width / 2 + 60, this.height - 40);
+                    }
+                    // Draw result
+                    if (step.found !== undefined) {
+                        this.ctx.fillStyle = step.found >= 0 ? '#1cc88a' : '#e74a3b';
+                        this.ctx.font = 'bold 20px Rajdhani';
+                        this.ctx.textAlign = 'center';
+                        this.ctx.fillText(step.found >= 0 ? `Found at index ${step.found}` : 'Not found', this.width / 2, this.height - 80);
                     }
                 }
-                // Draw result
-                if (step.found !== undefined) {
-                    this.ctx.fillStyle = step.found >= 0 ? '#1cc88a' : '#e74a3b';
-                    this.ctx.font = 'bold 20px Rajdhani';
-                    this.ctx.textAlign = 'center';
-                    this.ctx.fillText(step.found >= 0 ? `Found at index ${step.found}` : 'Not found', this.width / 2, this.height - 40);
-                }
-            }
-            start() {
-                this.animation.stop();
-                const text = this.textInput?.value || 'AABCAABXAAB';
-                const pattern = this.patternInput?.value || 'AAB';
-                this.stats.start();
-                const steps = [];
-                const concat = pattern + '$' + text;
-                const z = Array(concat.length).fill(0);
-                let l = 0, r = 0;
-                for (let i = 1; i < concat.length; i++) {
-                    this.stats.recordComparison();
-                    if (i > r) {
-                        l = r = i;
-                        while (r < concat.length && concat[r - l] === concat[r]) {
-                            this.stats.recordComparison();
-                            r++;
+                start() {
+                    this.animation.stop();
+                    const text = this.textInput?.value || 'HELLOWORLD';
+                    const pattern = this.patternInput?.value || 'WORLD';
+                    this.stats.start();
+                    const steps = [];
+                    const d = 256,
+                        q = 101;
+                    const m = pattern.length,
+                        n = text.length;
+                    let p = 0,
+                        t = 0,
+                        h = 1;
+                    for (let i = 0; i < m - 1; i++) h = (h * d) % q;
+                    for (let i = 0; i < m; i++) {
+                        p = (d * p + pattern.charCodeAt(i)) % q;
+                        t = (d * t + text.charCodeAt(i)) % q;
+                    }
+                    for (let i = 0; i <= n - m; i++) {
+                        this.stats.recordComparison();
+                        steps.push({
+                            windowStart: i,
+                            textHash: t,
+                            patternHash: p
+                        });
+                        if (p === t) {
+                            let match = true;
+                            for (let j = 0; j < m; j++) {
+                                this.stats.recordComparison();
+                                if (text[i + j] !== pattern[j]) {
+                                    match = false;
+                                    break;
+                                }
+                            }
+                            if (match) {
+                                steps.push({
+                                    windowStart: i,
+                                    textHash: t,
+                                    patternHash: p,
+                                    found: i
+                                });
+                                this.stats.stop();
+                                this.animation.run(steps);
+                                return;
+                            }
                         }
-                        z[i] = r - l;
-                        r--;
-                    } else {
-                        const k = i - l;
-                        if (z[k] < r - i + 1) {
-                            z[i] = z[k];
-                        } else {
-                            l = i;
+                        if (i < n - m) {
+                            t = (d * (t - text.charCodeAt(i) * h) + text.charCodeAt(i + m)) % q;
+                            if (t < 0) t += q;
+                        }
+                    }
+                    steps.push({
+                        found: -1
+                    });
+                    this.stats.stop();
+                    this.animation.run(steps);
+                }
+            }
+            // Z-Algorithm Visualizer
+            class ZVisualizer {
+                constructor() {
+                    this.canvas = document.getElementById('zCanvas');
+                    this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
+                    this.statsContainer = document.getElementById('zStats');
+                    this.textInput = document.getElementById('zText');
+                    this.patternInput = document.getElementById('zPattern');
+                    this.speedSlider = document.getElementById('zSpeed');
+                    this.stats = new AlgoViz.StatsTracker();
+                    this.animation = new AlgoViz.AnimationController();
+                    this.setupCanvas();
+                    this.bindEvents();
+                }
+                setupCanvas() {
+                    if (!this.canvas) return;
+                    const setup = AlgoViz.setupCanvas(this.canvas.id);
+                    if (setup) {
+                        this.width = setup.width;
+                        this.height = setup.height;
+                        this.ctx = setup.ctx;
+                    }
+                }
+                bindEvents() {
+                    if (this.speedSlider) this.speedSlider.addEventListener('input', (e) => this.animation.setSpeed(501 - e.target.value));
+                    this.animation.onStep = (step) => this.render(step);
+                    this.animation.onComplete = () => this.stats.updateDisplay(this.statsContainer.id);
+                }
+                render(step) {
+                    if (!this.ctx) return;
+                    AlgoViz.clearCanvas(this.ctx, this.width, this.height);
+                    const text = this.textInput?.value || 'AABCAABXAAB';
+                    const pattern = this.patternInput?.value || 'AAB';
+                    const concat = pattern + '$' + text;
+                    const cellSize = 30;
+                    const gap = 2;
+                    const startX = (this.width - concat.length * (cellSize + gap)) / 2;
+                    // Draw concatenated string
+                    for (let i = 0; i < concat.length; i++) {
+                        const x = startX + i * (cellSize + gap);
+                        const isPattern = i < pattern.length;
+                        const isSeparator = i === pattern.length;
+                        const isZValue = step.currentIndex === i;
+                        this.ctx.shadowColor = isZValue ? '#00f3ff' : (isPattern ? '#ff00ff' : 'transparent');
+                        this.ctx.shadowBlur = isZValue || isPattern ? 10 : 0;
+                        this.ctx.fillStyle = isSeparator ? '#e74a3b' : (isPattern ? 'rgba(255, 0, 255, 0.2)' : (isZValue ? 'rgba(0, 243, 255, 0.4)' : 'rgba(0, 243, 255, 0.1)'));
+                        this.ctx.fillRect(x + 1, 80, cellSize - 2, cellSize - 2);
+                        this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+                        this.ctx.strokeRect(x, 80, cellSize, cellSize);
+                        this.ctx.shadowBlur = 0;
+                        this.ctx.fillStyle = isSeparator ? '#ffffff' : '#ffffff';
+                        this.ctx.font = 'bold 14px Rajdhani';
+                        this.ctx.textAlign = 'center';
+                        this.ctx.textBaseline = 'middle';
+                        this.ctx.fillText(concat[i], x + cellSize / 2, 80 + cellSize / 2);
+                        // Draw Z value
+                        if (step.zArray && step.zArray[i] !== undefined) {
+                            this.ctx.fillStyle = step.zArray[i] === pattern.length ? '#1cc88a' : '#858796';
+                            this.ctx.font = '10px Rajdhani';
+                            this.ctx.fillText(step.zArray[i].toString(), x + cellSize / 2, 80 + cellSize + 12);
+                        }
+                    }
+                    // Draw result
+                    if (step.found !== undefined) {
+                        this.ctx.fillStyle = step.found >= 0 ? '#1cc88a' : '#e74a3b';
+                        this.ctx.font = 'bold 20px Rajdhani';
+                        this.ctx.textAlign = 'center';
+                        this.ctx.fillText(step.found >= 0 ? `Found at index ${step.found}` : 'Not found', this.width / 2, this.height - 40);
+                    }
+                }
+                start() {
+                    this.animation.stop();
+                    const text = this.textInput?.value || 'AABCAABXAAB';
+                    const pattern = this.patternInput?.value || 'AAB';
+                    this.stats.start();
+                    const steps = [];
+                    const concat = pattern + '$' + text;
+                    const z = Array(concat.length).fill(0);
+                    let l = 0,
+                        r = 0;
+                    for (let i = 1; i < concat.length; i++) {
+                        this.stats.recordComparison();
+                        if (i > r) {
+                            l = r = i;
                             while (r < concat.length && concat[r - l] === concat[r]) {
                                 this.stats.recordComparison();
                                 r++;
                             }
                             z[i] = r - l;
                             r--;
+                        } else {
+                            const k = i - l;
+                            if (z[k] < r - i + 1) {
+                                z[i] = z[k];
+                            } else {
+                                l = i;
+                                while (r < concat.length && concat[r - l] === concat[r]) {
+                                    this.stats.recordComparison();
+                                    r++;
+                                }
+                                z[i] = r - l;
+                                r--;
+                            }
+                        }
+                        steps.push({
+                            zArray: [...z],
+                            currentIndex: i
+                        });
+                    }
+                    // Find pattern occurrences
+                    let found = -1;
+                    for (let i = pattern.length + 1; i < concat.length; i++) {
+                        if (z[i] === pattern.length) {
+                            found = i - pattern.length - 1;
+                            break;
                         }
                     }
-                    steps.push({ zArray: [...z], currentIndex: i });
+                    steps[steps.length - 1].found = found;
+                    this.stats.stop();
+                    this.animation.run(steps);
                 }
-                // Find pattern occurrences
-                let found = -1;
-                for (let i = pattern.length + 1; i < concat.length; i++) {
-                    if (z[i] === pattern.length) {
-                        found = i - pattern.length - 1;
-                        break;
+            }
+            // Manacher's Visualizer
+            class ManacherVisualizer {
+                constructor() {
+                    this.canvas = document.getElementById('manacherCanvas');
+                    this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
+                    this.statsContainer = document.getElementById('manacherStats');
+                    this.strInput = document.getElementById('manacherStr');
+                    this.speedSlider = document.getElementById('manacherSpeed');
+                    this.stats = new AlgoViz.StatsTracker();
+                    this.animation = new AlgoViz.AnimationController();
+                    this.setupCanvas();
+                    this.bindEvents();
+                }
+                setupCanvas() {
+                    if (!this.canvas) return;
+                    const setup = AlgoViz.setupCanvas(this.canvas.id);
+                    if (setup) {
+                        this.width = setup.width;
+                        this.height = setup.height;
+                        this.ctx = setup.ctx;
                     }
                 }
-                steps[steps.length - 1].found = found;
-                this.stats.stop();
-                this.animation.run(steps);
-            }
-        }
-        // Manacher's Visualizer
-        class ManacherVisualizer {
-            constructor() {
-                this.canvas = document.getElementById('manacherCanvas');
-                this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
-                this.statsContainer = document.getElementById('manacherStats');
-                this.strInput = document.getElementById('manacherStr');
-                this.speedSlider = document.getElementById('manacherSpeed');
-                this.stats = new AlgoViz.StatsTracker();
-                this.animation = new AlgoViz.AnimationController();
-                this.setupCanvas();
-                this.bindEvents();
-            }
-            setupCanvas() {
-                if (!this.canvas) return;
-                const setup = AlgoViz.setupCanvas(this.canvas.id);
-                if (setup) { this.width = setup.width; this.height = setup.height; this.ctx = setup.ctx; }
-            }
-            bindEvents() {
-                if (this.speedSlider) this.speedSlider.addEventListener('input', (e) => this.animation.setSpeed(501 - e.target.value));
-                this.animation.onStep = (step) => this.render(step);
-                this.animation.onComplete = () => this.stats.updateDisplay(this.statsContainer.id);
-            }
-            render(step) {
-                if (!this.ctx) return;
-                AlgoViz.clearCanvas(this.ctx, this.width, this.height);
-                const str = this.strInput?.value || 'ABACABA';
-                const t = '#' + str.split('').join('#') + '#';
-                const cellSize = 28;
-                const gap = 2;
-                const startX = (this.width - t.length * (cellSize + gap)) / 2;
-                // Draw transformed string
-                for (let i = 0; i < t.length; i++) {
-                    const x = startX + i * (cellSize + gap);
-                    const isPalindrome = step.palindromeCenter !== undefined && Math.abs(i - step.palindromeCenter) <= (step.maxRadius || 0);
-                    const isCenter = i === step.palindromeCenter;
-                    this.ctx.shadowColor = isCenter ? '#00f3ff' : (isPalindrome ? '#1cc88a' : 'transparent');
-                    this.ctx.shadowBlur = isCenter || isPalindrome ? 10 : 0;
-                    this.ctx.fillStyle = isCenter ? '#00f3ff' : (isPalindrome ? 'rgba(28, 200, 138, 0.3)' : 'rgba(0, 243, 255, 0.1)');
-                    this.ctx.fillRect(x + 1, 80, cellSize - 2, cellSize - 2);
-                    this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-                    this.ctx.strokeRect(x, 80, cellSize, cellSize);
-                    this.ctx.shadowBlur = 0;
-                    this.ctx.fillStyle = '#ffffff';
-                    this.ctx.font = t[i] === '#' ? 'bold 20px Rajdhani' : 'bold 16px Rajdhani';
-                    this.ctx.textAlign = 'center';
-                    this.ctx.textBaseline = 'middle';
-                    this.ctx.fillText(t[i], x + cellSize / 2, 80 + cellSize / 2);
-                    // Draw P value
-                    if (step.pArray && step.pArray[i] !== undefined) {
-                        this.ctx.fillStyle = step.pArray[i] === step.maxRadius ? '#1cc88a' : '#858796';
-                        this.ctx.font = '10px Rajdhani';
-                        this.ctx.fillText(step.pArray[i].toString(), x + cellSize / 2, 80 + cellSize + 12);
+                bindEvents() {
+                    if (this.speedSlider) this.speedSlider.addEventListener('input', (e) => this.animation.setSpeed(501 - e.target.value));
+                    this.animation.onStep = (step) => this.render(step);
+                    this.animation.onComplete = () => this.stats.updateDisplay(this.statsContainer.id);
+                }
+                render(step) {
+                    if (!this.ctx) return;
+                    AlgoViz.clearCanvas(this.ctx, this.width, this.height);
+                    const str = this.strInput?.value || 'ABACABA';
+                    const t = '#' + str.split('').join('#') + '#';
+                    const cellSize = 28;
+                    const gap = 2;
+                    const startX = (this.width - t.length * (cellSize + gap)) / 2;
+                    // Draw transformed string
+                    for (let i = 0; i < t.length; i++) {
+                        const x = startX + i * (cellSize + gap);
+                        const isPalindrome = step.palindromeCenter !== undefined && Math.abs(i - step.palindromeCenter) <= (step.maxRadius || 0);
+                        const isCenter = i === step.palindromeCenter;
+                        this.ctx.shadowColor = isCenter ? '#00f3ff' : (isPalindrome ? '#1cc88a' : 'transparent');
+                        this.ctx.shadowBlur = isCenter || isPalindrome ? 10 : 0;
+                        this.ctx.fillStyle = isCenter ? '#00f3ff' : (isPalindrome ? 'rgba(28, 200, 138, 0.3)' : 'rgba(0, 243, 255, 0.1)');
+                        this.ctx.fillRect(x + 1, 80, cellSize - 2, cellSize - 2);
+                        this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+                        this.ctx.strokeRect(x, 80, cellSize, cellSize);
+                        this.ctx.shadowBlur = 0;
+                        this.ctx.fillStyle = '#ffffff';
+                        this.ctx.font = t[i] === '#' ? 'bold 20px Rajdhani' : 'bold 16px Rajdhani';
+                        this.ctx.textAlign = 'center';
+                        this.ctx.textBaseline = 'middle';
+                        this.ctx.fillText(t[i], x + cellSize / 2, 80 + cellSize / 2);
+                        // Draw P value
+                        if (step.pArray && step.pArray[i] !== undefined) {
+                            this.ctx.fillStyle = step.pArray[i] === step.maxRadius ? '#1cc88a' : '#858796';
+                            this.ctx.font = '10px Rajdhani';
+                            this.ctx.fillText(step.pArray[i].toString(), x + cellSize / 2, 80 + cellSize + 12);
+                        }
+                    }
+                    // Draw result
+                    if (step.result !== undefined) {
+                        this.ctx.fillStyle = '#1cc88a';
+                        this.ctx.font = 'bold 18px Rajdhani';
+                        this.ctx.textAlign = 'center';
+                        this.ctx.fillText(`Longest Palindrome Length: ${step.result}`, this.width / 2, this.height - 40);
                     }
                 }
-                // Draw result
-                if (step.result !== undefined) {
-                    this.ctx.fillStyle = '#1cc88a';
-                    this.ctx.font = 'bold 18px Rajdhani';
-                    this.ctx.textAlign = 'center';
-                    this.ctx.fillText(`Longest Palindrome Length: ${step.result}`, this.width / 2, this.height - 40);
-                }
-            }
-            start() {
-                this.animation.stop();
-                const str = this.strInput?.value || 'ABACABA';
-                this.stats.start();
-                const steps = [];
-                const t = '#' + str.split('').join('#') + '#';
-                const p = Array(t.length).fill(0);
-                let c = 0, r = 0, maxRadius = 0;
-                for (let i = 0; i < t.length; i++) {
-                    this.stats.recordComparison();
-                    const mirror = 2 * c - i;
-                    if (i < r) p[i] = Math.min(r - i, p[mirror]);
-                    while (t[i + p[i] + 1] === t[i - p[i] - 1]) {
+                start() {
+                    this.animation.stop();
+                    const str = this.strInput?.value || 'ABACABA';
+                    this.stats.start();
+                    const steps = [];
+                    const t = '#' + str.split('').join('#') + '#';
+                    const p = Array(t.length).fill(0);
+                    let c = 0,
+                        r = 0,
+                        maxRadius = 0;
+                    for (let i = 0; i < t.length; i++) {
                         this.stats.recordComparison();
-                        p[i]++;
+                        const mirror = 2 * c - i;
+                        if (i < r) p[i] = Math.min(r - i, p[mirror]);
+                        while (t[i + p[i] + 1] === t[i - p[i] - 1]) {
+                            this.stats.recordComparison();
+                            p[i]++;
+                        }
+                        if (i + p[i] > r) {
+                            c = i;
+                            r = i + p[i];
+                        }
+                        if (p[i] > maxRadius) maxRadius = p[i];
+                        steps.push({
+                            pArray: [...p],
+                            palindromeCenter: c,
+                            maxRadius
+                        });
                     }
-                    if (i + p[i] > r) {
-                        c = i;
-                        r = i + p[i];
-                    }
-                    if (p[i] > maxRadius) maxRadius = p[i];
-                    steps.push({ pArray: [...p], palindromeCenter: c, maxRadius });
+                    steps[steps.length - 1].result = maxRadius;
+                    this.stats.stop();
+                    this.animation.run(steps);
                 }
-                steps[steps.length - 1].result = maxRadius;
-                this.stats.stop();
-                this.animation.run(steps);
             }
-        }
-        window.kmpViz = new KMPVisualizer();
-        window.rkViz = new RKVisualizer();
-        window.zViz = new ZVisualizer();
-        window.manacherViz = new ManacherVisualizer();
-    })();
+            window.kmpViz = new KMPVisualizer();
+            window.rkViz = new RKVisualizer();
+            window.zViz = new ZVisualizer();
+            window.manacherViz = new ManacherVisualizer();
+        })();
     </script>
     <script src="js/main.js"></script>
 </body>
+
 </html>

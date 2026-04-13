@@ -1,38 +1,203 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Segment Tree - Lazy Propagation</title>
     <style>
-        :root { --neon-primary: #00f3ff; --neon-secondary: #ff00ff; --bg-dark: #050505; --bg-card: rgba(255,255,255,0.05); --border-neon: 1px solid rgba(0,243,255,0.3); --ease-out: cubic-bezier(0.16,1,0.3,1); }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: system-ui, sans-serif; background: var(--bg-dark); color: #fff; min-height: 100vh; }
-        .l-header { position: sticky; top: 0; z-index: 1000; background: rgba(5,5,5,0.9); backdrop-filter: blur(10px); border-bottom: var(--border-neon); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
-        .header__title { font-size: 1.5rem; color: var(--neon-primary); text-shadow: 0 0 5px var(--neon-primary); }
-        .header__back { color: var(--neon-secondary); text-decoration: none; padding: 0.5rem 1rem; border: var(--border-neon); border-radius: 8px; transition: all 0.3s var(--ease-out); }
-        .header__back:hover { box-shadow: 0 0 10px var(--neon-secondary); }
-        .l-main { display: grid; grid-template-columns: 1fr 350px; gap: 1rem; padding: 1rem; max-width: 1600px; margin: 0 auto; }
-        @media (max-width: 900px) { .l-main { grid-template-columns: 1fr; } }
-        .canvas-container { background: var(--bg-card); border: var(--border-neon); border-radius: 12px; padding: 1rem; backdrop-filter: blur(10px); overflow-x: auto; }
-        #treeCanvas { width: 100%; height: 400px; display: block; }
-        .array-container { background: var(--bg-card); border: var(--border-neon); border-radius: 12px; padding: 1rem; margin-top: 1rem; }
-        #arrayCanvas { width: 100%; height: 60px; display: block; }
-        .controls { background: var(--bg-card); border: var(--border-neon); border-radius: 12px; padding: 1.5rem; backdrop-filter: blur(10px); }
-        .controls__section { margin-bottom: 1.5rem; }
-        .controls__title { color: var(--neon-secondary); font-size: 1.1rem; margin-bottom: 1rem; text-shadow: 0 0 5px var(--neon-secondary); }
-        .input-group { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
-        .input-group input { flex: 1; min-width: 80px; padding: 0.8rem; background: rgba(0,0,0,0.3); border: var(--border-neon); border-radius: 8px; color: #fff; font-size: 1rem; caret-color: var(--neon-primary); }
-        .input-group input:focus { outline: none; box-shadow: 0 0 10px var(--neon-primary); }
-        .btn { padding: 0.8rem 1.5rem; background: rgba(0,243,255,0.1); border: var(--border-neon); border-radius: 8px; color: var(--neon-primary); cursor: pointer; font-size: 1rem; transition: all 0.3s var(--ease-out); }
-        .btn:hover { background: rgba(0,243,255,0.2); box-shadow: 0 0 15px var(--neon-primary); }
-        .info-box { background: rgba(0,0,0,0.3); border-radius: 8px; padding: 1rem; margin-top: 1rem; }
-        .info-box p { margin-bottom: 0.5rem; font-size: 0.9rem; }
-        .info-box span { color: var(--neon-primary); }
-        .log-box { background: rgba(0,0,0,0.3); border-radius: 8px; padding: 1rem; max-height: 100px; overflow-y: auto; font-size: 0.85rem; font-family: monospace; }
-        .log-entry { margin-bottom: 0.5rem; padding: 0.3rem; border-left: 2px solid var(--neon-secondary); padding-left: 0.5rem; }
+        :root {
+            --neon-primary: #00f3ff;
+            --neon-secondary: #ff00ff;
+            --bg-dark: #050505;
+            --bg-card: rgba(255, 255, 255, 0.05);
+            --border-neon: 1px solid rgba(0, 243, 255, 0.3);
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, sans-serif;
+            background: var(--bg-dark);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .l-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(5, 5, 5, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: var(--border-neon);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header__title {
+            font-size: 1.5rem;
+            color: var(--neon-primary);
+            text-shadow: 0 0 5px var(--neon-primary);
+        }
+
+        .header__back {
+            color: var(--neon-secondary);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border: var(--border-neon);
+            border-radius: 8px;
+            transition: all 0.3s var(--ease-out);
+        }
+
+        .header__back:hover {
+            box-shadow: 0 0 10px var(--neon-secondary);
+        }
+
+        .l-main {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 1rem;
+            padding: 1rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 900px) {
+            .l-main {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .canvas-container {
+            background: var(--bg-card);
+            border: var(--border-neon);
+            border-radius: 12px;
+            padding: 1rem;
+            backdrop-filter: blur(10px);
+            overflow-x: auto;
+        }
+
+        #treeCanvas {
+            width: 100%;
+            height: 400px;
+            display: block;
+        }
+
+        .array-container {
+            background: var(--bg-card);
+            border: var(--border-neon);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        #arrayCanvas {
+            width: 100%;
+            height: 60px;
+            display: block;
+        }
+
+        .controls {
+            background: var(--bg-card);
+            border: var(--border-neon);
+            border-radius: 12px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .controls__section {
+            margin-bottom: 1.5rem;
+        }
+
+        .controls__title {
+            color: var(--neon-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 5px var(--neon-secondary);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .input-group input {
+            flex: 1;
+            min-width: 80px;
+            padding: 0.8rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: var(--border-neon);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+            caret-color: var(--neon-primary);
+        }
+
+        .input-group input:focus {
+            outline: none;
+            box-shadow: 0 0 10px var(--neon-primary);
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            background: rgba(0, 243, 255, 0.1);
+            border: var(--border-neon);
+            border-radius: 8px;
+            color: var(--neon-primary);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s var(--ease-out);
+        }
+
+        .btn:hover {
+            background: rgba(0, 243, 255, 0.2);
+            box-shadow: 0 0 15px var(--neon-primary);
+        }
+
+        .info-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .info-box p {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .info-box span {
+            color: var(--neon-primary);
+        }
+
+        .log-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            max-height: 100px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+            font-family: monospace;
+        }
+
+        .log-entry {
+            margin-bottom: 0.5rem;
+            padding: 0.3rem;
+            border-left: 2px solid var(--neon-secondary);
+            padding-left: 0.5rem;
+        }
     </style>
 </head>
+
 <body>
     <header class="l-header">
         <h1 class="header__title">Segment Tree - Lazy Propagation</h1>
@@ -83,6 +248,7 @@
         const treeCtx = treeCanvas.getContext('2d');
         const arrayCanvas = document.getElementById('arrayCanvas');
         const arrayCtx = arrayCanvas.getContext('2d');
+
         function resizeCanvas() {
             treeCanvas.width = Math.max(treeCanvas.parentElement.clientWidth, 800);
             treeCanvas.height = 400;
@@ -92,7 +258,8 @@
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
         let arr = [1, 2, 3, 4, 5, 6, 7, 8];
-        let tree = [], lazy = [];
+        let tree = [],
+            lazy = [];
         let highlightedNodes = new Set();
         class LazySegmentTree {
             constructor(arr) {
@@ -102,7 +269,10 @@
                 this.build(arr, 0, 0, this.n - 1);
             }
             build(arr, node, start, end) {
-                if (start === end) { this.tree[node] = arr[start]; return; }
+                if (start === end) {
+                    this.tree[node] = arr[start];
+                    return;
+                }
                 const mid = Math.floor((start + end) / 2);
                 this.build(arr, 2 * node + 1, start, mid);
                 this.build(arr, 2 * node + 2, mid + 1, end);
@@ -118,7 +288,10 @@
                     this.lazy[node] = 0;
                 }
             }
-            rangeUpdate(l, r, val) { log(`Range Update [${l},${r}] += ${val}`); this.updateRec(0, 0, this.n - 1, l, r, val); }
+            rangeUpdate(l, r, val) {
+                log(`Range Update [${l},${r}] += ${val}`);
+                this.updateRec(0, 0, this.n - 1, l, r, val);
+            }
             updateRec(node, start, end, l, r, val) {
                 this.push(node, start, end);
                 if (r < start || end < l) return;
@@ -133,16 +306,26 @@
                 this.updateRec(2 * node + 2, mid + 1, end, l, r, val);
                 this.tree[node] = this.tree[2 * node + 1] + this.tree[2 * node + 2];
             }
-            query(l, r) { highlightedNodes.clear(); return this.queryRec(0, 0, this.n - 1, l, r); }
+            query(l, r) {
+                highlightedNodes.clear();
+                return this.queryRec(0, 0, this.n - 1, l, r);
+            }
             queryRec(node, start, end, l, r) {
                 this.push(node, start, end);
                 if (r < start || end < l) return 0;
-                if (l <= start && end <= r) { highlightedNodes.add(node); return this.tree[node]; }
+                if (l <= start && end <= r) {
+                    highlightedNodes.add(node);
+                    return this.tree[node];
+                }
                 const mid = Math.floor((start + end) / 2);
                 return this.queryRec(2 * node + 1, start, mid, l, r) + this.queryRec(2 * node + 2, mid + 1, end, l, r);
             }
-            getTree() { return this.tree; }
-            getLazy() { return this.lazy; }
+            getTree() {
+                return this.tree;
+            }
+            getLazy() {
+                return this.lazy;
+            }
             getArray() {
                 const result = [];
                 for (let i = 0; i < this.n; i++) result.push(this.queryRec(0, 0, this.n - 1, i, i));
@@ -150,12 +333,14 @@
             }
         }
         let segTree = new LazySegmentTree(arr);
+
         function drawTree() {
             treeCtx.clearRect(0, 0, treeCanvas.width, treeCanvas.height);
             tree = segTree.getTree();
             lazy = segTree.getLazy();
             drawNode(0, 0, treeCanvas.width / 2, 40, treeCanvas.width / 4, 0);
         }
+
         function drawNode(node, level, x, y, offset, maxLevel) {
             if (node >= tree.length || (tree[node] === 0 && lazy[node] === 0 && level > maxLevel)) return;
             maxLevel = Math.max(maxLevel, level);
@@ -190,12 +375,14 @@
                 ctx.font = '10px system-ui';
                 ctx.fillText(`+${lazy[node]}`, x, y + 10);
             }
-            const left = 2 * node + 1, right = 2 * node + 2;
+            const left = 2 * node + 1,
+                right = 2 * node + 2;
             if (left < tree.length && level < 3) {
                 drawNode(left, level + 1, x - offset, y + 60, offset / 2, maxLevel);
                 drawNode(right, level + 1, x + offset, y + 60, offset / 2, maxLevel);
             }
         }
+
         function drawArray() {
             arrayCtx.clearRect(0, 0, arrayCanvas.width, arrayCanvas.height);
             const currentArr = segTree.getArray();
@@ -219,6 +406,7 @@
                 arrayCtx.fillText(i, x, y + 25);
             });
         }
+
         function log(msg) {
             const logBox = document.getElementById('logBox');
             const entry = document.createElement('div');
@@ -227,6 +415,7 @@
             logBox.insertBefore(entry, logBox.firstChild);
             if (logBox.children.length > 10) logBox.removeChild(logBox.lastChild);
         }
+
         function rangeUpdate() {
             const l = parseInt(document.getElementById('leftInput').value);
             const r = parseInt(document.getElementById('rightInput').value);
@@ -238,6 +427,7 @@
                 drawArray();
             }
         }
+
         function queryRange() {
             const l = parseInt(document.getElementById('qLeftInput').value);
             const r = parseInt(document.getElementById('qRightInput').value);
@@ -247,8 +437,11 @@
                 drawTree();
             }
         }
+
         function randomize() {
-            arr = Array.from({length: 8}, () => Math.floor(Math.random() * 10) + 1);
+            arr = Array.from({
+                length: 8
+            }, () => Math.floor(Math.random() * 10) + 1);
             segTree = new LazySegmentTree(arr);
             highlightedNodes.clear();
             document.getElementById('logBox').innerHTML = '';
@@ -260,4 +453,5 @@
         drawArray();
     </script>
 </body>
+
 </html>

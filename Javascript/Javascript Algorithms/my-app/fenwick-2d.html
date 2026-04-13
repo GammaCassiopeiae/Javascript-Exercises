@@ -1,36 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2D Binary Indexed Tree</title>
     <style>
-        :root { --neon-primary: #00f3ff; --neon-secondary: #ff00ff; --bg-dark: #050505; --bg-card: rgba(255,255,255,0.05); --border-neon: 1px solid rgba(0,243,255,0.3); --ease-out: cubic-bezier(0.16,1,0.3,1); }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: system-ui, sans-serif; background: var(--bg-dark); color: #fff; min-height: 100vh; }
-        .l-header { position: sticky; top: 0; z-index: 1000; background: rgba(5,5,5,0.9); backdrop-filter: blur(10px); border-bottom: var(--border-neon); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
-        .header__title { font-size: 1.5rem; color: var(--neon-primary); text-shadow: 0 0 5px var(--neon-primary); }
-        .header__back { color: var(--neon-secondary); text-decoration: none; padding: 0.5rem 1rem; border: var(--border-neon); border-radius: 8px; transition: all 0.3s var(--ease-out); }
-        .header__back:hover { box-shadow: 0 0 10px var(--neon-secondary); }
-        .l-main { display: grid; grid-template-columns: 1fr 350px; gap: 1rem; padding: 1rem; max-width: 1400px; margin: 0 auto; }
-        @media (max-width: 900px) { .l-main { grid-template-columns: 1fr; } }
-        .canvas-container { background: var(--bg-card); border: var(--border-neon); border-radius: 12px; padding: 1rem; backdrop-filter: blur(10px); display: flex; justify-content: center; }
-        #gridCanvas { max-width: 100%; height: auto; }
-        .controls { background: var(--bg-card); border: var(--border-neon); border-radius: 12px; padding: 1.5rem; backdrop-filter: blur(10px); }
-        .controls__section { margin-bottom: 1.5rem; }
-        .controls__title { color: var(--neon-secondary); font-size: 1.1rem; margin-bottom: 1rem; text-shadow: 0 0 5px var(--neon-secondary); }
-        .input-group { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
-        .input-group input { flex: 1; min-width: 60px; padding: 0.8rem; background: rgba(0,0,0,0.3); border: var(--border-neon); border-radius: 8px; color: #fff; font-size: 1rem; caret-color: var(--neon-primary); }
-        .input-group input:focus { outline: none; box-shadow: 0 0 10px var(--neon-primary); }
-        .btn { padding: 0.8rem 1.5rem; background: rgba(0,243,255,0.1); border: var(--border-neon); border-radius: 8px; color: var(--neon-primary); cursor: pointer; font-size: 1rem; transition: all 0.3s var(--ease-out); }
-        .btn:hover { background: rgba(0,243,255,0.2); box-shadow: 0 0 15px var(--neon-primary); }
-        .info-box { background: rgba(0,0,0,0.3); border-radius: 8px; padding: 1rem; margin-top: 1rem; }
-        .info-box p { margin-bottom: 0.5rem; font-size: 0.9rem; }
-        .info-box span { color: var(--neon-primary); }
-        .log-box { background: rgba(0,0,0,0.3); border-radius: 8px; padding: 1rem; max-height: 100px; overflow-y: auto; font-size: 0.85rem; font-family: monospace; }
-        .log-entry { margin-bottom: 0.5rem; padding: 0.3rem; border-left: 2px solid var(--neon-secondary); padding-left: 0.5rem; }
+        :root {
+            --neon-primary: #00f3ff;
+            --neon-secondary: #ff00ff;
+            --bg-dark: #050505;
+            --bg-card: rgba(255, 255, 255, 0.05);
+            --border-neon: 1px solid rgba(0, 243, 255, 0.3);
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, sans-serif;
+            background: var(--bg-dark);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .l-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(5, 5, 5, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: var(--border-neon);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header__title {
+            font-size: 1.5rem;
+            color: var(--neon-primary);
+            text-shadow: 0 0 5px var(--neon-primary);
+        }
+
+        .header__back {
+            color: var(--neon-secondary);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border: var(--border-neon);
+            border-radius: 8px;
+            transition: all 0.3s var(--ease-out);
+        }
+
+        .header__back:hover {
+            box-shadow: 0 0 10px var(--neon-secondary);
+        }
+
+        .l-main {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 1rem;
+            padding: 1rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 900px) {
+            .l-main {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .canvas-container {
+            background: var(--bg-card);
+            border: var(--border-neon);
+            border-radius: 12px;
+            padding: 1rem;
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+        }
+
+        #gridCanvas {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .controls {
+            background: var(--bg-card);
+            border: var(--border-neon);
+            border-radius: 12px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .controls__section {
+            margin-bottom: 1.5rem;
+        }
+
+        .controls__title {
+            color: var(--neon-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 5px var(--neon-secondary);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .input-group input {
+            flex: 1;
+            min-width: 60px;
+            padding: 0.8rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: var(--border-neon);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+            caret-color: var(--neon-primary);
+        }
+
+        .input-group input:focus {
+            outline: none;
+            box-shadow: 0 0 10px var(--neon-primary);
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            background: rgba(0, 243, 255, 0.1);
+            border: var(--border-neon);
+            border-radius: 8px;
+            color: var(--neon-primary);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s var(--ease-out);
+        }
+
+        .btn:hover {
+            background: rgba(0, 243, 255, 0.2);
+            box-shadow: 0 0 15px var(--neon-primary);
+        }
+
+        .info-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .info-box p {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .info-box span {
+            color: var(--neon-primary);
+        }
+
+        .log-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            max-height: 100px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+            font-family: monospace;
+        }
+
+        .log-entry {
+            margin-bottom: 0.5rem;
+            padding: 0.3rem;
+            border-left: 2px solid var(--neon-secondary);
+            padding-left: 0.5rem;
+        }
     </style>
 </head>
+
 <body>
     <header class="l-header">
         <h1 class="header__title">2D Binary Indexed Tree</h1>
@@ -79,12 +232,16 @@
         const canvas = document.getElementById('gridCanvas');
         const ctx = canvas.getContext('2d');
         const SIZE = 8;
-        let grid = [], bit = [];
+        let grid = [],
+            bit = [];
         let highlightedCells = new Set();
         class BIT2D {
             constructor(n, m) {
-                this.n = n; this.m = m;
-                this.bit = Array.from({length: n + 1}, () => Array(m + 1).fill(0));
+                this.n = n;
+                this.m = m;
+                this.bit = Array.from({
+                    length: n + 1
+                }, () => Array(m + 1).fill(0));
             }
             update(x, y, delta) {
                 log(`Update (${x},${y}) += ${delta}`);
@@ -113,8 +270,11 @@
             }
         }
         let bit2d;
+
         function init() {
-            grid = Array.from({length: SIZE}, () => Array(SIZE).fill(0));
+            grid = Array.from({
+                length: SIZE
+            }, () => Array(SIZE).fill(0));
             bit2d = new BIT2D(SIZE, SIZE);
             for (let i = 0; i < SIZE; i++) {
                 for (let j = 0; j < SIZE; j++) {
@@ -123,6 +283,7 @@
                 }
             }
         }
+
         function drawGrid() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             const cellSize = Math.min(canvas.width, canvas.height) / SIZE;
@@ -152,6 +313,7 @@
                 }
             }
         }
+
         function log(msg) {
             const logBox = document.getElementById('logBox');
             const entry = document.createElement('div');
@@ -160,6 +322,7 @@
             logBox.insertBefore(entry, logBox.firstChild);
             if (logBox.children.length > 10) logBox.removeChild(logBox.lastChild);
         }
+
         function updateCell() {
             const row = parseInt(document.getElementById('rowInput').value);
             const col = parseInt(document.getElementById('colInput').value);
@@ -172,10 +335,11 @@
                     }
                 }
                 bit2d.update(row, col, val);
-                grid[row-1][col-1] += val;
+                grid[row - 1][col - 1] += val;
                 drawGrid();
             }
         }
+
         function query2D() {
             const row = parseInt(document.getElementById('qRowInput').value);
             const col = parseInt(document.getElementById('qColInput').value);
@@ -191,6 +355,7 @@
                 drawGrid();
             }
         }
+
         function randomize() {
             init();
             highlightedCells.clear();
@@ -202,4 +367,5 @@
         drawGrid();
     </script>
 </body>
+
 </html>

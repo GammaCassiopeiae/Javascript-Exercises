@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Greedy + Backtracking Algorithms</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <a href="index.html" class="back-link">Back to Hub</a>
     <h1>Greedy & Backtracking Algorithms</h1>
@@ -14,54 +16,42 @@
     <div class="algorithm-section">
         <h2>1. Permutations</h2>
         <div class="code-block" id="code-permutations">
-function permute(nums) {
-    let result = [];
-    function backtrack(curr, remaining) {
-        if (remaining.length === 0) result.push([...curr]);
-        for (let i = 0; i < remaining.length; i++) {
-            curr.push(remaining[i]);
-            backtrack(curr, remaining.slice(0, i).concat(remaining.slice(i + 1)));
-            curr.pop();
-        }
-    }
-    backtrack([], nums);
-    return result;
-}</div>
-        <button onclick="runPermutations()">Run Example</button>
-        <div class="result-block" id="result-permutations">Result: ...</div>
-    </div>
+            function permute(nums) {
+            let result = [];
+            function backtrack(curr, remaining) {
+            if (remaining.length === 0) result.push([...curr]);
+            for (let i = 0; i < remaining.length; i++) { curr.push(remaining[i]); backtrack(curr, remaining.slice(0, i).concat(remaining.slice(i + 1))); curr.pop(); } } backtrack([], nums); return result; }</div>
+                <button onclick="runPermutations()">Run Example</button>
+                <div class="result-block" id="result-permutations">Result: ...</div>
+        </div>
 
-    <!-- Subsets -->
-    <div class="algorithm-section">
-        <h2>2. Subsets</h2>
-        <div class="code-block" id="code-subsets">
-function subsets(nums) {
-    let result = [[]];
-    for (let num of nums) {
-        let size = result.length;
-        for (let i = 0; i < size; i++) {
-            result.push([...result[i], num]);
-        }
-    }
-    return result;
-}</div>
-        <button onclick="runSubsets()">Run Example</button>
-        <div class="result-block" id="result-subsets">Result: ...</div>
-    </div>
+        <!-- Subsets -->
+        <div class="algorithm-section">
+            <h2>2. Subsets</h2>
+            <div class="code-block" id="code-subsets">
+                function subsets(nums) {
+                let result = [[]];
+                for (let num of nums) {
+                let size = result.length;
+                for (let i = 0; i < size; i++) { result.push([...result[i], num]); } } return result; }</div>
+                    <button onclick="runSubsets()">Run Example</button>
+                    <div class="result-block" id="result-subsets">Result: ...</div>
+            </div>
 
-    <script>
-        function runPermutations() {
-            let nums = [1, 2, 3];
-            document.getElementById('result-permutations').innerText = "Nums: [1,2,3] | Count: " + permute(nums).length + " | Perms: " + JSON.stringify(permute(nums).slice(0, 3)) + "...";
-        }
+            <script>
+                function runPermutations() {
+                    let nums = [1, 2, 3];
+                    document.getElementById('result-permutations').innerText = "Nums: [1,2,3] | Count: " + permute(nums).length + " | Perms: " + JSON.stringify(permute(nums).slice(0, 3)) + "...";
+                }
 
-        function runSubsets() {
-            let nums = [1, 2, 3];
-            document.getElementById('result-subsets').innerText = "Nums: [1,2,3] | Subsets: " + JSON.stringify(subsets(nums));
-        }
+                function runSubsets() {
+                    let nums = [1, 2, 3];
+                    document.getElementById('result-subsets').innerText = "Nums: [1,2,3] | Subsets: " + JSON.stringify(subsets(nums));
+                }
 
-        eval(document.getElementById('code-permutations').innerText);
-        eval(document.getElementById('code-subsets').innerText);
-    </script>
+                eval(document.getElementById('code-permutations').innerText);
+                eval(document.getElementById('code-subsets').innerText);
+            </script>
 </body>
+
 </html>

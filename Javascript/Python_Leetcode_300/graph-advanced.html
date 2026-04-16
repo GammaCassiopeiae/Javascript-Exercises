@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRAPH ADVANCED // PYTHON_LEET_300</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono&family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="c-header">
+        <div class="c-header__container">
+            <a href="index.html" class="c-header__logo">⚡ PYTHON_LEET_300</a>
+            <a href="index.html" class="c-btn">RETURN_TO_BASE</a>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <section class="c-hero">
+            <h1 class="c-hero__title">GRAPH_ADVANCED</h1>
+            <p class="c-hero__text">Comprehensive collection of graph algorithms and problem solutions.</p>
+        </section>
+
+        <!-- Problem 200: Number of Islands -->
+        <article class="c-section">
+            <h2 class="c-section__title">#200 NUMBER OF ISLANDS</h2>
+            <p class="c-section__desc">Count the number of islands in a 2D binary grid.</p>
+            <div class="c-code">
+<pre>
+def numIslands(grid: list[list[str]]) -> int:
+    if not grid: return 0
+    ROWS, COLS = len(grid), len(grid[0])
+    islands = 0
+    def dfs(r, c):
+        if r < 0 or c < 0 or r == ROWS or c == COLS or grid[r][c] == "0":
+            return
+        grid[r][c] = "0"
+        for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)]:
+            dfs(r + dr, c + dc)
+    for r in range(ROWS):
+        for c in range(COLS):
+            if grid[r][c] == "1":
+                islands += 1
+                dfs(r, c)
+    return islands
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(M * N) Time | O(M * N) Space</p>
+        </article>
+
+        <!-- Problem 695: Max Area of Island -->
+        <article class="c-section">
+            <h2 class="c-section__title">#695 MAX AREA OF ISLAND</h2>
+            <p class="c-section__desc">Find the maximum area of an island in a 2D binary grid.</p>
+            <div class="c-code">
+<pre>
+def maxAreaOfIsland(grid: list[list[int]]) -> int:
+    ROWS, COLS = len(grid), len(grid[0])
+    visit = set()
+    def dfs(r, c):
+        if (r < 0 or r == ROWS or c < 0 or c == COLS or 
+            grid[r][c] == 0 or (r, c) in visit):
+            return 0
+        visit.add((r, c))
+        return 1 + dfs(r+1, c) + dfs(r-1, c) + dfs(r, c+1) + dfs(r, c-1)
+    
+    area = 0
+    for r in range(ROWS):
+        for c in range(COLS):
+            area = max(area, dfs(r, c))
+    return area
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(M * N) Time | O(M * N) Space</p>
+        </article>
+
+        <!-- Problem 133: Clone Graph -->
+        <article class="c-section">
+            <h2 class="c-section__title">#133 CLONE GRAPH</h2>
+            <p class="c-section__desc">Return a deep copy of a connected undirected graph.</p>
+            <div class="c-code">
+<pre>
+def cloneGraph(node: 'Node') -> 'Node':
+    oldToNew = {}
+    def dfs(node):
+        if node in oldToNew: return oldToNew[node]
+        copy = Node(node.val)
+        oldToNew[node] = copy
+        for nei in node.neighbors:
+            copy.neighbors.append(dfs(nei))
+        return copy
+    return dfs(node) if node else None
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(V + E) Time | O(V) Space</p>
+        </article>
+
+        <!-- Problem 417: Pacific Atlantic Water Flow -->
+        <article class="c-section">
+            <h2 class="c-section__title">#417 PACIFIC ATLANTIC WATER FLOW</h2>
+            <p class="c-section__desc">Find cells from which water can flow to both oceans.</p>
+            <div class="c-code">
+<pre>
+def pacificAtlantic(heights: list[list[int]]) -> list[list[int]]:
+    ROWS, COLS = len(heights), len(heights[0])
+    pac, atl = set(), set()
+    def dfs(r, c, visit, prevHeight):
+        if ((r, c) in visit or r < 0 or c < 0 or r == ROWS or c == COLS or 
+            heights[r][c] < prevHeight): return
+        visit.add((r, c))
+        for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)]:
+            dfs(r + dr, c + dc, visit, heights[r][c])
+    for c in range(COLS):
+        dfs(0, c, pac, heights[0][c])
+        dfs(ROWS - 1, c, atl, heights[ROWS - 1][c])
+    for r in range(ROWS):
+        dfs(r, 0, pac, heights[r][0])
+        dfs(r, COLS - 1, atl, heights[r][COLS - 1])
+    return list(pac & atl)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(M * N) Time | O(M * N) Space</p>
+        </article>
+
+        <!-- Problem 130: Surrounded Regions -->
+        <article class="c-section">
+            <h2 class="c-section__title">#130 SURROUNDED REGIONS</h2>
+            <p class="c-section__desc">Capture all regions surrounded by 'X'.</p>
+            <div class="c-code">
+<pre>
+def solve(board: list[list[str]]) -> None:
+    ROWS, COLS = len(board), len(board[0])
+    def capture(r, c):
+        if r < 0 or c < 0 or r == ROWS or c == COLS or board[r][c] != "O": return
+        board[r][c] = "T"
+        for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)]: capture(r + dr, c + dc)
+    for r in range(ROWS):
+        for c in range(COLS):
+            if board[r][c] == "O" and (r in [0, ROWS-1] or c in [0, COLS-1]):
+                capture(r, c)
+    for r in range(ROWS):
+        for c in range(COLS):
+            board[r][c] = "O" if board[r][c] == "T" else "X"
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(M * N) Time | O(M * N) Space</p>
+        </article>
+
+        <!-- Problem 207: Course Schedule -->
+        <article class="c-section">
+            <h2 class="c-section__title">#207 COURSE SCHEDULE</h2>
+            <p class="c-section__desc">Determine if you can finish all courses given prerequisites.</p>
+            <div class="c-code">
+<pre>
+def canFinish(numCourses: int, prerequisites: list[list[int]]) -> bool:
+    adj = {i: [] for i in range(numCourses)}
+    for crs, pre in prerequisites: adj[crs].append(pre)
+    visit = set()
+    def dfs(crs):
+        if crs in visit: return False
+        if not adj[crs]: return True
+        visit.add(crs)
+        for pre in adj[crs]:
+            if not dfs(pre): return False
+        visit.remove(crs); adj[crs] = []
+        return True
+    for c in range(numCourses):
+        if not dfs(c): return False
+    return True
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(V + E) Time | O(V + E) Space</p>
+        </article>
+
+        <!-- Problem 210: Course Schedule II -->
+        <article class="c-section">
+            <h2 class="c-section__title">#210 COURSE SCHEDULE II</h2>
+            <p class="c-section__desc">Find the order of courses to take given prerequisites.</p>
+            <div class="c-code">
+<pre>
+def findOrder(numCourses: int, prerequisites: list[list[int]]) -> list[int]:
+    adj = {i: [] for i in range(numCourses)}
+    for crs, pre in prerequisites: adj[crs].append(pre)
+    output, visit, cycle = [], set(), set()
+    def dfs(crs):
+        if crs in cycle: return False
+        if crs in visit: return True
+        cycle.add(crs)
+        for pre in adj[crs]:
+            if not dfs(pre): return False
+        cycle.remove(crs); visit.add(crs)
+        output.append(crs)
+        return True
+    for c in range(numCourses):
+        if not dfs(c): return []
+    return output
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(V + E) Time | O(V + E) Space</p>
+        </article>
+
+        <!-- Problem 261: Graph Valid Tree -->
+        <article class="c-section">
+            <h2 class="c-section__title">#261 GRAPH VALID TREE</h2>
+            <p class="c-section__desc">Check if a graph is a valid tree (no cycles, fully connected).</p>
+            <div class="c-code">
+<pre>
+def validTree(n, edges):
+    if not n: return True
+    adj = {i: [] for i in range(n)}
+    for u, v in edges:
+        adj[u].append(v); adj[v].append(u)
+    visit = set()
+    def dfs(i, prev):
+        if i in visit: return False
+        visit.add(i)
+        for nei in adj[i]:
+            if nei == prev: continue
+            if not dfs(nei, i): return False
+        return True
+    return dfs(0, -1) and n == len(visit)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(V + E) Time | O(V + E) Space</p>
+        </article>
+
+        <!-- Problem 323: Number of Connected Components -->
+        <article class="c-section">
+            <h2 class="c-section__title">#323 CONNECTED COMPONENTS</h2>
+            <p class="c-section__desc">Find the number of connected components in an undirected graph.</p>
+            <div class="c-code">
+<pre>
+def countComponents(n, edges):
+    par = [i for i in range(n)]; rank = [1] * n
+    def find(n1):
+        res = n1
+        while res != par[res]:
+            par[res] = par[par[res]]; res = par[res]
+        return res
+    def union(n1, n2):
+        p1, p2 = find(n1), find(n2)
+        if p1 == p2: return 0
+        if rank[p1] > rank[p2]: par[p2] = p1; rank[p1] += rank[p2]
+        else: par[p1] = p2; rank[p2] += rank[p1]
+        return 1
+    res = n
+    for n1, n2 in edges: res -= union(n1, n2)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(E * α(V)) Time | O(V) Space</p>
+        </article>
+
+        <!-- Problem 684: Redundant Connection -->
+        <article class="c-section">
+            <h2 class="c-section__title">#684 REDUNDANT CONNECTION</h2>
+            <p class="c-section__desc">Find an edge that can be removed so that the graph is a tree.</p>
+            <div class="c-code">
+<pre>
+def findRedundantConnection(edges: list[list[int]]) -> list[int]:
+    par = [i for i in range(len(edges) + 1)]
+    def find(n):
+        if n == par[n]: return n
+        par[n] = find(par[n]); return par[n]
+    for u, v in edges:
+        p1, p2 = find(u), find(v)
+        if p1 == p2: return [u, v]
+        par[p1] = p2
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(V) Time | O(V) Space</p>
+        </article>
+
+        <!-- Problem 994: Rotting Oranges -->
+        <article class="c-section">
+            <h2 class="c-section__title">#994 ROTTING ORANGES</h2>
+            <p class="c-section__desc">Find the minimum time until no fresh orange remains.</p>
+            <div class="c-code">
+<pre>
+from collections import deque
+def orangesRotting(grid: list[list[int]]) -> int:
+    q = deque(); time, fresh = 0, 0
+    ROWS, COLS = len(grid), len(grid[0])
+    for r in range(ROWS):
+        for c in range(COLS):
+            if grid[r][c] == 1: fresh += 1
+            if grid[r][c] == 2: q.append((r, c))
+    directions = [[1,0], [-1,0], [0,1], [0,-1]]
+    while q and fresh > 0:
+        for i in range(len(q)):
+            r, c = q.popleft()
+            for dr, dc in directions:
+                row, col = r + dr, c + dc
+                if (row in range(ROWS) and col in range(COLS) and 
+                    grid[row][col] == 1):
+                    grid[row][col] = 2; q.append((row, col)); fresh -= 1
+        time += 1
+    return time if fresh == 0 else -1
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(M * N) Time | O(M * N) Space</p>
+        </article>
+
+        <!-- Problem 286: Walls and Gates -->
+        <article class="c-section">
+            <h2 class="c-section__title">#286 WALLS AND GATES</h2>
+            <p class="c-section__desc">Fill each empty room with the distance to its nearest gate.</p>
+            <div class="c-code">
+<pre>
+def wallsAndGates(rooms: list[list[int]]) -> None:
+    ROWS, COLS = len(rooms), len(rooms[0])
+    visit = set(); q = deque()
+    def addRoom(r, c):
+        if (r < 0 or r == ROWS or c < 0 or c == COLS or 
+            (r, c) in visit or rooms[r][c] == -1): return
+        visit.add((r, c)); q.append((r, c))
+    for r in range(ROWS):
+        for c in range(COLS):
+            if rooms[r][c] == 0: q.append((r, c)); visit.add((r, c))
+    dist = 0
+    while q:
+        for i in range(len(q)):
+            r, c = q.popleft(); rooms[r][c] = dist
+            addRoom(r + 1, c); addRoom(r - 1, c)
+            addRoom(r, c + 1); addRoom(r, c - 1)
+        dist += 1
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(M * N) Time | O(M * N) Space</p>
+        </article>
+
+        <!-- Problem 953: Verifying an Alien Dictionary -->
+        <article class="c-section">
+            <h2 class="c-section__title">#953 VERIFYING ALIEN DICTIONARY</h2>
+            <p class="c-section__desc">Verify if words are sorted lexicographically in an alien language.</p>
+            <div class="c-code">
+<pre>
+def isAlienSorted(words: list[str], order: str) -> bool:
+    orderInd = {c: i for i, c in enumerate(order)}
+    for i in range(len(words) - 1):
+        w1, w2 = words[i], words[i + 1]
+        for j in range(len(w1)):
+            if j == len(w2): return False
+            if w1[j] != w2[j]:
+                if orderInd[w1[j]] > orderInd[w2[j]]: return False
+                break
+    return True
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(Total chars) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 1466: Reorder Routes -->
+        <article class="c-section">
+            <h2 class="c-section__title">#1466 REORDER ROUTES</h2>
+            <p class="c-section__desc">Reorder routes so that all paths lead to city zero.</p>
+            <div class="c-code">
+<pre>
+def minReorder(n: int, connections: list[list[int]]) -> int:
+    edges = {(u, v) for u, v in connections}
+    neighbors = {i: [] for i in range(n)}
+    for u, v in connections:
+        neighbors[u].append(v); neighbors[v].append(u)
+    visit = {0}; changes = 0
+    def dfs(city):
+        nonlocal changes
+        for neighbor in neighbors[city]:
+            if neighbor in visit: continue
+            if (city, neighbor) in edges: changes += 1
+            visit.add(neighbor); dfs(neighbor)
+    dfs(0); return changes
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(V + E) Time | O(V + E) Space</p>
+        </article>
+
+        <!-- Problem 802: Find Eventual Safe States -->
+        <article class="c-section">
+            <h2 class="c-section__title">#802 EVENTUAL SAFE STATES</h2>
+            <p class="c-section__desc">Find all nodes that will eventually lead to a terminal node.</p>
+            <div class="c-code">
+<pre>
+def eventualSafeNodes(graph: list[list[int]]) -> list[int]:
+    n = len(graph); safe = {}
+    def dfs(i):
+        if i in safe: return safe[i]
+        safe[i] = False
+        for nei in graph[i]:
+            if not dfs(nei): return False
+        safe[i] = True
+        return True
+    res = []
+    for i in range(n):
+        if dfs(i): res.append(i)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(V + E) Time | O(V) Space</p>
+        </article>
+
+        <!-- Problem 743: Network Delay Time -->
+        <article class="c-section">
+            <h2 class="c-section__title">#743 NETWORK DELAY TIME</h2>
+            <p class="c-section__desc">Find the minimum time for all nodes to receive a signal.</p>
+            <div class="c-code">
+<pre>
+import heapq
+def networkDelayTime(times, n, k):
+    adj = collections.defaultdict(list)
+    for u, v, w in times: adj[u].append((v, w))
+    min_heap = [(0, k)]; visit = set(); t = 0
+    while min_heap:
+        w1, n1 = heapq.heappop(min_heap)
+        if n1 in visit: continue
+        visit.add(n1); t = max(t, w1)
+        for n2, w2 in adj[n1]:
+            if n2 not in visit: heapq.heappush(min_heap, (w1 + w2, n2))
+    return t if len(visit) == n else -1
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(E log V) Time | O(V + E) Space</p>
+        </article>
+
+        <!-- Problem 1514: Path with Maximum Probability -->
+        <article class="c-section">
+            <h2 class="c-section__title">#1514 MAX PROBABILITY PATH</h2>
+            <p class="c-section__desc">Find the path with the maximum probability of success.</p>
+            <div class="c-code">
+<pre>
+def maxProbability(n, edges, succProb, start, end):
+    adj = collections.defaultdict(list)
+    for i, (u, v) in enumerate(edges):
+        adj[u].append((v, succProb[i])); adj[v].append((u, succProb[i]))
+    max_heap = [(-1, start)]; visit = set()
+    while max_heap:
+        prob, cur = heapq.heappop(max_heap)
+        if cur == end: return -prob
+        if cur in visit: continue
+        visit.add(cur)
+        for nei, p in adj[cur]:
+            if nei not in visit: heapq.heappush(max_heap, (prob * p, nei))
+    return 0
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(E log V) Time | O(V + E) Space</p>
+        </article>
+
+        <!-- Problem 787: Cheapest Flights Within K Stops -->
+        <article class="c-section">
+            <h2 class="c-section__title">#787 CHEAPEST FLIGHTS K STOPS</h2>
+            <p class="c-section__desc">Find the cheapest flight from src to dst with at most k stops.</p>
+            <div class="c-code">
+<pre>
+def findCheapestPrice(n, flights, src, dst, k):
+    prices = [float("inf")] * n; prices[src] = 0
+    for i in range(k + 1):
+        tmpPrices = prices[:]
+        for s, d, p in flights:
+            if prices[s] == float("inf"): continue
+            if prices[s] + p < tmpPrices[d]: tmpPrices[d] = prices[s] + p
+        prices = tmpPrices
+    return prices[dst] if prices[dst] != float("inf") else -1
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(K * E) Time | O(V) Space</p>
+        </article>
+
+        <!-- Problem 269: Alien Dictionary -->
+        <article class="c-section">
+            <h2 class="c-section__title">#269 ALIEN DICTIONARY</h2>
+            <p class="c-section__desc">Derive alphabet order from sorted alien words.</p>
+            <div class="c-code">
+<pre>
+def alienOrder(words):
+    adj = {c: set() for w in words for c in w}
+    for i in range(len(words) - 1):
+        w1, w2 = words[i], words[i + 1]
+        minLen = min(len(w1), len(w2))
+        if len(w1) > len(w2) and w1[:minLen] == w2[:minLen]: return ""
+        for j in range(minLen):
+            if w1[j] != w2[j]: adj[w1[j]].add(w2[j]); break
+    visit = {}; res = []
+    def dfs(c):
+        if c in visit: return visit[c]
+        visit[c] = True
+        for nei in adj[c]:
+            if dfs(nei): return True
+        visit[c] = False; res.append(c)
+    for c in adj:
+        if dfs(c): return ""
+    res.reverse(); return "".join(res)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(Total Chars) Time | O(K) Space</p>
+        </article>
+
+        <!-- Problem 778: Swim in Rising Water -->
+        <article class="c-section">
+            <h2 class="c-section__title">#778 SWIM IN RISING WATER</h2>
+            <p class="c-section__desc">Find the minimum time to reach the bottom-right cell.</p>
+            <div class="c-code">
+<pre>
+def swimInWater(grid):
+    n = len(grid); visit = {(0, 0)}; minH = [(grid[0][0], 0, 0)]
+    while minH:
+        t, r, c = heapq.heappop(minH)
+        if r == n - 1 and c == n - 1: return t
+        for dr, dc in [(0,1),(0,-1),(1,0),(-1,0)]:
+            nr, nc = r + dr, c + dc
+            if 0 <= nr < n and 0 <= nc < n and (nr, nc) not in visit:
+                visit.add((nr, nc)); heapq.heappush(minH, (max(t, grid[nr][nc]), nr, nc))
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(N² log N) Time | O(N²) Space</p>
+        </article>
+
+        <!-- Problem 332: Reconstruct Itinerary -->
+        <article class="c-section">
+            <h2 class="c-section__title">#332 RECONSTRUCT ITINERARY</h2>
+            <p class="c-section__desc">Reconstruct the itinerary in lexical order starting from "JFK".</p>
+            <div class="c-code">
+<pre>
+def findItinerary(tickets):
+    adj = collections.defaultdict(list)
+    for src, dst in sorted(tickets, reverse=True): adj[src].append(dst)
+    res = []
+    def dfs(src):
+        while adj[src]: dfs(adj[src].pop())
+        res.append(src)
+    dfs("JFK"); return res[::-1]
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(E log E) Time | O(E) Space</p>
+        </article>
+
+        <!-- Problem 1584: Min Cost to Connect All Points -->
+        <article class="c-section">
+            <h2 class="c-section__title">#1584 MIN COST CONNECT ALL POINTS</h2>
+            <p class="c-section__desc">Find the minimum cost to connect all points (MST).</p>
+            <div class="c-code">
+<pre>
+def minCostConnectPoints(points):
+    n = len(points); adj = {i: [] for i in range(n)}
+    for i in range(n):
+        x1, y1 = points[i]
+        for j in range(i + 1, n):
+            x2, y2 = points[j]
+            dist = abs(x1-x2) + abs(y1-y2)
+            adj[i].append([dist, j]); adj[j].append([dist, i])
+    res = 0; visit = set(); minH = [[0, 0]]
+    while len(visit) < n:
+        cost, i = heapq.heappop(minH)
+        if i in visit: continue
+        res += cost; visit.add(i)
+        for neiCost, nei in adj[i]:
+            if nei not in visit: heapq.heappush(minH, [neiCost, nei])
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(N² log N) Time | O(N²) Space</p>
+        </article>
+
+        <!-- Dijkstra's Algorithm -->
+        <article class="c-section">
+            <h2 class="c-section__title"># DIJKSTRA'S ALGORITHM</h2>
+            <p class="c-section__desc">Standard shortest path for non-negative weights.</p>
+            <div class="c-code">
+<pre>
+def dijkstra(graph, start):
+    dist = {node: float('inf') for node in graph}; dist[start] = 0
+    pq = [(0, start)]
+    while pq:
+        d, u = heapq.heappop(pq)
+        if d > dist[u]: continue
+        for v, w in graph[u].items():
+            if dist[u] + w < dist[v]:
+                dist[v] = dist[u] + w; heapq.heappush(pq, (dist[v], v))
+    return dist
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(E log V) Time | O(V) Space</p>
+        </article>
+
+        <!-- Bellman-Ford Algorithm -->
+        <article class="c-section">
+            <h2 class="c-section__title"># BELLMAN-FORD ALGORITHM</h2>
+            <p class="c-section__desc">Shortest path with possible negative edge weights.</p>
+            <div class="c-code">
+<pre>
+def bellman_ford(V, edges, start):
+    dist = [float('inf')] * V; dist[start] = 0
+    for _ in range(V - 1):
+        for u, v, w in edges:
+            if dist[u] != float('inf') and dist[u] + w < dist[v]: dist[v] = dist[u] + w
+    return dist
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(V * E) Time | O(V) Space</p>
+        </article>
+
+        <!-- Floyd-Warshall Algorithm -->
+        <article class="c-section">
+            <h2 class="c-section__title"># FLOYD-WARSHALL ALGORITHM</h2>
+            <p class="c-section__desc">All-pairs shortest path algorithm.</p>
+            <div class="c-code">
+<pre>
+def floyd_warshall(graph, V):
+    dist = [row[:] for row in graph]
+    for k in range(V):
+        for i in range(V):
+            for j in range(V):
+                dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])
+    return dist
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(V³) Time | O(V²) Space</p>
+        </article>
+
+        <!-- Kruskal's Algorithm -->
+        <article class="c-section">
+            <h2 class="c-section__title"># KRUSKAL'S ALGORITHM</h2>
+            <p class="c-section__desc">MST using Union-Find.</p>
+            <div class="c-code">
+<pre>
+def kruskal(n, edges):
+    edges.sort(key=lambda x: x[2])
+    par = list(range(n))
+    def find(i):
+        if par[i] == i: return i
+        par[i] = find(par[i]); return par[i]
+    mst = []; cost = 0
+    for u, v, w in edges:
+        root_u, root_v = find(u), find(v)
+        if root_u != root_v:
+            par[root_u] = root_v; mst.append((u, v, w)); cost += w
+    return mst, cost
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(E log E) Time | O(V) Space</p>
+        </article>
+
+        <!-- Problem 127: Word Ladder -->
+        <article class="c-section">
+            <h2 class="c-section__title">#127 WORD LADDER</h2>
+            <p class="c-section__desc">Shortest transformation sequence from beginWord to endWord.</p>
+            <div class="c-code">
+<pre>
+def ladderLength(beginWord, endWord, wordList):
+    if endWord not in wordList: return 0
+    adj = collections.defaultdict(list); wordList.append(beginWord)
+    for word in wordList:
+        for j in range(len(word)):
+            pattern = word[:j] + "*" + word[j+1:]; adj[pattern].append(word)
+    visit = {beginWord}; q = deque([beginWord]); res = 1
+    while q:
+        for i in range(len(q)):
+            word = q.popleft()
+            if word == endWord: return res
+            for j in range(len(word)):
+                pattern = word[:j] + "*" + word[j+1:]
+                for nei in adj[pattern]:
+                    if nei not in visit: visit.add(nei); q.append(nei)
+        res += 1
+    return 0
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(M² * N) Time | O(M² * N) Space</p>
+        </article>
+
+        <!-- Problem 785: Is Graph Bipartite? -->
+        <article class="c-section">
+            <h2 class="c-section__title">#785 IS GRAPH BIPARTITE?</h2>
+            <p class="c-section__desc">Check if nodes can be divided into two independent sets.</p>
+            <div class="c-code">
+<pre>
+def isBipartite(graph: list[list[int]]) -> bool:
+    color = {} # node: 0/1
+    for i in range(len(graph)):
+        if i not in color:
+            q = deque([i]); color[i] = 0
+            while q:
+                node = q.popleft()
+                for nei in graph[node]:
+                    if nei not in color:
+                        color[nei] = 1 - color[node]; q.append(nei)
+                    elif color[nei] == color[node]: return False
+    return True
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(V + E) Time | O(V) Space</p>
+        </article>
+
+        <!-- Problem 310: Minimum Height Trees -->
+        <article class="c-section">
+            <h2 class="c-section__title">#310 MINIMUM HEIGHT TREES</h2>
+            <p class="c-section__desc">Find all MHTs root nodes.</p>
+            <div class="c-code">
+<pre>
+def findMinHeightTrees(n, edges):
+    if n == 1: return [0]
+    adj = collections.defaultdict(list)
+    for u, v in edges: adj[u].append(v); adj[v].append(u)
+    leaves = [i for i in range(n) if len(adj[i]) == 1]
+    while n > 2:
+        n -= len(leaves); new_leaves = []
+        for leaf in leaves:
+            nei = adj[leaf].pop()
+            adj[nei].remove(leaf)
+            if len(adj[nei]) == 1: new_leaves.append(nei)
+        leaves = new_leaves
+    return leaves
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(V) Time | O(V) Space</p>
+        </article>
+
+        <!-- Problem 1091: Shortest Path in Binary Matrix -->
+        <article class="c-section">
+            <h2 class="c-section__title">#1091 SHORTEST PATH IN GRID</h2>
+            <p class="c-section__desc">Find the shortest clear path in a binary matrix.</p>
+            <div class="c-code">
+<pre>
+def shortestPathBinaryMatrix(grid):
+    n = len(grid)
+    if grid[0][0] or grid[n-1][n-1]: return -1
+    q = deque([(0, 0, 1)]); visit = {(0, 0)}
+    while q:
+        r, c, d = q.popleft()
+        if r == n - 1 and c == n - 1: return d
+        for dr in [-1, 0, 1]:
+            for dc in [-1, 0, 1]:
+                nr, nc = r + dr, c + dc
+                if 0 <= nr < n and 0 <= nc < n and not grid[nr][nc] and (nr, nc) not in visit:
+                    visit.add((nr, nc)); q.append((nr, nc, d + 1))
+    return -1
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(N²) Time | O(N²) Space</p>
+        </article>
+
+        <!-- Problem 752: Open the Lock -->
+        <article class="c-section">
+            <h2 class="c-section__title">#752 OPEN THE LOCK</h2>
+            <p class="c-section__desc">Find the minimum turns to open a combination lock.</p>
+            <div class="c-code">
+<pre>
+def openLock(deadends, target):
+    dead = set(deadends); q = deque([("0000", 0)])
+    if "0000" in dead: return -1
+    visit = {"0000"}
+    while q:
+        lock, turns = q.popleft()
+        if lock == target: return turns
+        for i in range(4):
+            for delta in [-1, 1]:
+                digit = (int(lock[i]) + delta) % 10
+                newLock = lock[:i] + str(digit) + lock[i+1:]
+                if newLock not in visit and newLock not in dead:
+                    visit.add(newLock); q.append((newLock, turns + 1))
+    return -1
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(10^4 * 4 * 2) Time | O(10^4) Space</p>
+        </article>
+
+        <!-- Problem 815: Bus Routes -->
+        <article class="c-section">
+            <h2 class="c-section__title">#815 BUS ROUTES</h2>
+            <p class="c-section__desc">Minimum number of buses to take from source to target.</p>
+            <div class="c-code">
+<pre>
+def numBusesToDestination(routes, source, target):
+    if source == target: return 0
+    stop_to_routes = collections.defaultdict(list)
+    for i, route in enumerate(routes):
+        for stop in route: stop_to_routes[stop].append(i)
+    q = deque([(source, 0)]); visit_stops = {source}; visit_routes = set()
+    while q:
+        stop, count = q.popleft()
+        if stop == target: return count
+        for route_idx in stop_to_routes[stop]:
+            if route_idx not in visit_routes:
+                visit_routes.add(route_idx)
+                for next_stop in routes[route_idx]:
+                    if next_stop not in visit_stops:
+                        visit_stops.add(next_stop); q.append((next_stop, count + 1))
+    return -1
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(Total stops) Time | O(Total stops) Space</p>
+        </article>
+
+        <!-- Problem 773: Sliding Puzzle -->
+        <article class="c-section">
+            <h2 class="c-section__title">#773 SLIDING PUZZLE</h2>
+            <p class="c-section__desc">Minimum moves to solve the 2x3 sliding puzzle.</p>
+            <div class="c-code">
+<pre>
+def slidingPuzzle(board):
+    target = "123450"; start = "".join(str(c) for r in board for c in r)
+    adj = {0:[1,3], 1:[0,2,4], 2:[1,5], 3:[0,4], 4:[1,3,5], 5:[2,4]}
+    q = deque([(start, 0)]); visit = {start}
+    while q:
+        s, d = q.popleft()
+        if s == target: return d
+        i = s.index('0')
+        for nei in adj[i]:
+            lst = list(s); lst[i], lst[nei] = lst[nei], lst[i]
+            ns = "".join(lst)
+            if ns not in visit: visit.add(ns); q.append((ns, d + 1))
+    return -1
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(6!) Time | O(6!) Space</p>
+        </article>
+
+        <!-- Problem 1162: As Far from Land as Possible -->
+        <article class="c-section">
+            <h2 class="c-section__title">#1162 AS FAR FROM LAND</h2>
+            <p class="c-section__desc">Find a water cell such that its distance to the nearest land is maximized.</p>
+            <div class="c-code">
+<pre>
+def maxDistance(grid):
+    n = len(grid); q = deque(); res = -1
+    for r in range(n):
+        for c in range(n):
+            if grid[r][c] == 1: q.append((r, c))
+    if not q or len(q) == n * n: return -1
+    while q:
+        for _ in range(len(q)):
+            r, c = q.popleft()
+            for dr, dc in [(0,1),(0,-1),(1,0),(-1,0)]:
+                nr, nc = r + dr, c + dc
+                if 0 <= nr < n and 0 <= nc < n and grid[nr][nc] == 0:
+                    grid[nr][nc] = 1; q.append((nr, nc))
+        res += 1
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(N²) Time | O(N²) Space</p>
+        </article>
+
+        <!-- Problem 797: All Paths Source to Target -->
+        <article class="c-section">
+            <h2 class="c-section__title">#797 ALL PATHS SOURCE TO TARGET</h2>
+            <p class="c-section__desc">Find all possible paths from node 0 to node n-1.</p>
+            <div class="c-code">
+<pre>
+def allPathsSourceTarget(graph):
+    target = len(graph) - 1; res = []
+    def dfs(node, path):
+        if node == target: res.append(list(path)); return
+        for nei in graph[node]:
+            path.append(nei); dfs(nei, path); path.pop()
+    dfs(0, [0]); return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(2^V * V) Time | O(V) Space</p>
+        </article>
+
+        <!-- Problem 841: Keys and Rooms -->
+        <article class="c-section">
+            <h2 class="c-section__title">#841 KEYS AND ROOMS</h2>
+            <p class="c-section__desc">Check if you can visit all rooms starting from room 0.</p>
+            <div class="c-code">
+<pre>
+def canVisitAllRooms(rooms):
+    visit = {0}; q = deque([0])
+    while q:
+        i = q.popleft()
+        for key in rooms[i]:
+            if key not in visit: visit.add(key); q.append(key)
+    return len(visit) == len(rooms)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(V + E) Time | O(V) Space</p>
+        </article>
+
+        <!-- Problem 1020: Number of Enclaves -->
+        <article class="c-section">
+            <h2 class="c-section__title">#1020 NUMBER OF ENCLAVES</h2>
+            <p class="c-section__desc">Count land cells that cannot reach the boundary.</p>
+            <div class="c-code">
+<pre>
+def numEnclaves(grid):
+    ROWS, COLS = len(grid), len(grid[0])
+    def dfs(r, c):
+        if r < 0 or c < 0 or r == ROWS or c == COLS or grid[r][c] == 0: return
+        grid[r][c] = 0; [dfs(r+dr, c+dc) for dr, dc in [(0,1),(0,-1),(1,0),(-1,0)]]
+    for r in range(ROWS):
+        for c in [0, COLS-1]: dfs(r, c)
+    for c in range(COLS):
+        for r in [0, ROWS-1]: dfs(r, c)
+    return sum(sum(row) for row in grid)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(M * N) Time | O(M * N) Space</p>
+        </article>
+
+        <!-- Problem 886: Possible Bipartition -->
+        <article class="c-section">
+            <h2 class="c-section__title">#886 POSSIBLE BIPARTITION</h2>
+            <p class="c-section__desc">Check if people can be split into two groups with no dislikes.</p>
+            <div class="c-code">
+<pre>
+def possibleBipartition(n, dislikes):
+    adj = collections.defaultdict(list)
+    for u, v in dislikes: adj[u].append(v); adj[v].append(u)
+    color = {}
+    def dfs(i, c):
+        if i in color: return color[i] == c
+        color[i] = c
+        return all(dfs(nei, 1 - c) for nei in adj[i])
+    return all(dfs(i, 0) for i in range(1, n + 1) if i not in color)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(V + E) Time | O(V) Space</p>
+        </article>
+
+        <!-- Problem 399: Evaluate Division -->
+        <article class="c-section">
+            <h2 class="c-section__title">#399 EVALUATE DIVISION</h2>
+            <p class="c-section__desc">Evaluate path values in a directed weighted graph.</p>
+            <div class="c-code">
+<pre>
+def calcEquation(equations, values, queries):
+    adj = collections.defaultdict(dict)
+    for (a, b), val in zip(equations, values):
+        adj[a][b] = val; adj[b][a] = 1 / val
+    def bfs(src, dst):
+        if src not in adj or dst not in adj: return -1.0
+        q, visit = deque([(src, 1.0)]), {src}
+        while q:
+            n, v = q.popleft()
+            if n == dst: return v
+            for nei, val in adj[n].items():
+                if nei not in visit: visit.add(nei); q.append((nei, v * val))
+        return -1.0
+    return [bfs(q[0], q[1]) for q in queries]
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(Q * (V + E)) Time | O(V + E) Space</p>
+        </article>
+
+        <!-- Problem 329: Longest Increasing Path -->
+        <article class="c-section">
+            <h2 class="c-section__title">#329 LONGEST INCREASING PATH</h2>
+            <p class="c-section__desc">Find the longest increasing path in a matrix.</p>
+            <div class="c-code">
+<pre>
+def longestIncreasingPath(matrix):
+    ROWS, COLS = len(matrix), len(matrix[0]); dp = {}
+    def dfs(r, c, prev):
+        if r < 0 or r == ROWS or c < 0 or c == COLS or matrix[r][c] <= prev: return 0
+        if (r, c) in dp: return dp[(r, c)]
+        res = 1 + max(dfs(r+1,c,matrix[r][c]), dfs(r-1,c,matrix[r][c]),
+                      dfs(r,c+1,matrix[r][c]), dfs(r,c-1,matrix[r][c]))
+        dp[(r, c)] = res; return res
+    for r in range(ROWS):
+        for c in range(COLS): dfs(r, c, -1)
+    return max(dp.values())
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(M * N) Time | O(M * N) Space</p>
+        </article>
+
+        <!-- Problem 2492: Minimum Score of a Path -->
+        <article class="c-section">
+            <h2 class="c-section__title">#2492 MIN SCORE PATH</h2>
+            <p class="c-section__desc">Find the minimum edge weight in any path between node 1 and n.</p>
+            <div class="c-code">
+<pre>
+def minScore(n, roads):
+    adj = collections.defaultdict(list)
+    for u, v, w in roads: adj[u].append((v, w)); adj[v].append((u, w))
+    res = float("inf"); q = deque([1]); visit = {1}
+    while q:
+        node = q.popleft()
+        for nei, w in adj[node]:
+            res = min(res, w)
+            if nei not in visit: visit.add(nei); q.append(nei)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(V + E) Time | O(V) Space</p>
+        </article>
+
+        <!-- Problem 2359: Find Closest Node to Two Nodes -->
+        <article class="c-section">
+            <h2 class="c-section__title">#2359 CLOSEST NODE TO TWO</h2>
+            <p class="c-section__desc">Find a node with minimum distance to both given nodes.</p>
+            <div class="c-code">
+<pre>
+def closestMeetingNode(edges, node1, node2):
+    def getDist(node):
+        dist = {node: 0}; curr = node
+        while edges[curr] != -1 and edges[curr] not in dist:
+            dist[edges[curr]] = dist[curr] + 1; curr = edges[curr]
+        return dist
+    d1, d2 = getDist(node1), getDist(node2)
+    res, min_dist = -1, float("inf")
+    for i in range(len(edges)):
+        if i in d1 and i in d2:
+            d = max(d1[i], d2[i])
+            if d < min_dist: min_dist, res = d, i
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(V) Time | O(V) Space</p>
+        </article>
+
+        <!-- Problem 934: Shortest Bridge -->
+        <article class="c-section">
+            <h2 class="c-section__title">#934 SHORTEST BRIDGE</h2>
+            <p class="c-section__desc">Find the minimum number of zeros to flip to connect two islands.</p>
+            <div class="c-code">
+<pre>
+def shortestBridge(grid):
+    n = len(grid); visit = set()
+    def dfs(r, c):
+        if r < 0 or c < 0 or r == n or c == n or grid[r][c] == 0 or (r, c) in visit: return
+        visit.add((r, c)); [dfs(r+dr, c+dc) for dr, dc in [(0,1),(0,-1),(1,0),(-1,0)]]
+    def find_first():
+        for r in range(n):
+            for c in range(n):
+                if grid[r][c]: return r, c
+    dfs(*find_first()); q = deque(list(visit)); d = 0
+    while q:
+        for _ in range(len(q)):
+            r, c = q.popleft()
+            for dr, dc in [(0,1),(0,-1),(1,0),(-1,0)]:
+                nr, nc = r + dr, c + dc
+                if 0 <= nr < n and 0 <= nc < n and (nr, nc) not in visit:
+                    if grid[nr][nc]: return d
+                    visit.add((nr, nc)); q.append((nr, nc))
+        d += 1
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(N²) Time | O(N²) Space</p>
+        </article>
+
+        <!-- Problem 909: Snakes and Ladders -->
+        <article class="c-section">
+            <h2 class="c-section__title">#909 SNAKES AND LADDERS</h2>
+            <p class="c-section__desc">Minimum moves to reach the last square on a board.</p>
+            <div class="c-code">
+<pre>
+def snakesAndLadders(board):
+    n = len(board); board.reverse()
+    def getPos(pos):
+        r = (pos - 1) // n; c = (pos - 1) % n
+        if r % 2: c = n - 1 - c
+        return r, c
+    q = deque([(1, 0)]); visit = {1}
+    while q:
+        curr, moves = q.popleft()
+        for i in range(1, 7):
+            nxt = curr + i
+            r, c = getPos(nxt)
+            if board[r][c] != -1: nxt = board[r][c]
+            if nxt == n * n: return moves + 1
+            if nxt not in visit: visit.add(nxt); q.append((nxt, moves + 1))
+    return -1
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(N²) Time | O(N²) Space</p>
+        </article>
+
+        <!-- Prim's Algorithm -->
+        <article class="c-section">
+            <h2 class="c-section__title"># PRIM'S ALGORITHM</h2>
+            <p class="c-section__desc">MST algorithm using a priority queue.</p>
+            <div class="c-code">
+<pre>
+def prim(n, adj):
+    visit = set(); minH = [[0, 0]]; res = 0
+    while len(visit) < n:
+        cost, i = heapq.heappop(minH)
+        if i in visit: continue
+        res += cost; visit.add(i)
+        for nei, neiCost in adj[i]:
+            if nei not in visit: heapq.heappush(minH, [neiCost, nei])
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(E log V) Time | O(V + E) Space</p>
+        </article>
+
+        <!-- Problem 685: Redundant Connection II -->
+        <article class="c-section">
+            <h2 class="c-section__title">#685 REDUNDANT CONNECTION II</h2>
+            <p class="c-section__desc">Find an edge that can be removed to make a directed graph a rooted tree.</p>
+            <div class="c-code">
+<pre>
+def findRedundantDirectedConnection(edges):
+    n = len(edges); parent = [0] * (n + 1); cand1 = cand2 = None
+    for u, v in edges:
+        if parent[v]: cand1, cand2 = [parent[v], v], [u, v]; break
+        parent[v] = u
+    def find(i, p):
+        if p[i] == i: return i
+        p[i] = find(p[i], p); return p[i]
+    p = list(range(n + 1))
+    for u, v in edges:
+        if [u, v] == cand2: continue
+        root_u, root_v = find(u, p), find(v, p)
+        if root_u == root_v: return cand1 if cand1 else [u, v]
+        p[root_u] = root_v
+    return cand2
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(N * α(N)) Time | O(N) Space</p>
+        </article>
+
+    </main>
+
+    <footer class="c-footer">
+        <p class="c-footer__text">TERMINAL_REF: PL-300 // GRAPH_ADVANCED // SECURE_UPLINK</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

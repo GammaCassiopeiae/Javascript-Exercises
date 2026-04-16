@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LINKED LISTS // JAVA_LEET_300</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono&family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="c-header">
+        <div class="c-header__container">
+            <a href="index.html" class="c-header__logo">⚡ JAVA_LEET_300</a>
+            <a href="index.html" class="c-btn">RETURN_TO_BASE</a>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <section class="c-hero">
+            <h1 class="c-hero__title">LINKED_LISTS</h1>
+            <p class="c-hero__text">Master pointer manipulation and linear data structures.</p>
+        </section>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#206 REVERSE LINKED LIST</h2>
+            <p class="c-section__desc">Reverse a singly linked list.</p>
+            <div class="c-code">
+<pre>
+public ListNode reverseList(ListNode head) {
+    ListNode prev = null, curr = head;
+    while (curr != null) {
+        ListNode nxt = curr.next;
+        curr.next = prev;
+        prev = curr;
+        curr = nxt;
+    }
+    return prev;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#21 MERGE TWO SORTED LISTS</h2>
+            <p class="c-section__desc">Merge two sorted linked lists into one sorted list.</p>
+            <div class="c-code">
+<pre>
+public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+    ListNode dummy = new ListNode(0);
+    ListNode tail = dummy;
+    while (l1 != null &amp;&amp; l2 != null) {
+        if (l1.val &lt; l2.val) {
+            tail.next = l1;
+            l1 = l1.next;
+        } else {
+            tail.next = l2;
+            l2 = l2.next;
+        }
+        tail = tail.next;
+    }
+    tail.next = (l1 != null) ? l1 : l2;
+    return dummy.next;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n + m) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#141 LINKED LIST CYCLE</h2>
+            <p class="c-section__desc">Determine if a linked list has a cycle.</p>
+            <div class="c-code">
+<pre>
+public boolean hasCycle(ListNode head) {
+    ListNode slow = head, fast = head;
+    while (fast != null &amp;&amp; fast.next != null) {
+        slow = slow.next;
+        fast = fast.next.next;
+        if (slow == fast) return true;
+    }
+    return false;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#143 REORDER LIST</h2>
+            <p class="c-section__desc">Reorder the list to follow L0 -> Ln -> L1 -> Ln-1 ...</p>
+            <div class="c-code">
+<pre>
+public void reorderList(ListNode head) {
+    ListNode slow = head, fast = head.next;
+    while (fast != null &amp;&amp; fast.next != null) {
+        slow = slow.next;
+        fast = fast.next.next;
+    }
+    ListNode second = slow.next;
+    slow.next = null;
+    ListNode prev = null;
+    while (second != null) {
+        ListNode tmp = second.next;
+        second.next = prev;
+        prev = second;
+        second = tmp;
+    }
+    ListNode first = head;
+    second = prev;
+    while (second != null) {
+        ListNode tmp1 = first.next, tmp2 = second.next;
+        first.next = second;
+        second.next = tmp1;
+        first = tmp1;
+        second = tmp2;
+    }
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#19 REMOVE NTH NODE FROM END</h2>
+            <p class="c-section__desc">Remove the n-th node from the end of the list.</p>
+            <div class="c-code">
+<pre>
+public ListNode removeNthFromEnd(ListNode head, int n) {
+    ListNode dummy = new ListNode(0, head);
+    ListNode left = dummy, right = head;
+    while (n &gt; 0) {
+        right = right.next;
+        n--;
+    }
+    while (right != null) {
+        left = left.next;
+        right = right.next;
+    }
+    left.next = left.next.next;
+    return dummy.next;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#138 COPY LIST WITH RANDOM POINTER</h2>
+            <p class="c-section__desc">Create a deep copy of a list with random pointers.</p>
+            <div class="c-code">
+<pre>
+public Node copyRandomList(Node head) {
+    Map&lt;Node, Node&gt; oldToCopy = new HashMap&lt;&gt;();
+    oldToCopy.put(null, null);
+    Node curr = head;
+    while (curr != null) {
+        oldToCopy.put(curr, new Node(curr.val));
+        curr = curr.next;
+    }
+    curr = head;
+    while (curr != null) {
+        Node copy = oldToCopy.get(curr);
+        copy.next = oldToCopy.get(curr.next);
+        copy.random = oldToCopy.get(curr.random);
+        curr = curr.next;
+    }
+    return oldToCopy.get(head);
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#2 ADD TWO NUMBERS</h2>
+            <p class="c-section__desc">Add two numbers represented by linked lists in reverse order.</p>
+            <div class="c-code">
+<pre>
+public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+    ListNode dummy = new ListNode(0);
+    ListNode curr = dummy;
+    int carry = 0;
+    while (l1 != null || l2 != null || carry != 0) {
+        int v1 = (l1 != null) ? l1.val : 0;
+        int v2 = (l2 != null) ? l2.val : 0;
+        int sum = v1 + v2 + carry;
+        carry = sum / 10;
+        curr.next = new ListNode(sum % 10);
+        curr = curr.next;
+        if (l1 != null) l1 = l1.next;
+        if (l2 != null) l2 = l2.next;
+    }
+    return dummy.next;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(max(n, m)) Time | O(max(n, m)) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#287 FIND THE DUPLICATE NUMBER</h2>
+            <p class="c-section__desc">Find the duplicate number in an array using Floyd's Cycle Detection.</p>
+            <div class="c-code">
+<pre>
+public int findDuplicate(int[] nums) {
+    int slow = 0, fast = 0;
+    do {
+        slow = nums[slow];
+        fast = nums[nums[fast]];
+    } while (slow != fast);
+
+    int slow2 = 0;
+    while (slow != slow2) {
+        slow = nums[slow];
+        slow2 = nums[slow2];
+    }
+    return slow;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#146 LRU CACHE</h2>
+            <p class="c-section__desc">Design a Least Recently Used (LRU) cache.</p>
+            <div class="c-code">
+<pre>
+class LRUCache {
+    private int cap;
+    private Map&lt;Integer, Node&gt; cache = new HashMap&lt;&gt;();
+    private Node left = new Node(0, 0);
+    private Node right = new Node(0, 0);
+
+    public LRUCache(int capacity) {
+        this.cap = capacity;
+        left.next = right;
+        right.prev = left;
+    }
+
+    private void remove(Node node) {
+        node.prev.next = node.next;
+        node.next.prev = node.prev;
+    }
+
+    private void insert(Node node) {
+        Node prev = right.prev;
+        prev.next = node;
+        node.prev = prev;
+        node.next = right;
+        right.prev = node;
+    }
+
+    public int get(int key) {
+        if (cache.containsKey(key)) {
+            remove(cache.get(key));
+            insert(cache.get(key));
+            return cache.get(key).val;
+        }
+        return -1;
+    }
+
+    public void put(int key, int value) {
+        if (cache.containsKey(key)) remove(cache.get(key));
+        cache.put(key, new Node(key, value));
+        insert(cache.get(key));
+        if (cache.size() &gt; cap) {
+            Node lru = left.next;
+            remove(lru);
+            cache.remove(lru.key);
+        }
+    }
+
+    class Node {
+        int key, val;
+        Node prev, next;
+        Node(int k, int v) { key = k; val = v; }
+    }
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(1) Time | O(capacity) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#23 MERGE K SORTED LISTS</h2>
+            <p class="c-section__desc">Merge k sorted linked lists and return it as one sorted list.</p>
+            <div class="c-code">
+<pre>
+public ListNode mergeKLists(ListNode[] lists) {
+    if (lists == null || lists.length == 0) return null;
+    PriorityQueue&lt;ListNode&gt; pq = new PriorityQueue&lt;&gt;(
+        (a, b) -&gt; a.val - b.val);
+    for (ListNode node : lists)
+        if (node != null) pq.add(node);
+
+    ListNode dummy = new ListNode(0);
+    ListNode tail = dummy;
+    while (!pq.isEmpty()) {
+        ListNode node = pq.poll();
+        tail.next = node;
+        tail = tail.next;
+        if (node.next != null) pq.add(node.next);
+    }
+    return dummy.next;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n log k) Time | O(k) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#25 REVERSE NODES IN K-GROUP</h2>
+            <p class="c-section__desc">Reverse nodes of a linked list k at a time.</p>
+            <div class="c-code">
+<pre>
+public ListNode reverseKGroup(ListNode head, int k) {
+    ListNode dummy = new ListNode(0, head);
+    ListNode groupPrev = dummy;
+    while (true) {
+        ListNode kth = getKth(groupPrev, k);
+        if (kth == null) break;
+        ListNode groupNext = kth.next;
+        ListNode prev = groupNext, curr = groupPrev.next;
+        while (curr != groupNext) {
+            ListNode tmp = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = tmp;
+        }
+        ListNode tmp = groupPrev.next;
+        groupPrev.next = kth;
+        groupPrev = tmp;
+    }
+    return dummy.next;
+}
+
+private ListNode getKth(ListNode curr, int k) {
+    while (curr != null &amp;&amp; k &gt; 0) {
+        curr = curr.next;
+        k--;
+    }
+    return curr;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+    </main>
+
+    <footer class="c-footer">
+        <p class="c-footer__text">TERMINAL_REF: JL-300 // LINKED_LISTS // SECURE_UPLINK</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

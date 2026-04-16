@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TWO POINTERS & SLIDING WINDOW // JAVA_LEET_300</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono&family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="c-header">
+        <div class="c-header__container">
+            <a href="index.html" class="c-header__logo">⚡ JAVA_LEET_300</a>
+            <a href="index.html" class="c-btn">RETURN_TO_BASE</a>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <section class="c-hero">
+            <h1 class="c-hero__title">TWO_POINTERS_&_SLIDING_WINDOW</h1>
+            <p class="c-hero__text">Master linear scanning, array partitioning, and dynamic window sizing.</p>
+        </section>
+
+        <!-- TWO POINTERS SECTION -->
+        <h2 style="font-family: var(--font-header); color: var(--neon-cyan); margin: 2rem 0; text-shadow: var(--glow-cyan);">[ SECTION_01: TWO_POINTERS ]</h2>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#125 VALID PALINDROME</h2>
+            <p class="c-section__desc">Check if a string is a palindrome, considering only alphanumeric characters.</p>
+            <div class="c-code">
+<pre>
+public boolean isPalindrome(String s) {
+    int l = 0, r = s.length() - 1;
+    while (l &lt; r) {
+        while (l &lt; r && !Character.isLetterOrDigit(s.charAt(l))) l++;
+        while (r &gt; l && !Character.isLetterOrDigit(s.charAt(r))) r--;
+        if (Character.toLowerCase(s.charAt(l)) !=
+            Character.toLowerCase(s.charAt(r))) return false;
+        l++; r--;
+    }
+    return true;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#15 3SUM</h2>
+            <p class="c-section__desc">Find all unique triplets that sum to zero.</p>
+            <div class="c-code">
+<pre>
+public List&lt;List&lt;Integer&gt;&gt; threeSum(int[] nums) {
+    List&lt;List&lt;Integer&gt;&gt; res = new ArrayList&lt;&gt;();
+    Arrays.sort(nums);
+    for (int i = 0; i &lt; nums.length; i++) {
+        if (i &gt; 0 && nums[i] == nums[i - 1]) continue;
+        int l = i + 1, r = nums.length - 1;
+        while (l &lt; r) {
+            int sum = nums[i] + nums[l] + nums[r];
+            if (sum &gt; 0) r--;
+            else if (sum &lt; 0) l++;
+            else {
+                res.add(Arrays.asList(nums[i], nums[l], nums[r]));
+                l++;
+                while (l &lt; r && nums[l] == nums[l - 1]) l++;
+            }
+        }
+    }
+    return res;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n²) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#11 CONTAINER WITH MOST WATER</h2>
+            <p class="c-section__desc">Find two lines that form a container holding the most water.</p>
+            <div class="c-code">
+<pre>
+public int maxArea(int[] height) {
+    int l = 0, r = height.length - 1, res = 0;
+    while (l &lt; r) {
+        res = Math.max(res,
+            Math.min(height[l], height[r]) * (r - l));
+        if (height[l] &lt; height[r]) l++;
+        else r--;
+    }
+    return res;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#42 TRAPPING RAIN WATER</h2>
+            <p class="c-section__desc">Calculate how much water can be trapped between bars after raining.</p>
+            <div class="c-code">
+<pre>
+public int trap(int[] height) {
+    if (height.length == 0) return 0;
+    int l = 0, r = height.length - 1;
+    int leftMax = height[l], rightMax = height[r];
+    int res = 0;
+    while (l &lt; r) {
+        if (leftMax &lt; rightMax) {
+            l++;
+            leftMax = Math.max(leftMax, height[l]);
+            res += leftMax - height[l];
+        } else {
+            r--;
+            rightMax = Math.max(rightMax, height[r]);
+            res += rightMax - height[r];
+        }
+    }
+    return res;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#167 TWO SUM II</h2>
+            <p class="c-section__desc">Find two numbers in a sorted array that add up to a target.</p>
+            <div class="c-code">
+<pre>
+public int[] twoSum(int[] numbers, int target) {
+    int l = 0, r = numbers.length - 1;
+    while (l &lt; r) {
+        int sum = numbers[l] + numbers[r];
+        if (sum &gt; target) r--;
+        else if (sum &lt; target) l++;
+        else return new int[]{l + 1, r + 1};
+    }
+    return new int[]{};
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#283 MOVE ZEROES</h2>
+            <p class="c-section__desc">Move all 0's to the end of an array while maintaining the relative order of non-zero elements.</p>
+            <div class="c-code">
+<pre>
+public void moveZeroes(int[] nums) {
+    int l = 0;
+    for (int r = 0; r &lt; nums.length; r++) {
+        if (nums[r] != 0) {
+            int temp = nums[l];
+            nums[l] = nums[r];
+            nums[r] = temp;
+            l++;
+        }
+    }
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <!-- SLIDING WINDOW SECTION -->
+        <h2 style="font-family: var(--font-header); color: var(--neon-cyan); margin: 2rem 0; text-shadow: var(--glow-cyan);">[ SECTION_02: SLIDING_WINDOW ]</h2>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#121 BUY & SELL STOCK</h2>
+            <p class="c-section__desc">Find the maximum profit you can achieve by buying and selling a stock once.</p>
+            <div class="c-code">
+<pre>
+public int maxProfit(int[] prices) {
+    int l = 0, maxP = 0;
+    for (int r = 1; r &lt; prices.length; r++) {
+        if (prices[l] &lt; prices[r]) {
+            maxP = Math.max(maxP, prices[r] - prices[l]);
+        } else {
+            l = r;
+        }
+    }
+    return maxP;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#3 LONGEST SUBSTRING</h2>
+            <p class="c-section__desc">Length of the longest substring without repeating characters.</p>
+            <div class="c-code">
+<pre>
+public int lengthOfLongestSubstring(String s) {
+    Set&lt;Character&gt; charSet = new HashSet&lt;&gt;();
+    int l = 0, res = 0;
+    for (int r = 0; r &lt; s.length(); r++) {
+        while (charSet.contains(s.charAt(r))) {
+            charSet.remove(s.charAt(l));
+            l++;
+        }
+        charSet.add(s.charAt(r));
+        res = Math.max(res, r - l + 1);
+    }
+    return res;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#424 REPEATING CHARACTER</h2>
+            <p class="c-section__desc">Longest repeating character replacement with k operations.</p>
+            <div class="c-code">
+<pre>
+public int characterReplacement(String s, int k) {
+    int[] count = new int[26];
+    int res = 0, l = 0, maxf = 0;
+    for (int r = 0; r &lt; s.length(); r++) {
+        count[s.charAt(r) - 'A']++;
+        maxf = Math.max(maxf, count[s.charAt(r) - 'A']);
+        while ((r - l + 1) - maxf &gt; k) {
+            count[s.charAt(l) - 'A']--;
+            l++;
+        }
+        res = Math.max(res, r - l + 1);
+    }
+    return res;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#76 MINIMUM WINDOW SUBSTRING</h2>
+            <p class="c-section__desc">Smallest substring containing all characters of another string.</p>
+            <div class="c-code">
+<pre>
+public String minWindow(String s, String t) {
+    if (t.isEmpty()) return "";
+    Map&lt;Character, Integer&gt; countT = new HashMap&lt;&gt;();
+    Map&lt;Character, Integer&gt; window = new HashMap&lt;&gt;();
+    for (char c : t.toCharArray())
+        countT.merge(c, 1, Integer::sum);
+
+    int have = 0, need = countT.size();
+    int[] res = {-1, -1};
+    int resLen = Integer.MAX_VALUE, l = 0;
+
+    for (int r = 0; r &lt; s.length(); r++) {
+        char c = s.charAt(r);
+        window.merge(c, 1, Integer::sum);
+        if (countT.containsKey(c) &&
+            window.get(c).intValue() == countT.get(c).intValue())
+            have++;
+        while (have == need) {
+            if ((r - l + 1) &lt; resLen) {
+                res = new int[]{l, r};
+                resLen = r - l + 1;
+            }
+            char left = s.charAt(l);
+            window.merge(left, -1, Integer::sum);
+            if (countT.containsKey(left) &&
+                window.get(left) &lt; countT.get(left))
+                have--;
+            l++;
+        }
+    }
+    return resLen == Integer.MAX_VALUE ? "" :
+        s.substring(res[0], res[1] + 1);
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#239 SLIDING WINDOW MAX</h2>
+            <p class="c-section__desc">Return the maximum element in each sliding window of size k.</p>
+            <div class="c-code">
+<pre>
+public int[] maxSlidingWindow(int[] nums, int k) {
+    int[] output = new int[nums.length - k + 1];
+    Deque&lt;Integer&gt; deque = new ArrayDeque&lt;&gt;();
+    int l = 0;
+    for (int r = 0; r &lt; nums.length; r++) {
+        while (!deque.isEmpty() && nums[deque.peekLast()] &lt; nums[r])
+            deque.pollLast();
+        deque.addLast(r);
+        if (l &gt; deque.peekFirst()) deque.pollFirst();
+        if (r + 1 &gt;= k) {
+            output[l] = nums[deque.peekFirst()];
+            l++;
+        }
+    }
+    return output;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(k) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#567 PERMUTATION IN STRING</h2>
+            <p class="c-section__desc">Check if s1's permutation is a substring of s2.</p>
+            <div class="c-code">
+<pre>
+public boolean checkInclusion(String s1, String s2) {
+    if (s1.length() &gt; s2.length()) return false;
+    int[] s1Count = new int[26], s2Count = new int[26];
+    for (int i = 0; i &lt; s1.length(); i++) {
+        s1Count[s1.charAt(i) - 'a']++;
+        s2Count[s2.charAt(i) - 'a']++;
+    }
+    int matches = 0;
+    for (int i = 0; i &lt; 26; i++)
+        if (s1Count[i] == s2Count[i]) matches++;
+
+    int l = 0;
+    for (int r = s1.length(); r &lt; s2.length(); r++) {
+        if (matches == 26) return true;
+        int idx = s2.charAt(r) - 'a';
+        s2Count[idx]++;
+        if (s2Count[idx] == s1Count[idx]) matches++;
+        else if (s2Count[idx] == s1Count[idx] + 1) matches--;
+
+        idx = s2.charAt(l) - 'a';
+        s2Count[idx]--;
+        if (s2Count[idx] == s1Count[idx]) matches++;
+        else if (s2Count[idx] == s1Count[idx] - 1) matches--;
+        l++;
+    }
+    return matches == 26;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+    </main>
+
+    <footer class="c-footer">
+        <p class="c-footer__text">TERMINAL_REF: JL-300 // TWO_POINTERS_SLIDING // SECURE_UPLINK</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

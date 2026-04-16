@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SORTING // PYTHON_LEET_300</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono&family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="c-header">
+        <div class="c-header__container">
+            <a href="index.html" class="c-header__logo">⚡ PYTHON_LEET_300</a>
+            <a href="index.html" class="c-btn">RETURN_TO_BASE</a>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <section class="c-hero">
+            <h1 class="c-hero__title">SORTING_ALGORITHMS</h1>
+            <p class="c-hero__text">Core sorting techniques for efficient data organization.</p>
+        </section>
+
+        <!-- Bubble Sort -->
+        <article class="c-section">
+            <h2 class="c-section__title"># BUBBLE SORT</h2>
+            <p class="c-section__desc">Repeatedly swap adjacent elements if they are in the wrong order.</p>
+            <div class="c-code">
+<pre>
+def bubbleSort(arr: list[int]) -> list[int]:
+    n = len(arr)
+    for i in range(n):
+        swapped = False
+        for j in range(0, n - i - 1):
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+                swapped = True
+        if not swapped:
+            break
+    return arr
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n²) Time | O(1) Space</p>
+        </article>
+
+        <!-- Selection Sort -->
+        <article class="c-section">
+            <h2 class="c-section__title"># SELECTION SORT</h2>
+            <p class="c-section__desc">Repeatedly find the minimum element from the unsorted part and put it at the beginning.</p>
+            <div class="c-code">
+<pre>
+def selectionSort(arr: list[int]) -> list[int]:
+    n = len(arr)
+    for i in range(n):
+        min_idx = i
+        for j in range(i + 1, n):
+            if arr[j] < arr[min_idx]:
+                min_idx = j
+        arr[i], arr[min_idx] = arr[min_idx], arr[i]
+    return arr
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n²) Time | O(1) Space</p>
+        </article>
+
+        <!-- Insertion Sort -->
+        <article class="c-section">
+            <h2 class="c-section__title"># INSERTION SORT</h2>
+            <p class="c-section__desc">Build the final sorted array one item at a time by inserting elements into their correct position.</p>
+            <div class="c-code">
+<pre>
+def insertionSort(arr: list[int]) -> list[int]:
+    for i in range(1, len(arr)):
+        key = arr[i]
+        j = i - 1
+        while j >= 0 and key < arr[j]:
+            arr[j + 1] = arr[j]
+            j -= 1
+        arr[j + 1] = key
+    return arr
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n²) Time | O(1) Space</p>
+        </article>
+
+        <!-- Merge Sort -->
+        <article class="c-section">
+            <h2 class="c-section__title"># MERGE SORT</h2>
+            <p class="c-section__desc">A divide-and-conquer algorithm that divides the array into halves, sorts them, and then merges them.</p>
+            <div class="c-code">
+<pre>
+def mergeSort(arr: list[int]) -> list[int]:
+    if len(arr) > 1:
+        mid = len(arr) // 2
+        L = arr[:mid]
+        R = arr[mid:]
+
+        mergeSort(L)
+        mergeSort(R)
+
+        i = j = k = 0
+        while i < len(L) and j < len(R):
+            if L[i] < R[j]:
+                arr[k] = L[i]
+                i += 1
+            else:
+                arr[k] = R[j]
+                j += 1
+            k += 1
+
+        while i < len(L):
+            arr[k] = L[i]
+            i += 1
+            k += 1
+
+        while j < len(R):
+            arr[k] = R[j]
+            j += 1
+            k += 1
+    return arr
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n log n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Quick Sort -->
+        <article class="c-section">
+            <h2 class="c-section__title"># QUICK SORT</h2>
+            <p class="c-section__desc">Pick a pivot element and partition the array around it.</p>
+            <div class="c-code">
+<pre>
+def quickSort(arr: list[int]) -> list[int]:
+    if len(arr) <= 1:
+        return arr
+    pivot = arr[len(arr) // 2]
+    left = [x for x in arr if x < pivot]
+    middle = [x for x in arr if x == pivot]
+    right = [x for x in arr if x > pivot]
+    return quickSort(left) + middle + quickSort(right)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n log n) Average | O(n²) Worst | O(log n) Space</p>
+        </article>
+
+        <!-- Heap Sort -->
+        <article class="c-section">
+            <h2 class="c-section__title"># HEAP SORT</h2>
+            <p class="c-section__desc">A comparison-based sorting technique based on a Binary Heap data structure.</p>
+            <div class="c-code">
+<pre>
+def heapify(arr, n, i):
+    largest = i
+    l = 2 * i + 1
+    r = 2 * i + 2
+    if l < n and arr[i] < arr[l]:
+        largest = l
+    if r < n and arr[largest] < arr[r]:
+        largest = r
+    if largest != i:
+        arr[i], arr[largest] = arr[largest], arr[i]
+        heapify(arr, n, largest)
+
+def heapSort(arr: list[int]) -> list[int]:
+    n = len(arr)
+    for i in range(n // 2 - 1, -1, -1):
+        heapify(arr, n, i)
+    for i in range(n - 1, 0, -1):
+        arr[i], arr[0] = arr[0], arr[i]
+        heapify(arr, i, 0)
+    return arr
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n log n) Time | O(1) Space</p>
+        </article>
+
+        <!-- Counting Sort -->
+        <article class="c-section">
+            <h2 class="c-section__title"># COUNTING SORT</h2>
+            <p class="c-section__desc">An integer sorting algorithm that counts the number of objects having distinct key values.</p>
+            <div class="c-code">
+<pre>
+def countingSort(arr: list[int]) -> list[int]:
+    if not arr: return arr
+    max_val = max(arr)
+    min_val = min(arr)
+    range_val = max_val - min_val + 1
+    count = [0] * range_val
+    output = [0] * len(arr)
+
+    for x in arr:
+        count[x - min_val] += 1
+    for i in range(1, len(count)):
+        count[i] += count[i - 1]
+    for i in range(len(arr) - 1, -1, -1):
+        output[count[arr[i] - min_val] - 1] = arr[i]
+        count[arr[i] - min_val] -= 1
+    return output
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n + k) Time | O(k) Space (where k is the range)</p>
+        </article>
+
+        <!-- Radix Sort -->
+        <article class="c-section">
+            <h2 class="c-section__title"># RADIX SORT</h2>
+            <p class="c-section__desc">Sort numbers digit by digit starting from least significant digit to most significant digit.</p>
+            <div class="c-code">
+<pre>
+def radixSort(arr: list[int]) -> list[int]:
+    if not arr: return arr
+    max_val = max(arr)
+    exp = 1
+    while max_val // exp > 0:
+        # Counting sort based on exp
+        output = [0] * len(arr)
+        count = [0] * 10
+        for i in range(len(arr)):
+            index = (arr[i] // exp) % 10
+            count[index] += 1
+        for i in range(1, 10):
+            count[i] += count[i - 1]
+        for i in range(len(arr) - 1, -1, -1):
+            index = (arr[i] // exp) % 10
+            output[count[index] - 1] = arr[i]
+            count[index] -= 1
+        for i in range(len(arr)):
+            arr[i] = output[i]
+        exp *= 10
+    return arr
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(nk) Time | O(n + k) Space (where k is number of digits)</p>
+        </article>
+    </main>
+
+    <footer class="c-footer">
+        <p class="c-footer__text">TERMINAL_REF: PL-300 // SORTING // SECURE_UPLINK</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

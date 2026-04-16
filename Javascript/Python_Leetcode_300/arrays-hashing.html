@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARRAYS & HASHING // PYTHON_LEET_300</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono&family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="c-header">
+        <div class="c-header__container">
+            <a href="index.html" class="c-header__logo">⚡ PYTHON_LEET_300</a>
+            <a href="index.html" class="c-btn">RETURN_TO_BASE</a>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <section class="c-hero">
+            <h1 class="c-hero__title">ARRAYS_&_HASHING</h1>
+            <p class="c-hero__text">Master the fundamentals of frequency counting, mapping, and set operations.</p>
+        </section>
+
+        <!-- Problem 1: Two Sum -->
+        <article class="c-section">
+            <h2 class="c-section__title">#1 TWO SUM</h2>
+            <p class="c-section__desc">Given an array of integers and a target, find indices of the two numbers that add up to the target.</p>
+            <div class="c-code">
+<pre>
+def twoSum(nums: list[int], target: int) -> list[int]:
+    prevMap = {}  # val : index
+
+    for i, n in enumerate(nums):
+        diff = target - n
+        if diff in prevMap:
+            return [prevMap[diff], i]
+        prevMap[n] = i
+    return []
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 217: Contains Duplicate -->
+        <article class="c-section">
+            <h2 class="c-section__title">#217 CONTAINS DUPLICATE</h2>
+            <p class="c-section__desc">Determine if any value appears at least twice in an array of integers.</p>
+            <div class="c-code">
+<pre>
+def containsDuplicate(nums: list[int]) -> bool:
+    hashset = set()
+
+    for n in nums:
+        if n in hashset:
+            return True
+        hashset.add(n)
+    return False
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 242: Valid Anagram -->
+        <article class="c-section">
+            <h2 class="c-section__title">#242 VALID ANAGRAM</h2>
+            <p class="c-section__desc">Check if two strings are anagrams of each other using frequency mapping.</p>
+            <div class="c-code">
+<pre>
+def isAnagram(s: str, t: str) -> bool:
+    if len(s) != len(t):
+        return False
+
+    countS, countT = {}, {}
+
+    for i in range(len(s)):
+        countS[s[i]] = 1 + countS.get(s[i], 0)
+        countT[t[i]] = 1 + countT.get(t[i], 0)
+    
+    return countS == countT
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(s + t) Time | O(s + t) Space</p>
+        </article>
+
+        <!-- Problem 1299: Replace Elements with Greatest Element on Right Side -->
+        <article class="c-section">
+            <h2 class="c-section__title">#1299 REPLACE ELEMENTS</h2>
+            <p class="c-section__desc">Replace every element with the greatest element among the elements to its right, and replace the last element with -1.</p>
+            <div class="c-code">
+<pre>
+def replaceElements(arr: list[int]) -> list[int]:
+    rightMax = -1
+
+    for i in range(len(arr) - 1, -1, -1):
+        newMax = max(rightMax, arr[i])
+        arr[i] = rightMax
+        rightMax = newMax
+    return arr
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 392: Is Subsequence -->
+        <article class="c-section">
+            <h2 class="c-section__title">#392 IS SUBSEQUENCE</h2>
+            <p class="c-section__desc">Given two strings s and t, return true if s is a subsequence of t, or false otherwise.</p>
+            <div class="c-code">
+<pre>
+def isSubsequence(s: str, t: str) -> bool:
+    i, j = 0, 0
+    while i < len(s) and j < len(t):
+        if s[i] == t[j]:
+            i += 1
+        j += 1
+    return i == len(s)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(t) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 58: Length of Last Word -->
+        <article class="c-section">
+            <h2 class="c-section__title">#58 LENGTH OF LAST WORD</h2>
+            <p class="c-section__desc">Given a string s consisting of words and spaces, return the length of the last word in the string.</p>
+            <div class="c-code">
+<pre>
+def lengthOfLastWord(s: str) -> int:
+    i, length = len(s) - 1, 0
+
+    while s[i] == " ":
+        i -= 1
+    while i >= 0 and s[i] != " ":
+        length += 1
+        i -= 1
+    return length
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 118: Pascal's Triangle -->
+        <article class="c-section">
+            <h2 class="c-section__title">#118 PASCAL'S TRIANGLE</h2>
+            <p class="c-section__desc">Given an integer numRows, return the first numRows of Pascal's triangle.</p>
+            <div class="c-code">
+<pre>
+def generate(numRows: int) -> list[list[int]]:
+    res = [[1]]
+
+    for i in range(numRows - 1):
+        temp = [0] + res[-1] + [0]
+        row = []
+        for j in range(len(res[-1]) + 1):
+            row.append(temp[j] + temp[j + 1])
+        res.append(row)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n²) Time | O(n²) Space</p>
+        </article>
+
+        <!-- Problem 27: Remove Element -->
+        <article class="c-section">
+            <h2 class="c-section__title">#27 REMOVE ELEMENT</h2>
+            <p class="c-section__desc">Remove all occurrences of val in nums in-place and return the new length.</p>
+            <div class="c-code">
+<pre>
+def removeElement(nums: list[int], val: int) -> int:
+    k = 0
+    for i in range(len(nums)):
+        if nums[i] != val:
+            nums[k] = nums[i]
+            k += 1
+    return k
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 929: Unique Email Addresses -->
+        <article class="c-section">
+            <h2 class="c-section__title">#929 UNIQUE EMAILS</h2>
+            <p class="c-section__desc">Count the number of unique email addresses after applying filtering rules.</p>
+            <div class="c-code">
+<pre>
+def numUniqueEmails(emails: list[str]) -> int:
+    unique = set()
+
+    for e in emails:
+        local, domain = e.split("@")
+        local = local.split("+")[0]
+        local = local.replace(".", "")
+        unique.add((local, domain))
+    return len(unique)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n * m) Time | O(n * m) Space</p>
+        </article>
+
+        <!-- Problem 205: Isomorphic Strings -->
+        <article class="c-section">
+            <h2 class="c-section__title">#205 ISOMORPHIC STRINGS</h2>
+            <p class="c-section__desc">Determine if two strings are isomorphic.</p>
+            <div class="c-code">
+<pre>
+def isIsomorphic(s: str, t: str) -> bool:
+    mapST, mapTS = {}, {}
+
+    for c1, c2 in zip(s, t):
+        if ((c1 in mapST and mapST[c1] != c2) or
+            (c2 in mapTS and mapTS[c2] != c1)):
+            return False
+        mapST[c1] = c2
+        mapTS[c2] = c1
+    return True
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 605: Can Place Flowers -->
+        <article class="c-section">
+            <h2 class="c-section__title">#605 CAN PLACE FLOWERS</h2>
+            <p class="c-section__desc">Check if n new flowers can be planted without violating the adjacency rule.</p>
+            <div class="c-code">
+<pre>
+def canPlaceFlowers(flowerbed: list[int], n: int) -> bool:
+    f = [0] + flowerbed + [0]
+    
+    for i in range(1, len(f) - 1):
+        if f[i-1] == 0 and f[i] == 0 and f[i+1] == 0:
+            f[i] = 1
+            n -= 1
+    return n <= 0
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 169: Majority Element -->
+        <article class="c-section">
+            <h2 class="c-section__title">#169 MAJORITY ELEMENT</h2>
+            <p class="c-section__desc">Find the element that appears more than n/2 times.</p>
+            <div class="c-code">
+<pre>
+def majorityElement(nums: list[int]) -> int:
+    res, count = 0, 0
+
+    for n in nums:
+        if count == 0:
+            res = n
+        count += (1 if n == res else -1)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 496: Next Greater Element I -->
+        <article class="c-section">
+            <h2 class="c-section__title">#496 NEXT GREATER ELEMENT I</h2>
+            <p class="c-section__desc">Find the next greater element for each value in nums1 in the corresponding position of nums2.</p>
+            <div class="c-code">
+<pre>
+def nextGreaterElement(nums1: list[int], nums2: list[int]) -> list[int]:
+    nums1Idx = { n:i for i, n in enumerate(nums1) }
+    res = [-1] * len(nums1)
+
+    stack = []
+    for i in range(len(nums2)):
+        cur = nums2[i]
+        while stack and cur > stack[-1]:
+            val = stack.pop()
+            idx = nums1Idx[val]
+            res[idx] = cur
+        if cur in nums1Idx:
+            stack.append(cur)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n + m) Time | O(m) Space</p>
+        </article>
+
+        <!-- Problem 724: Find Pivot Index -->
+        <article class="c-section">
+            <h2 class="c-section__title">#724 FIND PIVOT INDEX</h2>
+            <p class="c-section__desc">Find the index where the sum of numbers to the left equals the sum to the right.</p>
+            <div class="c-code">
+<pre>
+def pivotIndex(nums: list[int]) -> int:
+    total = sum(nums)
+    leftSum = 0
+
+    for i, x in enumerate(nums):
+        if leftSum == (total - leftSum - x):
+            return i
+        leftSum += x
+    return -1
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 303: Range Sum Query - Immutable -->
+        <article class="c-section">
+            <h2 class="c-section__title">#303 RANGE SUM QUERY</h2>
+            <p class="c-section__desc">Calculate the sum of elements between indices left and right inclusive.</p>
+            <div class="c-code">
+<pre>
+class NumArray:
+    def __init__(self, nums: list[int]):
+        self.prefix = []
+        cur = 0
+        for n in nums:
+            cur += n
+            self.prefix.append(cur)
+
+    def sumRange(self, left: int, right: int) -> int:
+        r = self.prefix[right]
+        l = self.prefix[left - 1] if left > 0 else 0
+        return r - l
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(1) Query Time | O(n) Init Time</p>
+        </article>
+
+        <!-- Problem 448: Find All Numbers Disappeared in an Array -->
+        <article class="c-section">
+            <h2 class="c-section__title">#448 DISAPPEARED NUMBERS</h2>
+            <p class="c-section__desc">Find all elements in range [1, n] that do not appear in an array of length n.</p>
+            <div class="c-code">
+<pre>
+def findDisappearedNumbers(nums: list[int]) -> list[int]:
+    for n in nums:
+        i = abs(n) - 1
+        nums[i] = -1 * abs(nums[i])
+
+    res = []
+    for i, n in enumerate(nums):
+        if n > 0:
+            res.append(i + 1)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 49: Group Anagrams -->
+        <article class="c-section">
+            <h2 class="c-section__title">#49 GROUP ANAGRAMS</h2>
+            <p class="c-section__desc">Group strings that are anagrams of each other.</p>
+            <div class="c-code">
+<pre>
+from collections import defaultdict
+
+def groupAnagrams(strs: list[str]) -> list[list[str]]:
+    res = defaultdict(list)
+    for s in strs:
+        count = [0] * 26
+        for c in s:
+            count[ord(c) - ord("a")] += 1
+        res[tuple(count)].append(s)
+    return list(res.values())
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n * k) Time | O(n * k) Space</p>
+        </article>
+
+        <!-- Problem 347: Top K Frequent Elements -->
+        <article class="c-section">
+            <h2 class="c-section__title">#347 TOP K FREQUENT</h2>
+            <p class="c-section__desc">Find the k most frequent elements in an array.</p>
+            <div class="c-code">
+<pre>
+def topKFrequent(nums: list[int], k: int) -> list[int]:
+    count = {}
+    freq = [[] for i in range(len(nums) + 1)]
+
+    for n in nums:
+        count[n] = 1 + count.get(n, 0)
+    for n, c in count.items():
+        freq[c].append(n)
+
+    res = []
+    for i in range(len(freq) - 1, 0, -1):
+        for n in freq[i]:
+            res.append(n)
+            if len(res) == k:
+                return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 238: Product of Array Except Self -->
+        <article class="c-section">
+            <h2 class="c-section__title">#238 PRODUCT EXCEPT SELF</h2>
+            <p class="c-section__desc">Return an array where each element is the product of all other elements without using division.</p>
+            <div class="c-code">
+<pre>
+def productExceptSelf(nums: list[int]) -> list[int]:
+    res = [1] * len(nums)
+
+    prefix = 1
+    for i in range(len(nums)):
+        res[i] = prefix
+        prefix *= nums[i]
+    
+    postfix = 1
+    for i in range(len(nums) - 1, -1, -1):
+        res[i] *= postfix
+        postfix *= nums[i]
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 36: Valid Sudoku -->
+        <article class="c-section">
+            <h2 class="c-section__title">#36 VALID SUDOKU</h2>
+            <p class="c-section__desc">Determine if a 9 x 9 Sudoku board is valid.</p>
+            <div class="c-code">
+<pre>
+import collections
+
+def isValidSudoku(board: list[list[str]]) -> bool:
+    cols = collections.defaultdict(set)
+    rows = collections.defaultdict(set)
+    squares = collections.defaultdict(set)
+
+    for r in range(9):
+        for c in range(9):
+            if board[r][c] == ".":
+                continue
+            if (board[r][c] in rows[r] or
+                board[r][c] in cols[c] or
+                board[r][c] in squares[(r // 3, c // 3)]):
+                return False
+            cols[c].add(board[r][c])
+            rows[r].add(board[r][c])
+            squares[(r // 3, c // 3)].add(board[r][c])
+    return True
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(1) Time | O(1) Space (fixed board size)</p>
+        </article>
+
+        <!-- Problem 271: Encode and Decode Strings -->
+        <article class="c-section">
+            <h2 class="c-section__title">#271 ENCODE & DECODE</h2>
+            <p class="c-section__desc">Design an algorithm to encode a list of strings to a single string and decode it back.</p>
+            <div class="c-code">
+<pre>
+def encode(strs):
+    res = ""
+    for s in strs:
+        res += str(len(s)) + "#" + s
+    return res
+
+def decode(s):
+    res, i = [], 0
+    while i < len(s):
+        j = i
+        while s[j] != "#":
+            j += 1
+        length = int(s[i:j])
+        res.append(s[j + 1 : j + 1 + length])
+        i = j + 1 + length
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 128: Longest Consecutive Sequence -->
+        <article class="c-section">
+            <h2 class="c-section__title">#128 LONGEST CONSECUTIVE</h2>
+            <p class="c-section__desc">Find the length of the longest consecutive elements sequence.</p>
+            <div class="c-code">
+<pre>
+def longestConsecutive(nums: list[int]) -> int:
+    numSet = set(nums)
+    longest = 0
+
+    for n in nums:
+        if (n - 1) not in numSet:
+            length = 1
+            while (n + length) in numSet:
+                length += 1
+            longest = max(length, longest)
+    return longest
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 75: Sort Colors -->
+        <article class="c-section">
+            <h2 class="c-section__title">#75 SORT COLORS</h2>
+            <p class="c-section__desc">Sort an array with 0s, 1s, and 2s in-place (Dutch National Flag algorithm).</p>
+            <div class="c-code">
+<pre>
+def sortColors(nums: list[int]) -> None:
+    l, i, r = 0, 0, len(nums) - 1
+
+    while i <= r:
+        if nums[i] == 0:
+            nums[l], nums[i] = nums[i], nums[l]
+            l += 1
+            i += 1
+        elif nums[i] == 2:
+            nums[i], nums[r] = nums[r], nums[i]
+            r -= 1
+        else:
+            i += 1
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 692: Top K Frequent Words -->
+        <article class="c-section">
+            <h2 class="c-section__title">#692 TOP K FREQUENT WORDS</h2>
+            <p class="c-section__desc">Find the k most frequent strings, sorted by frequency and then lexicographically.</p>
+            <div class="c-code">
+<pre>
+import heapq
+from collections import Counter
+
+def topKFrequent(words: list[str], k: int) -> list[str]:
+    counts = Counter(words)
+    h = [(-count, word) for word, count in counts.items()]
+    heapq.heapify(h)
+    return [heapq.heappop(h)[1] for _ in range(k)]
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n + k log n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 2017: Grid Game -->
+        <article class="c-section">
+            <h2 class="c-section__title">#2017 GRID GAME</h2>
+            <p class="c-section__desc">Find the minimum score the second robot can get if the first robot plays optimally.</p>
+            <div class="c-code">
+<pre>
+def gridGame(grid: list[list[int]]) -> int:
+    n = len(grid[0])
+    pre1, pre2 = grid[0][:], grid[1][:]
+
+    for i in range(1, n):
+        pre1[i] += pre1[i - 1]
+        pre2[i] += pre2[i - 1]
+
+    res = float("inf")
+    for i in range(n):
+        top = pre1[-1] - pre1[i]
+        bottom = pre2[i - 1] if i > 0 else 0
+        secondRobot = max(top, bottom)
+        res = min(res, secondRobot)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 438: Find All Anagrams in a String -->
+        <article class="c-section">
+            <h2 class="c-section__title">#438 FIND ALL ANAGRAMS</h2>
+            <p class="c-section__desc">Find all start indices of p's anagrams in s.</p>
+            <div class="c-code">
+<pre>
+def findAnagrams(s: str, p: str) -> list[int]:
+    if len(p) > len(s): return []
+    pCount, sCount = {}, {}
+    for i in range(len(p)):
+        pCount[p[i]] = 1 + pCount.get(p[i], 0)
+        sCount[s[i]] = 1 + sCount.get(s[i], 0)
+
+    res = [0] if sCount == pCount else []
+    l = 0
+    for r in range(len(p), len(s)):
+        sCount[s[r]] = 1 + sCount.get(s[r], 0)
+        sCount[s[l]] -= 1
+        if sCount[s[l]] == 0:
+            sCount.pop(s[l])
+        l += 1
+        if sCount == pCount:
+            res.append(l)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space (26 chars)</p>
+        </article>
+
+        <!-- Problem 560: Subarray Sum Equals K -->
+        <article class="c-section">
+            <h2 class="c-section__title">#560 SUBARRAY SUM K</h2>
+            <p class="c-section__desc">Find the total number of continuous subarrays whose sum equals to k.</p>
+            <div class="c-code">
+<pre>
+def subarraySum(nums: list[int], k: int) -> int:
+    res, curSum = 0, 0
+    prefixSums = {0: 1}
+
+    for n in nums:
+        curSum += n
+        diff = curSum - k
+        res += prefixSums.get(diff, 0)
+        prefixSums[curSum] = 1 + prefixSums.get(curSum, 0)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 554: Brick Wall -->
+        <article class="c-section">
+            <h2 class="c-section__title">#554 BRICK WALL</h2>
+            <p class="c-section__desc">Find the vertical line that crosses the fewest bricks.</p>
+            <div class="c-code">
+<pre>
+def leastBricks(wall: list[list[int]]) -> int:
+    countGap = {0: 0}
+    for row in wall:
+        total = 0
+        for b in row[:-1]:
+            total += b
+            countGap[total] = 1 + countGap.get(total, 0)
+    return len(wall) - max(countGap.values())
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(m) Space (where m is number of gaps)</p>
+        </article>
+
+        <!-- Problem 122: Best Time to Buy and Sell Stock II -->
+        <article class="c-section">
+            <h2 class="c-section__title">#122 BUY/SELL STOCK II</h2>
+            <p class="c-section__desc">Find the maximum profit you can achieve by buying and selling multiple times.</p>
+            <div class="c-code">
+<pre>
+def maxProfit(prices: list[int]) -> int:
+    profit = 0
+    for i in range(1, len(prices)):
+        if prices[i] > prices[i - 1]:
+            profit += (prices[i] - prices[i - 1])
+    return profit
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 167: Two Sum II - Input Array Is Sorted -->
+        <article class="c-section">
+            <h2 class="c-section__title">#167 TWO SUM II</h2>
+            <p class="c-section__desc">Find two numbers that add up to target in a 1-indexed sorted array.</p>
+            <div class="c-code">
+<pre>
+def twoSum(numbers: list[int], target: int) -> list[int]:
+    l, r = 0, len(numbers) - 1
+    while l < r:
+        curSum = numbers[l] + numbers[r]
+        if curSum > target:
+            r -= 1
+        elif curSum < target:
+            l += 1
+        else:
+            return [l + 1, r + 1]
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+    </main>
+
+    <footer class="c-footer">
+        <p class="c-footer__text">TERMINAL_REF: PL-300 // ARRAYS_HASHING // SECURE_UPLINK</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

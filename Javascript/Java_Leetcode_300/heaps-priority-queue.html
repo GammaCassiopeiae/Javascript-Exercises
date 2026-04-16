@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HEAPS & PRIORITY QUEUES // JAVA_LEET_300</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono&family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="c-header">
+        <div class="c-header__container">
+            <a href="index.html" class="c-header__logo">⚡ JAVA_LEET_300</a>
+            <a href="index.html" class="c-btn">RETURN_TO_BASE</a>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <section class="c-hero">
+            <h1 class="c-hero__title">HEAPS_&_PRIORITY_QUEUES</h1>
+            <p class="c-hero__text">Priority-based data management.</p>
+        </section>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#703 KTH LARGEST ELEMENT IN STREAM</h2>
+            <p class="c-section__desc">Design a class to find the kth largest element in a stream.</p>
+            <div class="c-code">
+<pre>
+class KthLargest {
+    private PriorityQueue&lt;Integer&gt; minHeap;
+    private int k;
+
+    public KthLargest(int k, int[] nums) {
+        this.k = k;
+        minHeap = new PriorityQueue&lt;&gt;();
+        for (int n : nums) add(n);
+    }
+
+    public int add(int val) {
+        minHeap.offer(val);
+        if (minHeap.size() &gt; k) minHeap.poll();
+        return minHeap.peek();
+    }
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(log k) per add | O(k) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#1046 LAST STONE WEIGHT</h2>
+            <p class="c-section__desc">Smash the two heaviest stones together until at most one remains.</p>
+            <div class="c-code">
+<pre>
+public int lastStoneWeight(int[] stones) {
+    PriorityQueue&lt;Integer&gt; maxHeap = new PriorityQueue&lt;&gt;(
+        Collections.reverseOrder());
+    for (int s : stones) maxHeap.offer(s);
+    while (maxHeap.size() &gt; 1) {
+        int a = maxHeap.poll();
+        int b = maxHeap.poll();
+        if (a != b) maxHeap.offer(a - b);
+    }
+    return maxHeap.isEmpty() ? 0 : maxHeap.peek();
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n log n) Time | O(n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#215 KTH LARGEST ELEMENT</h2>
+            <p class="c-section__desc">Find the kth largest element in an unsorted array.</p>
+            <div class="c-code">
+<pre>
+public int findKthLargest(int[] nums, int k) {
+    PriorityQueue&lt;Integer&gt; minHeap = new PriorityQueue&lt;&gt;();
+    for (int n : nums) {
+        minHeap.offer(n);
+        if (minHeap.size() &gt; k) minHeap.poll();
+    }
+    return minHeap.peek();
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n log k) Time | O(k) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#621 TASK SCHEDULER</h2>
+            <p class="c-section__desc">Find minimum intervals CPU needs to execute all tasks with cooldown.</p>
+            <div class="c-code">
+<pre>
+public int leastInterval(char[] tasks, int n) {
+    int[] count = new int[26];
+    for (char t : tasks) count[t - 'A']++;
+    PriorityQueue&lt;Integer&gt; maxHeap = new PriorityQueue&lt;&gt;(
+        Collections.reverseOrder());
+    for (int c : count) if (c &gt; 0) maxHeap.offer(c);
+
+    Queue&lt;int[]&gt; queue = new LinkedList&lt;&gt;();
+    int time = 0;
+    while (!maxHeap.isEmpty() || !queue.isEmpty()) {
+        time++;
+        if (!maxHeap.isEmpty()) {
+            int cnt = maxHeap.poll() - 1;
+            if (cnt &gt; 0) queue.offer(new int[]{cnt, time + n});
+        }
+        if (!queue.isEmpty() &amp;&amp; queue.peek()[1] == time) {
+            maxHeap.offer(queue.poll()[0]);
+        }
+    }
+    return time;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n * m) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#295 FIND MEDIAN FROM DATA STREAM</h2>
+            <p class="c-section__desc">Design a data structure that supports adding numbers and finding the median.</p>
+            <div class="c-code">
+<pre>
+class MedianFinder {
+    private PriorityQueue&lt;Integer&gt; small; // max heap
+    private PriorityQueue&lt;Integer&gt; large; // min heap
+
+    public MedianFinder() {
+        small = new PriorityQueue&lt;&gt;(Collections.reverseOrder());
+        large = new PriorityQueue&lt;&gt;();
+    }
+
+    public void addNum(int num) {
+        small.offer(num);
+        if (!small.isEmpty() &amp;&amp; !large.isEmpty() &amp;&amp;
+            small.peek() &gt; large.peek()) {
+            large.offer(small.poll());
+        }
+        if (small.size() &gt; large.size() + 1) large.offer(small.poll());
+        if (large.size() &gt; small.size() + 1) small.offer(large.poll());
+    }
+
+    public double findMedian() {
+        if (small.size() &gt; large.size()) return small.peek();
+        if (large.size() &gt; small.size()) return large.peek();
+        return (small.peek() + large.peek()) / 2.0;
+    }
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(log n) addNum | O(1) findMedian</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#973 K CLOSEST POINTS TO ORIGIN</h2>
+            <p class="c-section__desc">Find the k closest points to the origin (0, 0).</p>
+            <div class="c-code">
+<pre>
+public int[][] kClosest(int[][] points, int k) {
+    PriorityQueue&lt;int[]&gt; maxHeap = new PriorityQueue&lt;&gt;(
+        (a, b) -&gt; (b[0]*b[0] + b[1]*b[1]) - (a[0]*a[0] + a[1]*a[1]));
+    for (int[] p : points) {
+        maxHeap.offer(p);
+        if (maxHeap.size() &gt; k) maxHeap.poll();
+    }
+    return maxHeap.toArray(new int[0][]);
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n log k) Time | O(k) Space</p>
+        </article>
+    </main>
+
+    <footer class="c-footer">
+        <p class="c-footer__text">TERMINAL_REF: JL-300 // HEAPS_PRIORITY // SECURE_UPLINK</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

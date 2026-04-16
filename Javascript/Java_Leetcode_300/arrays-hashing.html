@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARRAYS & HASHING // JAVA_LEET_300</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono&family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="c-header">
+        <div class="c-header__container">
+            <a href="index.html" class="c-header__logo">⚡ JAVA_LEET_300</a>
+            <a href="index.html" class="c-btn">RETURN_TO_BASE</a>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <section class="c-hero">
+            <h1 class="c-hero__title">ARRAYS_&_HASHING</h1>
+            <p class="c-hero__text">Master the fundamentals of frequency counting, mapping, and set operations.</p>
+        </section>
+
+        <!-- Problem 1: Two Sum -->
+        <article class="c-section">
+            <h2 class="c-section__title">#1 TWO SUM</h2>
+            <p class="c-section__desc">Given an array of integers and a target, find indices of the two numbers that add up to the target.</p>
+            <div class="c-code">
+<pre>
+public int[] twoSum(int[] nums, int target) {
+    Map&lt;Integer, Integer&gt; map = new HashMap&lt;&gt;();
+    for (int i = 0; i &lt; nums.length; i++) {
+        int diff = target - nums[i];
+        if (map.containsKey(diff)) {
+            return new int[]{map.get(diff), i};
+        }
+        map.put(nums[i], i);
+    }
+    return new int[]{};
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 217: Contains Duplicate -->
+        <article class="c-section">
+            <h2 class="c-section__title">#217 CONTAINS DUPLICATE</h2>
+            <p class="c-section__desc">Determine if any value appears at least twice in an array of integers.</p>
+            <div class="c-code">
+<pre>
+public boolean containsDuplicate(int[] nums) {
+    Set&lt;Integer&gt; set = new HashSet&lt;&gt;();
+    for (int n : nums) {
+        if (set.contains(n)) return true;
+        set.add(n);
+    }
+    return false;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 242: Valid Anagram -->
+        <article class="c-section">
+            <h2 class="c-section__title">#242 VALID ANAGRAM</h2>
+            <p class="c-section__desc">Check if two strings are anagrams of each other using frequency mapping.</p>
+            <div class="c-code">
+<pre>
+public boolean isAnagram(String s, String t) {
+    if (s.length() != t.length()) return false;
+    int[] count = new int[26];
+    for (int i = 0; i &lt; s.length(); i++) {
+        count[s.charAt(i) - 'a']++;
+        count[t.charAt(i) - 'a']--;
+    }
+    for (int c : count) {
+        if (c != 0) return false;
+    }
+    return true;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 49: Group Anagrams -->
+        <article class="c-section">
+            <h2 class="c-section__title">#49 GROUP ANAGRAMS</h2>
+            <p class="c-section__desc">Group strings that are anagrams of each other.</p>
+            <div class="c-code">
+<pre>
+public List&lt;List&lt;String&gt;&gt; groupAnagrams(String[] strs) {
+    Map&lt;String, List&lt;String&gt;&gt; map = new HashMap&lt;&gt;();
+    for (String s : strs) {
+        int[] count = new int[26];
+        for (char c : s.toCharArray()) {
+            count[c - 'a']++;
+        }
+        String key = Arrays.toString(count);
+        map.computeIfAbsent(key, k -&gt; new ArrayList&lt;&gt;()).add(s);
+    }
+    return new ArrayList&lt;&gt;(map.values());
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n * k) Time | O(n * k) Space</p>
+        </article>
+
+        <!-- Problem 347: Top K Frequent Elements -->
+        <article class="c-section">
+            <h2 class="c-section__title">#347 TOP K FREQUENT</h2>
+            <p class="c-section__desc">Find the k most frequent elements in an array.</p>
+            <div class="c-code">
+<pre>
+public int[] topKFrequent(int[] nums, int k) {
+    Map&lt;Integer, Integer&gt; count = new HashMap&lt;&gt;();
+    List&lt;Integer&gt;[] bucket = new List[nums.length + 1];
+
+    for (int n : nums)
+        count.merge(n, 1, Integer::sum);
+    for (var entry : count.entrySet()) {
+        int freq = entry.getValue();
+        if (bucket[freq] == null) bucket[freq] = new ArrayList&lt;&gt;();
+        bucket[freq].add(entry.getKey());
+    }
+
+    int[] res = new int[k];
+    int idx = 0;
+    for (int i = bucket.length - 1; i &gt; 0 && idx &lt; k; i--) {
+        if (bucket[i] != null) {
+            for (int n : bucket[i]) {
+                res[idx++] = n;
+                if (idx == k) return res;
+            }
+        }
+    }
+    return res;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 238: Product of Array Except Self -->
+        <article class="c-section">
+            <h2 class="c-section__title">#238 PRODUCT EXCEPT SELF</h2>
+            <p class="c-section__desc">Return an array where each element is the product of all other elements without using division.</p>
+            <div class="c-code">
+<pre>
+public int[] productExceptSelf(int[] nums) {
+    int n = nums.length;
+    int[] res = new int[n];
+    int prefix = 1;
+    for (int i = 0; i &lt; n; i++) {
+        res[i] = prefix;
+        prefix *= nums[i];
+    }
+    int postfix = 1;
+    for (int i = n - 1; i &gt;= 0; i--) {
+        res[i] *= postfix;
+        postfix *= nums[i];
+    }
+    return res;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 128: Longest Consecutive Sequence -->
+        <article class="c-section">
+            <h2 class="c-section__title">#128 LONGEST CONSECUTIVE</h2>
+            <p class="c-section__desc">Find the length of the longest consecutive elements sequence.</p>
+            <div class="c-code">
+<pre>
+public int longestConsecutive(int[] nums) {
+    Set&lt;Integer&gt; numSet = new HashSet&lt;&gt;();
+    for (int n : nums) numSet.add(n);
+    int longest = 0;
+
+    for (int n : numSet) {
+        if (!numSet.contains(n - 1)) {
+            int length = 1;
+            while (numSet.contains(n + length)) length++;
+            longest = Math.max(longest, length);
+        }
+    }
+    return longest;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 36: Valid Sudoku -->
+        <article class="c-section">
+            <h2 class="c-section__title">#36 VALID SUDOKU</h2>
+            <p class="c-section__desc">Determine if a 9 x 9 Sudoku board is valid.</p>
+            <div class="c-code">
+<pre>
+public boolean isValidSudoku(char[][] board) {
+    Set&lt;String&gt; seen = new HashSet&lt;&gt;();
+    for (int r = 0; r &lt; 9; r++) {
+        for (int c = 0; c &lt; 9; c++) {
+            char val = board[r][c];
+            if (val == '.') continue;
+            if (!seen.add(val + "row" + r) ||
+                !seen.add(val + "col" + c) ||
+                !seen.add(val + "box" + r/3 + c/3))
+                return false;
+        }
+    }
+    return true;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(1) Time | O(1) Space (fixed board size)</p>
+        </article>
+
+        <!-- Problem 271: Encode and Decode Strings -->
+        <article class="c-section">
+            <h2 class="c-section__title">#271 ENCODE & DECODE</h2>
+            <p class="c-section__desc">Design an algorithm to encode a list of strings to a single string and decode it back.</p>
+            <div class="c-code">
+<pre>
+public String encode(List&lt;String&gt; strs) {
+    StringBuilder sb = new StringBuilder();
+    for (String s : strs) {
+        sb.append(s.length()).append('#').append(s);
+    }
+    return sb.toString();
+}
+
+public List&lt;String&gt; decode(String str) {
+    List&lt;String&gt; res = new ArrayList&lt;&gt;();
+    int i = 0;
+    while (i &lt; str.length()) {
+        int j = i;
+        while (str.charAt(j) != '#') j++;
+        int length = Integer.parseInt(str.substring(i, j));
+        res.add(str.substring(j + 1, j + 1 + length));
+        i = j + 1 + length;
+    }
+    return res;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 560: Subarray Sum Equals K -->
+        <article class="c-section">
+            <h2 class="c-section__title">#560 SUBARRAY SUM K</h2>
+            <p class="c-section__desc">Find the total number of continuous subarrays whose sum equals to k.</p>
+            <div class="c-code">
+<pre>
+public int subarraySum(int[] nums, int k) {
+    int res = 0, curSum = 0;
+    Map&lt;Integer, Integer&gt; prefixSums = new HashMap&lt;&gt;();
+    prefixSums.put(0, 1);
+
+    for (int n : nums) {
+        curSum += n;
+        res += prefixSums.getOrDefault(curSum - k, 0);
+        prefixSums.merge(curSum, 1, Integer::sum);
+    }
+    return res;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 169: Majority Element -->
+        <article class="c-section">
+            <h2 class="c-section__title">#169 MAJORITY ELEMENT</h2>
+            <p class="c-section__desc">Find the element that appears more than n/2 times.</p>
+            <div class="c-code">
+<pre>
+public int majorityElement(int[] nums) {
+    int res = 0, count = 0;
+    for (int n : nums) {
+        if (count == 0) res = n;
+        count += (n == res) ? 1 : -1;
+    }
+    return res;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 75: Sort Colors -->
+        <article class="c-section">
+            <h2 class="c-section__title">#75 SORT COLORS</h2>
+            <p class="c-section__desc">Sort an array with 0s, 1s, and 2s in-place (Dutch National Flag algorithm).</p>
+            <div class="c-code">
+<pre>
+public void sortColors(int[] nums) {
+    int l = 0, i = 0, r = nums.length - 1;
+    while (i &lt;= r) {
+        if (nums[i] == 0) {
+            int temp = nums[l]; nums[l] = nums[i]; nums[i] = temp;
+            l++; i++;
+        } else if (nums[i] == 2) {
+            int temp = nums[i]; nums[i] = nums[r]; nums[r] = temp;
+            r--;
+        } else {
+            i++;
+        }
+    }
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+    </main>
+
+    <footer class="c-footer">
+        <p class="c-footer__text">TERMINAL_REF: JL-300 // ARRAYS_HASHING // SECURE_UPLINK</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

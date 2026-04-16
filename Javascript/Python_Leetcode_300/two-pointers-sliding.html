@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TWO POINTERS & SLIDING WINDOW // PYTHON_LEET_300</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono&family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="c-header">
+        <div class="c-header__container">
+            <a href="index.html" class="c-header__logo">⚡ PYTHON_LEET_300</a>
+            <a href="index.html" class="c-btn">RETURN_TO_BASE</a>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <section class="c-hero">
+            <h1 class="c-hero__title">TWO_POINTERS_&_SLIDING_WINDOW</h1>
+            <p class="c-hero__text">Master linear scanning, array partitioning, and dynamic window sizing.</p>
+        </section>
+
+        <!-- TWO POINTERS SECTION -->
+        <h2 style="font-family: var(--font-header); color: var(--neon-cyan); margin: 2rem 0; text-shadow: var(--glow-cyan);">[ SECTION_01: TWO_POINTERS ]</h2>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#125 VALID PALINDROME</h2>
+            <p class="c-section__desc">Check if a string is a palindrome, considering only alphanumeric characters.</p>
+            <div class="c-code">
+<pre>
+def isPalindrome(s: str) -> bool:
+    l, r = 0, len(s) - 1
+    while l < r:
+        while l < r and not s[l].isalnum(): l += 1
+        while r > l and not s[r].isalnum(): r -= 1
+        if s[l].lower() != s[r].lower(): return False
+        l, r = l + 1, r - 1
+    return True
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#680 VALID PALINDROME II</h2>
+            <p class="c-section__desc">Determine if a string can be a palindrome after deleting at most one character.</p>
+            <div class="c-code">
+<pre>
+def validPalindrome(s: str) -> bool:
+    l, r = 0, len(s) - 1
+    while l < r:
+        if s[l] != s[r]:
+            skipL, skipR = s[l + 1 : r + 1], s[l:r]
+            return skipL == skipL[::-1] or skipR == skipR[::-1]
+        l, r = l + 1, r - 1
+    return True
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#1984 MIN DIFF K SCORES</h2>
+            <p class="c-section__desc">Minimum difference between the highest and lowest of k scores.</p>
+            <div class="c-code">
+<pre>
+def minimumDifference(nums: list[int], k: int) -> int:
+    nums.sort()
+    l, r = 0, k - 1
+    res = float("inf")
+    while r < len(nums):
+        res = min(res, nums[r] - nums[l])
+        l, r = l + 1, r + 1
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n log n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#1768 MERGE STRINGS ALTERNATELY</h2>
+            <p class="c-section__desc">Merge two strings by adding letters in alternating order.</p>
+            <div class="c-code">
+<pre>
+def mergeAlternately(word1: str, word2: str) -> str:
+    i, j = 0, 0
+    res = []
+    while i < len(word1) or j < len(word2):
+        if i < len(word1):
+            res.append(word1[i])
+            i += 1
+        if j < len(word2):
+            res.append(word2[j])
+            j += 1
+    return "".join(res)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n + m) Time | O(n + m) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#344 REVERSE STRING</h2>
+            <p class="c-section__desc">Reverse an array of characters in-place.</p>
+            <div class="c-code">
+<pre>
+def reverseString(s: list[str]) -> None:
+    l, r = 0, len(s) - 1
+    while l < r:
+        s[l], s[r] = s[r], s[l]
+        l, r = l + 1, r - 1
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#283 MOVE ZEROES</h2>
+            <p class="c-section__desc">Move all 0's to the end of an array while maintaining the relative order of non-zero elements.</p>
+            <div class="c-code">
+<pre>
+def moveZeroes(nums: list[int]) -> None:
+    l = 0
+    for r in range(len(nums)):
+        if nums[r]:
+            nums[l], nums[r] = nums[r], nums[l]
+            l += 1
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#26 REMOVE DUPLICATES</h2>
+            <p class="c-section__desc">Remove duplicates from sorted array in-place.</p>
+            <div class="c-code">
+<pre>
+def removeDuplicates(nums: list[int]) -> int:
+    l = 1
+    for r in range(1, len(nums)):
+        if nums[r] != nums[r - 1]:
+            nums[l] = nums[r]
+            l += 1
+    return l
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#80 REMOVE DUPLICATES II</h2>
+            <p class="c-section__desc">Remove duplicates such that each unique element appears at most twice.</p>
+            <div class="c-code">
+<pre>
+def removeDuplicates(nums: list[int]) -> int:
+    l, r = 0, 0
+    while r < len(nums):
+        count = 1
+        while r + 1 < len(nums) and nums[r] == nums[r + 1]:
+            r += 1
+            count += 1
+        for i in range(min(2, count)):
+            nums[l] = nums[r]
+            l += 1
+        r += 1
+    return l
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#167 TWO SUM II</h2>
+            <p class="c-section__desc">Find two numbers in a sorted array that add up to a target.</p>
+            <div class="c-code">
+<pre>
+def twoSum(numbers: list[int], target: int) -> list[int]:
+    l, r = 0, len(numbers) - 1
+    while l < r:
+        curSum = numbers[l] + numbers[r]
+        if curSum > target: r -= 1
+        elif curSum < target: l += 1
+        else: return [l + 1, r + 1]
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#15 3SUM</h2>
+            <p class="c-section__desc">Find all unique triplets that sum to zero.</p>
+            <div class="c-code">
+<pre>
+def threeSum(nums: list[int]) -> list[list[int]]:
+    res = []
+    nums.sort()
+    for i, a in enumerate(nums):
+        if i > 0 and a == nums[i - 1]: continue
+        l, r = i + 1, len(nums) - 1
+        while l < r:
+            s = a + nums[l] + nums[r]
+            if s > 0: r -= 1
+            elif s < 0: l += 1
+            else:
+                res.append([a, nums[l], nums[r]])
+                l += 1
+                while nums[l] == nums[l - 1] and l < r: l += 1
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n²) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#11 CONTAINER WITH MOST WATER</h2>
+            <p class="c-section__desc">Find two lines that form a container holding the most water.</p>
+            <div class="c-code">
+<pre>
+def maxArea(height: list[int]) -> int:
+    l, r = 0, len(height) - 1
+    res = 0
+    while l < r:
+        res = max(res, min(height[l], height[r]) * (r - l))
+        if height[l] < height[r]: l += 1
+        else: r -= 1
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#18 4SUM</h2>
+            <p class="c-section__desc">Find all unique quadruplets that sum to a target.</p>
+            <div class="c-code">
+<pre>
+def fourSum(nums: list[int], target: int) -> list[list[int]]:
+    nums.sort()
+    res, quad = [], []
+    def kSum(k, start, target):
+        if k != 2:
+            for i in range(start, len(nums) - k + 1):
+                if i > start and nums[i] == nums[i - 1]: continue
+                quad.append(nums[i])
+                kSum(k - 1, i + 1, target - nums[i])
+                quad.pop()
+            return
+        l, r = start, len(nums) - 1
+        while l < r:
+            if nums[l] + nums[r] < target: l += 1
+            elif nums[l] + nums[r] > target: r -= 1
+            else:
+                res.append(quad + [nums[l], nums[r]])
+                l += 1
+                while l < r and nums[l] == nums[l - 1]: l += 1
+    kSum(4, 0, target)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n³) Time | O(n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#1498 SUBSEQUENCES SUM</h2>
+            <p class="c-section__desc">Number of subsequences where min + max <= target.</p>
+            <div class="c-code">
+<pre>
+def numSubseq(nums: list[int], target: int) -> int:
+    nums.sort()
+    res, mod = 0, (10**9 + 7)
+    r = len(nums) - 1
+    for l in range(len(nums)):
+        while (nums[l] + nums[r]) > target and l <= r:
+            r -= 1
+        if l <= r:
+            res += pow(2, r - l, mod)
+            res %= mod
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n log n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#189 ROTATE ARRAY</h2>
+            <p class="c-section__desc">Rotate an array to the right by k steps.</p>
+            <div class="c-code">
+<pre>
+def rotate(nums: list[int], k: int) -> None:
+    k %= len(nums)
+    def reverse(l, r):
+        while l < r:
+            nums[l], nums[r] = nums[r], nums[l]
+            l, r = l + 1, r - 1
+    reverse(0, len(nums) - 1)
+    reverse(0, k - 1)
+    reverse(k, len(nums) - 1)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#1968 ARRAY NEIGHBORS</h2>
+            <p class="c-section__desc">Rearrange elements so each element is not equal to the average of its neighbors.</p>
+            <div class="c-code">
+<pre>
+def rearrangeArray(nums: list[int]) -> list[int]:
+    nums.sort()
+    res = []
+    l, r = 0, len(nums) - 1
+    while len(res) < len(nums):
+        res.append(nums[l])
+        l += 1
+        if l <= r:
+            res.append(nums[r])
+            r -= 1
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n log n) Time | O(n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#881 BOATS TO SAVE PEOPLE</h2>
+            <p class="c-section__desc">Minimum number of boats to carry every person (limit 2 per boat).</p>
+            <div class="c-code">
+<pre>
+def numRescueBoats(people: list[int], limit: int) -> int:
+    people.sort()
+    l, r = 0, len(people) - 1
+    res = 0
+    while l <= r:
+        if people[l] + people[r] <= limit:
+            l += 1
+        r -= 1
+        res += 1
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n log n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#42 TRAPPING RAIN WATER</h2>
+            <p class="c-section__desc">Calculate how much water can be trapped between bars after raining.</p>
+            <div class="c-code">
+<pre>
+def trap(height: list[int]) -> int:
+    if not height: return 0
+    l, r = 0, len(height) - 1
+    leftMax, rightMax = height[l], height[r]
+    res = 0
+    while l < r:
+        if leftMax < rightMax:
+            l += 1
+            leftMax = max(leftMax, height[l])
+            res += leftMax - height[l]
+        else:
+            r -= 1
+            rightMax = max(rightMax, height[r])
+            res += rightMax - height[r]
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#16 3SUM CLOSEST</h2>
+            <p class="c-section__desc">Find three integers such that their sum is closest to a target.</p>
+            <div class="c-code">
+<pre>
+def threeSumClosest(nums: list[int], target: int) -> int:
+    nums.sort()
+    res = sum(nums[:3])
+    for i in range(len(nums) - 2):
+        l, r = i + 1, len(nums) - 1
+        while l < r:
+            curSum = nums[i] + nums[l] + nums[r]
+            if abs(curSum - target) < abs(res - target):
+                res = curSum
+            if curSum < target: l += 1
+            else: r -= 1
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n²) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#977 SQUARES OF SORTED ARRAY</h2>
+            <p class="c-section__desc">Return an array of the squares of each number sorted in non-decreasing order.</p>
+            <div class="c-code">
+<pre>
+def sortedSquares(nums: list[int]) -> list[int]:
+    res = [0] * len(nums)
+    l, r = 0, len(nums) - 1
+    i = len(nums) - 1
+    while l <= r:
+        if nums[l]**2 > nums[r]**2:
+            res[i] = nums[l]**2
+            l += 1
+        else:
+            res[i] = nums[r]**2
+            r -= 1
+        i -= 1
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <!-- SLIDING WINDOW SECTION -->
+        <h2 style="font-family: var(--font-header); color: var(--neon-cyan); margin: 2rem 0; text-shadow: var(--glow-cyan);">[ SECTION_02: SLIDING_WINDOW ]</h2>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#121 BUY & SELL STOCK</h2>
+            <p class="c-section__desc">Find the maximum profit you can achieve by buying and selling a stock once.</p>
+            <div class="c-code">
+<pre>
+def maxProfit(prices: list[int]) -> int:
+    l, r = 0, 1
+    maxP = 0
+    while r < len(prices):
+        if prices[l] < prices[r]:
+            profit = prices[r] - prices[l]
+            maxP = max(maxP, profit)
+        else:
+            l = r
+        r += 1
+    return maxP
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#209 MIN SIZE SUBARRAY SUM</h2>
+            <p class="c-section__desc">Minimal length of a contiguous subarray of which the sum >= target.</p>
+            <div class="c-code">
+<pre>
+def minSubArrayLen(target: int, nums: list[int]) -> int:
+    l, total = 0, 0
+    res = float("inf")
+    for r in range(len(nums)):
+        total += nums[r]
+        while total >= target:
+            res = min(r - l + 1, res)
+            total -= nums[l]
+            l += 1
+    return 0 if res == float("inf") else res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#3 LONGEST SUBSTRING</h2>
+            <p class="c-section__desc">Length of the longest substring without repeating characters.</p>
+            <div class="c-code">
+<pre>
+def lengthOfLongestSubstring(s: str) -> int:
+    charSet = set()
+    l, res = 0, 0
+    for r in range(len(s)):
+        while s[r] in charSet:
+            charSet.remove(s[l])
+            l += 1
+        charSet.add(s[r])
+        res = max(res, r - l + 1)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#424 REPEATING CHARACTER</h2>
+            <p class="c-section__desc">Longest repeating character replacement with k operations.</p>
+            <div class="c-code">
+<pre>
+def characterReplacement(s: str, k: int) -> int:
+    count = {}
+    res = 0
+    l = 0
+    maxf = 0
+    for r in range(len(s)):
+        count[s[r]] = 1 + count.get(s[r], 0)
+        maxf = max(maxf, count[s[r]])
+        while (r - l + 1) - maxf > k:
+            count[s[l]] -= 1
+            l += 1
+        res = max(res, r - l + 1)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space (26 chars)</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#567 PERMUTATION IN STRING</h2>
+            <p class="c-section__desc">Check if s1's permutation is a substring of s2.</p>
+            <div class="c-code">
+<pre>
+def checkInclusion(s1: str, s2: str) -> bool:
+    if len(s1) > len(s2): return False
+    s1Count, s2Count = [0] * 26, [0] * 26
+    for i in range(len(s1)):
+        s1Count[ord(s1[i]) - ord('a')] += 1
+        s2Count[ord(s2[i]) - ord('a')] += 1
+    matches = 0
+    for i in range(26):
+        if s1Count[i] == s2Count[i]: matches += 1
+    l = 0
+    for r in range(len(s1), len(s2)):
+        if matches == 26: return True
+        index = ord(s2[r]) - ord('a')
+        s2Count[index] += 1
+        if s1Count[index] == s2Count[index]: matches += 1
+        elif s1Count[index] + 1 == s2Count[index]: matches -= 1
+        index = ord(s2[l]) - ord('a')
+        s2Count[index] -= 1
+        if s1Count[index] == s2Count[index]: matches += 1
+        elif s1Count[index] - 1 == s2Count[index]: matches -= 1
+        l += 1
+    return matches == 26
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#1838 FREQUENCY OF MOST FREQUENT</h2>
+            <p class="c-section__desc">Maximum frequency of an element after k increments.</p>
+            <div class="c-code">
+<pre>
+def maxFrequency(nums: list[int], k: int) -> int:
+    nums.sort()
+    l, r = 0, 0
+    res, total = 0, 0
+    while r < len(nums):
+        total += nums[r]
+        while nums[r] * (r - l + 1) > total + k:
+            total -= nums[l]
+            l += 1
+        res = max(res, r - l + 1)
+        r += 1
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n log n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#904 FRUIT INTO BASKETS</h2>
+            <p class="c-section__desc">Maximum amount of fruit you can collect in two baskets.</p>
+            <div class="c-code">
+<pre>
+def totalFruit(fruits: list[int]) -> int:
+    count = {}
+    l, res, total = 0, 0, 0
+    for r in range(len(fruits)):
+        count[fruits[r]] = 1 + count.get(fruits[r], 0)
+        total += 1
+        while len(count) > 2:
+            f = fruits[l]
+            count[f] -= 1
+            total -= 1
+            l += 1
+            if not count[f]: count.pop(f)
+        res = max(res, total)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#1456 MAX VOWELS</h2>
+            <p class="c-section__desc">Maximum number of vowels in a substring of given length k.</p>
+            <div class="c-code">
+<pre>
+def maxVowels(s: str, k: int) -> int:
+    vowels = {'a', 'e', 'i', 'o', 'u'}
+    l, cnt, res = 0, 0, 0
+    for r in range(len(s)):
+        cnt += 1 if s[r] in vowels else 0
+        if r - l + 1 > k:
+            cnt -= 1 if s[l] in vowels else 0
+            l += 1
+        res = max(res, cnt)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#1343 SUBARRAY THRESHOLD</h2>
+            <p class="c-section__desc">Number of subarrays of size k with average >= threshold.</p>
+            <div class="c-code">
+<pre>
+def numOfSubarrays(arr: list[int], k: int, threshold: int) -> int:
+    res = 0
+    curSum = sum(arr[:k-1])
+    for l in range(len(arr) - k + 1):
+        curSum += arr[l + k - 1]
+        if (curSum / k) >= threshold:
+            res += 1
+        curSum -= arr[l]
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#76 MINIMUM WINDOW SUBSTRING</h2>
+            <p class="c-section__desc">Smallest substring containing all characters of another string.</p>
+            <div class="c-code">
+<pre>
+def minWindow(s: str, t: str) -> str:
+    if t == "": return ""
+    countT, window = {}, {}
+    for c in t: countT[c] = 1 + countT.get(c, 0)
+    have, need = 0, len(countT)
+    res, resLen = [-1, -1], float("inf")
+    l = 0
+    for r in range(len(s)):
+        c = s[r]
+        window[c] = 1 + window.get(c, 0)
+        if c in countT and window[c] == countT[c]: have += 1
+        while have == need:
+            if (r - l + 1) < resLen:
+                res = [l, r]
+                resLen = (r - l + 1)
+            window[s[l]] -= 1
+            if s[l] in countT and window[s[l]] < countT[s[l]]: have -= 1
+            l += 1
+    l, r = res
+    return s[l : r + 1] if resLen != float("inf") else ""
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#239 SLIDING WINDOW MAX</h2>
+            <p class="c-section__desc">Return the maximum element in each sliding window of size k.</p>
+            <div class="c-code">
+<pre>
+import collections
+def maxSlidingWindow(nums: list[int], k: int) -> list[int]:
+    output = []
+    q = collections.deque()
+    l = r = 0
+    while r < len(nums):
+        while q and nums[q[-1]] < nums[r]:
+            q.pop()
+        q.append(r)
+        if l > q[0]:
+            q.popleft()
+        if (r + 1) >= k:
+            output.append(nums[q[0]])
+            l += 1
+        r += 1
+    return output
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(k) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#1004 MAX CONSECUTIVE ONES III</h2>
+            <p class="c-section__desc">Longest contiguous subarray with at most k 0's flipped.</p>
+            <div class="c-code">
+<pre>
+def longestOnes(nums: list[int], k: int) -> int:
+    l, res = 0, 0
+    for r in range(len(nums)):
+        if nums[r] == 0:
+            k -= 1
+        while k < 0:
+            if nums[l] == 0:
+                k += 1
+            l += 1
+        res = max(res, r - l + 1)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#1493 LONGEST SUBARRAY OF 1S</h2>
+            <p class="c-section__desc">Longest subarray of 1's after deleting one element.</p>
+            <div class="c-code">
+<pre>
+def longestSubarray(nums: list[int]) -> int:
+    l, k, res = 0, 1, 0
+    for r in range(len(nums)):
+        if nums[r] == 0:
+            k -= 1
+        while k < 0:
+            if nums[l] == 0:
+                k += 1
+            l += 1
+        res = max(res, r - l)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#1208 EQUAL SUBSTRINGS BUDGET</h2>
+            <p class="c-section__desc">Maximum length of a substring that can be changed within a budget.</p>
+            <div class="c-code">
+<pre>
+def equalSubstring(s: str, t: str, maxCost: int) -> int:
+    l, curCost, res = 0, 0, 0
+    for r in range(len(s)):
+        curCost += abs(ord(s[r]) - ord(t[r]))
+        while curCost > maxCost:
+            curCost -= abs(ord(s[l]) - ord(t[l]))
+            l += 1
+        res = max(res, r - l + 1)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#438 FIND ALL ANAGRAMS</h2>
+            <p class="c-section__desc">Find all start indices of p's anagrams in s.</p>
+            <div class="c-code">
+<pre>
+def findAnagrams(s: str, p: str) -> list[int]:
+    if len(p) > len(s): return []
+    pCount, sCount = {}, {}
+    for i in range(len(p)):
+        pCount[p[i]] = 1 + pCount.get(p[i], 0)
+        sCount[s[i]] = 1 + sCount.get(s[i], 0)
+    res = [0] if sCount == pCount else []
+    l = 0
+    for r in range(len(p), len(s)):
+        sCount[s[r]] = 1 + sCount.get(s[r], 0)
+        sCount[s[l]] -= 1
+        if sCount[s[l]] == 0: sCount.pop(s[l])
+        l += 1
+        if sCount == pCount: res.append(l)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#992 SUBARRAYS K INTEGERS</h2>
+            <p class="c-section__desc">Number of subarrays with exactly k different integers.</p>
+            <div class="c-code">
+<pre>
+def subarraysWithKDistinct(nums: list[int], k: int) -> int:
+    def atMost(k):
+        count = {}
+        l, res = 0, 0
+        for r in range(len(nums)):
+            count[nums[r]] = 1 + count.get(nums[r], 0)
+            while len(count) > k:
+                count[nums[l]] -= 1
+                if not count[nums[l]]: count.pop(nums[l])
+                l += 1
+            res += (r - l + 1)
+        return res
+    return atMost(k) - atMost(k - 1)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(k) Space</p>
+        </article>
+
+    </main>
+
+    <footer class="c-footer">
+        <p class="c-footer__text">TERMINAL_REF: PL-300 // TWO_POINTERS_SLIDING // SECURE_UPLINK</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

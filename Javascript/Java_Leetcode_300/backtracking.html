@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BACKTRACKING // JAVA_LEET_300</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono&family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="c-header">
+        <div class="c-header__container">
+            <a href="index.html" class="c-header__logo">⚡ JAVA_LEET_300</a>
+            <a href="index.html" class="c-btn">RETURN_TO_BASE</a>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <section class="c-hero">
+            <h1 class="c-hero__title">BACKTRACKING</h1>
+            <p class="c-hero__text">State-space search and recursion.</p>
+        </section>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#78 SUBSETS</h2>
+            <p class="c-section__desc">Return all possible subsets (power set).</p>
+            <div class="c-code">
+<pre>
+public List&lt;List&lt;Integer&gt;&gt; subsets(int[] nums) {
+    List&lt;List&lt;Integer&gt;&gt; res = new ArrayList&lt;&gt;();
+    backtrack(res, new ArrayList&lt;&gt;(), nums, 0);
+    return res;
+}
+
+private void backtrack(List&lt;List&lt;Integer&gt;&gt; res,
+                       List&lt;Integer&gt; curr, int[] nums, int start) {
+    res.add(new ArrayList&lt;&gt;(curr));
+    for (int i = start; i &lt; nums.length; i++) {
+        curr.add(nums[i]);
+        backtrack(res, curr, nums, i + 1);
+        curr.remove(curr.size() - 1);
+    }
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n * 2^n) Time | O(n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#39 COMBINATION SUM</h2>
+            <p class="c-section__desc">Find all unique combinations that sum to target (reuse allowed).</p>
+            <div class="c-code">
+<pre>
+public List&lt;List&lt;Integer&gt;&gt; combinationSum(int[] candidates, int target) {
+    List&lt;List&lt;Integer&gt;&gt; res = new ArrayList&lt;&gt;();
+    dfs(res, new ArrayList&lt;&gt;(), candidates, target, 0);
+    return res;
+}
+
+private void dfs(List&lt;List&lt;Integer&gt;&gt; res, List&lt;Integer&gt; curr,
+                 int[] cands, int target, int start) {
+    if (target == 0) { res.add(new ArrayList&lt;&gt;(curr)); return; }
+    if (target &lt; 0) return;
+    for (int i = start; i &lt; cands.length; i++) {
+        curr.add(cands[i]);
+        dfs(res, curr, cands, target - cands[i], i);
+        curr.remove(curr.size() - 1);
+    }
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(2^t) Time | O(t) Space (t = target/min)</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#46 PERMUTATIONS</h2>
+            <p class="c-section__desc">Return all possible permutations of distinct integers.</p>
+            <div class="c-code">
+<pre>
+public List&lt;List&lt;Integer&gt;&gt; permute(int[] nums) {
+    List&lt;List&lt;Integer&gt;&gt; res = new ArrayList&lt;&gt;();
+    boolean[] used = new boolean[nums.length];
+    backtrack(res, new ArrayList&lt;&gt;(), nums, used);
+    return res;
+}
+
+private void backtrack(List&lt;List&lt;Integer&gt;&gt; res, List&lt;Integer&gt; curr,
+                       int[] nums, boolean[] used) {
+    if (curr.size() == nums.length) {
+        res.add(new ArrayList&lt;&gt;(curr));
+        return;
+    }
+    for (int i = 0; i &lt; nums.length; i++) {
+        if (used[i]) continue;
+        used[i] = true;
+        curr.add(nums[i]);
+        backtrack(res, curr, nums, used);
+        curr.remove(curr.size() - 1);
+        used[i] = false;
+    }
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n * n!) Time | O(n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#90 SUBSETS II</h2>
+            <p class="c-section__desc">Return all possible subsets with duplicates handled.</p>
+            <div class="c-code">
+<pre>
+public List&lt;List&lt;Integer&gt;&gt; subsetsWithDup(int[] nums) {
+    Arrays.sort(nums);
+    List&lt;List&lt;Integer&gt;&gt; res = new ArrayList&lt;&gt;();
+    backtrack(res, new ArrayList&lt;&gt;(), nums, 0);
+    return res;
+}
+
+private void backtrack(List&lt;List&lt;Integer&gt;&gt; res,
+                       List&lt;Integer&gt; curr, int[] nums, int start) {
+    res.add(new ArrayList&lt;&gt;(curr));
+    for (int i = start; i &lt; nums.length; i++) {
+        if (i &gt; start &amp;&amp; nums[i] == nums[i - 1]) continue;
+        curr.add(nums[i]);
+        backtrack(res, curr, nums, i + 1);
+        curr.remove(curr.size() - 1);
+    }
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n * 2^n) Time | O(n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#79 WORD SEARCH</h2>
+            <p class="c-section__desc">Search for a word in a 2D board of characters.</p>
+            <div class="c-code">
+<pre>
+public boolean exist(char[][] board, String word) {
+    for (int r = 0; r &lt; board.length; r++)
+        for (int c = 0; c &lt; board[0].length; c++)
+            if (dfs(board, word, r, c, 0)) return true;
+    return false;
+}
+
+private boolean dfs(char[][] board, String word,
+                    int r, int c, int i) {
+    if (i == word.length()) return true;
+    if (r &lt; 0 || c &lt; 0 || r &gt;= board.length ||
+        c &gt;= board[0].length || board[r][c] != word.charAt(i))
+        return false;
+    char temp = board[r][c];
+    board[r][c] = '#';
+    boolean found = dfs(board, word, r+1, c, i+1) ||
+                    dfs(board, word, r-1, c, i+1) ||
+                    dfs(board, word, r, c+1, i+1) ||
+                    dfs(board, word, r, c-1, i+1);
+    board[r][c] = temp;
+    return found;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(m*n*4^L) Time | O(L) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#131 PALINDROME PARTITIONING</h2>
+            <p class="c-section__desc">Partition a string such that every substring is a palindrome.</p>
+            <div class="c-code">
+<pre>
+public List&lt;List&lt;String&gt;&gt; partition(String s) {
+    List&lt;List&lt;String&gt;&gt; res = new ArrayList&lt;&gt;();
+    dfs(res, new ArrayList&lt;&gt;(), s, 0);
+    return res;
+}
+
+private void dfs(List&lt;List&lt;String&gt;&gt; res, List&lt;String&gt; curr,
+                 String s, int start) {
+    if (start == s.length()) {
+        res.add(new ArrayList&lt;&gt;(curr));
+        return;
+    }
+    for (int end = start; end &lt; s.length(); end++) {
+        if (isPalin(s, start, end)) {
+            curr.add(s.substring(start, end + 1));
+            dfs(res, curr, s, end + 1);
+            curr.remove(curr.size() - 1);
+        }
+    }
+}
+
+private boolean isPalin(String s, int l, int r) {
+    while (l &lt; r) {
+        if (s.charAt(l++) != s.charAt(r--)) return false;
+    }
+    return true;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n * 2^n) Time | O(n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#17 LETTER COMBINATIONS</h2>
+            <p class="c-section__desc">All letter combinations a phone number could represent.</p>
+            <div class="c-code">
+<pre>
+private String[] phone = {"", "", "abc", "def", "ghi",
+    "jkl", "mno", "pqrs", "tuv", "wxyz"};
+
+public List&lt;String&gt; letterCombinations(String digits) {
+    List&lt;String&gt; res = new ArrayList&lt;&gt;();
+    if (digits.isEmpty()) return res;
+    backtrack(res, new StringBuilder(), digits, 0);
+    return res;
+}
+
+private void backtrack(List&lt;String&gt; res, StringBuilder sb,
+                       String digits, int idx) {
+    if (idx == digits.length()) {
+        res.add(sb.toString());
+        return;
+    }
+    for (char c : phone[digits.charAt(idx) - '0'].toCharArray()) {
+        sb.append(c);
+        backtrack(res, sb, digits, idx + 1);
+        sb.deleteCharAt(sb.length() - 1);
+    }
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(4^n) Time | O(n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#51 N-QUEENS</h2>
+            <p class="c-section__desc">Place n queens on an n×n board so no two attack each other.</p>
+            <div class="c-code">
+<pre>
+public List&lt;List&lt;String&gt;&gt; solveNQueens(int n) {
+    List&lt;List&lt;String&gt;&gt; res = new ArrayList&lt;&gt;();
+    char[][] board = new char[n][n];
+    for (char[] row : board) Arrays.fill(row, '.');
+    Set&lt;Integer&gt; cols = new HashSet&lt;&gt;();
+    Set&lt;Integer&gt; posDiag = new HashSet&lt;&gt;();
+    Set&lt;Integer&gt; negDiag = new HashSet&lt;&gt;();
+    backtrack(res, board, 0, cols, posDiag, negDiag);
+    return res;
+}
+
+private void backtrack(List&lt;List&lt;String&gt;&gt; res, char[][] board,
+    int row, Set&lt;Integer&gt; cols, Set&lt;Integer&gt; pos, Set&lt;Integer&gt; neg) {
+    if (row == board.length) {
+        List&lt;String&gt; copy = new ArrayList&lt;&gt;();
+        for (char[] r : board) copy.add(new String(r));
+        res.add(copy);
+        return;
+    }
+    for (int c = 0; c &lt; board.length; c++) {
+        if (cols.contains(c) || pos.contains(row+c) ||
+            neg.contains(row-c)) continue;
+        cols.add(c); pos.add(row+c); neg.add(row-c);
+        board[row][c] = 'Q';
+        backtrack(res, board, row+1, cols, pos, neg);
+        cols.remove(c); pos.remove(row+c); neg.remove(row-c);
+        board[row][c] = '.';
+    }
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n!) Time | O(n²) Space</p>
+        </article>
+    </main>
+
+    <footer class="c-footer">
+        <p class="c-footer__text">TERMINAL_REF: JL-300 // BACKTRACKING // SECURE_UPLINK</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIT MANIPULATION // PYTHON_LEET_300</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono&family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="c-header">
+        <div class="c-header__container">
+            <a href="index.html" class="c-header__logo">⚡ PYTHON_LEET_300</a>
+            <a href="index.html" class="c-btn">RETURN_TO_BASE</a>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <section class="c-hero">
+            <h1 class="c-hero__title">BIT_MANIPULATION</h1>
+            <p class="c-hero__text">Perform low-level data processing using binary operations.</p>
+        </section>
+
+        <!-- Problem 136: Single Number -->
+        <article class="c-section">
+            <h2 class="c-section__title">#136 SINGLE NUMBER</h2>
+            <p class="c-section__desc">Find the element that appears only once in an array where every other element appears twice.</p>
+            <div class="c-code">
+<pre>
+def singleNumber(nums: list[int]) -> int:
+    res = 0
+    for n in nums:
+        res ^= n
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 191: Number of 1 Bits -->
+        <article class="c-section">
+            <h2 class="c-section__title">#191 NUMBER OF 1 BITS</h2>
+            <p class="c-section__desc">Count the number of set bits (Hamming weight) in an integer.</p>
+            <div class="c-code">
+<pre>
+def hammingWeight(n: int) -> int:
+    res = 0
+    while n:
+        n &= (n - 1)
+        res += 1
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(1) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 338: Counting Bits -->
+        <article class="c-section">
+            <h2 class="c-section__title">#338 COUNTING BITS</h2>
+            <p class="c-section__desc">Return an array where each element is the number of 1s in the binary representation of i.</p>
+            <div class="c-code">
+<pre>
+def countBits(n: int) -> list[int]:
+    dp = [0] * (n + 1)
+    offset = 1
+    for i in range(1, n + 1):
+        if offset * 2 == i:
+            offset = i
+        dp[i] = 1 + dp[i - offset]
+    return dp
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space (ignoring output)</p>
+        </article>
+
+        <!-- Problem 190: Reverse Bits -->
+        <article class="c-section">
+            <h2 class="c-section__title">#190 REVERSE BITS</h2>
+            <p class="c-section__desc">Reverse bits of a given 32 bits unsigned integer.</p>
+            <div class="c-code">
+<pre>
+def reverseBits(n: int) -> int:
+    res = 0
+    for i in range(32):
+        bit = (n >> i) & 1
+        res = res | (bit << (31 - i))
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(1) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 268: Missing Number -->
+        <article class="c-section">
+            <h2 class="c-section__title">#268 MISSING NUMBER</h2>
+            <p class="c-section__desc">Find the only number in the range [0, n] that is missing from the array.</p>
+            <div class="c-code">
+<pre>
+def missingNumber(nums: list[int]) -> int:
+    res = len(nums)
+    for i in range(len(nums)):
+        res += (i - nums[i])
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 371: Sum of Two Integers -->
+        <article class="c-section">
+            <h2 class="c-section__title">#371 SUM OF TWO INTEGERS</h2>
+            <p class="c-section__desc">Sum two integers without using + or - operators.</p>
+            <div class="c-code">
+<pre>
+def getSum(a: int, b: int) -> int:
+    mask = 0xffffffff
+    while (b & mask) > 0:
+        carry = (a & b) << 1
+        a = (a ^ b)
+        b = carry
+    return (a & mask) if b > 0 else a
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(1) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 7: Reverse Integer -->
+        <article class="c-section">
+            <h2 class="c-section__title">#7 REVERSE INTEGER</h2>
+            <p class="c-section__desc">Reverse digits of a signed 32-bit integer.</p>
+            <div class="c-code">
+<pre>
+def reverse(x: int) -> int:
+    MIN = -2147483648
+    MAX = 2147483647
+    res = 0
+    while x:
+        digit = int(math.fmod(x, 10))
+        x = int(x / 10)
+        if (res > MAX // 10 or (res == MAX // 10 and digit > MAX % 10)): return 0
+        if (res < MIN // 10 or (res == MIN // 10 and digit < MIN % 10)): return 0
+        res = (res * 10) + digit
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(log n) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 137: Single Number II -->
+        <article class="c-section">
+            <h2 class="c-section__title">#137 SINGLE NUMBER II</h2>
+            <p class="c-section__desc">Find the element that appears once where others appear three times.</p>
+            <div class="c-code">
+<pre>
+def singleNumber(nums: list[int]) -> int:
+    ones, twos = 0, 0
+    for n in nums:
+        ones = (ones ^ n) & ~twos
+        twos = (twos ^ n) & ~ones
+    return ones
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 260: Single Number III -->
+        <article class="c-section">
+            <h2 class="c-section__title">#260 SINGLE NUMBER III</h2>
+            <p class="c-section__desc">Find the two elements that appear only once.</p>
+            <div class="c-code">
+<pre>
+def singleNumber(nums: list[int]) -> list[int]:
+    xor = 0
+    for n in nums: xor ^= n
+    diff = xor & -xor
+    res = [0, 0]
+    for n in nums:
+        if n & diff: res[0] ^= n
+        else: res[1] ^= n
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 389: Find the Difference -->
+        <article class="c-section">
+            <h2 class="c-section__title">#389 FIND THE DIFFERENCE</h2>
+            <p class="c-section__desc">Find the character that was added to string t.</p>
+            <div class="c-code">
+<pre>
+def findTheDifference(s: str, t: str) -> str:
+    res = 0
+    for c in s + t: res ^= ord(c)
+    return chr(res)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 461: Hamming Distance -->
+        <article class="c-section">
+            <h2 class="c-section__title">#461 HAMMING DISTANCE</h2>
+            <p class="c-section__desc">Find the number of positions at which the corresponding bits are different.</p>
+            <div class="c-code">
+<pre>
+def hammingDistance(x: int, y: int) -> int:
+    xor = x ^ y
+    res = 0
+    while xor:
+        res += xor & 1
+        xor >>= 1
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(1) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 476: Number Complement -->
+        <article class="c-section">
+            <h2 class="c-section__title">#476 NUMBER COMPLEMENT</h2>
+            <p class="c-section__desc">Output the complement number of a given integer.</p>
+            <div class="c-code">
+<pre>
+def findComplement(num: int) -> int:
+    mask = 1
+    while mask < num:
+        mask = (mask << 1) | 1
+    return num ^ mask
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(log n) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 169: Majority Element -->
+        <article class="c-section">
+            <h2 class="c-section__title">#169 MAJORITY ELEMENT</h2>
+            <p class="c-section__desc">Find the element that appears more than n/2 times.</p>
+            <div class="c-code">
+<pre>
+def majorityElement(nums: list[int]) -> int:
+    res, count = 0, 0
+    for n in nums:
+        if count == 0: res = n
+        count += (1 if n == res else -1)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 89: Gray Code -->
+        <article class="c-section">
+            <h2 class="c-section__title">#89 GRAY CODE</h2>
+            <p class="c-section__desc">Return a n-bit gray code sequence.</p>
+            <div class="c-code">
+<pre>
+def grayCode(n: int) -> list[int]:
+    res = []
+    for i in range(1 << n):
+        res.append(i ^ (i >> 1))
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(2^n) Time | O(2^n) Space</p>
+        </article>
+
+        <!-- Problem 201: Bitwise AND of Numbers Range -->
+        <article class="c-section">
+            <h2 class="c-section__title">#201 BITWISE AND OF RANGE</h2>
+            <p class="c-section__desc">Find bitwise AND of all numbers in range [left, right].</p>
+            <div class="c-code">
+<pre>
+def rangeBitwiseAnd(left: int, right: int) -> int:
+    shift = 0
+    while left < right:
+        left >>= 1
+        right >>= 1
+        shift += 1
+    return left << shift
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(log n) Time | O(1) Space</p>
+        </article>
+    </main>
+
+    <footer class="c-footer">
+        <p class="c-footer__text">TERMINAL_REF: PL-300 // BIT_MANIPULATION // SECURE_UPLINK</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

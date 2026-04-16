@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADVANCED TOPICS // JAVA_LEET_300</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono&family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="c-header">
+        <div class="c-header__container">
+            <a href="index.html" class="c-header__logo">⚡ JAVA_LEET_300</a>
+            <a href="index.html" class="c-btn">RETURN_TO_BASE</a>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <section class="c-hero">
+            <h1 class="c-hero__title">ADVANCED_TOPICS</h1>
+            <p class="c-hero__text">Bit manipulation, Greedy, and rare algorithmic patterns.</p>
+        </section>
+
+        <!-- BIT MANIPULATION -->
+        <h2 style="font-family: var(--font-header); color: var(--neon-cyan); margin: 2rem 0; text-shadow: var(--glow-cyan);">[ SECTION_01: BIT_MANIPULATION ]</h2>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#191 NUMBER OF 1 BITS</h2>
+            <p class="c-section__desc">Count the number of set bits (Hamming weight).</p>
+            <div class="c-code">
+<pre>
+public int hammingWeight(int n) {
+    int count = 0;
+    while (n != 0) {
+        count += n &amp; 1;
+        n &gt;&gt;&gt;= 1;
+    }
+    return count;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(32) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#338 COUNTING BITS</h2>
+            <p class="c-section__desc">Return an array of the number of 1's in binary representation of every number 0 to n.</p>
+            <div class="c-code">
+<pre>
+public int[] countBits(int n) {
+    int[] dp = new int[n + 1];
+    int offset = 1;
+    for (int i = 1; i &lt;= n; i++) {
+        if (offset * 2 == i) offset = i;
+        dp[i] = 1 + dp[i - offset];
+    }
+    return dp;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#190 REVERSE BITS</h2>
+            <p class="c-section__desc">Reverse bits of a given 32-bit unsigned integer.</p>
+            <div class="c-code">
+<pre>
+public int reverseBits(int n) {
+    int result = 0;
+    for (int i = 0; i &lt; 32; i++) {
+        result = (result &lt;&lt; 1) | (n &amp; 1);
+        n &gt;&gt;&gt;= 1;
+    }
+    return result;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(32) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#268 MISSING NUMBER</h2>
+            <p class="c-section__desc">Find the missing number in range [0, n] using XOR.</p>
+            <div class="c-code">
+<pre>
+public int missingNumber(int[] nums) {
+    int res = nums.length;
+    for (int i = 0; i &lt; nums.length; i++) {
+        res ^= i ^ nums[i];
+    }
+    return res;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#136 SINGLE NUMBER</h2>
+            <p class="c-section__desc">Find the element that appears only once (all others appear twice).</p>
+            <div class="c-code">
+<pre>
+public int singleNumber(int[] nums) {
+    int result = 0;
+    for (int n : nums) result ^= n;
+    return result;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#371 SUM OF TWO INTEGERS</h2>
+            <p class="c-section__desc">Calculate the sum of two integers without using + or -.</p>
+            <div class="c-code">
+<pre>
+public int getSum(int a, int b) {
+    while (b != 0) {
+        int carry = (a &amp; b) &lt;&lt; 1;
+        a = a ^ b;
+        b = carry;
+    }
+    return a;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(32) Time | O(1) Space</p>
+        </article>
+
+        <!-- GREEDY -->
+        <h2 style="font-family: var(--font-header); color: var(--neon-cyan); margin: 2rem 0; text-shadow: var(--glow-cyan);">[ SECTION_02: GREEDY ]</h2>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#53 MAXIMUM SUBARRAY</h2>
+            <p class="c-section__desc">Find the contiguous subarray with the largest sum (Kadane's Algorithm).</p>
+            <div class="c-code">
+<pre>
+public int maxSubArray(int[] nums) {
+    int maxSum = nums[0], curSum = 0;
+    for (int n : nums) {
+        curSum = Math.max(n, curSum + n);
+        maxSum = Math.max(maxSum, curSum);
+    }
+    return maxSum;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#55 JUMP GAME</h2>
+            <p class="c-section__desc">Determine if you can reach the last index.</p>
+            <div class="c-code">
+<pre>
+public boolean canJump(int[] nums) {
+    int goal = nums.length - 1;
+    for (int i = nums.length - 2; i &gt;= 0; i--) {
+        if (i + nums[i] &gt;= goal) goal = i;
+    }
+    return goal == 0;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#45 JUMP GAME II</h2>
+            <p class="c-section__desc">Minimum number of jumps to reach the last index.</p>
+            <div class="c-code">
+<pre>
+public int jump(int[] nums) {
+    int jumps = 0, curEnd = 0, farthest = 0;
+    for (int i = 0; i &lt; nums.length - 1; i++) {
+        farthest = Math.max(farthest, i + nums[i]);
+        if (i == curEnd) {
+            jumps++;
+            curEnd = farthest;
+        }
+    }
+    return jumps;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#134 GAS STATION</h2>
+            <p class="c-section__desc">Find the starting gas station index to complete the circuit.</p>
+            <div class="c-code">
+<pre>
+public int canCompleteCircuit(int[] gas, int[] cost) {
+    int totalSurplus = 0, curSurplus = 0, start = 0;
+    for (int i = 0; i &lt; gas.length; i++) {
+        totalSurplus += gas[i] - cost[i];
+        curSurplus += gas[i] - cost[i];
+        if (curSurplus &lt; 0) {
+            curSurplus = 0;
+            start = i + 1;
+        }
+    }
+    return totalSurplus &gt;= 0 ? start : -1;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#846 HAND OF STRAIGHTS</h2>
+            <p class="c-section__desc">Check if a hand can be rearranged into groups of consecutive cards.</p>
+            <div class="c-code">
+<pre>
+public boolean isNStraightHand(int[] hand, int groupSize) {
+    if (hand.length % groupSize != 0) return false;
+    TreeMap&lt;Integer, Integer&gt; count = new TreeMap&lt;&gt;();
+    for (int card : hand)
+        count.merge(card, 1, Integer::sum);
+
+    while (!count.isEmpty()) {
+        int first = count.firstKey();
+        for (int i = first; i &lt; first + groupSize; i++) {
+            if (!count.containsKey(i)) return false;
+            count.merge(i, -1, Integer::sum);
+            if (count.get(i) == 0) count.remove(i);
+        }
+    }
+    return true;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n log n) Time | O(n) Space</p>
+        </article>
+
+        <!-- MISC / DESIGN -->
+        <h2 style="font-family: var(--font-header); color: var(--neon-cyan); margin: 2rem 0; text-shadow: var(--glow-cyan);">[ SECTION_03: DESIGN ]</h2>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#355 DESIGN TWITTER</h2>
+            <p class="c-section__desc">Design a simplified version of Twitter.</p>
+            <div class="c-code">
+<pre>
+class Twitter {
+    private int timestamp = 0;
+    private Map&lt;Integer, Set&lt;Integer&gt;&gt; followMap = new HashMap&lt;&gt;();
+    private Map&lt;Integer, List&lt;int[]&gt;&gt; tweetMap = new HashMap&lt;&gt;();
+
+    public void postTweet(int userId, int tweetId) {
+        tweetMap.computeIfAbsent(userId, k -&gt; new ArrayList&lt;&gt;())
+                .add(new int[]{timestamp++, tweetId});
+    }
+
+    public List&lt;Integer&gt; getNewsFeed(int userId) {
+        PriorityQueue&lt;int[]&gt; pq = new PriorityQueue&lt;&gt;(
+            (a, b) -&gt; b[0] - a[0]);
+        followMap.computeIfAbsent(userId, k -&gt; new HashSet&lt;&gt;()).add(userId);
+        for (int followee : followMap.get(userId)) {
+            List&lt;int[]&gt; tweets = tweetMap.get(followee);
+            if (tweets != null) {
+                int idx = tweets.size() - 1;
+                int[] t = tweets.get(idx);
+                pq.offer(new int[]{t[0], t[1], followee, idx});
+            }
+        }
+        List&lt;Integer&gt; feed = new ArrayList&lt;&gt;();
+        while (!pq.isEmpty() &amp;&amp; feed.size() &lt; 10) {
+            int[] curr = pq.poll();
+            feed.add(curr[1]);
+            int idx = curr[3] - 1;
+            if (idx &gt;= 0) {
+                int[] t = tweetMap.get(curr[2]).get(idx);
+                pq.offer(new int[]{t[0], t[1], curr[2], idx});
+            }
+        }
+        return feed;
+    }
+
+    public void follow(int followerId, int followeeId) {
+        followMap.computeIfAbsent(followerId, k -&gt; new HashSet&lt;&gt;())
+                 .add(followeeId);
+    }
+
+    public void unfollow(int followerId, int followeeId) {
+        Set&lt;Integer&gt; set = followMap.get(followerId);
+        if (set != null) set.remove(followeeId);
+    }
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(k log n) getNewsFeed | O(1) other ops</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#380 INSERT DELETE GETRANDOM O(1)</h2>
+            <p class="c-section__desc">Design a set structure with insert, remove, and getRandom all in O(1).</p>
+            <div class="c-code">
+<pre>
+class RandomizedSet {
+    private List&lt;Integer&gt; list = new ArrayList&lt;&gt;();
+    private Map&lt;Integer, Integer&gt; map = new HashMap&lt;&gt;();
+    private Random rand = new Random();
+
+    public boolean insert(int val) {
+        if (map.containsKey(val)) return false;
+        map.put(val, list.size());
+        list.add(val);
+        return true;
+    }
+
+    public boolean remove(int val) {
+        if (!map.containsKey(val)) return false;
+        int idx = map.get(val);
+        int last = list.get(list.size() - 1);
+        list.set(idx, last);
+        map.put(last, idx);
+        list.remove(list.size() - 1);
+        map.remove(val);
+        return true;
+    }
+
+    public int getRandom() {
+        return list.get(rand.nextInt(list.size()));
+    }
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(1) all operations | O(n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#7 REVERSE INTEGER</h2>
+            <p class="c-section__desc">Reverse digits of a 32-bit signed integer with overflow detection.</p>
+            <div class="c-code">
+<pre>
+public int reverse(int x) {
+    int result = 0;
+    while (x != 0) {
+        int digit = x % 10;
+        x /= 10;
+        if (result &gt; Integer.MAX_VALUE / 10 ||
+            result &lt; Integer.MIN_VALUE / 10)
+            return 0;
+        result = result * 10 + digit;
+    }
+    return result;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(log x) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#8 STRING TO INTEGER (ATOI)</h2>
+            <p class="c-section__desc">Implement atoi which converts a string to an integer with edge case handling.</p>
+            <div class="c-code">
+<pre>
+public int myAtoi(String s) {
+    int i = 0, sign = 1, n = s.length();
+    long result = 0;
+    while (i &lt; n &amp;&amp; s.charAt(i) == ' ') i++;
+    if (i &lt; n &amp;&amp; (s.charAt(i) == '+' || s.charAt(i) == '-')) {
+        sign = (s.charAt(i) == '-') ? -1 : 1;
+        i++;
+    }
+    while (i &lt; n &amp;&amp; Character.isDigit(s.charAt(i))) {
+        result = result * 10 + (s.charAt(i) - '0');
+        if (result * sign &gt;= Integer.MAX_VALUE) return Integer.MAX_VALUE;
+        if (result * sign &lt;= Integer.MIN_VALUE) return Integer.MIN_VALUE;
+        i++;
+    }
+    return (int)(result * sign);
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+    </main>
+
+    <footer class="c-footer">
+        <p class="c-footer__text">TERMINAL_REF: JL-300 // ADVANCED_TOPICS // SECURE_UPLINK</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

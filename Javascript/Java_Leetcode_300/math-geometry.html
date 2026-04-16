@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MATH & GEOMETRY // JAVA_LEET_300</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono&family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="c-header">
+        <div class="c-header__container">
+            <a href="index.html" class="c-header__logo">⚡ JAVA_LEET_300</a>
+            <a href="index.html" class="c-btn">RETURN_TO_BASE</a>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <section class="c-hero">
+            <h1 class="c-hero__title">MATH_&_GEOMETRY</h1>
+            <p class="c-hero__text">Mathematical algorithms and spatial logic.</p>
+        </section>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#48 ROTATE IMAGE</h2>
+            <p class="c-section__desc">Rotate an n×n 2D matrix 90 degrees clockwise in-place.</p>
+            <div class="c-code">
+<pre>
+public void rotate(int[][] matrix) {
+    int n = matrix.length;
+    // Transpose
+    for (int i = 0; i &lt; n; i++) {
+        for (int j = i + 1; j &lt; n; j++) {
+            int temp = matrix[i][j];
+            matrix[i][j] = matrix[j][i];
+            matrix[j][i] = temp;
+        }
+    }
+    // Reverse each row
+    for (int i = 0; i &lt; n; i++) {
+        int l = 0, r = n - 1;
+        while (l &lt; r) {
+            int temp = matrix[i][l];
+            matrix[i][l] = matrix[i][r];
+            matrix[i][r] = temp;
+            l++; r--;
+        }
+    }
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n²) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#54 SPIRAL MATRIX</h2>
+            <p class="c-section__desc">Return all elements of a matrix in spiral order.</p>
+            <div class="c-code">
+<pre>
+public List&lt;Integer&gt; spiralOrder(int[][] matrix) {
+    List&lt;Integer&gt; res = new ArrayList&lt;&gt;();
+    int top = 0, bottom = matrix.length - 1;
+    int left = 0, right = matrix[0].length - 1;
+    while (top &lt;= bottom &amp;&amp; left &lt;= right) {
+        for (int i = left; i &lt;= right; i++) res.add(matrix[top][i]);
+        top++;
+        for (int i = top; i &lt;= bottom; i++) res.add(matrix[i][right]);
+        right--;
+        if (top &lt;= bottom) {
+            for (int i = right; i &gt;= left; i--) res.add(matrix[bottom][i]);
+            bottom--;
+        }
+        if (left &lt;= right) {
+            for (int i = bottom; i &gt;= top; i--) res.add(matrix[i][left]);
+            left++;
+        }
+    }
+    return res;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(m*n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#73 SET MATRIX ZEROES</h2>
+            <p class="c-section__desc">If an element is 0, set its entire row and column to 0.</p>
+            <div class="c-code">
+<pre>
+public void setZeroes(int[][] matrix) {
+    int m = matrix.length, n = matrix[0].length;
+    boolean firstRow = false, firstCol = false;
+    for (int i = 0; i &lt; m; i++)
+        if (matrix[i][0] == 0) firstCol = true;
+    for (int j = 0; j &lt; n; j++)
+        if (matrix[0][j] == 0) firstRow = true;
+    for (int i = 1; i &lt; m; i++)
+        for (int j = 1; j &lt; n; j++)
+            if (matrix[i][j] == 0) {
+                matrix[i][0] = 0;
+                matrix[0][j] = 0;
+            }
+    for (int i = 1; i &lt; m; i++)
+        for (int j = 1; j &lt; n; j++)
+            if (matrix[i][0] == 0 || matrix[0][j] == 0)
+                matrix[i][j] = 0;
+    if (firstRow) Arrays.fill(matrix[0], 0);
+    if (firstCol) for (int i = 0; i &lt; m; i++) matrix[i][0] = 0;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(m*n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#50 POW(X, N)</h2>
+            <p class="c-section__desc">Implement pow(x, n) using fast exponentiation.</p>
+            <div class="c-code">
+<pre>
+public double myPow(double x, int n) {
+    double result = 1.0;
+    long power = Math.abs((long) n);
+    while (power &gt; 0) {
+        if ((power &amp; 1) == 1) result *= x;
+        x *= x;
+        power &gt;&gt;= 1;
+    }
+    return n &lt; 0 ? 1.0 / result : result;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(log n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#43 MULTIPLY STRINGS</h2>
+            <p class="c-section__desc">Multiply two non-negative integers represented as strings.</p>
+            <div class="c-code">
+<pre>
+public String multiply(String num1, String num2) {
+    int m = num1.length(), n = num2.length();
+    int[] result = new int[m + n];
+    for (int i = m - 1; i &gt;= 0; i--) {
+        for (int j = n - 1; j &gt;= 0; j--) {
+            int mul = (num1.charAt(i) - '0') * (num2.charAt(j) - '0');
+            int p1 = i + j, p2 = i + j + 1;
+            int sum = mul + result[p2];
+            result[p2] = sum % 10;
+            result[p1] += sum / 10;
+        }
+    }
+    StringBuilder sb = new StringBuilder();
+    for (int d : result)
+        if (!(sb.length() == 0 &amp;&amp; d == 0)) sb.append(d);
+    return sb.length() == 0 ? "0" : sb.toString();
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(m*n) Time | O(m+n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#202 HAPPY NUMBER</h2>
+            <p class="c-section__desc">Determine if a number is happy (sum of squares of digits eventually reaches 1).</p>
+            <div class="c-code">
+<pre>
+public boolean isHappy(int n) {
+    Set&lt;Integer&gt; seen = new HashSet&lt;&gt;();
+    while (n != 1 &amp;&amp; !seen.contains(n)) {
+        seen.add(n);
+        int sum = 0;
+        while (n &gt; 0) {
+            int d = n % 10;
+            sum += d * d;
+            n /= 10;
+        }
+        n = sum;
+    }
+    return n == 1;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(log n) Time | O(log n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#66 PLUS ONE</h2>
+            <p class="c-section__desc">Increment a large integer represented as an array of digits.</p>
+            <div class="c-code">
+<pre>
+public int[] plusOne(int[] digits) {
+    for (int i = digits.length - 1; i &gt;= 0; i--) {
+        if (digits[i] &lt; 9) {
+            digits[i]++;
+            return digits;
+        }
+        digits[i] = 0;
+    }
+    int[] result = new int[digits.length + 1];
+    result[0] = 1;
+    return result;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+    </main>
+
+    <footer class="c-footer">
+        <p class="c-footer__text">TERMINAL_REF: JL-300 // MATH_GEOMETRY // SECURE_UPLINK</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

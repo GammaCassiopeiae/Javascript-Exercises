@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MATH & GEOMETRY // PYTHON_LEET_300</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono&family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="c-header">
+        <div class="c-header__container">
+            <a href="index.html" class="c-header__logo">⚡ PYTHON_LEET_300</a>
+            <a href="index.html" class="c-btn">RETURN_TO_BASE</a>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <section class="c-hero">
+            <h1 class="c-hero__title">MATH_&_GEOMETRY</h1>
+            <p class="c-hero__text">Solve algorithmic challenges using mathematical properties and spatial reasoning.</p>
+        </section>
+
+        <!-- Problem 73: Set Matrix Zeroes -->
+        <article class="c-section">
+            <h2 class="c-section__title">#73 SET MATRIX ZEROES</h2>
+            <p class="c-section__desc">If an element is 0, set its entire row and column to 0 in-place.</p>
+            <div class="c-code">
+<pre>
+def setZeroes(matrix: list[list[int]]) -> None:
+    ROWS, COLS = len(matrix), len(matrix[0])
+    rowZero = False
+    for r in range(ROWS):
+        for c in range(COLS):
+            if matrix[r][c] == 0:
+                matrix[0][c] = 0
+                if r > 0: matrix[r][0] = 0
+                else: rowZero = True
+    for r in range(1, ROWS):
+        for c in range(1, COLS):
+            if matrix[0][c] == 0 or matrix[r][0] == 0:
+                matrix[r][c] = 0
+    if matrix[0][0] == 0:
+        for r in range(ROWS): matrix[r][0] = 0
+    if rowZero:
+        for c in range(COLS): matrix[0][c] = 0
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(m * n) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 54: Spiral Matrix -->
+        <article class="c-section">
+            <h2 class="c-section__title">#54 SPIRAL MATRIX</h2>
+            <p class="c-section__desc">Return all elements of a matrix in spiral order.</p>
+            <div class="c-code">
+<pre>
+def spiralOrder(matrix: list[list[int]]) -> list[int]:
+    res = []
+    left, right = 0, len(matrix[0])
+    top, bottom = 0, len(matrix)
+    while left < right and top < bottom:
+        for i in range(left, right): res.append(matrix[top][i])
+        top += 1
+        for i in range(top, bottom): res.append(matrix[i][right - 1])
+        right -= 1
+        if not (left < right and top < bottom): break
+        for i in range(right - 1, left - 1, -1): res.append(matrix[bottom - 1][i])
+        bottom -= 1
+        for i in range(bottom - 1, top - 1, -1): res.append(matrix[i][left])
+        left += 1
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(m * n) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 202: Happy Number -->
+        <article class="c-section">
+            <h2 class="c-section__title">#202 HAPPY NUMBER</h2>
+            <p class="c-section__desc">Determine if a number eventually reaches 1 by summing squares of its digits.</p>
+            <div class="c-code">
+<pre>
+def isHappy(n: int) -> bool:
+    visit = set()
+    while n not in visit:
+        visit.add(n)
+        n = sum(int(i)**2 for i in str(n))
+        if n == 1: return True
+    return False
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(log n) Time | O(log n) Space</p>
+        </article>
+
+        <!-- Problem 48: Rotate Image -->
+        <article class="c-section">
+            <h2 class="c-section__title">#48 ROTATE IMAGE</h2>
+            <p class="c-section__desc">Rotate an n x n 2D matrix 90 degrees clockwise in-place.</p>
+            <div class="c-code">
+<pre>
+def rotate(matrix: list[list[int]]) -> None:
+    l, r = 0, len(matrix) - 1
+    while l < r:
+        for i in range(r - l):
+            top, bottom = l, r
+            topLeft = matrix[top][l + i]
+            matrix[top][l + i] = matrix[bottom - i][l]
+            matrix[bottom - i][l] = matrix[bottom][r - i]
+            matrix[bottom][r - i] = matrix[top + i][r]
+            matrix[top + i][r] = topLeft
+        r -= 1; l += 1
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n²) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 50: Pow(x, n) -->
+        <article class="c-section">
+            <h2 class="c-section__title">#50 POW(X, N)</h2>
+            <p class="c-section__desc">Implement power function x^n.</p>
+            <div class="c-code">
+<pre>
+def myPow(x: float, n: int) -> float:
+    def helper(x, n):
+        if x == 0: return 0
+        if n == 0: return 1
+        res = helper(x, n // 2)
+        res = res * res
+        return x * res if n % 2 else res
+    res = helper(x, abs(n))
+    return res if n >= 0 else 1 / res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(log n) Time | O(log n) Space</p>
+        </article>
+
+        <!-- Problem 43: Multiply Strings -->
+        <article class="c-section">
+            <h2 class="c-section__title">#43 MULTIPLY STRINGS</h2>
+            <p class="c-section__desc">Multiply two non-negative integers represented as strings.</p>
+            <div class="c-code">
+<pre>
+def multiply(num1: str, num2: str) -> str:
+    if "0" in [num1, num2]: return "0"
+    res = [0] * (len(num1) + len(num2))
+    num1, num2 = num1[::-1], num2[::-1]
+    for i1 in range(len(num1)):
+        for i2 in range(len(num2)):
+            digit = int(num1[i1]) * int(num2[i2])
+            res[i1 + i2] += digit
+            res[i1 + i2 + 1] += (res[i1 + i2] // 10)
+            res[i1 + i2] %= 10
+    res, beg = res[::-1], 0
+    while beg < len(res) and res[beg] == 0: beg += 1
+    res = map(str, res[beg:])
+    return "".join(res)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(m * n) Time | O(m + n) Space</p>
+        </article>
+
+        <!-- Problem 2013: Detect Squares -->
+        <article class="c-section">
+            <h2 class="c-section__title">#2013 DETECT SQUARES</h2>
+            <p class="c-section__desc">Implement a data structure to maintain points and count axis-aligned squares.</p>
+            <div class="c-code">
+<pre>
+class DetectSquares:
+    def __init__(self):
+        self.ptsCount = collections.defaultdict(int)
+        self.pts = []
+    def add(self, point: list[int]) -> None:
+        self.ptsCount[tuple(point)] += 1
+        self.pts.append(point)
+    def count(self, point: list[int]) -> int:
+        res = 0
+        px, py = point
+        for x, y in self.pts:
+            if (abs(py - y) != abs(px - x)) or x == px or y == py:
+                continue
+            res += self.ptsCount[(x, py)] * self.ptsCount[(px, y)]
+        return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) per count | O(n) Space</p>
+        </article>
+
+        <!-- Problem 66: Plus One -->
+        <article class="c-section">
+            <h2 class="c-section__title">#66 PLUS ONE</h2>
+            <p class="c-section__desc">Increment the large integer represented as an array of digits.</p>
+            <div class="c-code">
+<pre>
+def plusOne(digits: list[int]) -> list[int]:
+    for i in range(len(digits) - 1, -1, -1):
+        if digits[i] < 9:
+            digits[i] += 1
+            return digits
+        digits[i] = 0
+    return [1] + digits
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 9: Palindrome Number -->
+        <article class="c-section">
+            <h2 class="c-section__title">#9 PALINDROME NUMBER</h2>
+            <p class="c-section__desc">Check if an integer is a palindrome without converting to string.</p>
+            <div class="c-code">
+<pre>
+def isPalindrome(x: int) -> bool:
+    if x < 0: return False
+    div = 1
+    while x >= 10 * div: div *= 10
+    while x:
+        if x // div != x % 10: return False
+        x = (x % div) // 10
+        div /= 100
+    return True
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(log n) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 13: Roman to Integer -->
+        <article class="c-section">
+            <h2 class="c-section__title">#13 ROMAN TO INTEGER</h2>
+            <p class="c-section__desc">Convert a Roman numeral to an integer.</p>
+            <div class="c-code">
+<pre>
+def romanToInt(s: str) -> int:
+    roman = {"I": 1, "V": 5, "X": 10, "L": 50, "C": 100, "D": 500, "M": 1000}
+    res = 0
+    for i in range(len(s)):
+        if i + 1 < len(s) and roman[s[i]] < roman[s[i + 1]]:
+            res -= roman[s[i]]
+        else:
+            res += roman[s[i]]
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 12: Integer to Roman -->
+        <article class="c-section">
+            <h2 class="c-section__title">#12 INTEGER TO ROMAN</h2>
+            <p class="c-section__desc">Convert an integer to a Roman numeral.</p>
+            <div class="c-code">
+<pre>
+def intToRoman(num: int) -> str:
+    symList = [["I", 1], ["IV", 4], ["V", 5], ["IX", 9], ["X", 10], ["XL", 40], ["L", 50], ["XC", 90], ["C", 100], ["CD", 400], ["D", 500], ["CM", 900], ["M", 1000]]
+    res = ""
+    for sym, val in reversed(symList):
+        if num // val:
+            count = num // val
+            res += (sym * count)
+            num %= val
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(1) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 149: Max Points on a Line -->
+        <article class="c-section">
+            <h2 class="c-section__title">#149 MAX POINTS ON A LINE</h2>
+            <p class="c-section__desc">Find the maximum number of points that lie on the same straight line.</p>
+            <div class="c-code">
+<pre>
+def maxPoints(points: list[list[int]]) -> int:
+    res = 1
+    for i in range(len(points)):
+        p1 = points[i]
+        count = collections.defaultdict(int)
+        for j in range(i + 1, len(points)):
+            p2 = points[j]
+            if p2[0] == p1[0]: slope = float("inf")
+            else: slope = (p2[1] - p1[1]) / (p2[0] - p1[0])
+            count[slope] += 1
+            res = max(res, count[slope] + 1)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n²) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 223: Rectangle Area -->
+        <article class="c-section">
+            <h2 class="c-section__title">#223 RECTANGLE AREA</h2>
+            <p class="c-section__desc">Find the total area covered by two rectilinear rectangles.</p>
+            <div class="c-code">
+<pre>
+def computeArea(ax1, ay1, ax2, ay2, bx1, by1, bx2, by2):
+    area1 = (ax2 - ax1) * (ay2 - ay1)
+    area2 = (bx2 - bx1) * (by2 - by1)
+    overlapX = min(ax2, bx2) - max(ax1, bx1)
+    overlapY = min(ay2, by2) - max(ay1, by1)
+    overlap = max(overlapX, 0) * max(overlapY, 0)
+    return area1 + area2 - overlap
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(1) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 231: Power of Two -->
+        <article class="c-section">
+            <h2 class="c-section__title">#231 POWER OF TWO</h2>
+            <p class="c-section__desc">Determine if an integer is a power of two.</p>
+            <div class="c-code">
+<pre>
+def isPowerOfTwo(n: int) -> bool:
+    return n > 0 and (n & (n - 1)) == 0
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(1) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 463: Island Perimeter -->
+        <article class="c-section">
+            <h2 class="c-section__title">#463 ISLAND PERIMETER</h2>
+            <p class="c-section__desc">Find the perimeter of the island in a grid.</p>
+            <div class="c-code">
+<pre>
+def islandPerimeter(grid: list[list[int]]) -> int:
+    visit = set()
+    def dfs(i, j):
+        if i >= len(grid) or j >= len(grid[0]) or i < 0 or j < 0 or grid[i][j] == 0:
+            return 1
+        if (i, j) in visit: return 0
+        visit.add((i, j))
+        return dfs(i, j + 1) + dfs(i + 1, j) + dfs(i, j - 1) + dfs(i - 1, j)
+    for i in range(len(grid)):
+        for j in range(len(grid[0])):
+            if grid[i][j]: return dfs(i, j)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(m * n) Time | O(m * n) Space</p>
+        </article>
+    </main>
+
+    <footer class="c-footer">
+        <p class="c-footer__text">TERMINAL_REF: PL-300 // MATH_&_GEOMETRY // SECURE_UPLINK</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

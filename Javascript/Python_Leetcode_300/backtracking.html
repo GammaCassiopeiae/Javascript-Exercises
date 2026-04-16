@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BACKTRACKING // PYTHON_LEET_300</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono&family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="c-header">
+        <div class="c-header__container">
+            <a href="index.html" class="c-header__logo">⚡ PYTHON_LEET_300</a>
+            <a href="index.html" class="c-btn">RETURN_TO_BASE</a>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <section class="c-hero">
+            <h1 class="c-hero__title">BACKTRACKING</h1>
+            <p class="c-hero__text">Explore all possible paths and prune the search space.</p>
+        </section>
+
+        <!-- Problem 78: Subsets -->
+        <article class="c-section">
+            <h2 class="c-section__title">#78 SUBSETS</h2>
+            <p class="c-section__desc">Return all possible subsets (the power set) of a set of unique integers.</p>
+            <div class="c-code">
+<pre>
+def subsets(nums: list[int]) -> list[list[int]]:
+    res = []
+    subset = []
+
+    def dfs(i):
+        if i >= len(nums):
+            res.append(subset.copy())
+            return
+        
+        # Decision to include nums[i]
+        subset.append(nums[i])
+        dfs(i + 1)
+        
+        # Decision NOT to include nums[i]
+        subset.pop()
+        dfs(i + 1)
+
+    dfs(0)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n * 2^n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 39: Combination Sum -->
+        <article class="c-section">
+            <h2 class="c-section__title">#39 COMBINATION SUM</h2>
+            <p class="c-section__desc">Find all unique combinations in candidates where the numbers sum to target.</p>
+            <div class="c-code">
+<pre>
+def combinationSum(candidates: list[int], target: int) -> list[list[int]]:
+    res = []
+
+    def dfs(i, cur, total):
+        if total == target:
+            res.append(cur.copy())
+            return
+        if i >= len(candidates) or total > target:
+            return
+
+        cur.append(candidates[i])
+        dfs(i, cur, total + candidates[i])
+        cur.pop()
+        dfs(i + 1, cur, total)
+
+    dfs(0, [], 0)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(2^t) Time | O(t) Space (t = target value)</p>
+        </article>
+
+        <!-- Problem 46: Permutations -->
+        <article class="c-section">
+            <h2 class="c-section__title">#46 PERMUTATIONS</h2>
+            <p class="c-section__desc">Return all possible permutations of an array of distinct integers.</p>
+            <div class="c-code">
+<pre>
+def permute(nums: list[int]) -> list[list[int]]:
+    res = []
+    if len(nums) == 1:
+        return [nums.copy()]
+
+    for i in range(len(nums)):
+        n = nums.pop(0)
+        perms = permute(nums)
+        for p in perms:
+            p.append(n)
+        res.extend(perms)
+        nums.append(n)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n! * n) Time | O(n!) Space</p>
+        </article>
+
+        <!-- Problem 90: Subsets II -->
+        <article class="c-section">
+            <h2 class="c-section__title">#90 SUBSETS II</h2>
+            <p class="c-section__desc">Return all possible subsets from a list that may contain duplicates.</p>
+            <div class="c-code">
+<pre>
+def subsetsWithDup(nums: list[int]) -> list[list[int]]:
+    res = []
+    nums.sort()
+
+    def backtrack(i, subset):
+        if i == len(nums):
+            res.append(subset[::])
+            return
+
+        # All subsets that include nums[i]
+        subset.append(nums[i])
+        backtrack(i + 1, subset)
+        subset.pop()
+
+        # All subsets that don't include nums[i]
+        while i + 1 < len(nums) and nums[i] == nums[i + 1]:
+            i += 1
+        backtrack(i + 1, subset)
+
+    backtrack(0, [])
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n * 2^n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 40: Combination Sum II -->
+        <article class="c-section">
+            <h2 class="c-section__title">#40 COMBINATION SUM II</h2>
+            <p class="c-section__desc">Find all unique combinations where the sum equals target, each number used once.</p>
+            <div class="c-code">
+<pre>
+def combinationSum2(candidates: list[int], target: int) -> list[list[int]]:
+    candidates.sort()
+    res = []
+
+    def backtrack(cur, pos, target):
+        if target == 0:
+            res.append(cur.copy())
+            return
+        if target <= 0:
+            return
+
+        prev = -1
+        for i in range(pos, len(candidates)):
+            if candidates[i] == prev:
+                continue
+            cur.append(candidates[i])
+            backtrack(cur, i + 1, target - candidates[i])
+            cur.pop()
+            prev = candidates[i]
+
+    backtrack([], 0, target)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(2^n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 79: Word Search -->
+        <article class="c-section">
+            <h2 class="c-section__title">#79 WORD SEARCH</h2>
+            <p class="c-section__desc">Check if a word exists in a 2D grid of characters.</p>
+            <div class="c-code">
+<pre>
+def exist(board: list[list[str]], word: str) -> bool:
+    ROWS, COLS = len(board), len(board[0])
+    path = set()
+
+    def dfs(r, c, i):
+        if i == len(word):
+            return True
+        if (r < 0 or c < 0 or r >= ROWS or c >= COLS or
+            word[i] != board[r][c] or (r, c) in path):
+            return False
+
+        path.add((r, c))
+        res = (dfs(r + 1, c, i + 1) or dfs(r - 1, c, i + 1) or
+               dfs(r, c + 1, i + 1) or dfs(r, c - 1, i + 1))
+        path.remove((r, c))
+        return res
+
+    for r in range(ROWS):
+        for c in range(COLS):
+            if dfs(r, c, 0): return True
+    return False
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n * m * 4^n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 131: Palindrome Partitioning -->
+        <article class="c-section">
+            <h2 class="c-section__title">#131 PALINDROME PARTITIONING</h2>
+            <p class="c-section__desc">Partition a string such that every substring is a palindrome.</p>
+            <div class="c-code">
+<pre>
+def partition(s: str) -> list[list[str]]:
+    res = []
+    part = []
+
+    def dfs(i):
+        if i >= len(s):
+            res.append(part.copy())
+            return
+        for j in range(i, len(s)):
+            if isPali(s, i, j):
+                part.append(s[i : j + 1])
+                dfs(j + 1)
+                part.pop()
+
+    def isPali(s, l, r):
+        while l < r:
+            if s[l] != s[r]: return False
+            l, r = l + 1, r - 1
+        return True
+
+    dfs(0)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(2^n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 17: Letter Combinations of a Phone Number -->
+        <article class="c-section">
+            <h2 class="c-section__title">#17 LETTER COMBINATIONS</h2>
+            <p class="c-section__desc">Return all possible letter combinations that the number could represent.</p>
+            <div class="c-code">
+<pre>
+def letterCombinations(digits: str) -> list[str]:
+    res = []
+    digitToChar = {
+        "2": "abc", "3": "def", "4": "ghi", "5": "jkl",
+        "6": "mno", "7": "pqrs", "8": "tuv", "9": "wxyz",
+    }
+
+    def backtrack(i, curStr):
+        if len(curStr) == len(digits):
+            res.append(curStr)
+            return
+        for c in digitToChar[digits[i]]:
+            backtrack(i + 1, curStr + c)
+
+    if digits: backtrack(0, "")
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n * 4^n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 93: Restore IP Addresses -->
+        <article class="c-section">
+            <h2 class="c-section__title">#93 RESTORE IP ADDRESSES</h2>
+            <p class="c-section__desc">Return all possible valid IP addresses that can be formed from s.</p>
+            <div class="c-code">
+<pre>
+def restoreIpAddresses(s: str) -> list[str]:
+    res = []
+    if len(s) > 12: return res
+
+    def backtrack(i, dots, curIP):
+        if dots == 4 and i == len(s):
+            res.append(curIP[:-1])
+            return
+        if dots > 4: return
+
+        for j in range(i, min(i + 3, len(s))):
+            if int(s[i : j + 1]) < 256 and (i == j or s[i] != "0"):
+                backtrack(j + 1, dots + 1, curIP + s[i : j + 1] + ".")
+
+    backtrack(0, 0, "")
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(3^4) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 473: Matchsticks to Square -->
+        <article class="c-section">
+            <h2 class="c-section__title">#473 MATCHSTICKS TO SQUARE</h2>
+            <p class="c-section__desc">Determine if you can form a square using all the given matchsticks.</p>
+            <div class="c-code">
+<pre>
+def makesquare(matchsticks: list[int]) -> bool:
+    length = sum(matchsticks) // 4
+    sides = [0] * 4
+    if sum(matchsticks) / 4 != length: return False
+    matchsticks.sort(reverse=True)
+
+    def backtrack(i):
+        if i == len(matchsticks): return True
+        for j in range(4):
+            if sides[j] + matchsticks[i] <= length:
+                sides[j] += matchsticks[i]
+                if backtrack(i + 1): return True
+                sides[j] -= matchsticks[i]
+            if sides[j] == 0: break
+        return False
+
+    return backtrack(0)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(4^n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 1849: Splitting a String Into Descending Consecutive Values -->
+        <article class="c-section">
+            <h2 class="c-section__title">#1849 SPLIT STRING DESCENDING</h2>
+            <p class="c-section__desc">Check if s can be split into descending consecutive values.</p>
+            <div class="c-code">
+<pre>
+def splitString(s: str) -> bool:
+    def backtrack(index, prev):
+        if index == len(s): return True
+        for j in range(index, len(s)):
+            val = int(s[index : j + 1])
+            if val + 1 == prev and backtrack(j + 1, val):
+                return True
+        return False
+
+    for i in range(len(s) - 1):
+        val = int(s[: i + 1])
+        if backtrack(i + 1, val): return True
+    return False
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n^n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 51: N-Queens -->
+        <article class="c-section">
+            <h2 class="c-section__title">#51 N-QUEENS</h2>
+            <p class="c-section__desc">Place n queens on an n×n chessboard such that no two queens attack each other.</p>
+            <div class="c-code">
+<pre>
+def solveNQueens(n: int) -> list[list[str]]:
+    col, posDiag, negDiag = set(), set(), set()
+    res = []
+    board = [["."] * n for _ in range(n)]
+
+    def backtrack(r):
+        if r == n:
+            copy = ["".join(row) for row in board]
+            res.append(copy)
+            return
+
+        for c in range(n):
+            if c in col or (r + c) in posDiag or (r - c) in negDiag:
+                continue
+
+            col.add(c); posDiag.add(r + c); negDiag.add(r - c)
+            board[r][c] = "Q"
+            backtrack(r + 1)
+            col.remove(c); posDiag.remove(r + c); negDiag.remove(r - c)
+            board[r][c] = "."
+
+    backtrack(0)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n!) Time | O(n^2) Space</p>
+        </article>
+
+        <!-- Problem 212: Word Search II -->
+        <article class="c-section">
+            <h2 class="c-section__title">#212 WORD SEARCH II</h2>
+            <p class="c-section__desc">Find all words in the board that are also in the given list of words.</p>
+            <div class="c-code">
+<pre>
+class TrieNode:
+    def __init__(self):
+        self.children = {}; self.isWord = False
+    def addWord(self, word):
+        cur = self
+        for c in word:
+            if c not in cur.children: cur.children[c] = TrieNode()
+            cur = cur.children[c]
+        cur.isWord = True
+
+def findWords(board, words):
+    root = TrieNode()
+    for w in words: root.addWord(w)
+    ROWS, COLS = len(board), len(board[0])
+    res, visit = set(), set()
+
+    def dfs(r, c, node, word):
+        if (r < 0 or c < 0 or r == ROWS or c == COLS or
+            (r, c) in visit or board[r][c] not in node.children):
+            return
+        visit.add((r, c))
+        node = node.children[board[r][c]]
+        word += board[r][c]
+        if node.isWord: res.add(word)
+        dfs(r + 1, c, node, word); dfs(r - 1, c, node, word)
+        dfs(r, c + 1, node, word); dfs(r, c - 1, node, word)
+        visit.remove((r, c))
+
+    for r in range(ROWS):
+        for c in range(COLS): dfs(r, c, root, "")
+    return list(res)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(M * (4 * 3^(L-1))) Time | O(N) Space (M=cells, L=word len, N=total chars in Trie)</p>
+        </article>
+
+        <!-- Problem 47: Permutations II -->
+        <article class="c-section">
+            <h2 class="c-section__title">#47 PERMUTATIONS II</h2>
+            <p class="c-section__desc">Return all possible unique permutations of a collection that might contain duplicates.</p>
+            <div class="c-code">
+<pre>
+def permuteUnique(nums: list[int]) -> list[list[int]]:
+    res = []
+    perm = []
+    count = {n: 0 for n in nums}
+    for n in nums: count[n] += 1
+
+    def dfs():
+        if len(perm) == len(nums):
+            res.append(perm.copy())
+            return
+        for n in count:
+            if count[n] > 0:
+                perm.append(n); count[n] -= 1
+                dfs()
+                count[n] += 1; perm.pop()
+
+    dfs()
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n! * n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 216: Combination Sum III -->
+        <article class="c-section">
+            <h2 class="c-section__title">#216 COMBINATION SUM III</h2>
+            <p class="c-section__desc">Find all valid combinations of k numbers that sum up to n using numbers 1-9.</p>
+            <div class="c-code">
+<pre>
+def combinationSum3(k: int, n: int) -> list[list[int]]:
+    res = []
+
+    def backtrack(num, stack, target):
+        if len(stack) == k:
+            if target == 0: res.append(stack[:])
+            return
+        for x in range(num, 10):
+            if x > target: break
+            stack.append(x)
+            backtrack(x + 1, stack, target - x)
+            stack.pop()
+
+    backtrack(1, [], n)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(C(9, k)) Time | O(k) Space</p>
+        </article>
+
+        <!-- Problem 37: Sudoku Solver -->
+        <article class="c-section">
+            <h2 class="c-section__title">#37 SUDOKU SOLVER</h2>
+            <p class="c-section__desc">Write a program to solve a Sudoku puzzle by filling the empty cells.</p>
+            <div class="c-code">
+<pre>
+def solveSudoku(board: list[list[str]]) -> None:
+    def isValid(r, c, char):
+        for i in range(9):
+            if board[i][c] == char: return False
+            if board[r][i] == char: return False
+            if board[3 * (r // 3) + i // 3][3 * (c // 3) + i % 3] == char: return False
+        return True
+
+    def solve():
+        for r in range(9):
+            for c in range(9):
+                if board[r][c] == ".":
+                    for char in "123456789":
+                        if isValid(r, c, char):
+                            board[r][c] = char
+                            if solve(): return True
+                            board[r][c] = "."
+                    return False
+        return True
+    solve()
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(9^(n*n)) Time | O(n*n) Space</p>
+        </article>
+
+        <!-- Problem 22: Generate Parentheses -->
+        <article class="c-section">
+            <h2 class="c-section__title">#22 GENERATE PARENTHESES</h2>
+            <p class="c-section__desc">Generate all combinations of well-formed parentheses given n pairs.</p>
+            <div class="c-code">
+<pre>
+def generateParenthesis(n: int) -> list[str]:
+    stack = []
+    res = []
+
+    def backtrack(openN, closedN):
+        if openN == closedN == n:
+            res.append("".join(stack))
+            return
+        if openN < n:
+            stack.append("(")
+            backtrack(openN + 1, closedN)
+            stack.pop()
+        if closedN < openN:
+            stack.append(")")
+            backtrack(openN, closedN + 1)
+            stack.pop()
+
+    backtrack(0, 0)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(4^n / sqrt(n)) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 526: Beautiful Arrangement -->
+        <article class="c-section">
+            <h2 class="c-section__title">#526 BEAUTIFUL ARRANGEMENT</h2>
+            <p class="c-section__desc">Find the number of beautiful arrangements that can be constructed.</p>
+            <div class="c-code">
+<pre>
+def countArrangement(n: int) -> int:
+    visited = [False] * (n + 1)
+    count = 0
+
+    def backtrack(pos):
+        nonlocal count
+        if pos > n:
+            count += 1
+            return
+        for i in range(1, n + 1):
+            if not visited[i] and (i % pos == 0 or pos % i == 0):
+                visited[i] = True
+                backtrack(pos + 1)
+                visited[i] = False
+
+    backtrack(1)
+    return count
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(k) Time (k is number of beautiful arrangements) | O(n) Space</p>
+        </article>
+
+        <!-- Problem 698: Partition to K Equal Sum Subsets -->
+        <article class="c-section">
+            <h2 class="c-section__title">#698 PARTITION K SUBSETS</h2>
+            <p class="c-section__desc">Check if it's possible to partition nums into k subsets with equal sum.</p>
+            <div class="c-code">
+<pre>
+def canPartitionKSubsets(nums: list[int], k: int) -> bool:
+    if sum(nums) % k != 0: return False
+    target = sum(nums) / k
+    used = [False] * len(nums)
+    nums.sort(reverse=True)
+
+    def backtrack(i, k, subsetSum):
+        if k == 0: return True
+        if subsetSum == target:
+            return backtrack(0, k - 1, 0)
+        for j in range(i, len(nums)):
+            if used[j] or subsetSum + nums[j] > target:
+                continue
+            used[j] = True
+            if backtrack(j + 1, k, subsetSum + nums[j]):
+                return True
+            used[j] = False
+            if subsetSum == 0: break
+        return False
+
+    return backtrack(0, k, 0)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(k * 2^n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 980: Unique Paths III -->
+        <article class="c-section">
+            <h2 class="c-section__title">#980 UNIQUE PATHS III</h2>
+            <p class="c-section__desc">Return the number of 4-directional walks from start to end that visit every non-obstacle square exactly once.</p>
+            <div class="c-code">
+<pre>
+def uniquePathsIII(grid: list[list[int]]) -> int:
+    ROWS, COLS = len(grid), len(grid[0])
+    start_r, start_c, empty = 0, 0, 1
+    for r in range(ROWS):
+        for c in range(COLS):
+            if grid[r][c] == 1: start_r, start_c = r, c
+            elif grid[r][c] == 0: empty += 1
+
+    res = 0
+    def backtrack(r, c, visited_count):
+        nonlocal res
+        if not (0 <= r < ROWS and 0 <= c < COLS) or grid[r][c] == -1:
+            return
+        if grid[r][c] == 2:
+            if visited_count == empty: res += 1
+            return
+
+        temp = grid[r][c]
+        grid[r][c] = -1
+        for dr, dc in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+            backtrack(r + dr, c + dc, visited_count + 1)
+        grid[r][c] = temp
+
+    backtrack(start_r, start_c, 0)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(3^n) Time | O(n) Space</p>
+        </article>
+
+    </main>
+
+    <footer class="c-footer">
+        <p class="c-footer__text">TERMINAL_REF: PL-300 // BACKTRACKING // SECURE_UPLINK</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

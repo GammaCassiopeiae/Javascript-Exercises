@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STACK PROBLEMS // JAVA_LEET_300</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono&family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="c-header">
+        <div class="c-header__container">
+            <a href="index.html" class="c-header__logo">⚡ JAVA_LEET_300</a>
+            <a href="index.html" class="c-btn">RETURN_TO_BASE</a>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <section class="c-hero">
+            <h1 class="c-hero__title">STACK_PROBLEMS</h1>
+            <p class="c-hero__text">LIFO structures and monotonic stack patterns.</p>
+        </section>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#20 VALID PARENTHESES</h2>
+            <p class="c-section__desc">Determine if a string of brackets is valid.</p>
+            <div class="c-code">
+<pre>
+public boolean isValid(String s) {
+    Stack&lt;Character&gt; stack = new Stack&lt;&gt;();
+    Map&lt;Character, Character&gt; map = Map.of(')', '(', ']', '[', '}', '{');
+    for (char c : s.toCharArray()) {
+        if (map.containsKey(c)) {
+            if (stack.isEmpty() || stack.peek() != map.get(c))
+                return false;
+            stack.pop();
+        } else {
+            stack.push(c);
+        }
+    }
+    return stack.isEmpty();
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#155 MIN STACK</h2>
+            <p class="c-section__desc">Design a stack that supports push, pop, top, and retrieving the minimum element in O(1).</p>
+            <div class="c-code">
+<pre>
+class MinStack {
+    private Stack&lt;Integer&gt; stack = new Stack&lt;&gt;();
+    private Stack&lt;Integer&gt; minStack = new Stack&lt;&gt;();
+
+    public void push(int val) {
+        stack.push(val);
+        int min = minStack.isEmpty() ? val : Math.min(val, minStack.peek());
+        minStack.push(min);
+    }
+
+    public void pop() {
+        stack.pop();
+        minStack.pop();
+    }
+
+    public int top() { return stack.peek(); }
+    public int getMin() { return minStack.peek(); }
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(1) all operations | O(n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#150 EVALUATE REVERSE POLISH NOTATION</h2>
+            <p class="c-section__desc">Evaluate arithmetic expressions in Reverse Polish Notation.</p>
+            <div class="c-code">
+<pre>
+public int evalRPN(String[] tokens) {
+    Stack&lt;Integer&gt; stack = new Stack&lt;&gt;();
+    for (String t : tokens) {
+        if ("+-*/".contains(t)) {
+            int b = stack.pop(), a = stack.pop();
+            switch (t) {
+                case "+": stack.push(a + b); break;
+                case "-": stack.push(a - b); break;
+                case "*": stack.push(a * b); break;
+                case "/": stack.push(a / b); break;
+            }
+        } else {
+            stack.push(Integer.parseInt(t));
+        }
+    }
+    return stack.pop();
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#739 DAILY TEMPERATURES</h2>
+            <p class="c-section__desc">Find days until a warmer temperature using a monotonic stack.</p>
+            <div class="c-code">
+<pre>
+public int[] dailyTemperatures(int[] temperatures) {
+    int[] res = new int[temperatures.length];
+    Stack&lt;Integer&gt; stack = new Stack&lt;&gt;();
+    for (int i = 0; i &lt; temperatures.length; i++) {
+        while (!stack.isEmpty() &amp;&amp;
+               temperatures[i] &gt; temperatures[stack.peek()]) {
+            int idx = stack.pop();
+            res[idx] = i - idx;
+        }
+        stack.push(i);
+    }
+    return res;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#853 CAR FLEET</h2>
+            <p class="c-section__desc">Determine the number of car fleets arriving at the destination.</p>
+            <div class="c-code">
+<pre>
+public int carFleet(int target, int[] position, int[] speed) {
+    int n = position.length;
+    double[][] pairs = new double[n][2];
+    for (int i = 0; i &lt; n; i++) {
+        pairs[i][0] = position[i];
+        pairs[i][1] = (double)(target - position[i]) / speed[i];
+    }
+    Arrays.sort(pairs, (a, b) -&gt; Double.compare(b[0], a[0]));
+
+    Stack&lt;Double&gt; stack = new Stack&lt;&gt;();
+    for (double[] pair : pairs) {
+        if (stack.isEmpty() || pair[1] &gt; stack.peek()) {
+            stack.push(pair[1]);
+        }
+    }
+    return stack.size();
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n log n) Time | O(n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#84 LARGEST RECTANGLE IN HISTOGRAM</h2>
+            <p class="c-section__desc">Find the largest rectangular area in a histogram.</p>
+            <div class="c-code">
+<pre>
+public int largestRectangleArea(int[] heights) {
+    Stack&lt;int[]&gt; stack = new Stack&lt;&gt;();
+    int maxArea = 0;
+    for (int i = 0; i &lt; heights.length; i++) {
+        int start = i;
+        while (!stack.isEmpty() &amp;&amp; stack.peek()[1] &gt; heights[i]) {
+            int[] top = stack.pop();
+            maxArea = Math.max(maxArea, top[1] * (i - top[0]));
+            start = top[0];
+        }
+        stack.push(new int[]{start, heights[i]});
+    }
+    for (int[] s : stack) {
+        maxArea = Math.max(maxArea,
+            s[1] * (heights.length - s[0]));
+    }
+    return maxArea;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#22 GENERATE PARENTHESES</h2>
+            <p class="c-section__desc">Generate all combinations of n well-formed parentheses.</p>
+            <div class="c-code">
+<pre>
+public List&lt;String&gt; generateParenthesis(int n) {
+    List&lt;String&gt; res = new ArrayList&lt;&gt;();
+    backtrack(res, new StringBuilder(), 0, 0, n);
+    return res;
+}
+
+private void backtrack(List&lt;String&gt; res, StringBuilder sb,
+                       int open, int close, int n) {
+    if (sb.length() == 2 * n) {
+        res.add(sb.toString());
+        return;
+    }
+    if (open &lt; n) {
+        sb.append('(');
+        backtrack(res, sb, open + 1, close, n);
+        sb.deleteCharAt(sb.length() - 1);
+    }
+    if (close &lt; open) {
+        sb.append(')');
+        backtrack(res, sb, open, close + 1, n);
+        sb.deleteCharAt(sb.length() - 1);
+    }
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(4^n / sqrt(n)) Time | O(n) Space</p>
+        </article>
+    </main>
+
+    <footer class="c-footer">
+        <p class="c-footer__text">TERMINAL_REF: JL-300 // STACK_PROBLEMS // SECURE_UPLINK</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

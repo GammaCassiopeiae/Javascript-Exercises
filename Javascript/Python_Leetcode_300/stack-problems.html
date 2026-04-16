@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STACK PROBLEMS // PYTHON_LEET_300</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono&family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="c-header">
+        <div class="c-header__container">
+            <a href="index.html" class="c-header__logo">⚡ PYTHON_LEET_300</a>
+            <a href="index.html" class="c-btn">RETURN_TO_BASE</a>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <section class="c-hero">
+            <h1 class="c-hero__title">STACK_PROBLEMS</h1>
+            <p class="c-hero__text">Master LIFO structures and monotonic stack patterns.</p>
+        </section>
+
+        <!-- Problem 20: Valid Parentheses -->
+        <article class="c-section">
+            <h2 class="c-section__title">#20 VALID PARENTHESES</h2>
+            <p class="c-section__desc">Determine if the input string has valid closing brackets in the correct order.</p>
+            <div class="c-code">
+<pre>
+def isValid(s: str) -> bool:
+    stack = []
+    closeToOpen = {")": "(", "]": "[", "}": "{"}
+
+    for c in s:
+        if c in closeToOpen:
+            if stack and stack[-1] == closeToOpen[c]:
+                stack.pop()
+            else:
+                return False
+        else:
+            stack.append(c)
+    return True if not stack else False
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 682: Baseball Game -->
+        <article class="c-section">
+            <h2 class="c-section__title">#682 BASEBALL GAME</h2>
+            <p class="c-section__desc">Keep track of scores using a stack based on a series of operations.</p>
+            <div class="c-code">
+<pre>
+def calPoints(operations: list[str]) -> int:
+    stack = []
+    for op in operations:
+        if op == "+":
+            stack.append(stack[-1] + stack[-2])
+        elif op == "D":
+            stack.append(2 * stack[-1])
+        elif op == "C":
+            stack.pop()
+        else:
+            stack.append(int(op))
+    return sum(stack)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 225: Implement Stack using Queues -->
+        <article class="c-section">
+            <h2 class="c-section__title">#225 IMPLEMENT STACK USING QUEUES</h2>
+            <p class="c-section__desc">Implement a last-in-first-out (LIFO) stack using only two queues.</p>
+            <div class="c-code">
+<pre>
+from collections import deque
+
+class MyStack:
+    def __init__(self):
+        self.q = deque()
+
+    def push(self, x: int) -> None:
+        self.q.append(x)
+        for _ in range(len(self.q) - 1):
+            self.q.append(self.q.popleft())
+
+    def pop(self) -> int:
+        return self.q.popleft()
+
+    def top(self) -> int:
+        return self.q[0]
+
+    def empty(self) -> bool:
+        return len(self.q) == 0
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Push, O(1) Pop | O(n) Space</p>
+        </article>
+
+        <!-- Problem 155: Min Stack -->
+        <article class="c-section">
+            <h2 class="c-section__title">#155 MIN STACK</h2>
+            <p class="c-section__desc">Design a stack that supports push, pop, top, and retrieving the minimum element in constant time.</p>
+            <div class="c-code">
+<pre>
+class MinStack:
+    def __init__(self):
+        self.stack = []
+        self.minStack = []
+
+    def push(self, val: int) -> None:
+        self.stack.append(val)
+        val = min(val, self.minStack[-1] if self.minStack else val)
+        self.minStack.append(val)
+
+    def pop(self) -> None:
+        self.stack.pop()
+        self.minStack.pop()
+
+    def top(self) -> int:
+        return self.stack[-1]
+
+    def getMin(self) -> int:
+        return self.minStack[-1]
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(1) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 150: Evaluate Reverse Polish Notation -->
+        <article class="c-section">
+            <h2 class="c-section__title">#150 EVALUATE REVERSE POLISH NOTATION</h2>
+            <p class="c-section__desc">Evaluate the value of an arithmetic expression in Reverse Polish Notation.</p>
+            <div class="c-code">
+<pre>
+def evalRPN(tokens: list[str]) -> int:
+    stack = []
+    for c in tokens:
+        if c == "+":
+            stack.append(stack.pop() + stack.pop())
+        elif c == "-":
+            a, b = stack.pop(), stack.pop()
+            stack.append(b - a)
+        elif c == "*":
+            stack.append(stack.pop() * stack.pop())
+        elif c == "/":
+            a, b = stack.pop(), stack.pop()
+            stack.append(int(float(b) / a))
+        else:
+            stack.append(int(c))
+    return stack[0]
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 22: Generate Parentheses -->
+        <article class="c-section">
+            <h2 class="c-section__title">#22 GENERATE PARENTHESES</h2>
+            <p class="c-section__desc">Generate all combinations of well-formed parentheses given n pairs.</p>
+            <div class="c-code">
+<pre>
+def generateParenthesis(n: int) -> list[str]:
+    stack = []
+    res = []
+
+    def backtrack(openN, closedN):
+        if openN == closedN == n:
+            res.append("".join(stack))
+            return
+
+        if openN < n:
+            stack.append("(")
+            backtrack(openN + 1, closedN)
+            stack.pop()
+        if closedN < openN:
+            stack.append(")")
+            backtrack(openN, closedN + 1)
+            stack.pop()
+
+    backtrack(0, 0)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(4ⁿ / √n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 739: Daily Temperatures -->
+        <article class="c-section">
+            <h2 class="c-section__title">#739 DAILY TEMPERATURES</h2>
+            <p class="c-section__desc">Find how many days you have to wait until a warmer temperature.</p>
+            <div class="c-code">
+<pre>
+def dailyTemperatures(temperatures: list[int]) -> list[int]:
+    res = [0] * len(temperatures)
+    stack = []  # [temp, index]
+
+    for i, t in enumerate(temperatures):
+        while stack and t > stack[-1][0]:
+            stackTemp, stackInd = stack.pop()
+            res[stackInd] = i - stackInd
+        stack.append((t, i))
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 853: Car Fleet -->
+        <article class="c-section">
+            <h2 class="c-section__title">#853 CAR FLEET</h2>
+            <p class="c-section__desc">Determine how many car fleets will arrive at the destination.</p>
+            <div class="c-code">
+<pre>
+def carFleet(target: int, position: list[int], speed: list[int]) -> int:
+    pair = [[p, s] for p, s in zip(position, speed)]
+    stack = []
+    for p, s in sorted(pair)[::-1]:  # Reverse Sorted
+        stack.append((target - p) / s)
+        if len(stack) >= 2 and stack[-1] <= stack[-2]:
+            stack.pop()
+    return len(stack)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n log n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 901: Online Stock Span -->
+        <article class="c-section">
+            <h2 class="c-section__title">#901 ONLINE STOCK SPAN</h2>
+            <p class="c-section__desc">Calculate the span of a stock's price today.</p>
+            <div class="c-code">
+<pre>
+class StockSpanner:
+    def __init__(self):
+        self.stack = []  # pair: [price, span]
+
+    def next(self, price: int) -> int:
+        span = 1
+        while self.stack and self.stack[-1][0] <= price:
+            span += self.stack.pop()[1]
+        self.stack.append([price, span])
+        return span
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(1) Amortized Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 71: Simplify Path -->
+        <article class="c-section">
+            <h2 class="c-section__title">#71 SIMPLIFY PATH</h2>
+            <p class="c-section__desc">Convert an absolute Unix-style path to its simplified canonical path.</p>
+            <div class="c-code">
+<pre>
+def simplifyPath(path: str) -> str:
+    stack = []
+    for part in path.split("/"):
+        if part == "..":
+            if stack:
+                stack.pop()
+        elif part == "." or not part:
+            continue
+        else:
+            stack.append(part)
+    return "/" + "/".join(stack)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 394: Decode String -->
+        <article class="c-section">
+            <h2 class="c-section__title">#394 DECODE STRING</h2>
+            <p class="c-section__desc">Decode an encoded string where k[string] means string is repeated k times.</p>
+            <div class="c-code">
+<pre>
+def decodeString(s: str) -> str:
+    stack = []
+    for char in s:
+        if char != "]":
+            stack.append(char)
+        else:
+            substr = ""
+            while stack[-1] != "[":
+                substr = stack.pop() + substr
+            stack.pop()  # remove [
+            
+            k = ""
+            while stack and stack[-1].isdigit():
+                k = stack.pop() + k
+            stack.append(int(k) * substr)
+    return "".join(stack)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 735: Asteroid Collision -->
+        <article class="c-section">
+            <h2 class="c-section__title">#735 ASTEROID COLLISION</h2>
+            <p class="c-section__desc">Find the state of asteroids after all collisions.</p>
+            <div class="c-code">
+<pre>
+def asteroidCollision(asteroids: list[int]) -> list[int]:
+    stack = []
+    for a in asteroids:
+        while stack and a < 0 < stack[-1]:
+            if stack[-1] < -a:
+                stack.pop()
+                continue
+            elif stack[-1] == -a:
+                stack.pop()
+            break
+        else:
+            stack.append(a)
+    return stack
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 2390: Removing Stars From a String -->
+        <article class="c-section">
+            <h2 class="c-section__title">#2390 REMOVING STARS FROM A STRING</h2>
+            <p class="c-section__desc">Remove the closest non-star character to the left of each star.</p>
+            <div class="c-code">
+<pre>
+def removeStars(s: str) -> str:
+    stack = []
+    for c in s:
+        if c == "*":
+            stack.pop()
+        else:
+            stack.append(c)
+    return "".join(stack)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 456: 132 Pattern -->
+        <article class="c-section">
+            <h2 class="c-section__title">#456 132 PATTERN</h2>
+            <p class="c-section__desc">Find if there is a 132 pattern in the array.</p>
+            <div class="c-code">
+<pre>
+def find132pattern(nums: list[int]) -> bool:
+    stack = []  # [num, minLeft]
+    curMin = nums[0]
+
+    for n in nums[1:]:
+        while stack and n >= stack[-1][0]:
+            stack.pop()
+        if stack and n > stack[-1][1]:
+            return True
+        
+        stack.append([n, curMin])
+        curMin = min(curMin, n)
+    return False
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 84: Largest Rectangle in Histogram -->
+        <article class="c-section">
+            <h2 class="c-section__title">#84 LARGEST RECTANGLE IN HISTOGRAM</h2>
+            <p class="c-section__desc">Find the area of the largest rectangle in the histogram.</p>
+            <div class="c-code">
+<pre>
+def largestRectangleArea(heights: list[int]) -> int:
+    maxArea = 0
+    stack = []  # (index, height)
+
+    for i, h in enumerate(heights):
+        start = i
+        while stack and stack[-1][1] > h:
+            index, height = stack.pop()
+            maxArea = max(maxArea, height * (i - index))
+            start = index
+        stack.append((start, h))
+
+    for i, h in stack:
+        maxArea = max(maxArea, h * (len(heights) - i))
+    return maxArea
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+    </main>
+
+    <footer class="c-footer">
+        <p class="c-footer__text">TERMINAL_REF: PL-300 // STACK_PROBLEMS // SECURE_UPLINK</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

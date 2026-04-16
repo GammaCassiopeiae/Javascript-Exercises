@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TREES & GRAPHS // PYTHON_LEET_300</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono&family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="c-header">
+        <div class="c-header__container">
+            <a href="index.html" class="c-header__logo">⚡ PYTHON_LEET_300</a>
+            <a href="index.html" class="c-btn">RETURN_TO_BASE</a>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <section class="c-hero">
+            <h1 class="c-hero__title">TREES_&_GRAPHS</h1>
+            <p class="c-hero__text">Master hierarchical structures and advanced tree algorithms.</p>
+        </section>
+
+        <!-- 1. Invert Binary Tree -->
+        <article class="c-section">
+            <h2 class="c-section__title">#226 INVERT BINARY TREE</h2>
+            <p class="c-section__desc">Invert a binary tree (mirror it).</p>
+            <div class="c-code">
+<pre>
+def invertTree(root: Optional[TreeNode]) -> Optional[TreeNode]:
+    if not root: return None
+    root.left, root.right = root.right, root.left
+    invertTree(root.left)
+    invertTree(root.right)
+    return root
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(h) Space</p>
+        </article>
+
+        <!-- 2. Maximum Depth of Binary Tree -->
+        <article class="c-section">
+            <h2 class="c-section__title">#104 MAX DEPTH OF BINARY TREE</h2>
+            <p class="c-section__desc">Find the length of the longest path from root to leaf.</p>
+            <div class="c-code">
+<pre>
+def maxDepth(root: Optional[TreeNode]) -> int:
+    if not root: return 0
+    return 1 + max(maxDepth(root.left), maxDepth(root.right))
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(h) Space</p>
+        </article>
+
+        <!-- 3. Diameter of Binary Tree -->
+        <article class="c-section">
+            <h2 class="c-section__title">#543 DIAMETER OF BINARY TREE</h2>
+            <p class="c-section__desc">Longest path between any two nodes in a tree.</p>
+            <div class="c-code">
+<pre>
+def diameterOfBinaryTree(root: Optional[TreeNode]) -> int:
+    res = 0
+    def dfs(node):
+        nonlocal res
+        if not node: return 0
+        left, right = dfs(node.left), dfs(node.right)
+        res = max(res, left + right)
+        return 1 + max(left, right)
+    dfs(root)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(h) Space</p>
+        </article>
+
+        <!-- 4. Balanced Binary Tree -->
+        <article class="c-section">
+            <h2 class="c-section__title">#110 BALANCED BINARY TREE</h2>
+            <p class="c-section__desc">Check if height difference of subtrees is at most 1.</p>
+            <div class="c-code">
+<pre>
+def isBalanced(root: Optional[TreeNode]) -> bool:
+    def dfs(node):
+        if not node: return [True, 0]
+        left, right = dfs(node.left), dfs(node.right)
+        balanced = left[0] and right[0] and abs(left[1] - right[1]) <= 1
+        return [balanced, 1 + max(left[1], right[1])]
+    return dfs(root)[0]
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(h) Space</p>
+        </article>
+
+        <!-- 5. Same Tree -->
+        <article class="c-section">
+            <h2 class="c-section__title">#100 SAME TREE</h2>
+            <p class="c-section__desc">Check if two binary trees are structurally identical.</p>
+            <div class="c-code">
+<pre>
+def isSameTree(p: Optional[TreeNode], q: Optional[TreeNode]) -> bool:
+    if not p and not q: return True
+    if not p or not q or p.val != q.val: return False
+    return isSameTree(p.left, q.left) and isSameTree(p.right, q.right)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(h) Space</p>
+        </article>
+
+        <!-- 6. Subtree of Another Tree -->
+        <article class="c-section">
+            <h2 class="c-section__title">#572 SUBTREE OF ANOTHER TREE</h2>
+            <p class="c-section__desc">Check if a tree contains another tree as a subtree.</p>
+            <div class="c-code">
+<pre>
+def isSubtree(root: Optional[TreeNode], subRoot: Optional[TreeNode]) -> bool:
+    if not subRoot: return True
+    if not root: return False
+    if isSameTree(root, subRoot): return True
+    return isSubtree(root.left, subRoot) or isSubtree(root.right, subRoot)
+
+def isSameTree(p, q):
+    if not p and not q: return True
+    if p and q and p.val == q.val:
+        return isSameTree(p.left, q.left) and isSameTree(p.right, q.right)
+    return False
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(m*n) Time | O(h) Space</p>
+        </article>
+
+        <!-- 7. Lowest Common Ancestor of a BST -->
+        <article class="c-section">
+            <h2 class="c-section__title">#235 LCA OF A BST</h2>
+            <p class="c-section__desc">Find LCA in a Binary Search Tree.</p>
+            <div class="c-code">
+<pre>
+def lowestCommonAncestor(root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+    curr = root
+    while curr:
+        if p.val > curr.val and q.val > curr.val:
+            curr = curr.right
+        elif p.val < curr.val and q.val < curr.val:
+            curr = curr.left
+        else:
+            return curr
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(h) Time | O(1) Space</p>
+        </article>
+
+        <!-- 8. Path Sum -->
+        <article class="c-section">
+            <h2 class="c-section__title">#112 PATH SUM</h2>
+            <p class="c-section__desc">Root-to-leaf path sum equals target.</p>
+            <div class="c-code">
+<pre>
+def hasPathSum(root: Optional[TreeNode], targetSum: int) -> bool:
+    if not root: return False
+    if not root.left and not root.right:
+        return targetSum == root.val
+    return (hasPathSum(root.left, targetSum - root.val) or 
+            hasPathSum(root.right, targetSum - root.val))
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(h) Space</p>
+        </article>
+
+        <!-- 9. Binary Tree Postorder Traversal -->
+        <article class="c-section">
+            <h2 class="c-section__title">#145 POSTORDER TRAVERSAL</h2>
+            <p class="c-section__desc">L-R-Root traversal (Iterative).</p>
+            <div class="c-code">
+<pre>
+def postorderTraversal(root: Optional[TreeNode]) -> list[int]:
+    if not root: return []
+    res, stack = [], [root]
+    while stack:
+        node = stack.pop()
+        res.append(node.val)
+        if node.left: stack.append(node.left)
+        if node.right: stack.append(node.right)
+    return res[::-1]
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(h) Space</p>
+        </article>
+
+        <!-- 10. Minimum Distance Between BST Nodes -->
+        <article class="c-section">
+            <h2 class="c-section__title">#783 MIN DISTANCE IN BST</h2>
+            <p class="c-section__desc">Find the minimum difference between any two nodes.</p>
+            <div class="c-code">
+<pre>
+def minDiffInBST(root: Optional[TreeNode]) -> int:
+    prev, res = None, float('inf')
+    def dfs(node):
+        nonlocal prev, res
+        if not node: return
+        dfs(node.left)
+        if prev:
+            res = min(res, node.val - prev.val)
+        prev = node
+        dfs(node.right)
+    dfs(root)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(h) Space</p>
+        </article>
+
+        <!-- 11. Binary Tree Level Order Traversal -->
+        <article class="c-section">
+            <h2 class="c-section__title">#102 LEVEL ORDER TRAVERSAL</h2>
+            <p class="c-section__desc">BFS level-by-level traversal.</p>
+            <div class="c-code">
+<pre>
+from collections import deque
+def levelOrder(root: Optional[TreeNode]) -> list[list[int]]:
+    res, q = [], deque([root] if root else [])
+    while q:
+        level = []
+        for _ in range(len(q)):
+            node = q.popleft()
+            level.append(node.val)
+            if node.left: q.append(node.left)
+            if node.right: q.append(node.right)
+        res.append(level)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <!-- 12. Binary Tree Right Side View -->
+        <article class="c-section">
+            <h2 class="c-section__title">#199 RIGHT SIDE VIEW</h2>
+            <p class="c-section__desc">Nodes visible from the right side.</p>
+            <div class="c-code">
+<pre>
+def rightSideView(root: Optional[TreeNode]) -> list[int]:
+    res, q = [], deque([root] if root else [])
+    while q:
+        rightNode = None
+        for _ in range(len(q)):
+            node = q.popleft()
+            rightNode = node
+            if node.left: q.append(node.left)
+            if node.right: q.append(node.right)
+        if rightNode: res.append(rightNode.val)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <!-- 13. Count Good Nodes in Binary Tree -->
+        <article class="c-section">
+            <h2 class="c-section__title">#1448 COUNT GOOD NODES</h2>
+            <p class="c-section__desc">Nodes with val >= max val on path from root.</p>
+            <div class="c-code">
+<pre>
+def goodNodes(root: TreeNode) -> int:
+    def dfs(node, maxVal):
+        if not node: return 0
+        res = 1 if node.val >= maxVal else 0
+        maxVal = max(maxVal, node.val)
+        res += dfs(node.left, maxVal)
+        res += dfs(node.right, maxVal)
+        return res
+    return dfs(root, root.val)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(h) Space</p>
+        </article>
+
+        <!-- 14. Validate Binary Search Tree -->
+        <article class="c-section">
+            <h2 class="c-section__title">#98 VALIDATE BST</h2>
+            <p class="c-section__desc">Check if a tree is a valid BST.</p>
+            <div class="c-code">
+<pre>
+def isValidBST(root: Optional[TreeNode]) -> bool:
+    def valid(node, left, right):
+        if not node: return True
+        if not (left < node.val < right): return False
+        return (valid(node.left, left, node.val) and 
+                valid(node.right, node.val, right))
+    return valid(root, float("-inf"), float("inf"))
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(h) Space</p>
+        </article>
+
+        <!-- 15. Kth Smallest Element in a BST -->
+        <article class="c-section">
+            <h2 class="c-section__title">#230 KTH SMALLEST IN BST</h2>
+            <p class="c-section__desc">Find the kth smallest value using inorder traversal.</p>
+            <div class="c-code">
+<pre>
+def kthSmallest(root: Optional[TreeNode], k: int) -> int:
+    stack, curr = [], root
+    while stack or curr:
+        while curr:
+            stack.append(curr)
+            curr = curr.left
+        curr = stack.pop()
+        k -= 1
+        if k == 0: return curr.val
+        curr = curr.right
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(h + k) Time | O(h) Space</p>
+        </article>
+
+        <!-- 16. Construct Binary Tree from Preorder and Inorder -->
+        <article class="c-section">
+            <h2 class="c-section__title">#105 BUILD FROM TRAVERSALS</h2>
+            <p class="c-section__desc">Reconstruct tree from preorder and inorder arrays.</p>
+            <div class="c-code">
+<pre>
+def buildTree(preorder: list[int], inorder: list[int]) -> Optional[TreeNode]:
+    if not preorder or not inorder: return None
+    root = TreeNode(preorder[0])
+    mid = inorder.index(preorder[0])
+    root.left = buildTree(preorder[1:mid+1], inorder[:mid])
+    root.right = buildTree(preorder[mid+1:], inorder[mid+1:])
+    return root
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <!-- 17. Binary Tree Zigzag Level Order Traversal -->
+        <article class="c-section">
+            <h2 class="c-section__title">#103 ZIGZAG LEVEL ORDER</h2>
+            <p class="c-section__desc">Level order traversal with alternating directions.</p>
+            <div class="c-code">
+<pre>
+def zigzagLevelOrder(root: Optional[TreeNode]) -> list[list[int]]:
+    res, q = [], deque([root] if root else [])
+    while q:
+        level = []
+        for _ in range(len(q)):
+            node = q.popleft()
+            level.append(node.val)
+            if node.left: q.append(node.left)
+            if node.right: q.append(node.right)
+        if len(res) % 2 == 1: level.reverse()
+        res.append(level)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <!-- 18. Populating Next Right Pointers in Each Node -->
+        <article class="c-section">
+            <h2 class="c-section__title">#116 POPULATE NEXT POINTERS</h2>
+            <p class="c-section__desc">Link all nodes at the same level.</p>
+            <div class="c-code">
+<pre>
+def connect(root: 'Optional[Node]') -> 'Optional[Node]':
+    curr, nxt = root, root.left if root else None
+    while curr and nxt:
+        curr.left.next = curr.right
+        if curr.next:
+            curr.right.next = curr.next.left
+        curr = curr.next
+        if not curr:
+            curr, nxt = nxt, nxt.left
+    return root
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <!-- 19. Flatten Binary Tree to Linked List -->
+        <article class="c-section">
+            <h2 class="c-section__title">#114 FLATTEN BINARY TREE</h2>
+            <p class="c-section__desc">Flatten tree to a "linked list" in-place.</p>
+            <div class="c-code">
+<pre>
+def flatten(root: Optional[TreeNode]) -> None:
+    curr = root
+    while curr:
+        if curr.left:
+            last = curr.left
+            while last.right: last = last.right
+            last.right = curr.right
+            curr.right = curr.left
+            curr.left = None
+        curr = curr.right
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <!-- 20. Binary Search Tree Iterator -->
+        <article class="c-section">
+            <h2 class="c-section__title">#173 BST ITERATOR</h2>
+            <p class="c-section__desc">Inorder traversal iterator using a stack.</p>
+            <div class="c-code">
+<pre>
+class BSTIterator:
+    def __init__(self, root: Optional[TreeNode]):
+        self.stack = []
+        self._push_left(root)
+    def _push_left(self, node):
+        while node:
+            self.stack.append(node)
+            node = node.left
+    def next(self) -> int:
+        node = self.stack.pop()
+        self._push_left(node.right)
+        return node.val
+    def hasNext(self) -> bool:
+        return len(self.stack) > 0
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(1) avg next() | O(h) Space</p>
+        </article>
+
+        <!-- 21. Trim a Binary Search Tree -->
+        <article class="c-section">
+            <h2 class="c-section__title">#669 TRIM A BST</h2>
+            <p class="c-section__desc">Remove nodes outside [low, high] range.</p>
+            <div class="c-code">
+<pre>
+def trimBST(root: Optional[TreeNode], low: int, high: int) -> Optional[TreeNode]:
+    if not root: return None
+    if root.val < low: return trimBST(root.right, low, high)
+    if root.val > high: return trimBST(root.left, low, high)
+    root.left = trimBST(root.left, low, high)
+    root.right = trimBST(root.right, low, high)
+    return root
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(h) Space</p>
+        </article>
+
+        <!-- 22. House Robber III -->
+        <article class="c-section">
+            <h2 class="c-section__title">#337 HOUSE ROBBER III</h2>
+            <p class="c-section__desc">Max amount you can rob without robbing adjacent nodes.</p>
+            <div class="c-code">
+<pre>
+def rob(root: Optional[TreeNode]) -> int:
+    def dfs(node):
+        if not node: return [0, 0] # [robNode, skipNode]
+        left, right = dfs(node.left), dfs(node.right)
+        robNode = node.val + left[1] + right[1]
+        skipNode = max(left) + max(right)
+        return [robNode, skipNode]
+    return max(dfs(root))
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(h) Space</p>
+        </article>
+
+        <!-- 23. Binary Tree Maximum Path Sum -->
+        <article class="c-section">
+            <h2 class="c-section__title">#124 MAX PATH SUM</h2>
+            <p class="c-section__desc">Find the maximum path sum between any two nodes.</p>
+            <div class="c-code">
+<pre>
+def maxPathSum(root: Optional[TreeNode]) -> int:
+    res = root.val
+    def dfs(node):
+        nonlocal res
+        if not node: return 0
+        leftMax = max(dfs(node.left), 0)
+        rightMax = max(dfs(node.right), 0)
+        res = max(res, node.val + leftMax + rightMax)
+        return node.val + max(leftMax, rightMax)
+    dfs(root)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(h) Space</p>
+        </article>
+
+        <!-- 24. Serialize and Deserialize Binary Tree -->
+        <article class="c-section">
+            <h2 class="c-section__title">#297 SERIALIZE TREE</h2>
+            <p class="c-section__desc">Convert tree to string and back.</p>
+            <div class="c-code">
+<pre>
+class Codec:
+    def serialize(self, root):
+        res = []
+        def dfs(node):
+            if not node: res.append("N"); return
+            res.append(str(node.val))
+            dfs(node.left)
+            dfs(node.right)
+        dfs(root)
+        return ",".join(res)
+    def deserialize(self, data):
+        vals = data.split(",")
+        self.i = 0
+        def dfs():
+            if vals[self.i] == "N": self.i += 1; return None
+            node = TreeNode(int(vals[self.i])); self.i += 1
+            node.left, node.right = dfs(), dfs()
+            return node
+        return dfs()
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <!-- 25. Minimum Depth of Binary Tree -->
+        <article class="c-section">
+            <h2 class="c-section__title">#111 MIN DEPTH OF TREE</h2>
+            <p class="c-section__desc">Find the shortest path from root to leaf.</p>
+            <div class="c-code">
+<pre>
+def minDepth(root: Optional[TreeNode]) -> int:
+    if not root: return 0
+    if not root.left: return 1 + minDepth(root.right)
+    if not root.right: return 1 + minDepth(root.left)
+    return 1 + min(minDepth(root.left), minDepth(root.right))
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(h) Space</p>
+        </article>
+
+        <!-- 26. Binary Tree Inorder Traversal -->
+        <article class="c-section">
+            <h2 class="c-section__title">#94 INORDER TRAVERSAL</h2>
+            <p class="c-section__desc">Left-Root-Right traversal (Iterative).</p>
+            <div class="c-code">
+<pre>
+def inorderTraversal(root: Optional[TreeNode]) -> list[int]:
+    res, stack, curr = [], [], root
+    while curr or stack:
+        while curr:
+            stack.append(curr); curr = curr.left
+        curr = stack.pop()
+        res.append(curr.val); curr = curr.right
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(h) Space</p>
+        </article>
+
+        <!-- 27. Binary Tree Preorder Traversal -->
+        <article class="c-section">
+            <h2 class="c-section__title">#144 PREORDER TRAVERSAL</h2>
+            <p class="c-section__desc">Root-Left-Right traversal (Iterative).</p>
+            <div class="c-code">
+<pre>
+def preorderTraversal(root: Optional[TreeNode]) -> list[int]:
+    if not root: return []
+    res, stack = [], [root]
+    while stack:
+        node = stack.pop()
+        res.append(node.val)
+        if node.right: stack.append(node.right)
+        if node.left: stack.append(node.left)
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(h) Space</p>
+        </article>
+
+        <!-- 28. Symmetric Tree -->
+        <article class="c-section">
+            <h2 class="c-section__title">#101 SYMMETRIC TREE</h2>
+            <p class="c-section__desc">Check if a tree is a mirror of itself.</p>
+            <div class="c-code">
+<pre>
+def isSymmetric(root: Optional[TreeNode]) -> bool:
+    def isMirror(t1, t2):
+        if not t1 and not t2: return True
+        if not t1 or not t2: return False
+        return (t1.val == t2.val and isMirror(t1.left, t2.right) 
+                and isMirror(t1.right, t2.left))
+    return isMirror(root, root)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(h) Space</p>
+        </article>
+
+        <!-- 29. Binary Tree Tilt -->
+        <article class="c-section">
+            <h2 class="c-section__title">#563 BINARY TREE TILT</h2>
+            <p class="c-section__desc">Sum of absolute differences between subtree sums.</p>
+            <div class="c-code">
+<pre>
+def findTilt(root: Optional[TreeNode]) -> int:
+    tilt = 0
+    def dfs(node):
+        nonlocal tilt
+        if not node: return 0
+        left, right = dfs(node.left), dfs(node.right)
+        tilt += abs(left - right)
+        return node.val + left + right
+    dfs(root)
+    return tilt
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(h) Space</p>
+        </article>
+
+        <!-- 30. Sum of Left Leaves -->
+        <article class="c-section">
+            <h2 class="c-section__title">#404 SUM OF LEFT LEAVES</h2>
+            <p class="c-section__desc">Sum of all leaves that are left children.</p>
+            <div class="c-code">
+<pre>
+def sumOfLeftLeaves(root: Optional[TreeNode]) -> int:
+    if not root: return 0
+    res = 0
+    if root.left and not root.left.left and not root.left.right:
+        res += root.left.val
+    return res + sumOfLeftLeaves(root.left) + sumOfLeftLeaves(root.right)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(h) Space</p>
+        </article>
+
+        <!-- 31. Path Sum II -->
+        <article class="c-section">
+            <h2 class="c-section__title">#113 PATH SUM II</h2>
+            <p class="c-section__desc">All root-to-leaf paths that sum to target.</p>
+            <div class="c-code">
+<pre>
+def pathSum(root: Optional[TreeNode], targetSum: int) -> list[list[int]]:
+    res = []
+    def dfs(node, currSum, path):
+        if not node: return
+        currSum += node.val
+        if not node.left and not node.right and currSum == targetSum:
+            res.append(path + [node.val])
+        dfs(node.left, currSum, path + [node.val])
+        dfs(node.right, currSum, path + [node.val])
+    dfs(root, 0, [])
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n^2) Time | O(h) Space</p>
+        </article>
+
+        <!-- 32. Binary Tree Paths -->
+        <article class="c-section">
+            <h2 class="c-section__title">#257 BINARY TREE PATHS</h2>
+            <p class="c-section__desc">All root-to-leaf paths in string format.</p>
+            <div class="c-code">
+<pre>
+def binaryTreePaths(root: Optional[TreeNode]) -> list[str]:
+    res = []
+    def dfs(node, path):
+        if not node: return
+        path += str(node.val)
+        if not node.left and not node.right:
+            res.append(path)
+        else:
+            dfs(node.left, path + "->")
+            dfs(node.right, path + "->")
+    dfs(root, "")
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(h) Space</p>
+        </article>
+
+        <!-- 33. Convert Sorted Array to BST -->
+        <article class="c-section">
+            <h2 class="c-section__title">#108 ARRAY TO BST</h2>
+            <p class="c-section__desc">Build a balanced BST from a sorted array.</p>
+            <div class="c-code">
+<pre>
+def sortedArrayToBST(nums: list[int]) -> Optional[TreeNode]:
+    if not nums: return None
+    mid = len(nums) // 2
+    root = TreeNode(nums[mid])
+    root.left = sortedArrayToBST(nums[:mid])
+    root.right = sortedArrayToBST(nums[mid+1:])
+    return root
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(log n) Space</p>
+        </article>
+
+        <!-- 34. Search in a BST -->
+        <article class="c-section">
+            <h2 class="c-section__title">#700 SEARCH IN BST</h2>
+            <p class="c-section__desc">Find the node with val equal to target.</p>
+            <div class="c-code">
+<pre>
+def searchBST(root: Optional[TreeNode], val: int) -> Optional[TreeNode]:
+    if not root or root.val == val: return root
+    if val < root.val: return searchBST(root.left, val)
+    return searchBST(root.right, val)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(h) Time | O(h) Space</p>
+        </article>
+
+        <!-- 35. Insert into a BST -->
+        <article class="c-section">
+            <h2 class="c-section__title">#701 INSERT INTO BST</h2>
+            <p class="c-section__desc">Insert a value while maintaining BST properties.</p>
+            <div class="c-code">
+<pre>
+def insertIntoBST(root: Optional[TreeNode], val: int) -> Optional[TreeNode]:
+    if not root: return TreeNode(val)
+    if val < root.val:
+        root.left = insertIntoBST(root.left, val)
+    else:
+        root.right = insertIntoBST(root.right, val)
+    return root
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(h) Time | O(h) Space</p>
+        </article>
+
+        <!-- 36. Delete Node in a BST -->
+        <article class="c-section">
+            <h2 class="c-section__title">#450 DELETE NODE IN BST</h2>
+            <p class="c-section__desc">Remove a node from BST and reorganize.</p>
+            <div class="c-code">
+<pre>
+def deleteNode(root: Optional[TreeNode], key: int) -> Optional[TreeNode]:
+    if not root: return None
+    if key < root.val:
+        root.left = deleteNode(root.left, key)
+    elif key > root.val:
+        root.right = deleteNode(root.right, key)
+    else:
+        if not root.left: return root.right
+        if not root.right: return root.left
+        curr = root.right
+        while curr.left: curr = curr.left
+        root.val = curr.val
+        root.right = deleteNode(root.right, curr.val)
+    return root
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(h) Time | O(h) Space</p>
+        </article>
+
+        <!-- 37. All Nodes Distance K in Binary Tree -->
+        <article class="c-section">
+            <h2 class="c-section__title">#863 NODES DISTANCE K</h2>
+            <p class="c-section__desc">Find all nodes at distance k from target node.</p>
+            <div class="c-code">
+<pre>
+def distanceK(root: TreeNode, target: TreeNode, k: int) -> list[int]:
+    adj = collections.defaultdict(list)
+    def build(node, parent):
+        if node and parent:
+            adj[node.val].append(parent.val)
+            adj[parent.val].append(node.val)
+        if node.left: build(node.left, node)
+        if node.right: build(node.right, node)
+    build(root, None)
+    res, q, visit = [], deque([(target.val, 0)]), {target.val}
+    while q:
+        val, d = q.popleft()
+        if d == k: res.append(val)
+        if d < k:
+            for n in adj[val]:
+                if n not in visit:
+                    visit.add(n); q.append((n, d + 1))
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <!-- 38. Binary Tree Level Order Traversal II -->
+        <article class="c-section">
+            <h2 class="c-section__title">#107 LEVEL ORDER II</h2>
+            <p class="c-section__desc">Bottom-up level order traversal.</p>
+            <div class="c-code">
+<pre>
+def levelOrderBottom(root: Optional[TreeNode]) -> list[list[int]]:
+    res, q = [], deque([root] if root else [])
+    while q:
+        level = []
+        for _ in range(len(q)):
+            node = q.popleft()
+            level.append(node.val)
+            if node.left: q.append(node.left)
+            if node.right: q.append(node.right)
+        res.append(level)
+    return res[::-1]
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <!-- 39. Populating Next Right Pointers in Each Node II -->
+        <article class="c-section">
+            <h2 class="c-section__title">#117 POPULATE NEXT II</h2>
+            <p class="c-section__desc">Same as #116 but for any binary tree.</p>
+            <div class="c-code">
+<pre>
+def connect(root: 'Node') -> 'Node':
+    if not root: return None
+    q = deque([root])
+    while q:
+        prev = None
+        for _ in range(len(q)):
+            node = q.popleft()
+            if prev: prev.next = node
+            prev = node
+            if node.left: q.append(node.left)
+            if node.right: q.append(node.right)
+    return root
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <!-- 40. Lowest Common Ancestor of a Binary Tree -->
+        <article class="c-section">
+            <h2 class="c-section__title">#236 LCA OF BINARY TREE</h2>
+            <p class="c-section__desc">Find LCA in any binary tree.</p>
+            <div class="c-code">
+<pre>
+def lowestCommonAncestor(root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+    if not root or root == p or root == q: return root
+    left = lowestCommonAncestor(root.left, p, q)
+    right = lowestCommonAncestor(root.right, p, q)
+    if left and right: return root
+    return left if left else right
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(h) Space</p>
+        </article>
+
+    </main>
+
+    <footer class="c-footer">
+        <p class="c-footer__text">TERMINAL_REF: PL-300 // TREES_GRAPHS // SECURE_UPLINK</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

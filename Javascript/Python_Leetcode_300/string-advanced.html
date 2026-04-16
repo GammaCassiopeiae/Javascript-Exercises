@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRIES & ADVANCED STRINGS // PYTHON_LEET_300</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono&family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="c-header">
+        <div class="c-header__container">
+            <a href="index.html" class="c-header__logo">⚡ PYTHON_LEET_300</a>
+            <a href="index.html" class="c-btn">RETURN_TO_BASE</a>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <section class="c-hero">
+            <h1 class="c-hero__title">TRIES_&_ADVANCED_STRINGS</h1>
+            <p class="c-hero__text">Efficiently manage prefix-based data and complex string patterns.</p>
+        </section>
+
+        <!-- Problem 208: Implement Trie (Prefix Tree) -->
+        <article class="c-section">
+            <h2 class="c-section__title">#208 IMPLEMENT TRIE</h2>
+            <p class="c-section__desc">Implement a trie with insert, search, and startsWith methods.</p>
+            <div class="c-code">
+<pre>
+class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.endOfWord = False
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+    def insert(self, word: str) -> None:
+        cur = self.root
+        for c in word:
+            if c not in cur.children:
+                cur.children[c] = TrieNode()
+            cur = cur.children[c]
+        cur.endOfWord = True
+    def search(self, word: str) -> bool:
+        cur = self.root
+        for c in word:
+            if c not in cur.children: return False
+            cur = cur.children[c]
+        return cur.endOfWord
+    def startsWith(self, prefix: str) -> bool:
+        cur = self.root
+        for c in prefix:
+            if c not in cur.children: return False
+            cur = cur.children[c]
+        return True
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) per operation | O(n * m) Space</p>
+        </article>
+
+        <!-- Problem 211: Design Add and Search Words Data Structure -->
+        <article class="c-section">
+            <h2 class="c-section__title">#211 DESIGN ADD/SEARCH WORDS</h2>
+            <p class="c-section__desc">Support adding words and searching with '.' as a wildcard.</p>
+            <div class="c-code">
+<pre>
+class WordDictionary:
+    def __init__(self):
+        self.root = TrieNode()
+    def addWord(self, word: str) -> None:
+        cur = self.root
+        for c in word:
+            if c not in cur.children:
+                cur.children[c] = TrieNode()
+            cur = cur.children[c]
+        cur.endOfWord = True
+    def search(self, word: str) -> bool:
+        def dfs(j, root):
+            cur = root
+            for i in range(j, len(word)):
+                c = word[i]
+                if c == ".":
+                    for child in cur.children.values():
+                        if dfs(i + 1, child): return True
+                    return False
+                else:
+                    if c not in cur.children: return False
+                    cur = cur.children[c]
+            return cur.endOfWord
+        return dfs(0, self.root)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Add, O(2^m) Search | O(n * m) Space</p>
+        </article>
+
+        <!-- Problem 212: Word Search II -->
+        <article class="c-section">
+            <h2 class="c-section__title">#212 WORD SEARCH II</h2>
+            <p class="c-section__desc">Find all words from a dictionary in a 2D grid of characters.</p>
+            <div class="c-code">
+<pre>
+def findWords(board: list[list[str]], words: list[str]) -> list[str]:
+    root = TrieNode()
+    for w in words: root.addWord(w)
+    ROWS, COLS = len(board), len(board[0])
+    res, visit = set(), set()
+    def dfs(r, c, node, word):
+        if (r < 0 or c < 0 or r == ROWS or c == COLS or
+            (r, c) in visit or board[r][c] not in node.children):
+            return
+        visit.add((r, c))
+        node = node.children[board[r][c]]
+        word += board[r][c]
+        if node.endOfWord: res.add(word)
+        dfs(r + 1, c, node, word)
+        dfs(r - 1, c, node, word)
+        dfs(r, c + 1, node, word)
+        dfs(r, c - 1, node, word)
+        visit.remove((r, c))
+    for r in range(ROWS):
+        for c in range(COLS):
+            dfs(r, c, root, "")
+    return list(res)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(M * 4 * 3^(L-1)) Time | O(N * L) Space</p>
+        </article>
+
+        <!-- Problem 1392: Longest Happy Prefix -->
+        <article class="c-section">
+            <h2 class="c-section__title">#1392 LONGEST HAPPY PREFIX</h2>
+            <p class="c-section__desc">Find the longest prefix that is also a suffix (excluding the string itself).</p>
+            <div class="c-code">
+<pre>
+def longestPrefix(s: str) -> str:
+    res = ""
+    l, r = 0, 0
+    mod = 10**9 + 7
+    P = 31
+    h_l, h_r = 0, 0
+    p_pow = 1
+    for i in range(len(s) - 1):
+        h_l = (h_l * P + (ord(s[i]) - ord('a') + 1)) % mod
+        h_r = (h_r + (ord(s[len(s) - 1 - i]) - ord('a') + 1) * p_pow) % mod
+        p_pow = (p_pow * P) % mod
+        if h_l == h_r:
+            res = s[:i+1]
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(1) Space</p>
+        </article>
+
+        <!-- Problem 745: Prefix and Suffix Search -->
+        <article class="c-section">
+            <h2 class="c-section__title">#745 PREFIX AND SUFFIX SEARCH</h2>
+            <p class="c-section__desc">Design a data structure that returns the index of a word with given prefix and suffix.</p>
+            <div class="c-code">
+<pre>
+class WordFilter:
+    def __init__(self, words: list[str]):
+        self.trie = {}
+        for idx, word in enumerate(words):
+            long = word + "#" + word
+            for i in range(len(word) + 1):
+                cur = self.trie
+                for j in range(i, len(long)):
+                    char = long[j]
+                    if char not in cur: cur[char] = {}
+                    cur = cur[char]
+                    cur["index"] = idx
+    def f(self, prefix: str, suffix: str) -> int:
+        cur = self.trie
+        for char in suffix + "#" + prefix:
+            if char not in cur: return -1
+            cur = cur[char]
+        return cur["index"]
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(L²) Build, O(L) Query | O(L²) Space</p>
+        </article>
+
+        <!-- Problem 648: Replace Words -->
+        <article class="c-section">
+            <h2 class="c-section__title">#648 REPLACE WORDS</h2>
+            <p class="c-section__desc">Replace words in a sentence with their shortest root from a dictionary.</p>
+            <div class="c-code">
+<pre>
+def replaceWords(dictionary: list[str], sentence: str) -> str:
+    root = TrieNode()
+    for w in dictionary: root.addWord(w)
+    res = []
+    for word in sentence.split():
+        cur = root
+        prefix = ""
+        for c in word:
+            if c not in cur.children or cur.endOfWord: break
+            prefix += c
+            cur = cur.children[c]
+        res.append(prefix if cur.endOfWord else word)
+    return " ".join(res)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(N + M) Time | O(D) Space</p>
+        </article>
+
+        <!-- Problem 676: Implement Magic Dictionary -->
+        <article class="c-section">
+            <h2 class="c-section__title">#676 MAGIC DICTIONARY</h2>
+            <p class="c-section__desc">Find if changing exactly one character can result in a word in the dictionary.</p>
+            <div class="c-code">
+<pre>
+class MagicDictionary:
+    def __init__(self):
+        self.root = TrieNode()
+    def buildDict(self, dictionary: list[str]) -> None:
+        for w in dictionary: self.root.addWord(w)
+    def search(self, searchWord: str) -> bool:
+        def dfs(node, i, changed):
+            if i == len(searchWord):
+                return changed and node.endOfWord
+            char = searchWord[i]
+            for c in node.children:
+                if c == char:
+                    if dfs(node.children[c], i + 1, changed): return True
+                elif not changed:
+                    if dfs(node.children[c], i + 1, True): return True
+            return False
+        return dfs(self.root, 0, False)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(N * L) Build, O(L * 26) Search | O(N * L) Space</p>
+        </article>
+
+        <!-- Problem 677: Map Sum Pairs -->
+        <article class="c-section">
+            <h2 class="c-section__title">#677 MAP SUM PAIRS</h2>
+            <p class="c-section__desc">Sum values of all keys that have a given prefix.</p>
+            <div class="c-code">
+<pre>
+class MapSum:
+    def __init__(self):
+        self.root = {}
+        self.map = {}
+    def insert(self, key: str, val: int) -> None:
+        delta = val - self.map.get(key, 0)
+        self.map[key] = val
+        cur = self.root
+        for c in key:
+            if c not in cur: cur[c] = {"sum": 0}
+            cur = cur[c]
+            cur["sum"] += delta
+    def sum(self, prefix: str) -> int:
+        cur = self.root
+        for c in prefix:
+            if c not in cur: return 0
+            cur = cur[c]
+        return cur["sum"]
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(L) per operation | O(N * L) Space</p>
+        </article>
+
+        <!-- Problem 1268: Search Suggestions System -->
+        <article class="c-section">
+            <h2 class="c-section__title">#1268 SEARCH SUGGESTIONS</h2>
+            <p class="c-section__desc">Return up to three products with shared prefix for each character typed.</p>
+            <div class="c-code">
+<pre>
+def suggestedProducts(products: list[str], searchWord: str) -> list[list[str]]:
+    products.sort()
+    res = []
+    l, r = 0, len(products) - 1
+    for i in range(len(searchWord)):
+        c = searchWord[i]
+        while l <= r and (len(products[l]) <= i or products[l][i] != c):
+            l += 1
+        while l <= r and (len(products[r]) <= i or products[r][i] != c):
+            r -= 1
+        res.append([])
+        remain = r - l + 1
+        for j in range(min(3, remain)):
+            res[-1].append(products[l + j])
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(N log N + M) Time | O(M) Space</p>
+        </article>
+
+        <!-- Problem 421: Maximum XOR of Two Numbers in an Array -->
+        <article class="c-section">
+            <h2 class="c-section__title">#421 MAX XOR</h2>
+            <p class="c-section__desc">Find maximum result of XORing two numbers in an array.</p>
+            <div class="c-code">
+<pre>
+def findMaximumXOR(nums: list[int]) -> int:
+    res, mask = 0, 0
+    for i in range(31, -1, -1):
+        mask |= (1 << i)
+        found = set()
+        for n in nums: found.add(n & mask)
+        start = res | (1 << i)
+        for f in found:
+            if start ^ f in found:
+                res = start
+                break
+    return res
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 214: Shortest Palindrome -->
+        <article class="c-section">
+            <h2 class="c-section__title">#214 SHORTEST PALINDROME</h2>
+            <p class="c-section__desc">Find the shortest palindrome by adding characters at the front.</p>
+            <div class="c-code">
+<pre>
+def shortestPalindrome(s: str) -> str:
+    if not s: return ""
+    rev = s[::-1]
+    for i in range(len(s)):
+        if s.startswith(rev[i:]):
+            return rev[:i] + s
+    return ""
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n²) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 28: Find Index of First Occurrence -->
+        <article class="c-section">
+            <h2 class="c-section__title">#28 FIND FIRST OCCURRENCE</h2>
+            <p class="c-section__desc">Return index of first occurrence of needle in haystack (KMP Algorithm).</p>
+            <div class="c-code">
+<pre>
+def strStr(haystack: str, needle: str) -> int:
+    if needle == "": return 0
+    lps = [0] * len(needle)
+    prevLPS, i = 0, 1
+    while i < len(needle):
+        if needle[i] == needle[prevLPS]:
+            lps[i] = prevLPS + 1
+            prevLPS += 1; i += 1
+        elif prevLPS == 0: i += 1
+        else: prevLPS = lps[prevLPS - 1]
+    i = j = 0
+    while i < len(haystack):
+        if haystack[i] == needle[j]:
+            i += 1; j += 1
+        elif j == 0: i += 1
+        else: j = lps[j - 1]
+        if j == len(needle): return i - len(needle)
+    return -1
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n + m) Time | O(m) Space</p>
+        </article>
+
+        <!-- Problem 459: Repeated Substring Pattern -->
+        <article class="c-section">
+            <h2 class="c-section__title">#459 REPEATED SUBSTRING</h2>
+            <p class="c-section__desc">Check if string can be formed by repeating a substring.</p>
+            <div class="c-code">
+<pre>
+def repeatedSubstringPattern(s: str) -> bool:
+    return s in (s + s)[1:-1]
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <!-- Problem 1032: Stream of Characters -->
+        <article class="c-section">
+            <h2 class="c-section__title">#1032 STREAM OF CHARACTERS</h2>
+            <p class="c-section__desc">Check if any suffix of characters typed so far forms a word in the dictionary.</p>
+            <div class="c-code">
+<pre>
+class StreamChecker:
+    def __init__(self, words: list[str]):
+        self.trie = {}
+        self.stream = []
+        for w in words:
+            cur = self.trie
+            for c in reversed(w):
+                if c not in cur: cur[c] = {}
+                cur = cur[c]
+            cur["#"] = True
+    def query(self, letter: str) -> bool:
+        self.stream.append(letter)
+        cur = self.trie
+        for i in range(len(self.stream) - 1, -1, -1):
+            c = self.stream[i]
+            if c not in cur: return False
+            cur = cur[c]
+            if "#" in cur: return True
+        return False
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(L) per query | O(N * L) Space</p>
+        </article>
+
+        <!-- Problem 187: Repeated DNA Sequences -->
+        <article class="c-section">
+            <h2 class="c-section__title">#187 REPEATED DNA SEQUENCES</h2>
+            <p class="c-section__desc">Find all 10-letter-long sequences that occur more than once.</p>
+            <div class="c-code">
+<pre>
+def findRepeatedDnaSequences(s: str) -> list[str]:
+    seen, res = set(), set()
+    for l in range(len(s) - 9):
+        cur = s[l : l + 10]
+        if cur in seen: res.add(cur)
+        seen.add(cur)
+    return list(res)
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+    </main>
+
+    <footer class="c-footer">
+        <p class="c-footer__text">TERMINAL_REF: PL-300 // TRIES_&_ADVANCED_STRINGS // SECURE_UPLINK</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

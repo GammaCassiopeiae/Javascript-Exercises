@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADVANCED GRAPHS // JAVA_LEET_300</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono&family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="c-header">
+        <div class="c-header__container">
+            <a href="index.html" class="c-header__logo">⚡ JAVA_LEET_300</a>
+            <a href="index.html" class="c-btn">RETURN_TO_BASE</a>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <section class="c-hero">
+            <h1 class="c-hero__title">ADVANCED_GRAPHS</h1>
+            <p class="c-hero__text">Shortest paths, MST, topological sort, and advanced connectivity.</p>
+        </section>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#207 COURSE SCHEDULE</h2>
+            <p class="c-section__desc">Determine if you can finish all courses (cycle detection in directed graph).</p>
+            <div class="c-code">
+<pre>
+public boolean canFinish(int numCourses, int[][] prerequisites) {
+    List&lt;List&lt;Integer&gt;&gt; adj = new ArrayList&lt;&gt;();
+    for (int i = 0; i &lt; numCourses; i++) adj.add(new ArrayList&lt;&gt;());
+    for (int[] pre : prerequisites) adj.get(pre[0]).add(pre[1]);
+
+    int[] visited = new int[numCourses]; // 0=unvisited, 1=visiting, 2=done
+    for (int i = 0; i &lt; numCourses; i++)
+        if (hasCycle(adj, visited, i)) return false;
+    return true;
+}
+
+private boolean hasCycle(List&lt;List&lt;Integer&gt;&gt; adj, int[] visited, int node) {
+    if (visited[node] == 1) return true;
+    if (visited[node] == 2) return false;
+    visited[node] = 1;
+    for (int nei : adj.get(node))
+        if (hasCycle(adj, visited, nei)) return true;
+    visited[node] = 2;
+    return false;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(V + E) Time | O(V + E) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#210 COURSE SCHEDULE II</h2>
+            <p class="c-section__desc">Return the ordering of courses (topological sort).</p>
+            <div class="c-code">
+<pre>
+public int[] findOrder(int numCourses, int[][] prerequisites) {
+    List&lt;List&lt;Integer&gt;&gt; adj = new ArrayList&lt;&gt;();
+    int[] inDegree = new int[numCourses];
+    for (int i = 0; i &lt; numCourses; i++) adj.add(new ArrayList&lt;&gt;());
+    for (int[] pre : prerequisites) {
+        adj.get(pre[1]).add(pre[0]);
+        inDegree[pre[0]]++;
+    }
+
+    Queue&lt;Integer&gt; q = new LinkedList&lt;&gt;();
+    for (int i = 0; i &lt; numCourses; i++)
+        if (inDegree[i] == 0) q.add(i);
+
+    int[] order = new int[numCourses];
+    int idx = 0;
+    while (!q.isEmpty()) {
+        int node = q.poll();
+        order[idx++] = node;
+        for (int nei : adj.get(node)) {
+            inDegree[nei]--;
+            if (inDegree[nei] == 0) q.add(nei);
+        }
+    }
+    return idx == numCourses ? order : new int[]{};
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(V + E) Time | O(V + E) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#133 CLONE GRAPH</h2>
+            <p class="c-section__desc">Deep copy an undirected graph.</p>
+            <div class="c-code">
+<pre>
+public Node cloneGraph(Node node) {
+    if (node == null) return null;
+    Map&lt;Node, Node&gt; map = new HashMap&lt;&gt;();
+    return dfs(node, map);
+}
+
+private Node dfs(Node node, Map&lt;Node, Node&gt; map) {
+    if (map.containsKey(node)) return map.get(node);
+    Node clone = new Node(node.val);
+    map.put(node, clone);
+    for (Node nei : node.neighbors)
+        clone.neighbors.add(dfs(nei, map));
+    return clone;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(V + E) Time | O(V) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#417 PACIFIC ATLANTIC WATER FLOW</h2>
+            <p class="c-section__desc">Find cells where water can flow to both Pacific and Atlantic oceans.</p>
+            <div class="c-code">
+<pre>
+public List&lt;List&lt;Integer&gt;&gt; pacificAtlantic(int[][] heights) {
+    int m = heights.length, n = heights[0].length;
+    boolean[][] pacific = new boolean[m][n];
+    boolean[][] atlantic = new boolean[m][n];
+
+    for (int i = 0; i &lt; m; i++) {
+        dfs(heights, pacific, i, 0, 0);
+        dfs(heights, atlantic, i, n - 1, 0);
+    }
+    for (int j = 0; j &lt; n; j++) {
+        dfs(heights, pacific, 0, j, 0);
+        dfs(heights, atlantic, m - 1, j, 0);
+    }
+
+    List&lt;List&lt;Integer&gt;&gt; res = new ArrayList&lt;&gt;();
+    for (int i = 0; i &lt; m; i++)
+        for (int j = 0; j &lt; n; j++)
+            if (pacific[i][j] &amp;&amp; atlantic[i][j])
+                res.add(Arrays.asList(i, j));
+    return res;
+}
+
+private void dfs(int[][] h, boolean[][] visited,
+                 int r, int c, int prev) {
+    if (r &lt; 0 || c &lt; 0 || r &gt;= h.length || c &gt;= h[0].length ||
+        visited[r][c] || h[r][c] &lt; prev) return;
+    visited[r][c] = true;
+    dfs(h, visited, r+1, c, h[r][c]);
+    dfs(h, visited, r-1, c, h[r][c]);
+    dfs(h, visited, r, c+1, h[r][c]);
+    dfs(h, visited, r, c-1, h[r][c]);
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(m*n) Time | O(m*n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#743 NETWORK DELAY TIME</h2>
+            <p class="c-section__desc">Dijkstra's algorithm — minimum time for all nodes to receive a signal.</p>
+            <div class="c-code">
+<pre>
+public int networkDelayTime(int[][] times, int n, int k) {
+    Map&lt;Integer, List&lt;int[]&gt;&gt; adj = new HashMap&lt;&gt;();
+    for (int[] t : times)
+        adj.computeIfAbsent(t[0], x -&gt; new ArrayList&lt;&gt;())
+           .add(new int[]{t[1], t[2]});
+
+    PriorityQueue&lt;int[]&gt; pq = new PriorityQueue&lt;&gt;(
+        (a, b) -&gt; a[1] - b[1]);
+    pq.offer(new int[]{k, 0});
+    Set&lt;Integer&gt; visited = new HashSet&lt;&gt;();
+    int maxTime = 0;
+
+    while (!pq.isEmpty()) {
+        int[] curr = pq.poll();
+        int node = curr[0], dist = curr[1];
+        if (visited.contains(node)) continue;
+        visited.add(node);
+        maxTime = Math.max(maxTime, dist);
+        if (adj.containsKey(node)) {
+            for (int[] nei : adj.get(node)) {
+                if (!visited.contains(nei[0]))
+                    pq.offer(new int[]{nei[0], dist + nei[1]});
+            }
+        }
+    }
+    return visited.size() == n ? maxTime : -1;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(E log V) Time | O(V + E) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#684 REDUNDANT CONNECTION</h2>
+            <p class="c-section__desc">Find the edge that creates a cycle in an undirected graph (Union-Find).</p>
+            <div class="c-code">
+<pre>
+int[] parent, rank;
+
+public int[] findRedundantConnection(int[][] edges) {
+    int n = edges.length;
+    parent = new int[n + 1];
+    rank = new int[n + 1];
+    for (int i = 0; i &lt;= n; i++) parent[i] = i;
+
+    for (int[] edge : edges) {
+        if (!union(edge[0], edge[1]))
+            return edge;
+    }
+    return new int[]{};
+}
+
+private int find(int x) {
+    if (parent[x] != x) parent[x] = find(parent[x]);
+    return parent[x];
+}
+
+private boolean union(int a, int b) {
+    int pa = find(a), pb = find(b);
+    if (pa == pb) return false;
+    if (rank[pa] &gt; rank[pb]) parent[pb] = pa;
+    else if (rank[pa] &lt; rank[pb]) parent[pa] = pb;
+    else { parent[pb] = pa; rank[pa]++; }
+    return true;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n * α(n)) Time | O(n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#1584 MIN COST TO CONNECT ALL POINTS</h2>
+            <p class="c-section__desc">Minimum spanning tree using Prim's algorithm.</p>
+            <div class="c-code">
+<pre>
+public int minCostConnectPoints(int[][] points) {
+    int n = points.length, cost = 0, edges = 0;
+    boolean[] visited = new boolean[n];
+    PriorityQueue&lt;int[]&gt; pq = new PriorityQueue&lt;&gt;(
+        (a, b) -&gt; a[0] - b[0]);
+    pq.offer(new int[]{0, 0}); // [cost, pointIdx]
+
+    while (edges &lt; n) {
+        int[] curr = pq.poll();
+        int w = curr[0], u = curr[1];
+        if (visited[u]) continue;
+        visited[u] = true;
+        cost += w;
+        edges++;
+        for (int v = 0; v &lt; n; v++) {
+            if (!visited[v]) {
+                int dist = Math.abs(points[u][0] - points[v][0]) +
+                           Math.abs(points[u][1] - points[v][1]);
+                pq.offer(new int[]{dist, v});
+            }
+        }
+    }
+    return cost;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n² log n) Time | O(n²) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#332 RECONSTRUCT ITINERARY</h2>
+            <p class="c-section__desc">Reconstruct the itinerary in lexical order (Eulerian path).</p>
+            <div class="c-code">
+<pre>
+public List&lt;String&gt; findItinerary(List&lt;List&lt;String&gt;&gt; tickets) {
+    Map&lt;String, PriorityQueue&lt;String&gt;&gt; adj = new HashMap&lt;&gt;();
+    for (List&lt;String&gt; t : tickets)
+        adj.computeIfAbsent(t.get(0), k -&gt; new PriorityQueue&lt;&gt;())
+           .add(t.get(1));
+
+    LinkedList&lt;String&gt; res = new LinkedList&lt;&gt;();
+    dfs("JFK", adj, res);
+    return res;
+}
+
+private void dfs(String node, Map&lt;String, PriorityQueue&lt;String&gt;&gt; adj,
+                 LinkedList&lt;String&gt; res) {
+    PriorityQueue&lt;String&gt; neighbors = adj.get(node);
+    while (neighbors != null &amp;&amp; !neighbors.isEmpty())
+        dfs(neighbors.poll(), adj, res);
+    res.addFirst(node);
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(E log E) Time | O(E) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#787 CHEAPEST FLIGHTS WITHIN K STOPS</h2>
+            <p class="c-section__desc">Find cheapest price from src to dst with at most k stops (Bellman-Ford).</p>
+            <div class="c-code">
+<pre>
+public int findCheapestPrice(int n, int[][] flights,
+                             int src, int dst, int k) {
+    int[] prices = new int[n];
+    Arrays.fill(prices, Integer.MAX_VALUE);
+    prices[src] = 0;
+
+    for (int i = 0; i &lt;= k; i++) {
+        int[] temp = prices.clone();
+        for (int[] f : flights) {
+            int from = f[0], to = f[1], cost = f[2];
+            if (prices[from] != Integer.MAX_VALUE) {
+                temp[to] = Math.min(temp[to], prices[from] + cost);
+            }
+        }
+        prices = temp;
+    }
+    return prices[dst] == Integer.MAX_VALUE ? -1 : prices[dst];
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(k * E) Time | O(V) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#130 SURROUNDED REGIONS</h2>
+            <p class="c-section__desc">Capture all 'O' regions that are surrounded by 'X'.</p>
+            <div class="c-code">
+<pre>
+public void solve(char[][] board) {
+    int m = board.length, n = board[0].length;
+    // Mark border-connected O's as safe
+    for (int i = 0; i &lt; m; i++) {
+        dfs(board, i, 0); dfs(board, i, n - 1);
+    }
+    for (int j = 0; j &lt; n; j++) {
+        dfs(board, 0, j); dfs(board, m - 1, j);
+    }
+    for (int i = 0; i &lt; m; i++)
+        for (int j = 0; j &lt; n; j++) {
+            if (board[i][j] == 'O') board[i][j] = 'X';
+            if (board[i][j] == 'T') board[i][j] = 'O';
+        }
+}
+
+private void dfs(char[][] board, int r, int c) {
+    if (r &lt; 0 || c &lt; 0 || r &gt;= board.length ||
+        c &gt;= board[0].length || board[r][c] != 'O') return;
+    board[r][c] = 'T';
+    dfs(board, r+1, c); dfs(board, r-1, c);
+    dfs(board, r, c+1); dfs(board, r, c-1);
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(m*n) Time | O(m*n) Space</p>
+        </article>
+    </main>
+
+    <footer class="c-footer">
+        <p class="c-footer__text">TERMINAL_REF: JL-300 // GRAPH_ADVANCED // SECURE_UPLINK</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TREES & GRAPHS // JAVA_LEET_300</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono&family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="c-header">
+        <div class="c-header__container">
+            <a href="index.html" class="c-header__logo">⚡ JAVA_LEET_300</a>
+            <a href="index.html" class="c-btn">RETURN_TO_BASE</a>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <section class="c-hero">
+            <h1 class="c-hero__title">TREES_&_GRAPHS</h1>
+            <p class="c-hero__text">Master hierarchical structures and advanced tree algorithms.</p>
+        </section>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#226 INVERT BINARY TREE</h2>
+            <p class="c-section__desc">Invert a binary tree (mirror it).</p>
+            <div class="c-code">
+<pre>
+public TreeNode invertTree(TreeNode root) {
+    if (root == null) return null;
+    TreeNode temp = root.left;
+    root.left = root.right;
+    root.right = temp;
+    invertTree(root.left);
+    invertTree(root.right);
+    return root;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(h) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#104 MAX DEPTH OF BINARY TREE</h2>
+            <p class="c-section__desc">Find the length of the longest path from root to leaf.</p>
+            <div class="c-code">
+<pre>
+public int maxDepth(TreeNode root) {
+    if (root == null) return 0;
+    return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(h) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#543 DIAMETER OF BINARY TREE</h2>
+            <p class="c-section__desc">Longest path between any two nodes in a tree.</p>
+            <div class="c-code">
+<pre>
+int diameter = 0;
+public int diameterOfBinaryTree(TreeNode root) {
+    dfs(root);
+    return diameter;
+}
+private int dfs(TreeNode node) {
+    if (node == null) return 0;
+    int left = dfs(node.left);
+    int right = dfs(node.right);
+    diameter = Math.max(diameter, left + right);
+    return 1 + Math.max(left, right);
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(h) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#110 BALANCED BINARY TREE</h2>
+            <p class="c-section__desc">Check if height difference of subtrees is at most 1.</p>
+            <div class="c-code">
+<pre>
+public boolean isBalanced(TreeNode root) {
+    return height(root) != -1;
+}
+private int height(TreeNode node) {
+    if (node == null) return 0;
+    int left = height(node.left);
+    int right = height(node.right);
+    if (left == -1 || right == -1 || Math.abs(left - right) &gt; 1)
+        return -1;
+    return 1 + Math.max(left, right);
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(h) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#100 SAME TREE</h2>
+            <p class="c-section__desc">Check if two binary trees are structurally identical.</p>
+            <div class="c-code">
+<pre>
+public boolean isSameTree(TreeNode p, TreeNode q) {
+    if (p == null &amp;&amp; q == null) return true;
+    if (p == null || q == null || p.val != q.val) return false;
+    return isSameTree(p.left, q.left) &amp;&amp; isSameTree(p.right, q.right);
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(h) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#572 SUBTREE OF ANOTHER TREE</h2>
+            <p class="c-section__desc">Check if a tree contains another tree as a subtree.</p>
+            <div class="c-code">
+<pre>
+public boolean isSubtree(TreeNode root, TreeNode subRoot) {
+    if (subRoot == null) return true;
+    if (root == null) return false;
+    if (isSameTree(root, subRoot)) return true;
+    return isSubtree(root.left, subRoot) ||
+           isSubtree(root.right, subRoot);
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(m*n) Time | O(h) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#235 LCA OF A BST</h2>
+            <p class="c-section__desc">Find LCA in a Binary Search Tree.</p>
+            <div class="c-code">
+<pre>
+public TreeNode lowestCommonAncestor(TreeNode root,
+                                     TreeNode p, TreeNode q) {
+    TreeNode curr = root;
+    while (curr != null) {
+        if (p.val &gt; curr.val &amp;&amp; q.val &gt; curr.val) curr = curr.right;
+        else if (p.val &lt; curr.val &amp;&amp; q.val &lt; curr.val) curr = curr.left;
+        else return curr;
+    }
+    return null;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(h) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#102 LEVEL ORDER TRAVERSAL</h2>
+            <p class="c-section__desc">BFS level-by-level traversal.</p>
+            <div class="c-code">
+<pre>
+public List&lt;List&lt;Integer&gt;&gt; levelOrder(TreeNode root) {
+    List&lt;List&lt;Integer&gt;&gt; res = new ArrayList&lt;&gt;();
+    if (root == null) return res;
+    Queue&lt;TreeNode&gt; q = new LinkedList&lt;&gt;();
+    q.add(root);
+    while (!q.isEmpty()) {
+        List&lt;Integer&gt; level = new ArrayList&lt;&gt;();
+        int size = q.size();
+        for (int i = 0; i &lt; size; i++) {
+            TreeNode node = q.poll();
+            level.add(node.val);
+            if (node.left != null) q.add(node.left);
+            if (node.right != null) q.add(node.right);
+        }
+        res.add(level);
+    }
+    return res;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#199 RIGHT SIDE VIEW</h2>
+            <p class="c-section__desc">Nodes visible from the right side.</p>
+            <div class="c-code">
+<pre>
+public List&lt;Integer&gt; rightSideView(TreeNode root) {
+    List&lt;Integer&gt; res = new ArrayList&lt;&gt;();
+    if (root == null) return res;
+    Queue&lt;TreeNode&gt; q = new LinkedList&lt;&gt;();
+    q.add(root);
+    while (!q.isEmpty()) {
+        int size = q.size();
+        TreeNode rightNode = null;
+        for (int i = 0; i &lt; size; i++) {
+            rightNode = q.poll();
+            if (rightNode.left != null) q.add(rightNode.left);
+            if (rightNode.right != null) q.add(rightNode.right);
+        }
+        res.add(rightNode.val);
+    }
+    return res;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#1448 COUNT GOOD NODES</h2>
+            <p class="c-section__desc">Nodes with val >= max val on path from root.</p>
+            <div class="c-code">
+<pre>
+public int goodNodes(TreeNode root) {
+    return dfs(root, root.val);
+}
+private int dfs(TreeNode node, int maxVal) {
+    if (node == null) return 0;
+    int res = (node.val &gt;= maxVal) ? 1 : 0;
+    maxVal = Math.max(maxVal, node.val);
+    res += dfs(node.left, maxVal);
+    res += dfs(node.right, maxVal);
+    return res;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(h) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#98 VALIDATE BST</h2>
+            <p class="c-section__desc">Check if a tree is a valid BST.</p>
+            <div class="c-code">
+<pre>
+public boolean isValidBST(TreeNode root) {
+    return valid(root, Long.MIN_VALUE, Long.MAX_VALUE);
+}
+private boolean valid(TreeNode node, long left, long right) {
+    if (node == null) return true;
+    if (node.val &lt;= left || node.val &gt;= right) return false;
+    return valid(node.left, left, node.val) &amp;&amp;
+           valid(node.right, node.val, right);
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(h) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#230 KTH SMALLEST IN BST</h2>
+            <p class="c-section__desc">Find the kth smallest value using inorder traversal.</p>
+            <div class="c-code">
+<pre>
+public int kthSmallest(TreeNode root, int k) {
+    Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;();
+    TreeNode curr = root;
+    while (!stack.isEmpty() || curr != null) {
+        while (curr != null) {
+            stack.push(curr);
+            curr = curr.left;
+        }
+        curr = stack.pop();
+        k--;
+        if (k == 0) return curr.val;
+        curr = curr.right;
+    }
+    return -1;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(h + k) Time | O(h) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#105 BUILD FROM TRAVERSALS</h2>
+            <p class="c-section__desc">Reconstruct tree from preorder and inorder arrays.</p>
+            <div class="c-code">
+<pre>
+public TreeNode buildTree(int[] preorder, int[] inorder) {
+    Map&lt;Integer, Integer&gt; inMap = new HashMap&lt;&gt;();
+    for (int i = 0; i &lt; inorder.length; i++)
+        inMap.put(inorder[i], i);
+    return build(preorder, 0, preorder.length - 1,
+                 inorder, 0, inorder.length - 1, inMap);
+}
+
+private int[] preIdx = {0};
+private TreeNode build(int[] pre, int preL, int preR,
+                       int[] in, int inL, int inR,
+                       Map&lt;Integer, Integer&gt; map) {
+    if (preL &gt; preR || inL &gt; inR) return null;
+    TreeNode root = new TreeNode(pre[preL]);
+    int mid = map.get(pre[preL]);
+    int leftSize = mid - inL;
+    root.left = build(pre, preL+1, preL+leftSize,
+                      in, inL, mid-1, map);
+    root.right = build(pre, preL+leftSize+1, preR,
+                       in, mid+1, inR, map);
+    return root;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#124 MAX PATH SUM</h2>
+            <p class="c-section__desc">Find the maximum path sum between any two nodes.</p>
+            <div class="c-code">
+<pre>
+int maxSum = Integer.MIN_VALUE;
+public int maxPathSum(TreeNode root) {
+    dfsPath(root);
+    return maxSum;
+}
+private int dfsPath(TreeNode node) {
+    if (node == null) return 0;
+    int leftMax = Math.max(dfsPath(node.left), 0);
+    int rightMax = Math.max(dfsPath(node.right), 0);
+    maxSum = Math.max(maxSum, node.val + leftMax + rightMax);
+    return node.val + Math.max(leftMax, rightMax);
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(h) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#297 SERIALIZE TREE</h2>
+            <p class="c-section__desc">Convert tree to string and back.</p>
+            <div class="c-code">
+<pre>
+public String serialize(TreeNode root) {
+    if (root == null) return "N";
+    return root.val + "," + serialize(root.left) +
+           "," + serialize(root.right);
+}
+
+int idx = 0;
+public TreeNode deserialize(String data) {
+    String[] vals = data.split(",");
+    return dfsDeserialize(vals);
+}
+private TreeNode dfsDeserialize(String[] vals) {
+    if (vals[idx].equals("N")) { idx++; return null; }
+    TreeNode node = new TreeNode(Integer.parseInt(vals[idx++]));
+    node.left = dfsDeserialize(vals);
+    node.right = dfsDeserialize(vals);
+    return node;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#200 NUMBER OF ISLANDS</h2>
+            <p class="c-section__desc">Count the number of islands in a 2D grid.</p>
+            <div class="c-code">
+<pre>
+public int numIslands(char[][] grid) {
+    int count = 0;
+    for (int r = 0; r &lt; grid.length; r++) {
+        for (int c = 0; c &lt; grid[0].length; c++) {
+            if (grid[r][c] == '1') {
+                dfsIsland(grid, r, c);
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+private void dfsIsland(char[][] grid, int r, int c) {
+    if (r &lt; 0 || c &lt; 0 || r &gt;= grid.length ||
+        c &gt;= grid[0].length || grid[r][c] == '0') return;
+    grid[r][c] = '0';
+    dfsIsland(grid, r+1, c); dfsIsland(grid, r-1, c);
+    dfsIsland(grid, r, c+1); dfsIsland(grid, r, c-1);
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(m*n) Time | O(m*n) Space</p>
+        </article>
+    </main>
+
+    <footer class="c-footer">
+        <p class="c-footer__text">TERMINAL_REF: JL-300 // TREES_GRAPHS // SECURE_UPLINK</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

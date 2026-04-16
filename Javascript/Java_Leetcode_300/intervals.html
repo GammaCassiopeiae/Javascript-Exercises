@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INTERVALS // JAVA_LEET_300</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono&family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="c-header">
+        <div class="c-header__container">
+            <a href="index.html" class="c-header__logo">⚡ JAVA_LEET_300</a>
+            <a href="index.html" class="c-btn">RETURN_TO_BASE</a>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <section class="c-hero">
+            <h1 class="c-hero__title">INTERVALS</h1>
+            <p class="c-hero__text">Scheduling and overlap problems.</p>
+        </section>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#57 INSERT INTERVAL</h2>
+            <p class="c-section__desc">Insert a new interval into a sorted set of non-overlapping intervals.</p>
+            <div class="c-code">
+<pre>
+public int[][] insert(int[][] intervals, int[] newInterval) {
+    List&lt;int[]&gt; res = new ArrayList&lt;&gt;();
+    for (int[] interval : intervals) {
+        if (newInterval == null || interval[1] &lt; newInterval[0]) {
+            res.add(interval);
+        } else if (interval[0] &gt; newInterval[1]) {
+            res.add(newInterval);
+            res.add(interval);
+            newInterval = null;
+        } else {
+            newInterval[0] = Math.min(newInterval[0], interval[0]);
+            newInterval[1] = Math.max(newInterval[1], interval[1]);
+        }
+    }
+    if (newInterval != null) res.add(newInterval);
+    return res.toArray(new int[0][]);
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n) Time | O(n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#56 MERGE INTERVALS</h2>
+            <p class="c-section__desc">Merge all overlapping intervals.</p>
+            <div class="c-code">
+<pre>
+public int[][] merge(int[][] intervals) {
+    Arrays.sort(intervals, (a, b) -&gt; a[0] - b[0]);
+    List&lt;int[]&gt; res = new ArrayList&lt;&gt;();
+    res.add(intervals[0]);
+    for (int i = 1; i &lt; intervals.length; i++) {
+        int[] last = res.get(res.size() - 1);
+        if (intervals[i][0] &lt;= last[1]) {
+            last[1] = Math.max(last[1], intervals[i][1]);
+        } else {
+            res.add(intervals[i]);
+        }
+    }
+    return res.toArray(new int[0][]);
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n log n) Time | O(n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#435 NON-OVERLAPPING INTERVALS</h2>
+            <p class="c-section__desc">Minimum number of intervals to remove to make the rest non-overlapping.</p>
+            <div class="c-code">
+<pre>
+public int eraseOverlapIntervals(int[][] intervals) {
+    Arrays.sort(intervals, (a, b) -&gt; a[1] - b[1]);
+    int count = 0, prevEnd = Integer.MIN_VALUE;
+    for (int[] interval : intervals) {
+        if (interval[0] &gt;= prevEnd) {
+            prevEnd = interval[1];
+        } else {
+            count++;
+        }
+    }
+    return count;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n log n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#253 MEETING ROOMS II</h2>
+            <p class="c-section__desc">Find the minimum number of conference rooms required.</p>
+            <div class="c-code">
+<pre>
+public int minMeetingRooms(int[][] intervals) {
+    int[] starts = new int[intervals.length];
+    int[] ends = new int[intervals.length];
+    for (int i = 0; i &lt; intervals.length; i++) {
+        starts[i] = intervals[i][0];
+        ends[i] = intervals[i][1];
+    }
+    Arrays.sort(starts);
+    Arrays.sort(ends);
+
+    int rooms = 0, endPtr = 0;
+    for (int s : starts) {
+        if (s &lt; ends[endPtr]) rooms++;
+        else endPtr++;
+    }
+    return rooms;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n log n) Time | O(n) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#252 MEETING ROOMS</h2>
+            <p class="c-section__desc">Determine if a person could attend all meetings.</p>
+            <div class="c-code">
+<pre>
+public boolean canAttendMeetings(int[][] intervals) {
+    Arrays.sort(intervals, (a, b) -&gt; a[0] - b[0]);
+    for (int i = 1; i &lt; intervals.length; i++) {
+        if (intervals[i][0] &lt; intervals[i - 1][1])
+            return false;
+    }
+    return true;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O(n log n) Time | O(1) Space</p>
+        </article>
+
+        <article class="c-section">
+            <h2 class="c-section__title">#1851 MINIMUM INTERVAL TO INCLUDE QUERY</h2>
+            <p class="c-section__desc">For each query, find the size of the smallest interval containing it.</p>
+            <div class="c-code">
+<pre>
+public int[] minInterval(int[][] intervals, int[] queries) {
+    Arrays.sort(intervals, (a, b) -&gt; a[0] - b[0]);
+    int[][] sortedQ = new int[queries.length][2];
+    for (int i = 0; i &lt; queries.length; i++)
+        sortedQ[i] = new int[]{queries[i], i};
+    Arrays.sort(sortedQ, (a, b) -&gt; a[0] - b[0]);
+
+    PriorityQueue&lt;int[]&gt; pq = new PriorityQueue&lt;&gt;(
+        (a, b) -&gt; a[0] - b[0]); // [size, right]
+    int[] res = new int[queries.length];
+    Arrays.fill(res, -1);
+    int j = 0;
+    for (int[] q : sortedQ) {
+        while (j &lt; intervals.length &amp;&amp; intervals[j][0] &lt;= q[0]) {
+            int size = intervals[j][1] - intervals[j][0] + 1;
+            pq.offer(new int[]{size, intervals[j][1]});
+            j++;
+        }
+        while (!pq.isEmpty() &amp;&amp; pq.peek()[1] &lt; q[0])
+            pq.poll();
+        if (!pq.isEmpty()) res[q[1]] = pq.peek()[0];
+    }
+    return res;
+}
+</pre>
+            </div>
+            <p class="c-section__desc"><strong>Complexity:</strong> O((n+q) log n) Time | O(n+q) Space</p>
+        </article>
+    </main>
+
+    <footer class="c-footer">
+        <p class="c-footer__text">TERMINAL_REF: JL-300 // INTERVALS // SECURE_UPLINK</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

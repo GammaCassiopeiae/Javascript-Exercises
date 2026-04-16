@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickSort — DOM API Visualizer</title>
+    <meta name="description" content="Interactive QuickSort algorithm visualizer built with vanilla JavaScript and the HTML DOM API. Watch partitioning, pivot selection, and recursive sorting in real time.">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* =============================================
+           DESIGN TOKENS
+           ============================================= */
+        :root {
+            --bg-deep: #06070d;
+            --bg-surface: #0d0f1a;
+            --bg-panel: rgba(15, 18, 35, 0.75);
+            --border-glow: rgba(0, 243, 255, 0.15);
+            --neon-cyan: #00f3ff;
+            --neon-magenta: #ff00e5;
+            --neon-green: #39ff14;
+            --neon-amber: #ffae00;
+            --neon-red: #ff3860;
+            --text-primary: #e8eaf6;
+            --text-muted: rgba(232, 234, 246, 0.55);
+            --font-ui: 'Outfit', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --radius: 14px;
+            --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-smooth: 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* =============================================
+           RESET & BASE
+           ============================================= */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-ui);
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Animated background grid */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+            z-index: 0;
+            animation: gridPulse 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes gridPulse {
+            0% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+
+        /* =============================================
+           HEADER
+           ============================================= */
+        .header {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 1100px;
+            padding: 2.5rem 1.5rem 0.5rem;
+            text-align: center;
+        }
+
+        .header__badge {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--neon-cyan);
+            border: 1px solid var(--border-glow);
+            padding: 0.3rem 1rem;
+            border-radius: 50px;
+            margin-bottom: 1rem;
+            background: rgba(0, 243, 255, 0.05);
+        }
+
+        .header__title {
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-weight: 700;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.15;
+            margin-bottom: 0.5rem;
+        }
+
+        .header__sub {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            max-width: 560px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* =============================================
+           STATS BAR
+           ============================================= */
+        .stats {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 1.5rem 0 1rem;
+            width: 100%;
+            max-width: 1100px;
+            padding: 0 1.5rem;
+        }
+
+        .stat-card {
+            flex: 1 1 140px;
+            max-width: 200px;
+            background: var(--bg-panel);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glow);
+            border-radius: var(--radius);
+            padding: 1rem 1.2rem;
+            text-align: center;
+            transition: border-color var(--transition-fast);
+        }
+
+        .stat-card:hover {
+            border-color: var(--neon-cyan);
+        }
+
+        .stat-card__label {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.35rem;
+        }
+
+        .stat-card__value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--neon-cyan);
+            font-family: var(--font-mono);
+        }
+
+        .stat-card__value.magenta { color: var(--neon-magenta); }
+        .stat-card__value.green { color: var(--neon-green); }
+        .stat-card__value.amber { color: var(--neon-amber); }
+
+        /* =============================================
+           CONTROLS
+           ============================================= */
+        .controls {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding: 0 1.5rem;
+        }
+
+        .btn {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 0.7rem 1.6rem;
+            border: 1px solid var(--border-glow);
+            border-radius: 50px;
+            background: var(--bg-panel);
+            backdrop-filter: blur(12px);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta));
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+            z-index: -1;
+            border-radius: inherit;
+        }
+
+        .btn:hover:not(:disabled) {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .btn:hover:not(:disabled)::after {
+            opacity: 0.15;
+        }
+
+        .btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+
+        .btn--primary {
+            border-color: var(--neon-cyan);
+            color: var(--neon-cyan);
+        }
+
+        .btn--danger {
+            border-color: var(--neon-red);
+            color: var(--neon-red);
+        }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .speed-control__label {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .speed-control__slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+            border-radius: 4px;
+            outline: none;
+        }
+
+        .speed-control__slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--text-primary);
+            border: 2px solid var(--neon-cyan);
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(0, 243, 255, 0.4);
+        }
+
+        .speed-control__slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--text-primary);
+            border: 2px solid var(--neon-cyan);
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(0, 243, 255, 0.4);
+        }
+
+        .size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .size-control__label {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .size-select {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            background: var(--bg-panel);
+            color: var(--text-primary);
+            border: 1px solid var(--border-glow);
+            border-radius: 8px;
+            padding: 0.4rem 0.6rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .size-select:focus {
+            border-color: var(--neon-cyan);
+        }
+
+        /* =============================================
+           VISUALIZER
+           ============================================= */
+        .visualizer {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 1100px;
+            padding: 0 1.5rem;
+        }
+
+        .visualizer__panel {
+            background: var(--bg-panel);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glow);
+            border-radius: var(--radius);
+            padding: 2rem 1.5rem 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Corner accents */
+        .visualizer__panel::before,
+        .visualizer__panel::after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--neon-cyan);
+            opacity: 0.3;
+        }
+
+        .visualizer__panel::before {
+            top: 8px;
+            left: 8px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .visualizer__panel::after {
+            bottom: 8px;
+            right: 8px;
+            border-left: none;
+            border-top: none;
+        }
+
+        .chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            height: 400px;
+            gap: 2px;
+            padding-top: 1rem;
+        }
+
+        /* --- BAR STYLES --- */
+        .bar {
+            position: relative;
+            border-radius: 3px 3px 0 0;
+            transition: height var(--transition-fast), background var(--transition-fast), box-shadow var(--transition-fast);
+            cursor: default;
+        }
+
+        .bar--default {
+            background: linear-gradient(180deg, #2a2f4a 0%, #1a1e35 100%);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .bar--pivot {
+            background: linear-gradient(180deg, var(--neon-amber) 0%, #c47f00 100%);
+            box-shadow: 0 0 18px rgba(255, 174, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            z-index: 5;
+        }
+
+        .bar--comparing {
+            background: linear-gradient(180deg, var(--neon-magenta) 0%, #b300a0 100%);
+            box-shadow: 0 0 15px rgba(255, 0, 229, 0.4);
+        }
+
+        .bar--swapping {
+            background: linear-gradient(180deg, var(--neon-red) 0%, #c0002a 100%);
+            box-shadow: 0 0 20px rgba(255, 56, 96, 0.5);
+            animation: swapPulse 0.3s ease;
+        }
+
+        .bar--range {
+            background: linear-gradient(180deg, #1e5070 0%, #143850 100%);
+            box-shadow: 0 0 6px rgba(0, 150, 200, 0.2);
+        }
+
+        .bar--sorted {
+            background: linear-gradient(180deg, var(--neon-green) 0%, #20b300 100%);
+            box-shadow: 0 0 14px rgba(57, 255, 20, 0.35);
+        }
+
+        .bar__value {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--font-mono);
+            font-size: 0.55rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+            pointer-events: none;
+        }
+
+        .bar:hover .bar__value,
+        .bar--pivot .bar__value,
+        .bar--comparing .bar__value,
+        .bar--swapping .bar__value {
+            opacity: 1;
+            color: var(--text-primary);
+        }
+
+        @keyframes swapPulse {
+            0%, 100% { transform: scaleX(1); }
+            50% { transform: scaleX(1.4); }
+        }
+
+        @keyframes finalSweep {
+            0% { filter: brightness(1); }
+            50% { filter: brightness(2); }
+            100% { filter: brightness(1); }
+        }
+
+        /* =============================================
+           LEGEND
+           ============================================= */
+        .legend {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            gap: 1.2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 1.2rem 0;
+            padding: 0 1.5rem;
+        }
+
+        .legend__item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .legend__swatch {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+        }
+
+        .legend__swatch--default { background: #2a2f4a; }
+        .legend__swatch--pivot { background: var(--neon-amber); box-shadow: 0 0 6px rgba(255, 174, 0, 0.4); }
+        .legend__swatch--comparing { background: var(--neon-magenta); box-shadow: 0 0 6px rgba(255, 0, 229, 0.4); }
+        .legend__swatch--swapping { background: var(--neon-red); box-shadow: 0 0 6px rgba(255, 56, 96, 0.4); }
+        .legend__swatch--range { background: #1e5070; }
+        .legend__swatch--sorted { background: var(--neon-green); box-shadow: 0 0 6px rgba(57, 255, 20, 0.4); }
+
+        .legend__text {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        /* =============================================
+           INFO PANEL
+           ============================================= */
+        .info {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 1100px;
+            padding: 0 1.5rem;
+            margin: 1rem 0 2rem;
+        }
+
+        .info__panel {
+            background: var(--bg-panel);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glow);
+            border-radius: var(--radius);
+            padding: 1.5rem 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .info__section-title {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--neon-cyan);
+            margin-bottom: 0.6rem;
+        }
+
+        .info__text {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        .info__text code {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--neon-amber);
+            background: rgba(255, 174, 0, 0.08);
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+        }
+
+        /* =============================================
+           STATUS MESSAGE
+           ============================================= */
+        .status {
+            position: relative;
+            z-index: 2;
+            margin: 0.75rem 0;
+            text-align: center;
+        }
+
+        .status__text {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            transition: color var(--transition-fast);
+        }
+
+        .status__text--active {
+            color: var(--neon-cyan);
+        }
+
+        .status__text--done {
+            color: var(--neon-green);
+        }
+
+        /* =============================================
+           FOOTER
+           ============================================= */
+        .footer {
+            position: relative;
+            z-index: 2;
+            padding: 2rem 1.5rem;
+            text-align: center;
+        }
+
+        .footer__text {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        /* =============================================
+           RESPONSIVE
+           ============================================= */
+        @media (max-width: 700px) {
+            .chart {
+                height: 260px;
+            }
+
+            .info__panel {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-card {
+                flex: 1 1 100px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- HEADER -->
+    <header class="header" id="header">
+        <div class="header__badge">Algorithm Visualizer</div>
+        <h1 class="header__title">QuickSort</h1>
+        <p class="header__sub">
+            Watch the divide-and-conquer partitioning strategy in real time.
+            Built with the <strong>HTML DOM API</strong> and vanilla JavaScript.
+        </p>
+    </header>
+
+    <!-- STATS -->
+    <section class="stats" id="stats">
+        <div class="stat-card">
+            <div class="stat-card__label">Comparisons</div>
+            <div class="stat-card__value" id="stat-comparisons">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card__label">Swaps</div>
+            <div class="stat-card__value magenta" id="stat-swaps">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card__label">Recursion Depth</div>
+            <div class="stat-card__value green" id="stat-depth">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card__label">Elapsed</div>
+            <div class="stat-card__value amber" id="stat-time">0.0s</div>
+        </div>
+    </section>
+
+    <!-- CONTROLS -->
+    <div class="controls" id="controls">
+        <button class="btn btn--primary" id="btn-sort">▶ Start Sort</button>
+        <button class="btn" id="btn-shuffle">↻ Shuffle</button>
+        <button class="btn btn--danger" id="btn-stop" disabled>■ Stop</button>
+        <div class="speed-control">
+            <span class="speed-control__label">Speed</span>
+            <input type="range" class="speed-control__slider" id="speed-slider" min="1" max="100" value="50">
+        </div>
+        <div class="size-control">
+            <span class="size-control__label">Size</span>
+            <select class="size-select" id="size-select">
+                <option value="15">15</option>
+                <option value="25" selected>25</option>
+                <option value="40">40</option>
+                <option value="60">60</option>
+                <option value="80">80</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- STATUS -->
+    <div class="status">
+        <p class="status__text" id="status-text">READY — Press Start to begin</p>
+    </div>
+
+    <!-- VISUALIZER -->
+    <main class="visualizer" id="visualizer">
+        <div class="visualizer__panel">
+            <div class="chart" id="chart"></div>
+        </div>
+    </main>
+
+    <!-- LEGEND -->
+    <div class="legend">
+        <div class="legend__item">
+            <div class="legend__swatch legend__swatch--default"></div>
+            <span class="legend__text">Unsorted</span>
+        </div>
+        <div class="legend__item">
+            <div class="legend__swatch legend__swatch--range"></div>
+            <span class="legend__text">Active Range</span>
+        </div>
+        <div class="legend__item">
+            <div class="legend__swatch legend__swatch--pivot"></div>
+            <span class="legend__text">Pivot</span>
+        </div>
+        <div class="legend__item">
+            <div class="legend__swatch legend__swatch--comparing"></div>
+            <span class="legend__text">Comparing</span>
+        </div>
+        <div class="legend__item">
+            <div class="legend__swatch legend__swatch--swapping"></div>
+            <span class="legend__text">Swapping</span>
+        </div>
+        <div class="legend__item">
+            <div class="legend__swatch legend__swatch--sorted"></div>
+            <span class="legend__text">Sorted</span>
+        </div>
+    </div>
+
+    <!-- INFO -->
+    <section class="info">
+        <div class="info__panel">
+            <div>
+                <h3 class="info__section-title">How It Works</h3>
+                <p class="info__text">
+                    QuickSort selects a <code>pivot</code> element, then partitions the array so all
+                    elements smaller than the pivot are on its left, and all larger on its right.
+                    It then recursively sorts the two sub-arrays. This visualizer uses the
+                    <strong>last element</strong> as the pivot (Lomuto partition scheme).
+                </p>
+            </div>
+            <div>
+                <h3 class="info__section-title">Complexity</h3>
+                <p class="info__text">
+                    <strong>Best / Average:</strong> <code>O(n log n)</code><br>
+                    <strong>Worst case:</strong> <code>O(n²)</code> — occurs when the pivot is always the smallest or largest element.<br>
+                    <strong>Space:</strong> <code>O(log n)</code> — recursion stack depth.<br>
+                    <strong>In-place:</strong> Yes &nbsp;|&nbsp; <strong>Stable:</strong> No
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p class="footer__text">QuickSort DOM API Visualizer • JavaScript</p>
+    </footer>
+
+    <!-- =============================================
+          JAVASCRIPT — QUICKSORT ENGINE
+          ============================================= -->
+    <script>
+        (() => {
+            'use strict';
+
+            /* ---------------------------
+               DOM REFERENCES
+               --------------------------- */
+            const chart = document.getElementById('chart');
+            const btnSort = document.getElementById('btn-sort');
+            const btnShuffle = document.getElementById('btn-shuffle');
+            const btnStop = document.getElementById('btn-stop');
+            const speedSlider = document.getElementById('speed-slider');
+            const sizeSelect = document.getElementById('size-select');
+            const statusText = document.getElementById('status-text');
+
+            const statComparisons = document.getElementById('stat-comparisons');
+            const statSwaps = document.getElementById('stat-swaps');
+            const statDepth = document.getElementById('stat-depth');
+            const statTime = document.getElementById('stat-time');
+
+            /* ---------------------------
+               STATE
+               --------------------------- */
+            let data = [];
+            let bars = [];
+            let sorting = false;
+            let aborted = false;
+
+            let comparisons = 0;
+            let swaps = 0;
+            let maxDepth = 0;
+            let startTime = 0;
+            let timerRAF = null;
+
+            /* ---------------------------
+               HELPERS
+               --------------------------- */
+            const getDelay = () => {
+                const v = parseInt(speedSlider.value);
+                // map 1–100 → 500ms–2ms (inverted, exponential feel)
+                return Math.round(500 * Math.pow(0.945, v));
+            };
+
+            const sleep = (ms) => new Promise((resolve) => {
+                const id = setTimeout(resolve, ms);
+                if (aborted) {
+                    clearTimeout(id);
+                    resolve();
+                }
+            });
+
+            const setStatus = (msg, type = '') => {
+                statusText.textContent = msg;
+                statusText.className = 'status__text' + (type ? ` status__text--${type}` : '');
+            };
+
+            const updateStats = () => {
+                statComparisons.textContent = comparisons;
+                statSwaps.textContent = swaps;
+                statDepth.textContent = maxDepth;
+            };
+
+            const startTimer = () => {
+                startTime = performance.now();
+                const tick = () => {
+                    const elapsed = ((performance.now() - startTime) / 1000).toFixed(1);
+                    statTime.textContent = elapsed + 's';
+                    if (sorting) timerRAF = requestAnimationFrame(tick);
+                };
+                timerRAF = requestAnimationFrame(tick);
+            };
+
+            const stopTimer = () => {
+                if (timerRAF) cancelAnimationFrame(timerRAF);
+            };
+
+            /* ---------------------------
+               BAR MANAGEMENT (DOM API)
+               --------------------------- */
+            const clearBars = () => {
+                while (chart.firstChild) {
+                    chart.removeChild(chart.firstChild);
+                }
+                bars = [];
+            };
+
+            const generateData = (count) => {
+                data = [];
+                for (let i = 0; i < count; i++) {
+                    data.push(Math.floor(Math.random() * 350) + 15);
+                }
+            };
+
+            const renderBars = () => {
+                clearBars();
+                const count = data.length;
+                const chartWidth = chart.clientWidth || 1040;
+                const gap = 2;
+                const barWidth = Math.max(4, Math.floor((chartWidth - gap * (count - 1)) / count));
+
+                data.forEach((value) => {
+                    const bar = document.createElement('div');
+                    bar.classList.add('bar', 'bar--default');
+                    bar.style.width = barWidth + 'px';
+                    bar.style.height = value + 'px';
+
+                    const label = document.createElement('span');
+                    label.classList.add('bar__value');
+                    label.textContent = value;
+
+                    bar.appendChild(label);
+                    chart.appendChild(bar);
+                    bars.push(bar);
+                });
+            };
+
+            const setBarState = (index, state) => {
+                const bar = bars[index];
+                if (!bar) return;
+                bar.classList.remove('bar--default', 'bar--pivot', 'bar--comparing', 
+                                    'bar--swapping', 'bar--range', 'bar--sorted');
+                bar.classList.add(`bar--${state}`);
+            };
+
+            /* ---------------------------
+               QUICKSORT ALGORITHM
+               --------------------------- */
+            async function partition(low, high) {
+                if (aborted) return low;
+
+                const pivotValue = data[high];
+                setBarState(high, 'pivot');
+
+                let i = low - 1;
+
+                for (let j = low; j < high; j++) {
+                    if (aborted) return low;
+
+                    setBarState(j, 'comparing');
+                    comparisons++;
+                    updateStats();
+                    await sleep(getDelay());
+
+                    if (data[j] < pivotValue) {
+                        i++;
+                        if (i !== j) {
+                            setBarState(i, 'swapping');
+                            setBarState(j, 'swapping');
+                            swaps++;
+                            updateStats();
+                            await sleep(getDelay());
+
+                            [data[i], data[j]] = [data[j], data[i]];
+                            bars[i].style.height = data[i] + 'px';
+                            bars[i].querySelector('.bar__value').textContent = data[i];
+                            bars[j].style.height = data[j] + 'px';
+                            bars[j].querySelector('.bar__value').textContent = data[j];
+                        }
+                    }
+
+                    setBarState(j, 'range');
+                    if (i >= low) setBarState(i, 'range');
+                }
+
+                if (i + 1 !== high) {
+                    setBarState(i + 1, 'swapping');
+                    setBarState(high, 'swapping');
+                    swaps++;
+                    updateStats();
+                    await sleep(getDelay());
+
+                    [data[i + 1], data[high]] = [data[high], data[i + 1]];
+                    bars[i + 1].style.height = data[i + 1] + 'px';
+                    bars[i + 1].querySelector('.bar__value').textContent = data[i + 1];
+                    bars[high].style.height = data[high] + 'px';
+                    bars[high].querySelector('.bar__value').textContent = data[high];
+                }
+
+                setBarState(i + 1, 'sorted');
+
+                for (let k = low; k <= high; k++) {
+                    if (k !== i + 1 && !bars[k].classList.contains('bar--sorted')) {
+                        setBarState(k, 'default');
+                    }
+                }
+
+                return i + 1;
+            }
+
+            async function quickSort(low, high, depth = 0) {
+                if (aborted) return;
+                if (low > high) return;
+
+                if (depth > maxDepth) {
+                    maxDepth = depth;
+                    updateStats();
+                }
+
+                setStatus(`SORTING — partition [${low}..${high}] | depth ${depth}`, 'active');
+
+                for (let k = low; k <= high; k++) {
+                    if (!bars[k].classList.contains('bar--sorted')) {
+                        setBarState(k, 'range');
+                    }
+                }
+                await sleep(getDelay());
+
+                if (low === high) {
+                    setBarState(low, 'sorted');
+                    return;
+                }
+
+                const pi = await partition(low, high);
+
+                if (aborted) return;
+
+                await quickSort(low, pi - 1, depth + 1);
+                await quickSort(pi + 1, high, depth + 1);
+                
+                for (let k = low; k <= high; k++) {
+                    setBarState(k, 'sorted');
+                }
+            }
+
+            /* ---------------------------
+               FINAL SWEEP ANIMATION
+               --------------------------- */
+            const finalSweep = async () => {
+                for (let i = 0; i < bars.length; i++) {
+                    bars[i].style.animation = 'finalSweep 0.4s ease';
+                    await sleep(30);
+                }
+            };
+
+            /* ---------------------------
+               ACTIONS
+               --------------------------- */
+            const doSort = async () => {
+                if (sorting) return;
+
+                sorting = true;
+                aborted = false;
+                comparisons = 0;
+                swaps = 0;
+                maxDepth = 0;
+                updateStats();
+
+                btnSort.disabled = true;
+                btnShuffle.disabled = true;
+                sizeSelect.disabled = true;
+                btnStop.disabled = false;
+                setStatus('SORTING — initializing...', 'active');
+                startTimer();
+
+                await quickSort(0, data.length - 1, 0);
+
+                stopTimer();
+                sorting = false;
+                btnSort.disabled = false;
+                btnShuffle.disabled = false;
+                sizeSelect.disabled = false;
+                btnStop.disabled = true;
+
+                if (!aborted) {
+                    for (let i = 0; i < bars.length; i++) {
+                        setBarState(i, 'sorted');
+                    }
+                    await finalSweep();
+                    setStatus(`COMPLETE — ${comparisons} comparisons, ${swaps} swaps, depth ${maxDepth}`, 'done');
+                } else {
+                    setStatus('ABORTED — sort was interrupted', '');
+                }
+            };
+
+            const doShuffle = () => {
+                if (sorting) return;
+                const count = parseInt(sizeSelect.value);
+                generateData(count);
+                renderBars();
+                comparisons = 0;
+                swaps = 0;
+                maxDepth = 0;
+                updateStats();
+                statTime.textContent = '0.0s';
+                setStatus('READY — Press Start to begin', '');
+            };
+
+            const doStop = () => {
+                if (!sorting) return;
+                aborted = true;
+                stopTimer();
+            };
+
+            /* ---------------------------
+               EVENT LISTENERS
+               --------------------------- */
+            btnSort.addEventListener('click', doSort);
+            btnShuffle.addEventListener('click', doShuffle);
+            btnStop.addEventListener('click', doStop);
+            sizeSelect.addEventListener('change', doShuffle);
+
+            /* ---------------------------
+               INIT
+               --------------------------- */
+            doShuffle();
+            console.log('QUICKSORT_VISUALIZER :: initialized');
+        })();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="NEON-NOIR Algorithm Terminal - System Access Granted">
+    <title>[SYSTEM] NEON ALGORITHMS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #000000;
+            --bg-surface: #0a0b10;
+            --neon-cyan: #00f3ff;
+            --neon-magenta: #ff00ff;
+            --neon-green: #00ff9d;
+            --text-primary: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --glow-cyan: 0 0 5px var(--neon-cyan), 0 0 15px rgba(0, 243, 255, 0.3);
+            --font-main: 'Rajdhani', sans-serif;
+            --font-mono: 'Fira Code', monospace;
+            --glitch-speed: 0.2s;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--neon-cyan);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Scanline Effect - Directive 57 */
+        .u-scanlines {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%,
+                rgba(0, 0, 0, 0.15) 50%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* Grid Background - Directive 317 */
+        .l-grid-bg {
+            position: fixed;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .l-wrapper {
+            display: grid;
+            grid-template-areas: 
+                "header header"
+                "main sidebar"
+                "footer footer";
+            grid-template-columns: 1fr 300px;
+            min-height: 100vh;
+        }
+
+        /* Header - Directive 375 */
+        .c-header {
+            grid-area: header;
+            padding: 2rem;
+            border-bottom: 1px solid var(--neon-cyan);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .c-header__title {
+            font-size: 3rem;
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            text-shadow: var(--glow-cyan);
+            margin-bottom: 0.5rem;
+        }
+
+        .c-header__status {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--neon-magenta);
+        }
+
+        /* Main Content */
+        .l-main {
+            grid-area: main;
+            padding: 3rem;
+        }
+
+        .c-section-title {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--neon-magenta);
+            padding-left: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .c-algo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Card - Directive 717 */
+        .c-card {
+            background: rgba(10, 11, 16, 0.9);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            padding: 1.5rem;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .c-card::before {
+            content: 'DATA_LINK';
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            font-size: 0.6rem;
+            background: var(--neon-cyan);
+            color: #000;
+            padding: 2px 5px;
+            font-family: var(--font-mono);
+        }
+
+        .c-card:hover {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .c-card__title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .c-card__tag {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--neon-magenta);
+            text-transform: uppercase;
+        }
+
+        /* Sidebar - HUD Data */
+        .c-sidebar {
+            grid-area: sidebar;
+            border-left: 1px solid rgba(0, 243, 255, 0.2);
+            padding: 2rem;
+            background: rgba(5, 5, 5, 0.9);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+        }
+
+        .c-sidebar__item {
+            margin-bottom: 2rem;
+        }
+
+        .c-sidebar__label {
+            color: var(--text-muted);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .u-pulse {
+            animation: pulse 2s infinite;
+            color: var(--neon-green);
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        .c-footer {
+            grid-area: footer;
+            padding: 1rem 2rem;
+            border-top: 1px solid rgba(0, 243, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            font-family: var(--font-mono);
+        }
+
+        @media (max-width: 900px) {
+            .l-wrapper {
+                grid-template-areas: "header" "main" "sidebar" "footer";
+                grid-template-columns: 1fr;
+            }
+            .c-header__title { font-size: 2rem; }
+        }
+
+        /* HUD Tracker - Directive 589 */
+        #hud-coords {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            color: var(--neon-magenta);
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            z-index: 2000;
+        }
+    </style>
+</head>
+<body class="l-body">
+    <div class="u-scanlines"></div>
+    <div class="l-grid-bg"></div>
+    
+    <div id="hud-coords">X: 000 | Y: 000</div>
+
+    <div class="l-wrapper">
+        <header class="c-header">
+            <h1 class="c-header__title" data-text="SYSTEM_ACCESS">SYSTEM_ACCESS</h1>
+            <div class="c-header__status">
+                <span class="u-pulse">●</span> STATUS: ENCRYPTED_UPLINK | KERNEL: v4.0.ALPHA
+            </div>
+        </header>
+
+        <main class="l-main">
+            <section>
+                <h2 class="c-section-title">Root / Algorithms / Sorting</h2>
+                <div class="c-algo-grid" id="sorting-grid"></div>
+            </section>
+
+            <section style="margin-top: 4rem;">
+                <h2 class="c-section-title">Root / Algorithms / Graphs</h2>
+                <div class="c-algo-grid" id="graphs-grid"></div>
+            </section>
+
+            <section style="margin-top: 4rem;">
+                <h2 class="c-section-title">Root / Algorithms / Trees</h2>
+                <div class="c-algo-grid" id="trees-grid"></div>
+            </section>
+
+            <section style="margin-top: 4rem;">
+                <h2 class="c-section-title">Root / Algorithms / Backtracking</h2>
+                <div class="c-algo-grid" id="backtracking-grid"></div>
+            </section>
+
+            <section style="margin-top: 4rem;">
+                <h2 class="c-section-title">Root / Algorithms / Sliding Window</h2>
+                <div class="c-algo-grid" id="window-grid"></div>
+            </section>
+
+            <section style="margin-top: 4rem;">
+                <h2 class="c-section-title">Root / Algorithms / Bit Manipulation</h2>
+                <div class="c-algo-grid" id="bits-grid"></div>
+            </section>
+
+            <section style="margin-top: 4rem;">
+                <h2 class="c-section-title">Root / Algorithms / Math & Number Theory</h2>
+                <div class="c-algo-grid" id="math-grid"></div>
+            </section>
+        </main>
+
+        <aside class="c-sidebar">
+            <div class="c-sidebar__item">
+                <span class="c-sidebar__label">[ SESSION_DATA ]</span>
+                USER: GHOST_IN_SHELL<br>
+                UPLINK: STABLE<br>
+                IP: 127.0.0.1
+            </div>
+            <div class="c-sidebar__item">
+                <span class="c-sidebar__label">[ CORE_STATS ]</span>
+                CPU: 88%<br>
+                MEM: 4.1GB<br>
+                ENTROPY: 0.0891
+            </div>
+            <div class="c-sidebar__item">
+                <span class="c-sidebar__label">[ LOGS ]</span>
+                > Expanding Nodes...<br>
+                > Loading 100 Algorithms...<br>
+                > System Overload: NEGATIVE.<br>
+                > System Ready.
+            </div>
+        </aside>
+
+        <footer class="c-footer">
+            <div>&copy; 2077 NEON-NOIR ARCHITECTS</div>
+            <div>BUILD_ID: 100-UX-NODE</div>
+        </footer>
+    </div>
+
+    <script>
+        const algorithms = {
+            sorting: [
+                "Bubble Sort", "Selection Sort", "Insertion Sort", "Merge Sort", "Quick Sort",
+                "Heap Sort", "Shell Sort", "Counting Sort", "Radix Sort", "Bucket Sort"
+            ],
+            searching: [
+                "Linear Search", "Binary Search", "Jump Search", "Interpolation Search", "Exponential Search",
+                "Fibonacci Search", "Ternary Search", "BFS", "DFS", "Hash Search"
+            ],
+            pointers: [
+                "Two Sum", "Remove Duplicates", "Reverse Array", "3Sum", "Container Water",
+                "Trapping Rain", "Palindrome Check", "Move Zeroes", "Sorted Squares", "Longest Substring"
+            ],
+            dp: [
+                "Fibonacci", "Knapsack 0/1", "LCS", "LIS", "Edit Distance",
+                "Coin Change", "Matrix Chain", "Word Break", "Subset Sum", "House Robber"
+            ],
+            graphs: [
+                "Dijkstra", "Bellman-Ford", "Kruskal", "Prim", "Topological Sort",
+                "Floyd-Warshall", "Kahn's", "Kosaraju", "Bridges", "Articulation Points"
+            ],
+            trees: [
+                "Level Order", "Inorder", "Preorder", "Postorder", "Max Depth",
+                "LCA", "Invert Tree", "Balanced Tree", "Diameter", "Flatten Tree"
+            ],
+            backtracking: [
+                "N-Queens", "Sudoku", "Permutations", "Combinations", "Subsets",
+                "Palindrome Partition", "Word Search", "Rat in Maze", "M-Coloring", "Knight Tour"
+            ],
+            window: [
+                "Max Subarray K", "Longest Sub K Dist", "Fruit Baskets", "Window Max", "Smallest Sub Sum",
+                "Permutation String", "Anagrams Count", "Min Window Sub", "Repeated DNA", "Grumpy Owner"
+            ],
+            bits: [
+                "Count Bits", "Power of Two", "1 Bits", "Single Number", "Missing Number",
+                "Hamming Dist", "Reverse Bits", "AND Range", "Power of Four", "Bitwise XOR"
+            ],
+            math: [
+                "Sieve", "GCD", "Fraction Knapsack", "Huffman", "Gas Station",
+                "Activity Selection", "Majority Element", "Next Permutation", "Pow(x, n)", "Excel Column"
+            ]
+        };
+
+        function generateCards() {
+            const createCard = (name, type) => {
+                const card = document.createElement('a');
+                card.className = 'c-card';
+                const fileName = name.toLowerCase().replace(/ /g, '_').replace(/\//g, '').replace(/\(/g, '').replace(/\)/g, '').replace(/,/g, '') + '.html';
+                card.href = fileName;
+                
+                card.innerHTML = `
+                    <div class="c-card__title">${name}</div>
+                    <div class="c-card__tag">[ ${type} ]</div>
+                `;
+                return card;
+            };
+
+            const populateGrid = (id, items, type) => {
+                const grid = document.getElementById(id);
+                if (!grid) return;
+                const fragment = document.createDocumentFragment();
+                items.forEach(name => {
+                    fragment.appendChild(createCard(name, type));
+                });
+                grid.appendChild(fragment);
+            };
+
+            populateGrid('sorting-grid', algorithms.sorting, 'SORT');
+            populateGrid('searching-grid', algorithms.searching, 'SEARCH');
+            populateGrid('pointers-grid', algorithms.pointers, 'POINTER');
+            populateGrid('dp-grid', algorithms.dp, 'DP');
+            populateGrid('graphs-grid', algorithms.graphs, 'GRAPH');
+            populateGrid('trees-grid', algorithms.trees, 'TREE');
+            populateGrid('backtracking-grid', algorithms.backtracking, 'BACK');
+            populateGrid('window-grid', algorithms.window, 'WINDOW');
+            populateGrid('bits-grid', algorithms.bits, 'BIT');
+            populateGrid('math-grid', algorithms.math, 'MATH');
+        }
+
+        // HUD Mouse Tracker
+        document.addEventListener('mousemove', (e) => {
+            const hud = document.getElementById('hud-coords');
+            hud.textContent = `X: ${String(e.pageX).padStart(3, '0')} | Y: ${String(e.pageY).padStart(3, '0')}`;
+        });
+
+        document.addEventListener('DOMContentLoaded', generateCards);
+    </script>
+</body>
+</html>

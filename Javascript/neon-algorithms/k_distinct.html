@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[ALGO] Longest Substring</title>
+    <title>[ALGO] K-Distinct Substring</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
@@ -17,7 +17,7 @@
             background: rgba(0, 243, 255, 0.05); transition: all 0.2s;
         }
         .c-char.is-window { border-color: var(--neon-secondary); background: rgba(255, 0, 255, 0.1); }
-        .c-char.is-dup { border-color: var(--neon-danger); color: var(--neon-danger); }
+        .c-char.is-excess { border-color: var(--neon-danger); }
     </style>
 
     <style>
@@ -41,7 +41,7 @@
         <div class="l-container c-header__content">
             <a href="index.html" class="c-logo u-text-neon">&lt; SYSTEM_DASHBOARD</a>
             <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--neon-secondary);">
-                MODULE: WINDOW_ENGINE // ALGO: LONGEST_UNIQUE_SUBSTRING
+                MODULE: WINDOW_ENGINE // ALGO: LONGEST_SUBSTR_K_DISTINCT
             </div>
         </div>
     </header>
@@ -49,21 +49,25 @@
     <main class="l-main u-mt-2">
         <div class="l-container">
             <div class="c-controls">
-                <button class="c-btn" id="run-btn">Find Longest</button>
+                <button class="c-btn" id="run-btn">Find Longest (K=2)</button>
                 <div style="font-family: var(--font-mono); font-size: 0.8rem; margin-left: 2rem;">
-                    MAX LENGTH: <span id="max-len" style="color:var(--neon-success)">0</span> | 
-                    CURRENT: <span id="curr-str" style="color:var(--neon-secondary)">--</span>
+                    MAX LEN: <span id="max-len" style="color:var(--neon-success)">0</span> | 
+                    DISTINCT: <span id="dist-count" style="color:var(--neon-secondary)">0</span>
                 </div>
             </div>
             <div class="c-viz-display" id="viz-container">
                 <div id="viz" class="c-str-viz"></div>
             </div>
             <div class="c-code-block">
-<pre><code>function lengthOfLongestSubstring(s) {
-    let set = new Set(), l = 0, res = 0;
+<pre><code>function lengthOfLongestSubstringKDistinct(s, k) {
+    let map = new Map(), l = 0, res = 0;
     for (let r = 0; r < s.length; r++) {
-        while (set.has(s[r])) set.delete(s[l++]);
-        set.add(s[r]);
+        map.set(s[r], (map.get(s[r]) || 0) + 1);
+        while (map.size > k) {
+            map.set(s[l], map.get(s[l]) - 1);
+            if (map.get(s[l]) == 0) map.delete(s[l]);
+            l++;
+        }
         res = Math.max(res, r - l + 1);
     }
 }</code></pre>
@@ -73,21 +77,22 @@
 
     <script src="js/neon-engine.js"></script>
     <script>
-        class SubstringVisualizer extends NeonEngine.AlgorithmVisualizer {
+        class KDistinctVisualizer extends NeonEngine.AlgorithmVisualizer {
             constructor(containerId) {
                 super(containerId);
-                this.str = "abcabcbb";
+                this.str = "eceba";
+                this.k = 2;
                 this.render();
             }
 
-            render(l = -1, r = -1, dupChar = null) {
+            render(l = -1, r = -1, excess = false) {
                 const container = document.getElementById('viz');
                 container.innerHTML = '';
                 this.str.split('').forEach((char, idx) => {
                     const node = document.createElement('div');
                     node.className = 'c-char';
                     if (idx >= l && idx <= r) node.classList.add('is-window');
-                    if (char === dupChar && idx >= l && idx <= r) node.classList.add('is-dup');
+                    if (excess && idx >= l && idx <= r) node.classList.add('is-excess');
                     node.textContent = char;
                     container.appendChild(node);
                 });
@@ -97,25 +102,30 @@
                 this.isRunning = true;
                 let l = 0, r = 0;
                 let maxLen = 0;
-                const set = new Set();
+                const map = new Map();
                 const lenEl = document.getElementById('max-len');
-                const currEl = document.getElementById('curr-str');
+                const distEl = document.getElementById('dist-count');
 
                 try {
                     while (r < this.str.length) {
                         const char = this.str[r];
-                        if (!set.has(char)) {
-                            set.add(char);
-                            r++;
-                            maxLen = Math.max(maxLen, r - l);
-                        } else {
-                            this.render(l, r, char);
+                        map.set(char, (map.get(char) || 0) + 1);
+                        r++;
+
+                        while (map.size > this.k) {
+                            this.render(l, r - 1, true);
+                            distEl.textContent = map.size;
                             await this.sleep(600);
-                            set.delete(this.str[l]);
+                            
+                            const leftChar = this.str[l];
+                            map.set(leftChar, map.get(leftChar) - 1);
+                            if (map.get(leftChar) === 0) map.delete(leftChar);
                             l++;
                         }
+                        
+                        maxLen = Math.max(maxLen, r - l);
                         lenEl.textContent = maxLen;
-                        currEl.textContent = this.str.substring(l, r);
+                        distEl.textContent = map.size;
                         this.render(l, r - 1);
                         await this.sleep(400);
                     }
@@ -123,7 +133,7 @@
                 this.isRunning = false;
             }
         }
-        const visualizer = new SubstringVisualizer('viz-container');
+        const visualizer = new KDistinctVisualizer('viz-container');
         document.getElementById('run-btn').addEventListener('click', () => {
             if (visualizer.isRunning) return;
             visualizer.execute();
@@ -131,3 +141,4 @@
     </script>
 </body>
 </html>
+

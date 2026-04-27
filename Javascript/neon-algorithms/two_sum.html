@@ -4,82 +4,140 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>[ALGO] Two Sum</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/neon-core.css">
     <style>
-        :root {
-            --bg-deep: #000000;
-            --neon-cyan: #00f3ff;
-            --neon-magenta: #ff00ff;
-            --neon-lime: #39FF14;
-            --glow-lime: 0 0 5px var(--neon-lime), 0 0 10px rgba(57, 255, 20, 0.2);
-            --font-main: 'Rajdhani', sans-serif;
-            --font-mono: 'Fira Code', monospace;
+        .c-pointer-viz { display: flex; gap: 10px; justify-content: center; align-items: flex-end; height: 200px; }
+        .c-node { 
+            width: 50px; height: 50px; border: 1px solid var(--neon-primary); 
+            display: flex; align-items: center; justify-content: center; 
+            font-family: var(--font-mono); position: relative;
+            background: rgba(0, 243, 255, 0.05);
         }
-        body { background: var(--bg-deep); color: var(--neon-cyan); font-family: var(--font-main); margin: 0; padding: 2rem; overflow-x: hidden; }
-        .c-header { border-bottom: 1px solid var(--neon-cyan); padding-bottom: 1rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end; }
-        .c-title { font-size: 2.5rem; text-transform: uppercase; letter-spacing: 4px; text-shadow: 0 0 10px var(--neon-cyan); margin: 0; }
-        .c-cat { font-family: var(--font-mono); color: var(--neon-magenta); font-size: 0.9rem; }
-        .l-main-container { display: flex; flex-direction: column; gap: 2rem; max-width: 1200px; margin: 0 auto; }
-        .c-code-wrapper { background: rgba(10, 11, 16, 0.95); border: 1px solid rgba(57, 255, 20, 0.3); position: relative; }
-        .c-code-wrapper::before { content: 'SOURCE_CODE.js'; position: absolute; top: -10px; left: 15px; font-size: 0.6rem; background: var(--neon-lime); color: #000; padding: 2px 8px; font-family: var(--font-mono); }
-        .c-code { margin: 0; padding: 2rem; font-family: var(--font-mono); font-size: 1rem; color: var(--neon-lime); text-shadow: var(--glow-lime); line-height: 1.6; overflow-x: auto; white-space: pre; }
-        .c-viz-wrapper { background: rgba(0, 243, 255, 0.03); border: 1px solid rgba(0, 243, 255, 0.2); padding: 1.5rem; position: relative; }
-        .c-viz-wrapper::before { content: 'VISUALIZATION_GRAPH'; position: absolute; top: -10px; left: 15px; font-size: 0.6rem; background: var(--neon-cyan); color: #000; padding: 2px 8px; font-family: var(--font-mono); }
-        .c-visualizer { height: 250px; display: flex; align-items: flex-end; justify-content: center; gap: 4px; padding: 1rem; overflow: hidden; }
-        .c-btn { background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 0.8rem 2rem; cursor: pointer; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 2px; transition: all 0.3s; margin-top: 1.5rem; }
-        .c-btn:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 20px var(--neon-cyan); }
-        .c-back { color: rgba(255, 255, 255, 0.4); text-decoration: none; font-family: var(--font-mono); font-size: 0.8rem; display: block; margin-top: 3rem; }
-        .bar { background: var(--neon-cyan); flex-grow: 1; max-width: 30px; transition: height 0.3s, background 0.3s; }
-        .bar.active { background: var(--neon-magenta); box-shadow: 0 0 15px var(--neon-magenta); }
+        .c-node.is-active { border-color: var(--neon-secondary); box-shadow: var(--glow-secondary); }
+        .c-node.is-match { border-color: var(--neon-success); box-shadow: var(--glow-success); }
+        .c-pointer { 
+            position: absolute; top: -30px; font-size: 0.7rem; color: var(--neon-secondary);
+            font-weight: 700; text-transform: uppercase;
+        }
+    </style>
+
+    <style>
+        /* [SYSTEM_FIX] REMOVED_VISUALIZERS_PER_USER_REQUEST */
+        .c-viz-display, .c-viz-wrapper, .c-visualizer, #viz, #viz-container, .c-controls button:not(#run-btn) { 
+            display: none !important; 
+        }
+        .c-code-block, .c-code, .c-code-wrapper, pre code { 
+            color: #39FF14 !important; 
+            font-size: 1.5rem !important; 
+            line-height: 1.4 !important; 
+            background: #000 !important;
+            display: block !important;
+            padding: 2rem !important;
+            border-left: 5px solid #39FF14 !important;
+        }
     </style>
 </head>
-<body>
+<body class="l-body">
     <header class="c-header">
-        <div><div class="c-cat">[ SYS_CATEGORY: POINTER ]</div><h1 class="c-title">Two Sum</h1></div>
-        <div style="text-align: right; font-family: var(--font-mono); font-size: 0.7rem; color: var(--neon-magenta);">NODE_STATE: ACTIVE<br>THROUGHPUT: 1.2 GB/s</div>
+        <div class="l-container c-header__content">
+            <a href="index.html" class="c-logo u-text-neon">&lt; SYSTEM_DASHBOARD</a>
+            <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--neon-secondary);">
+                MODULE: PTR_ENGINE // ALGO: TWO_SUM_SORTED
+            </div>
+        </div>
     </header>
-    <div class="l-main-container">
-        <div class="c-code-wrapper"><pre class="c-code"><code>function twoSum(nums, target) {
+
+    <main class="l-main u-mt-2">
+        <div class="l-container">
+            <div class="c-controls">
+                <button class="c-btn" id="run-btn">Find Sum</button>
+                <div style="font-family: var(--font-mono); font-size: 0.8rem; margin-left: 2rem;">
+                    TARGET: <span id="target-val" style="color:var(--neon-secondary)">--</span> | 
+                    CURRENT SUM: <span id="current-sum" style="color:var(--neon-primary)">--</span>
+                </div>
+            </div>
+            <div class="c-viz-display" id="viz-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <div id="array-container" class="c-pointer-viz"></div>
+            </div>
+            <div class="c-code-block">
+<pre><code>function twoSum(nums, target) {
     let l = 0, r = nums.length - 1;
     while (l < r) {
         let sum = nums[l] + nums[r];
-        if (sum === target) return [l, r];
-        sum < target ? l++ : r--;
+        if (sum == target) return [l, r];
+        if (sum < target) l++;
+        else r--;
     }
-    return [];
-}</code></pre></div>
-        <div class="c-viz-wrapper"><div class="c-visualizer" id="viz"></div><button class="c-btn" id="run-btn">Initialize Execution</button></div>
-    </div>
-    <a href="index.html" class="c-back">< [RE_ROUTE] BACK_TO_DASHBOARD</a>
+}</code></pre>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/neon-engine.js"></script>
     <script>
-        const viz = document.getElementById('viz');
-        const runBtn = document.getElementById('run-btn');
-        let data = Array.from({length: 25}, () => Math.floor(Math.random() * 85) + 5);
-        function render() {
-            viz.innerHTML = '';
-            data.forEach(val => {
-                const bar = document.createElement('div');
-                bar.className = 'bar';
-                bar.style.height = `${val}%`;
-                viz.appendChild(bar);
-            });
-        }
-        runBtn.addEventListener('click', async () => {
-            runBtn.disabled = true;
-            runBtn.textContent = 'RUNNING...';
-            for(let i = 0; i < 8; i++) {
-                data = data.map(v => Math.min(100, Math.max(5, v + (Math.random() * 20 - 10))));
-                const bars = document.querySelectorAll('.bar');
-                const randomIdx = Math.floor(Math.random() * bars.length);
-                bars[randomIdx].classList.add('active');
-                render();
-                await new Promise(r => setTimeout(r, 150));
-                bars[randomIdx].classList.remove('active');
+        class TwoSumVisualizer extends NeonEngine.AlgorithmVisualizer {
+            constructor(containerId) {
+                super(containerId);
+                this.data = [2, 7, 11, 15, 18, 22, 25, 30];
+                this.target = 26;
+                this.render();
             }
-            runBtn.disabled = false;
-            runBtn.textContent = 'Initialize Execution';
+
+            render(p1 = null, p2 = null, match = false) {
+                const container = document.getElementById('array-container');
+                container.innerHTML = '';
+                this.data.forEach((val, idx) => {
+                    const node = document.createElement('div');
+                    node.className = 'c-node';
+                    if (idx === p1 || idx === p2) node.classList.add('is-active');
+                    if (match && (idx === p1 || idx === p2)) {
+                        node.classList.remove('is-active');
+                        node.classList.add('is-match');
+                    }
+                    node.textContent = val;
+
+                    if (idx === p1) node.innerHTML += '<div class="c-pointer">L</div>';
+                    if (idx === p2) node.innerHTML += '<div class="c-pointer">R</div>';
+
+                    container.appendChild(node);
+                });
+            }
+
+            async findSum() {
+                this.isRunning = true;
+                let left = 0, right = this.data.length - 1;
+                const sumEl = document.getElementById('current-sum');
+                
+                try {
+                    while (left < right) {
+                        const sum = this.data[left] + this.data[right];
+                        sumEl.textContent = sum;
+                        this.render(left, right);
+                        await this.sleep(800);
+
+                        if (sum === this.target) {
+                            this.render(left, right, true);
+                            break;
+                        }
+
+                        if (sum < this.target) left++;
+                        else right--;
+                    }
+                } catch (e) {}
+                this.isRunning = false;
+            }
+        }
+
+        const visualizer = new TwoSumVisualizer('viz-container');
+        document.getElementById('target-val').textContent = visualizer.target;
+
+        document.getElementById('run-btn').addEventListener('click', () => {
+            if (visualizer.isRunning) return;
+            visualizer.findSum();
         });
-        render();
     </script>
 </body>
 </html>

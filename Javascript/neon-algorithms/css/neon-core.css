@@ -1,0 +1,237 @@
+/* 🌌 NEON-NOIR CORE DESIGN SYSTEM */
+/* Adheres to Neon-Noir Architect Manifesto v3.0 */
+
+:root {
+    /* Background Colors - Directive 51 */
+    --bg-dark: #050505;
+    --bg-secondary: #0a0b10;
+    --bg-card: rgba(255, 255, 255, 0.03);
+    
+    /* Neon Accent Colors - Directive 51-60 */
+    --neon-primary: #00f3ff;      /* Cyber Cyan */
+    --neon-secondary: #ff00ff;    /* Electric Magenta */
+    --neon-success: #39FF14;      /* Neon Lime */
+    --neon-warning: #f6c23e;
+    --neon-danger: #e74a3b;
+    
+    /* Glow Effects - Directive 52, 53 */
+    --glow-primary: 0 0 10px rgba(0, 243, 255, 0.5), 0 0 20px rgba(0, 243, 255, 0.2);
+    --glow-secondary: 0 0 10px rgba(255, 0, 255, 0.5), 0 0 20px rgba(255, 0, 255, 0.2);
+    --glow-success: 0 0 10px rgba(57, 255, 20, 0.5), 0 0 20px rgba(57, 255, 20, 0.2);
+
+    /* Fonts - Directive 59, 60 */
+    --font-heading: 'Rajdhani', system-ui, sans-serif;
+    --font-mono: 'Fira Code', monospace;
+    --font-body: system-ui, -apple-system, sans-serif;
+
+    /* Spacing */
+    --container-width: 1200px;
+    --sidebar-width: 300px;
+    --z-sticky: 100;
+}
+
+/* Reset - Directive 5 */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--neon-primary);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+/* Scanline Effect - Directive 62 */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%,
+        rgba(0, 0, 0, 0.1) 50%
+    );
+    background-size: 100% 4px;
+    pointer-events: none;
+    z-index: 2000;
+}
+
+/* Grid Background - Directive 118 */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: 
+        linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Typography - Directive 9, 35 */
+h1, h2, h3, h4 {
+    font-family: var(--font-heading);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* Layout - Directive 8, 21 */
+.l-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.l-container {
+    width: 100%;
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+/* Components - Directive 22, 124 */
+.c-header {
+    background: rgba(5, 5, 5, 0.8);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+    padding: 1.5rem 0;
+    position: sticky;
+    top: 0;
+    z-index: var(--z-sticky);
+}
+
+.c-header__content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.c-logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--neon-primary);
+    text-shadow: var(--glow-primary);
+    text-decoration: none;
+}
+
+/* Card Component - Directive 106, 54 */
+.c-card {
+    background: var(--bg-card);
+    border: 1px solid rgba(0, 243, 255, 0.1);
+    backdrop-filter: blur(5px);
+    padding: 1.5rem;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.c-card:hover {
+    border-color: var(--neon-primary);
+    box-shadow: var(--glow-primary);
+    transform: translateY(-2px);
+}
+
+/* Visualizer Controls - Directive 186 */
+.c-controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.c-btn {
+    background: transparent;
+    border: 1px solid var(--neon-primary);
+    color: var(--neon-primary);
+    padding: 0.6rem 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.c-btn:hover:not(:disabled) {
+    background: var(--neon-primary);
+    color: #000;
+    box-shadow: var(--glow-primary);
+}
+
+.c-btn--secondary {
+    border-color: var(--neon-secondary);
+    color: var(--neon-secondary);
+}
+
+.c-btn--secondary:hover:not(:disabled) {
+    background: var(--neon-secondary);
+    color: #000;
+    box-shadow: var(--glow-secondary);
+}
+
+.c-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* Visualization Display Area */
+.c-viz-display {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(0, 243, 255, 0.1);
+    min-height: 300px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 4px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.c-viz-display::before {
+    content: 'SYSTEM_OUTPUT';
+    position: absolute;
+    top: 5px;
+    left: 10px;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    opacity: 0.5;
+}
+
+/* Elements */
+.c-bar {
+    background: var(--neon-primary);
+    flex: 1;
+    transition: height 0.2s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s;
+}
+
+.c-bar.is-active {
+    background: var(--neon-secondary);
+    box-shadow: var(--glow-secondary);
+}
+
+.c-bar.is-sorted {
+    background: var(--neon-success);
+    box-shadow: var(--glow-success);
+}
+
+/* Code Block - Directive 47 */
+.c-code-block {
+    background: #000;
+    border-left: 2px solid var(--neon-secondary);
+    padding: 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--neon-success);
+    overflow-x: auto;
+    margin-top: 2rem;
+}
+
+/* Utility */
+.u-text-neon { text-shadow: var(--glow-primary); }
+.u-text-magenta { color: var(--neon-secondary); }
+.u-mt-2 { margin-top: 2rem; }

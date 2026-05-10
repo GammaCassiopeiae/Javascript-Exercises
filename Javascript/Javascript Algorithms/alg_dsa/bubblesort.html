@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Neon-Noir Bubble Sort Visualizer">
+    <title>BUBBLESORT // ALGORITHM_VISUALIZER</title>
+    
+    <!-- Preconnect & Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Neon-Noir Palette */
+            --bg-dark: #050505;
+            --bg-secondary: #0a0b10;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --neon-primary: #00f3ff;
+            --neon-secondary: #ff00ff;
+            --neon-accent: #a855f7;
+            --glow-primary: 0 0 5px rgba(0, 243, 255, 0.3), 0 0 15px rgba(0, 243, 255, 0.1);
+            --glow-secondary: 0 0 5px rgba(255, 0, 255, 0.3), 0 0 15px rgba(255, 0, 255, 0.1);
+            --font-heading: 'Rajdhani', sans-serif;
+            --font-mono: 'Fira Code', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #fff;
+            font-family: var(--font-heading);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Scanlines Overlay */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 2px;
+            pointer-events: none;
+            z-index: 2000;
+            opacity: 0.3;
+        }
+
+        header {
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+            background: var(--bg-secondary);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            letter-spacing: 0.3em;
+            color: var(--neon-primary);
+            text-shadow: var(--glow-primary);
+            text-transform: uppercase;
+        }
+
+        .l-container {
+            flex: 1;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Visualization Area */
+        .c-visualizer {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 243, 255, 0.1);
+            height: 400px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 2px;
+            padding: 20px;
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        .bar {
+            background: linear-gradient(to top, var(--neon-primary), transparent);
+            width: 100%;
+            transition: height 0.05s ease, background 0.05s ease;
+            box-shadow: var(--glow-primary);
+        }
+
+        .bar.is-comparing {
+            background: #fff;
+            box-shadow: 0 0 10px #fff;
+        }
+
+        .bar.is-sorted {
+            background: linear-gradient(to top, var(--neon-secondary), transparent);
+            box-shadow: var(--glow-secondary);
+        }
+
+        /* Controls */
+        .c-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .c-btn {
+            background: transparent;
+            border: 1px solid var(--neon-primary);
+            color: var(--neon-primary);
+            padding: 0.8rem 1.5rem;
+            font-family: var(--font-heading);
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .c-btn:hover:not(:disabled) {
+            background: rgba(0, 243, 255, 0.1);
+            box-shadow: var(--glow-primary);
+            transform: scale(1.05);
+        }
+
+        .c-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            border-color: #555;
+            color: #555;
+        }
+
+        /* Code Display */
+        .c-code-window {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 0, 255, 0.2);
+            padding: 1.5rem;
+            border-radius: 4px;
+        }
+
+        .c-code-window__header {
+            font-size: 0.8rem;
+            color: var(--neon-secondary);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            font-family: var(--font-mono);
+            border-bottom: 1px solid rgba(255, 0, 255, 0.1);
+            padding-bottom: 0.5rem;
+        }
+
+        pre {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #ccc;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        .token--keyword { color: var(--neon-secondary); }
+        .token--func { color: var(--neon-primary); }
+        .token--comment { color: #666; font-style: italic; }
+
+        footer {
+            padding: 2rem;
+            text-align: center;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>BUBBLESORT_ENGINE</h1>
+    </header>
+
+    <div class="l-container">
+        <div class="c-visualizer" id="js-visualizer">
+            <!-- Bars generated by JS -->
+        </div>
+
+        <div class="c-controls">
+            <button class="c-btn" id="js-shuffle-btn">SHUFFLE_ARRAY</button>
+            <button class="c-btn" id="js-sort-btn">INITIALIZE_SORT</button>
+        </div>
+
+        <div class="c-code-window">
+            <div class="c-code-window__header">SOURCE_CODE // BUBBLESORT.JS</div>
+            <pre><code><span class="token--keyword">async function</span> <span class="token--func">bubbleSort</span>(arr) {
+    <span class="token--keyword">let</span> n = arr.length;
+    <span class="token--keyword">for</span> (<span class="token--keyword">let</span> i = 0; i < n - 1; i++) {
+        <span class="token--keyword">for</span> (<span class="token--keyword">let</span> j = 0; j < n - i - 1; j++) {
+            <span class="token--keyword">if</span> (arr[j] > arr[j + 1]) {
+                <span class="token--comment">// Swap elements</span>
+                [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+            }
+        }
+    }
+}</code></pre>
+        </div>
+    </div>
+
+    <footer>
+        [STATUS: SYSTEM_READY] // BY_NEON_ARCHITECT
+    </footer>
+
+    <script>
+        (function() {
+            'use strict';
+
+            const ARRAY_SIZE = 30;
+            const ANIMATION_SPEED = 20;
+            let data = [];
+            let isSorting = false;
+
+            const DOM = {
+                visualizer: document.getElementById('js-visualizer'),
+                shuffleBtn: document.getElementById('js-shuffle-btn'),
+                sortBtn: document.getElementById('js-sort-btn')
+            };
+
+            function init() {
+                generateArray();
+                bindEvents();
+            }
+
+            function generateArray() {
+                data = [];
+                for (let i = 0; i < ARRAY_SIZE; i++) {
+                    data.push(Math.floor(Math.random() * 90) + 10);
+                }
+                renderBars();
+            }
+
+            function renderBars(comparingIndices = [], sortedIndexStart = -1) {
+                DOM.visualizer.innerHTML = '';
+                data.forEach((val, idx) => {
+                    const bar = document.createElement('div');
+                    bar.className = 'bar';
+                    bar.style.height = `${val}%`;
+                    
+                    if (comparingIndices.includes(idx)) bar.classList.add('is-comparing');
+                    if (sortedIndexStart !== -1 && idx >= sortedIndexStart) bar.classList.add('is-sorted');
+                    
+                    DOM.visualizer.appendChild(bar);
+                });
+            }
+
+            function bindEvents() {
+                DOM.shuffleBtn.addEventListener('click', () => {
+                    if (isSorting) return;
+                    generateArray();
+                });
+
+                DOM.sortBtn.addEventListener('click', async () => {
+                    if (isSorting) return;
+                    isSorting = true;
+                    toggleControls(true);
+                    await bubbleSort();
+                    isSorting = false;
+                    toggleControls(false);
+                    renderBars([], 0); // Mark all as sorted
+                });
+            }
+
+            function toggleControls(disabled) {
+                DOM.shuffleBtn.disabled = disabled;
+                DOM.sortBtn.disabled = disabled;
+            }
+
+            async function bubbleSort() {
+                let n = data.length;
+                for (let i = 0; i < n - 1; i++) {
+                    for (let j = 0; j < n - i - 1; j++) {
+                        // Visualization: comparing data[j] and data[j+1]
+                        renderBars([j, j + 1], n - i);
+                        await sleep(ANIMATION_SPEED);
+
+                        if (data[j] > data[j + 1]) {
+                            [data[j], data[j + 1]] = [data[j + 1], data[j]];
+                            renderBars([j, j + 1], n - i);
+                        }
+                    }
+                }
+            }
+
+            function sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            init();
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Neon-Noir Bogo Sort Visualizer">
+    <title>BOGOSORT // ALGORITHM_VISUALIZER</title>
+    
+    <!-- Preconnect & Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --bg-secondary: #0a0b10;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --neon-primary: #00f3ff;
+            --neon-secondary: #ff00ff;
+            --neon-accent: #a855f7;
+            --neon-success: #1cc88a;
+            --neon-danger: #e74a3b;
+            --glow-primary: 0 0 5px rgba(0, 243, 255, 0.3), 0 0 15px rgba(0, 243, 255, 0.1);
+            --glow-secondary: 0 0 5px rgba(255, 0, 255, 0.3), 0 0 15px rgba(255, 0, 255, 0.1);
+            --glow-success: 0 0 5px rgba(28, 200, 138, 0.3), 0 0 15px rgba(28, 200, 138, 0.2);
+            --font-heading: 'Rajdhani', sans-serif;
+            --font-mono: 'Fira Code', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #fff;
+            font-family: var(--font-heading);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 2px;
+            pointer-events: none;
+            z-index: 2000;
+            opacity: 0.3;
+        }
+
+        header {
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+            background: var(--bg-secondary);
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            letter-spacing: 0.3em;
+            color: var(--neon-primary);
+            text-shadow: var(--glow-primary);
+            text-transform: uppercase;
+        }
+
+        .header-warning {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--neon-danger);
+            letter-spacing: 0.1em;
+            margin-top: 0.5rem;
+            animation: blink 1.5s step-end infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.2; }
+        }
+
+        .l-container {
+            flex: 1;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Visualization Area */
+        .c-visualizer {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 243, 255, 0.1);
+            height: 400px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 16px;
+            padding: 20px;
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        .bar-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            height: 100%;
+            flex: 1;
+            gap: 10px;
+        }
+
+        .bar {
+            width: 100%;
+            transition: height 0.08s ease, background 0.08s ease, box-shadow 0.08s ease;
+            background: linear-gradient(to top, var(--neon-primary), transparent);
+            box-shadow: var(--glow-primary);
+            position: relative;
+        }
+
+        .bar-label {
+            font-family: var(--font-mono);
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--neon-primary);
+            text-shadow: var(--glow-primary);
+            transition: color 0.1s ease;
+            letter-spacing: 0.05em;
+        }
+
+        /* States */
+        .bar.is-shuffling {
+            background: linear-gradient(to top, var(--neon-secondary), transparent);
+            box-shadow: var(--glow-secondary);
+        }
+        .bar-col.is-shuffling .bar-label {
+            color: var(--neon-secondary);
+            text-shadow: var(--glow-secondary);
+        }
+
+        .bar.is-checking {
+            background: #fff;
+            box-shadow: 0 0 20px #fff;
+        }
+        .bar-col.is-checking .bar-label {
+            color: #fff;
+        }
+
+        .bar.is-sorted {
+            background: linear-gradient(to top, var(--neon-success), transparent);
+            box-shadow: var(--glow-success);
+            animation: sorted-pulse 0.6s ease infinite alternate;
+        }
+        .bar-col.is-sorted .bar-label {
+            color: var(--neon-success);
+            text-shadow: var(--glow-success);
+        }
+
+        @keyframes sorted-pulse {
+            from { box-shadow: var(--glow-success); }
+            to   { box-shadow: 0 0 15px var(--neon-success), 0 0 40px var(--neon-success); }
+        }
+
+        /* Counter HUD */
+        .c-hud {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .c-hud__stat {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 243, 255, 0.1);
+            padding: 1rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .c-hud__stat-label {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 0.3rem;
+        }
+
+        .c-hud__stat-value {
+            font-family: var(--font-mono);
+            font-size: 2rem;
+            font-weight: 500;
+            color: var(--neon-primary);
+            text-shadow: var(--glow-primary);
+            letter-spacing: 0.05em;
+        }
+
+        .c-hud__stat-value.is-danger {
+            color: var(--neon-danger);
+            text-shadow: 0 0 5px var(--neon-danger);
+        }
+
+        .c-hud__stat-value.is-success {
+            color: var(--neon-success);
+            text-shadow: var(--glow-success);
+        }
+
+        /* Controls */
+        .c-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .c-target-display {
+            width: 100%;
+            text-align: center;
+            font-size: 1.5rem;
+            color: var(--neon-secondary);
+            text-shadow: var(--glow-secondary);
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+            font-family: var(--font-mono);
+        }
+
+        .c-btn {
+            background: transparent;
+            border: 1px solid var(--neon-primary);
+            color: var(--neon-primary);
+            padding: 0.8rem 1.5rem;
+            font-family: var(--font-heading);
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .c-btn:hover:not(:disabled) {
+            background: rgba(0, 243, 255, 0.1);
+            box-shadow: var(--glow-primary);
+            transform: scale(1.05);
+        }
+
+        .c-btn.c-btn--danger {
+            border-color: var(--neon-danger);
+            color: var(--neon-danger);
+        }
+
+        .c-btn.c-btn--danger:hover:not(:disabled) {
+            background: rgba(231, 74, 59, 0.1);
+            box-shadow: 0 0 10px var(--neon-danger);
+        }
+
+        .c-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            border-color: #555;
+            color: #555;
+        }
+
+        /* Code Display */
+        .c-code-window {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 0, 255, 0.2);
+            padding: 1.5rem;
+            border-radius: 4px;
+        }
+
+        .c-code-window__header {
+            font-size: 0.8rem;
+            color: var(--neon-secondary);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            font-family: var(--font-mono);
+            border-bottom: 1px solid rgba(255, 0, 255, 0.1);
+            padding-bottom: 0.5rem;
+        }
+
+        pre {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #ccc;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        .token--keyword { color: var(--neon-secondary); }
+        .token--func { color: var(--neon-primary); }
+        .token--comment { color: #666; font-style: italic; }
+
+        footer {
+            padding: 2rem;
+            text-align: center;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>BOGOSORT_ENGINE</h1>
+        <div class="header-warning">⚠ WARNING: O((n+1)!) AVERAGE COMPLEXITY — ARRAY LIMITED TO 7 ELEMENTS ⚠</div>
+    </header>
+
+    <div class="l-container">
+        <div class="c-visualizer" id="js-visualizer">
+            <!-- Bars generated by JS -->
+        </div>
+
+        <div class="c-hud">
+            <div class="c-hud__stat">
+                <div class="c-hud__stat-label">SHUFFLE_ATTEMPTS</div>
+                <div class="c-hud__stat-value" id="js-attempts">0</div>
+            </div>
+            <div class="c-hud__stat">
+                <div class="c-hud__stat-label">COMPARISONS_MADE</div>
+                <div class="c-hud__stat-value" id="js-comparisons">0</div>
+            </div>
+            <div class="c-hud__stat">
+                <div class="c-hud__stat-label">STATUS</div>
+                <div class="c-hud__stat-value" id="js-status">IDLE</div>
+            </div>
+        </div>
+
+        <div class="c-controls">
+            <div class="c-target-display" id="js-target-display">PRAYING TO THE RANDOM NUMBER GODS...</div>
+            <button class="c-btn" id="js-shuffle-btn">GENERATE_ARRAY</button>
+            <button class="c-btn" id="js-search-btn">BEGIN_CHAOS</button>
+            <button class="c-btn c-btn--danger" id="js-stop-btn" disabled>ABORT_MISSION</button>
+        </div>
+
+        <div class="c-code-window">
+            <div class="c-code-window__header">SOURCE_CODE // BOGOSORT.JS</div>
+            <pre><code><span class="token--comment">// O(n! * n) average, O(1) best case, O(∞) worst case</span>
+<span class="token--keyword">function</span> <span class="token--func">isSorted</span>(arr) {
+    <span class="token--keyword">for</span> (<span class="token--keyword">let</span> i = 0; i < arr.length - 1; i++) {
+        <span class="token--keyword">if</span> (arr[i] > arr[i + 1]) <span class="token--keyword">return false</span>;
+    }
+    <span class="token--keyword">return true</span>;
+}
+
+<span class="token--keyword">function</span> <span class="token--func">shuffle</span>(arr) {
+    <span class="token--keyword">for</span> (<span class="token--keyword">let</span> i = arr.length - 1; i > 0; i--) {
+        <span class="token--keyword">const</span> j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]]; <span class="token--comment">// Fisher-Yates swap</span>
+    }
+    <span class="token--keyword">return</span> arr;
+}
+
+<span class="token--keyword">async function</span> <span class="token--func">bogoSort</span>(arr) {
+    <span class="token--keyword">let</span> attempts = 0;
+    
+    <span class="token--keyword">while</span> (!<span class="token--func">isSorted</span>(arr)) {
+        arr = <span class="token--func">shuffle</span>(arr);
+        attempts++;
+    }
+    
+    <span class="token--keyword">return</span> arr;
+}</code></pre>
+        </div>
+    </div>
+
+    <footer>
+        [STATUS: SYSTEM_READY] // BY_NEON_ARCHITECT
+    </footer>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // SAFETY LIMIT: Bogo Sort can run forever. We cap this at a reasonable threshold.
+            const MAX_ATTEMPTS = 50000;
+            const ARRAY_SIZE = 7;
+            const ANIMATION_SPEED = 60;
+
+            let data = [];
+            let isRunning = false;
+            let stopRequested = false;
+            let attempts = 0;
+            let comparisons = 0;
+
+            const DOM = {
+                visualizer:  document.getElementById('js-visualizer'),
+                shuffleBtn:  document.getElementById('js-shuffle-btn'),
+                searchBtn:   document.getElementById('js-search-btn'),
+                stopBtn:     document.getElementById('js-stop-btn'),
+                targetDisplay: document.getElementById('js-target-display'),
+                attemptsEl:  document.getElementById('js-attempts'),
+                comparisonsEl: document.getElementById('js-comparisons'),
+                statusEl:    document.getElementById('js-status')
+            };
+
+            function init() {
+                generateArray();
+                bindEvents();
+            }
+
+            function generateArray() {
+                data = [];
+                const used = new Set();
+                while (data.length < ARRAY_SIZE) {
+                    let v = Math.floor(Math.random() * 90) + 10;
+                    if (!used.has(v)) { used.add(v); data.push(v); }
+                }
+
+                attempts = 0;
+                comparisons = 0;
+                updateCounters();
+                DOM.statusEl.textContent = 'IDLE';
+                DOM.statusEl.className = 'c-hud__stat-value';
+                DOM.targetDisplay.textContent = 'PRAYING TO THE RANDOM NUMBER GODS...';
+                DOM.targetDisplay.style.color = 'var(--neon-secondary)';
+                renderBars('idle');
+            }
+
+            function renderBars(state = 'idle') {
+                DOM.visualizer.innerHTML = '';
+                const maxVal = Math.max(...data);
+
+                data.forEach((val) => {
+                    const col = document.createElement('div');
+                    col.className = 'bar-col';
+
+                    const bar = document.createElement('div');
+                    bar.className = 'bar';
+                    bar.style.height = `${(val / maxVal) * 90}%`;
+
+                    const label = document.createElement('div');
+                    label.className = 'bar-label';
+                    label.textContent = val;
+
+                    if (state === 'shuffling') {
+                        bar.classList.add('is-shuffling');
+                        col.classList.add('is-shuffling');
+                    } else if (state === 'checking') {
+                        bar.classList.add('is-checking');
+                        col.classList.add('is-checking');
+                    } else if (state === 'sorted') {
+                        bar.classList.add('is-sorted');
+                        col.classList.add('is-sorted');
+                    }
+
+                    col.appendChild(label);
+                    col.appendChild(bar);
+                    DOM.visualizer.appendChild(col);
+                });
+            }
+
+            function updateCounters() {
+                DOM.attemptsEl.textContent = attempts.toLocaleString();
+                DOM.comparisonsEl.textContent = comparisons.toLocaleString();
+            }
+
+            function isSorted(arr) {
+                for (let i = 0; i < arr.length - 1; i++) {
+                    comparisons++;
+                    if (arr[i] > arr[i + 1]) return false;
+                }
+                return true;
+            }
+
+            function shuffle(arr) {
+                for (let i = arr.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                }
+                return arr;
+            }
+
+            function bindEvents() {
+                DOM.shuffleBtn.addEventListener('click', () => {
+                    if (isRunning) return;
+                    generateArray();
+                });
+
+                DOM.searchBtn.addEventListener('click', async () => {
+                    if (isRunning) return;
+                    isRunning = true;
+                    stopRequested = false;
+                    toggleControls(true);
+
+                    DOM.statusEl.textContent = 'RUNNING';
+                    DOM.statusEl.className = 'c-hud__stat-value is-danger';
+                    DOM.targetDisplay.style.color = 'var(--neon-secondary)';
+
+                    await bogoSort();
+
+                    if (!stopRequested) {
+                        // Success
+                        renderBars('sorted');
+                        DOM.statusEl.textContent = 'SORTED';
+                        DOM.statusEl.className = 'c-hud__stat-value is-success';
+                        DOM.targetDisplay.textContent = `CHAOS_RESOLVED AFTER ${attempts.toLocaleString()} ATTEMPTS`;
+                        DOM.targetDisplay.style.color = 'var(--neon-success)';
+                        DOM.attemptsEl.className = 'c-hud__stat-value is-success';
+                    }
+
+                    isRunning = false;
+                    toggleControls(false);
+                });
+
+                DOM.stopBtn.addEventListener('click', () => {
+                    if (!isRunning) return;
+                    stopRequested = true;
+                    DOM.statusEl.textContent = 'ABORTED';
+                    DOM.statusEl.className = 'c-hud__stat-value is-danger';
+                    DOM.targetDisplay.textContent = `MISSION_ABORTED AT ${attempts.toLocaleString()} ATTEMPTS`;
+                    DOM.targetDisplay.style.color = 'var(--neon-danger)';
+                });
+            }
+
+            function toggleControls(running) {
+                DOM.shuffleBtn.disabled = running;
+                DOM.searchBtn.disabled = running;
+                DOM.stopBtn.disabled = !running;
+            }
+
+            async function bogoSort() {
+                // Initial check
+                renderBars('checking');
+                await sleep(ANIMATION_SPEED);
+
+                while (!isSorted(data)) {
+                    if (stopRequested) return;
+                    if (attempts >= MAX_ATTEMPTS) {
+                        // Safety cap hit
+                        DOM.targetDisplay.textContent = `SAFETY_CAP HIT AT ${MAX_ATTEMPTS.toLocaleString()} ATTEMPTS. ABORT.`;
+                        DOM.targetDisplay.style.color = 'var(--neon-danger)';
+                        DOM.statusEl.textContent = 'CAP_HIT';
+                        DOM.statusEl.className = 'c-hud__stat-value is-danger';
+                        stopRequested = true;
+                        return;
+                    }
+
+                    // Shuffle
+                    shuffle(data);
+                    attempts++;
+                    updateCounters();
+
+                    // Animate every frame
+                    renderBars('shuffling');
+                    DOM.targetDisplay.textContent = `ATTEMPT #${attempts.toLocaleString()} — CHECKING IF SORTED...`;
+                    await sleep(ANIMATION_SPEED);
+
+                    // Check sorted
+                    renderBars('checking');
+                    await sleep(ANIMATION_SPEED / 2);
+                }
+            }
+
+            function sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            init();
+        })();
+    </script>
+</body>
+</html>

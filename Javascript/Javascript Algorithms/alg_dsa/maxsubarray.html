@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Neon-Noir Maximum Subarray Visualizer">
+    <title>MAXSUBARRAY // ALGORITHM_VISUALIZER</title>
+    
+    <!-- Preconnect & Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Neon-Noir Palette */
+            --bg-dark: #050505;
+            --bg-secondary: #0a0b10;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --neon-primary: #00f3ff;
+            --neon-secondary: #ff00ff;
+            --neon-accent: #a855f7;
+            --neon-success: #1cc88a;
+            --neon-danger: #e74a3b;
+            --glow-primary: 0 0 5px rgba(0, 243, 255, 0.3), 0 0 15px rgba(0, 243, 255, 0.1);
+            --glow-secondary: 0 0 5px rgba(255, 0, 255, 0.3), 0 0 15px rgba(255, 0, 255, 0.1);
+            --glow-success: 0 0 5px rgba(28, 200, 138, 0.3), 0 0 15px rgba(28, 200, 138, 0.2);
+            --font-heading: 'Rajdhani', sans-serif;
+            --font-mono: 'Fira Code', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #fff;
+            font-family: var(--font-heading);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Scanlines Overlay */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 2px;
+            pointer-events: none;
+            z-index: 2000;
+            opacity: 0.3;
+        }
+
+        header {
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+            background: var(--bg-secondary);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            letter-spacing: 0.3em;
+            color: var(--neon-primary);
+            text-shadow: var(--glow-primary);
+            text-transform: uppercase;
+        }
+
+        .l-container {
+            flex: 1;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Visualization Area */
+        .c-visualizer {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 243, 255, 0.1);
+            height: 400px;
+            display: flex;
+            align-items: center; /* Center for zero axis */
+            justify-content: center;
+            gap: 4px;
+            padding: 20px;
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        .zero-axis {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(0, 243, 255, 0.3);
+            z-index: 1;
+        }
+
+        .bar-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            width: 100%;
+            position: relative;
+        }
+
+        .bar-positive {
+            position: absolute;
+            bottom: 50%;
+            width: 100%;
+            background: linear-gradient(to top, var(--neon-primary), transparent);
+            box-shadow: var(--glow-primary);
+            transition: height 0.2s, background 0.2s, box-shadow 0.2s, opacity 0.2s, transform 0.2s;
+        }
+
+        .bar-negative {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            background: linear-gradient(to bottom, var(--neon-danger), transparent);
+            box-shadow: 0 0 10px var(--neon-danger);
+            transition: height 0.2s, background 0.2s, box-shadow 0.2s, opacity 0.2s, transform 0.2s;
+        }
+
+        /* States */
+        .is-dimmed {
+            opacity: 0.2;
+            box-shadow: none;
+            background: linear-gradient(to top, #444, transparent);
+        }
+        .bar-negative.is-dimmed {
+            background: linear-gradient(to bottom, #444, transparent);
+        }
+
+        .is-current {
+            background: #fff;
+            box-shadow: 0 0 15px #fff;
+            transform: scale(1.05);
+            z-index: 10;
+        }
+
+        .is-window {
+            /* Active window for the running sum */
+            opacity: 0.8;
+            transform: scale(1.02);
+        }
+
+        .is-best {
+            background: linear-gradient(to top, var(--neon-success), transparent);
+            box-shadow: var(--glow-success);
+            transform: scale(1.1);
+            z-index: 10;
+            opacity: 1;
+        }
+        .bar-negative.is-best {
+            background: linear-gradient(to bottom, var(--neon-success), transparent);
+            box-shadow: var(--glow-success);
+        }
+
+        /* Controls */
+        .c-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .c-target-display {
+            width: 100%;
+            text-align: center;
+            font-size: 1.5rem;
+            color: var(--neon-secondary);
+            text-shadow: var(--glow-secondary);
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+            font-family: var(--font-mono);
+        }
+
+        .c-btn {
+            background: transparent;
+            border: 1px solid var(--neon-primary);
+            color: var(--neon-primary);
+            padding: 0.8rem 1.5rem;
+            font-family: var(--font-heading);
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .c-btn:hover:not(:disabled) {
+            background: rgba(0, 243, 255, 0.1);
+            box-shadow: var(--glow-primary);
+            transform: scale(1.05);
+        }
+
+        .c-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            border-color: #555;
+            color: #555;
+        }
+
+        /* Code Display */
+        .c-code-window {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 0, 255, 0.2);
+            padding: 1.5rem;
+            border-radius: 4px;
+        }
+
+        .c-code-window__header {
+            font-size: 0.8rem;
+            color: var(--neon-secondary);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            font-family: var(--font-mono);
+            border-bottom: 1px solid rgba(255, 0, 255, 0.1);
+            padding-bottom: 0.5rem;
+        }
+
+        pre {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #ccc;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        .token--keyword { color: var(--neon-secondary); }
+        .token--func { color: var(--neon-primary); }
+        .token--comment { color: #666; font-style: italic; }
+
+        footer {
+            padding: 2rem;
+            text-align: center;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>MAXSUBARRAY_ENGINE // KADANE</h1>
+    </header>
+
+    <div class="l-container">
+        <div class="c-visualizer" id="js-visualizer">
+            <div class="zero-axis"></div>
+            <!-- Bars generated by JS -->
+        </div>
+
+        <div class="c-controls">
+            <div class="c-target-display" id="js-target-display">MAX SUM: -- | CURRENT SUM: --</div>
+            <button class="c-btn" id="js-shuffle-btn">GENERATE_ARRAY</button>
+            <button class="c-btn" id="js-search-btn">RUN_KADANES_ALGORITHM</button>
+        </div>
+
+        <div class="c-code-window">
+            <div class="c-code-window__header">SOURCE_CODE // MAXSUBARRAY.JS</div>
+            <pre><code><span class="token--keyword">async function</span> <span class="token--func">maxSubArray</span>(nums) {
+    <span class="token--keyword">let</span> maxSum = nums[0];
+    <span class="token--keyword">let</span> currentSum = nums[0];
+
+    <span class="token--keyword">for</span> (<span class="token--keyword">let</span> i = 1; i < nums.length; i++) {
+        <span class="token--comment">// If adding nums[i] to currentSum is less than nums[i] itself, start new subarray</span>
+        currentSum = Math.max(nums[i], currentSum + nums[i]);
+        maxSum = Math.max(maxSum, currentSum);
+    }
+    
+    <span class="token--keyword">return</span> maxSum;
+}</code></pre>
+        </div>
+    </div>
+
+    <footer>
+        [STATUS: SYSTEM_READY] // BY_NEON_ARCHITECT
+    </footer>
+
+    <script>
+        (function() {
+            'use strict';
+
+            const ARRAY_SIZE = 30; // Slightly smaller to give wide bars
+            const ANIMATION_SPEED = 200;
+            let data = [];
+            let isRunning = false;
+
+            const DOM = {
+                visualizer: document.getElementById('js-visualizer'),
+                shuffleBtn: document.getElementById('js-shuffle-btn'),
+                searchBtn: document.getElementById('js-search-btn'),
+                targetDisplay: document.getElementById('js-target-display')
+            };
+
+            function init() {
+                generateArray();
+                bindEvents();
+            }
+
+            function generateArray() {
+                data = [];
+                // Max Subarray requires negative numbers to make it interesting
+                for (let i = 0; i < ARRAY_SIZE; i++) {
+                    // Generate random values between -40 and 40
+                    data.push(Math.floor(Math.random() * 81) - 40);
+                }
+                
+                DOM.targetDisplay.textContent = `MAX SUM: -- | CURRENT SUM: --`;
+                DOM.targetDisplay.style.color = 'var(--neon-secondary)';
+                renderBars(-1, -1, -1, -1, -1, false);
+            }
+
+            function renderBars(currentIndex = -1, currentStart = -1, currentEnd = -1, bestStart = -1, bestEnd = -1, isDone = false) {
+                // Keep the zero axis
+                DOM.visualizer.innerHTML = '<div class="zero-axis"></div>';
+                
+                const maxAbs = 40; // Max possible absolute value from generator
+
+                data.forEach((val, idx) => {
+                    const col = document.createElement('div');
+                    col.className = 'bar-col';
+                    
+                    const bar = document.createElement('div');
+                    
+                    // Cap at 45% so it leaves a 5% margin at top/bottom
+                    let heightPct = Math.min((Math.abs(val) / maxAbs) * 45, 45);
+                    // Give a small minimum height just so 0 isn't totally invisible, though 0 is 0
+                    if (val === 0) heightPct = 1;
+                    
+                    if (val >= 0) {
+                        bar.className = 'bar-positive';
+                        bar.style.height = `${heightPct}%`;
+                    } else {
+                        bar.className = 'bar-negative';
+                        bar.style.height = `${heightPct}%`;
+                    }
+                    
+                    if (isDone) {
+                        if (idx >= bestStart && idx <= bestEnd) {
+                            bar.classList.add('is-best');
+                        } else {
+                            bar.classList.add('is-dimmed');
+                        }
+                    } else {
+                        if (idx === currentIndex) {
+                            bar.classList.add('is-current');
+                        } else if (idx >= currentStart && idx <= currentEnd) {
+                            bar.classList.add('is-window');
+                        } else {
+                            bar.classList.add('is-dimmed');
+                        }
+                    }
+                    
+                    col.appendChild(bar);
+                    DOM.visualizer.appendChild(col);
+                });
+            }
+
+            function bindEvents() {
+                DOM.shuffleBtn.addEventListener('click', () => {
+                    if (isRunning) return;
+                    generateArray();
+                });
+
+                DOM.searchBtn.addEventListener('click', async () => {
+                    if (isRunning) return;
+                    isRunning = true;
+                    toggleControls(true);
+                    
+                    DOM.targetDisplay.style.color = 'var(--neon-secondary)';
+                    await kadaneAlgorithm();
+                    
+                    isRunning = false;
+                    toggleControls(false);
+                });
+            }
+
+            function toggleControls(disabled) {
+                DOM.shuffleBtn.disabled = disabled;
+                DOM.searchBtn.disabled = disabled;
+            }
+
+            async function kadaneAlgorithm() {
+                let maxSum = data[0];
+                let currentSum = data[0];
+                
+                let currentStart = 0;
+                let currentEnd = 0;
+                let bestStart = 0;
+                let bestEnd = 0;
+
+                DOM.targetDisplay.textContent = `MAX SUM: ${maxSum} | CURRENT SUM: ${currentSum}`;
+                renderBars(0, currentStart, currentEnd, bestStart, bestEnd, false);
+                await sleep(ANIMATION_SPEED);
+
+                for (let i = 1; i < data.length; i++) {
+                    // Math.max(nums[i], currentSum + nums[i])
+                    if (data[i] > currentSum + data[i]) {
+                        // It's more optimal to drop the running sum and start fresh at i
+                        currentSum = data[i];
+                        currentStart = i;
+                        currentEnd = i;
+                    } else {
+                        // The running sum is beneficial, extend it
+                        currentSum = currentSum + data[i];
+                        currentEnd = i;
+                    }
+
+                    if (currentSum > maxSum) {
+                        maxSum = currentSum;
+                        bestStart = currentStart;
+                        bestEnd = currentEnd;
+                    }
+
+                    DOM.targetDisplay.textContent = `MAX SUM: ${maxSum} | CURRENT SUM: ${currentSum}`;
+                    renderBars(i, currentStart, currentEnd, bestStart, bestEnd, false);
+                    await sleep(ANIMATION_SPEED);
+                }
+                
+                // Done
+                renderBars(-1, -1, -1, bestStart, bestEnd, true);
+                DOM.targetDisplay.textContent = `OPTIMAL SUBARRAY ACQUIRED | MAX SUM = ${maxSum}`;
+                DOM.targetDisplay.style.color = 'var(--neon-success)';
+                return maxSum;
+            }
+
+            function sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            init();
+        })();
+    </script>
+</body>
+</html>

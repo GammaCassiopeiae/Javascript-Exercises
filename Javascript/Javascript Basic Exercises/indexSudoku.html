@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Neon-Noir Sudoku - 10 Cyberpunk Puzzles">
+    <title>NEON SUDOKU // V1.0</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Neon-Noir Palette (Manifesto v3.0) */
+            --bg-dark: #050505;
+            --bg-secondary: #0a0b10;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --neon-primary: #00f3ff;
+            --neon-secondary: #ff00ff;
+            --neon-danger: #e74a3b;
+            --glow-primary: 0 0 5px rgba(0, 243, 255, 0.3), 0 0 15px rgba(0, 243, 255, 0.1);
+            --glow-secondary: 0 0 5px rgba(255, 0, 255, 0.3), 0 0 15px rgba(255, 0, 255, 0.1);
+            --font-heading: 'Rajdhani', sans-serif;
+            --font-mono: 'Fira Code', monospace;
+            --z-sticky: 100;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #fff;
+            font-family: var(--font-heading);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Scanlines Effect (Directive 62) */
+        body::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2000;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        header {
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+        }
+
+        h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--neon-primary);
+            text-shadow: var(--glow-primary);
+        }
+
+        .l-main-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            padding: 2rem;
+            justify-content: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            flex-grow: 1;
+        }
+
+        /* Level Select Sidebar */
+        aside {
+            flex: 1 1 200px;
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 243, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 4px;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            color: var(--neon-secondary);
+            text-shadow: var(--glow-secondary);
+        }
+
+        .level-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+        }
+
+        .btn-level {
+            background: transparent;
+            border: 1px solid rgba(255, 0, 255, 0.3);
+            color: #fff;
+            padding: 0.8rem;
+            cursor: pointer;
+            font-family: var(--font-mono);
+            transition: all 0.3s ease;
+        }
+
+        .btn-level:hover, .btn-level.is-active {
+            background: rgba(255, 0, 255, 0.1);
+            border-color: var(--neon-secondary);
+            box-shadow: var(--glow-secondary);
+        }
+
+        /* Sudoku Board */
+        main {
+            flex: 0 0 auto;
+            display: grid;
+            grid-template-columns: repeat(9, clamp(35px, 8vw, 60px));
+            grid-template-rows: repeat(9, clamp(35px, 8vw, 60px));
+            border: 2px solid var(--neon-primary);
+            box-shadow: var(--glow-primary);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .cell {
+            border: 0.5px solid rgba(0, 243, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s ease;
+        }
+
+        .cell.is-given {
+            color: var(--neon-primary);
+            font-weight: 700;
+        }
+
+        .cell.is-input {
+            color: #fff;
+        }
+
+        .cell.is-selected {
+            background: rgba(0, 243, 255, 0.2);
+            box-shadow: inset 0 0 10px rgba(0, 243, 255, 0.3);
+        }
+
+        .cell.is-related {
+            background: rgba(0, 243, 255, 0.05);
+        }
+
+        .cell.has-error {
+            color: var(--neon-danger);
+            text-shadow: 0 0 5px var(--neon-danger);
+            background: rgba(231, 74, 59, 0.1);
+        }
+
+        /* Thicker borders for 3x3 grids */
+        .cell:nth-child(3n) { border-right-width: 2px; border-right-color: rgba(0, 243, 255, 0.5); }
+        .cell:nth-child(9n) { border-right-width: 0; }
+        .cell:nth-child(n+19):nth-child(-n+27),
+        .cell:nth-child(n+46):nth-child(-n+54) { border-bottom-width: 2px; border-bottom-color: rgba(0, 243, 255, 0.5); }
+
+        /* Keypad */
+        .keypad {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-key {
+            width: clamp(40px, 10vw, 50px);
+            height: clamp(40px, 10vw, 50px);
+            background: var(--bg-card);
+            border: 1px solid var(--neon-primary);
+            color: var(--neon-primary);
+            font-family: var(--font-mono);
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .btn-key:hover {
+            background: var(--neon-primary);
+            color: var(--bg-dark);
+            box-shadow: var(--glow-primary);
+        }
+
+        .btn-key--clear {
+            width: auto;
+            padding: 0 1rem;
+            border-color: var(--neon-secondary);
+            color: var(--neon-secondary);
+        }
+
+        .btn-key--clear:hover {
+            background: var(--neon-secondary);
+            color: #fff;
+            box-shadow: var(--glow-secondary);
+        }
+
+        footer {
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .victory-msg {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid var(--neon-primary);
+            padding: 3rem;
+            text-align: center;
+            z-index: 3000;
+            display: none;
+            box-shadow: 0 0 50px rgba(0, 243, 255, 0.5);
+        }
+
+        .victory-msg.is-visible { display: block; animation: glitch 0.5s infinite; }
+
+        @keyframes glitch {
+            0% { transform: translate(-50%, -50%) skew(0deg); }
+            20% { transform: translate(-52%, -48%) skew(2deg); filter: hue-rotate(90deg); }
+            40% { transform: translate(-48%, -52%) skew(-2deg); }
+            60% { transform: translate(-51%, -49%) skew(1deg); filter: hue-rotate(-90deg); }
+            100% { transform: translate(-50%, -50%) skew(0deg); }
+        }
+
+        @media (max-width: 600px) {
+            .l-main-container { padding: 1rem; }
+            aside { width: 100%; order: 2; }
+            main { order: 1; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>NEON SUDOKU</h1>
+    </header>
+
+    <div class="l-main-container">
+        <aside>
+            <h2>ACCESS_LEVEL</h2>
+            <div class="level-grid" id="level-grid">
+                <!-- Buttons generated by JS -->
+            </div>
+        </aside>
+
+        <main id="board">
+            <!-- 81 cells generated by JS -->
+        </main>
+    </div>
+
+    <div class="keypad">
+        <button class="btn-key" data-val="1">1</button>
+        <button class="btn-key" data-val="2">2</button>
+        <button class="btn-key" data-val="3">3</button>
+        <button class="btn-key" data-val="4">4</button>
+        <button class="btn-key" data-val="5">5</button>
+        <button class="btn-key" data-val="6">6</button>
+        <button class="btn-key" data-val="7">7</button>
+        <button class="btn-key" data-val="8">8</button>
+        <button class="btn-key" data-val="9">9</button>
+        <button class="btn-key btn-key--clear" data-val="0">CLEAR</button>
+    </div>
+
+    <footer>
+        <button class="btn-level btn-key--clear" onclick="resetGame()">SYSTEM_REBOOT</button>
+    </footer>
+
+    <div class="victory-msg" id="victory">
+        <h2 style="font-size: 3rem;">SYSTEM_BREACHED</h2>
+        <p>CONGRATULATIONS_USER</p>
+        <button class="btn-level" style="margin-top: 2rem;" onclick="closeVictory()">CONTINUE_MISSION</button>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            const PUZZLES = [
+                "53..7....6..195....98....6.8...6...34..8.3..17...2...6.6....28....419..5....8..79", // Level 1 (Easy)
+                "000000000000000308500100000000001004030602070000007010000030005080004000010007000", // Level 2
+                "7.8...3...6.7..2...3...4...2..9..1.6...6.1...1.5..7..4...2...1...3..8.5...2...6.8", // Level 3
+                "0002607.168..7..9.19...45..82.1...4...46.29...5...3.28..93...74.4..5..367.3018000", // Level 4
+                "1..489..2...7.3.5.38.5.1.96...1.7.3.4.5...9.1.3.9.2...26.9.5.84.5.8.6...7..342..5", // Level 5
+                "4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......", // Level 6
+                "52...6.........7.13...........4..8..6......5...........1.7.2...........2..3.......", // Level 7
+                "6..8..1..1..5..6..5..1..2..2..4..3..9..7..5..3..1..4..8..2..7..4..3..9..1..6..8..", // Level 8
+                ".....1.2.3...4.5..........6.7...2.......3...9.5..........8.1...9.4...7..........", // Level 9
+                ".......1.4.........2...........5.4.7..8...3....1.9....3..4..2...5.1........8.6...", // Level 10 (Hard)
+                "003020600900305001001806400008102900700000008006708200002609500800203009005010300", // Level 11
+                "200080300060070084030500209000105408000000000402706000301007040720040060004010003", // Level 12
+                "000000907000420180000705026100904000050000040000507009920806000034059000507000000", // Level 13
+                "030500000000006000100000040000000020400030005080000000020000009000100000000002030", // Level 14
+                "050010040107000602000905000208030501040070020901080406000401000304000709020060010", // Level 15
+                "000000000000003085001000000000001004030602070000007010000030005080004000010007000", // Level 16
+                "004300209005009001070060043006002087190007400050083000600000105003508690042910300", // Level 17
+                "000000000000000308500100000000001004030602070000007010000030005080004000010007000", // Level 18
+                "020030090000907000900208005004060100007000300003040200100502003000704000030090010", // Level 19
+                "000000000000000308500100000000001004030602070000007010000030005080004000010007000", // Level 20
+                "000000010400000000020000000000050407..8...3....1.9....3..4..2...5.1........8.6...", // Level 21
+                "003010602000305001001806400008102900700000008006708200002609500800203009005010300", // Level 22
+                "200080300060070084030500209000105408000000000402706000301007040720040060004010003", // Level 23
+                "000000907000420180000705026100904000050000040000507009920806000034059000507000000", // Level 24
+                "030500000000006000100000040000000020400030005080000000020000009000100000000002030", // Level 25
+                "050010040107000602000905000208030501040070020901080406000401000304000709020060010", // Level 26
+                "000000000000003085001000000000001004030602070000007010000030005080004000010007000", // Level 27
+                "004300209005009001070060043006002087190007400050083000600000105003508690042910300", // Level 28
+                "020030090000907000900208005004060100007000300003040200100502003000704000030090010", // Level 29
+                "000000000000000308500100000000001004030602070000007010000030005080004000010007000", // Level 30
+                "4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......", // Level 31
+                "52...6.........7.13...........4..8..6......5...........1.7.2...........2..3.......", // Level 32
+                "6..8..1..1..5..6..5..1..2..2..4..3..9..7..5..3..1..4..8..2..7..4..3..9..1..6..8..", // Level 33
+                ".....1.2.3...4.5..........6.7...2.......3...9.5..........8.1...9.4...7..........", // Level 34
+                ".......1.4.........2...........5.4.7..8...3....1.9....3..4..2...5.1........8.6...", // Level 35
+                "53..7....6..195....98....6.8...6...34..8.3..17...2...6.6....28....419..5....8..79", // Level 36
+                "000000000000000308500100000000001004030602070000007010000030005080004000010007000", // Level 37
+                "7.8...3...6.7..2...3...4...2..9..1.6...6.1...1.5..7..4...2...1...3..8.5...2...6.8", // Level 38
+                "0002607.168..7..9.19...45..82.1...4...46.29...5...3.28..93...74.4..5..367.3018000", // Level 39
+                "1..489..2...7.3.5.38.5.1.96...1.7.3.4.5...9.1.3.9.2...26.9.5.84.5.8.6...7..342..5"  // Level 40
+            ];
+
+            let currentLevel = 0;
+            let selectedIndex = -1;
+            let gameState = [];
+
+            const DOM = {
+                board: document.getElementById('board'),
+                levelGrid: document.getElementById('level-grid'),
+                victory: document.getElementById('victory')
+            };
+
+            function init() {
+                createLevelButtons();
+                loadLevel(0);
+                bindEvents();
+            }
+
+            function createLevelButtons() {
+                PUZZLES.forEach((_, i) => {
+                    const btn = document.createElement('button');
+                    btn.className = `btn-level ${i === 0 ? 'is-active' : ''}`;
+                    btn.textContent = `L-${String(i + 1).padStart(2, '0')}`;
+                    btn.onclick = () => loadLevel(i);
+                    DOM.levelGrid.appendChild(btn);
+                });
+            }
+
+            function loadLevel(index) {
+                currentLevel = index;
+                const puzzleStr = PUZZLES[index];
+                gameState = puzzleStr.split('').map(char => {
+                    const val = (char === '.' || char === '0') ? 0 : parseInt(char);
+                    return { val, isGiven: val !== 0, error: false };
+                });
+                
+                // Update button UI
+                Array.from(DOM.levelGrid.children).forEach((btn, i) => {
+                    btn.classList.toggle('is-active', i === index);
+                });
+
+                renderBoard();
+                selectedIndex = -1;
+                DOM.victory.classList.remove('is-visible');
+
+                // Auto-scroll to board (requested feature)
+                DOM.board.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            function renderBoard() {
+                DOM.board.innerHTML = '';
+                gameState.forEach((cell, i) => {
+                    const div = document.createElement('div');
+                    div.className = 'cell';
+                    if (cell.isGiven) div.classList.add('is-given');
+                    else div.classList.add('is-input');
+                    
+                    div.textContent = cell.val === 0 ? '' : cell.val;
+                    div.dataset.index = i;
+                    div.onclick = () => selectCell(i);
+                    DOM.board.appendChild(div);
+                });
+                validateBoard();
+            }
+
+            function selectCell(index) {
+                selectedIndex = index;
+                const cells = DOM.board.children;
+                const r = Math.floor(index / 9);
+                const c = index % 9;
+
+                Array.from(cells).forEach((cell, i) => {
+                    const ir = Math.floor(i / 9);
+                    const ic = i % 9;
+                    const ib = Math.floor(ir / 3) * 3 + Math.floor(ic / 3);
+                    const selB = Math.floor(r / 3) * 3 + Math.floor(c / 3);
+
+                    cell.classList.toggle('is-selected', i === index);
+                    cell.classList.toggle('is-related', (ir === r || ic === c || ib === selB) && i !== index);
+                });
+            }
+
+            function handleInput(val) {
+                if (selectedIndex === -1 || gameState[selectedIndex].isGiven) return;
+                
+                gameState[selectedIndex].val = val;
+                const cellEl = DOM.board.children[selectedIndex];
+                cellEl.textContent = val === 0 ? '' : val;
+                
+                validateBoard();
+                checkVictory();
+            }
+
+            function validateBoard() {
+                // Reset errors
+                gameState.forEach(c => c.error = false);
+
+                for (let i = 0; i < 81; i++) {
+                    if (gameState[i].val === 0) continue;
+                    
+                    const r = Math.floor(i / 9);
+                    const c = i % 9;
+                    const b = Math.floor(r / 3) * 3 + Math.floor(c / 3);
+
+                    for (let j = 0; j < 81; j++) {
+                        if (i === j || gameState[j].val === 0) continue;
+                        
+                        const jr = Math.floor(j / 9);
+                        const jc = j % 9;
+                        const jb = Math.floor(jr / 3) * 3 + Math.floor(jc / 3);
+
+                        if (gameState[i].val === gameState[j].val) {
+                            if (r === jr || c === jc || b === jb) {
+                                gameState[i].error = true;
+                                gameState[j].error = true;
+                            }
+                        }
+                    }
+                }
+
+                Array.from(DOM.board.children).forEach((el, i) => {
+                    el.classList.toggle('has-error', gameState[i].error);
+                });
+            }
+
+            function checkVictory() {
+                const isComplete = gameState.every(c => c.val !== 0 && !c.error);
+                if (isComplete) {
+                    DOM.victory.classList.add('is-visible');
+                }
+            }
+
+            function bindEvents() {
+                // Keypad delegation (Fixing CLEAR button and improving reliability)
+                const keypad = document.querySelector('.keypad');
+                keypad.addEventListener('click', (e) => {
+                    const btn = e.target.closest('.btn-key');
+                    if (btn && btn.dataset.val !== undefined) {
+                        handleInput(parseInt(btn.dataset.val));
+                    }
+                });
+
+                // Keyboard
+                window.addEventListener('keydown', (e) => {
+                    if (e.key >= '1' && e.key <= '9') {
+                        handleInput(parseInt(e.key));
+                    } else if (e.key === 'Backspace' || e.key === 'Delete' || e.key === '0') {
+                        handleInput(0);
+                    } else if (e.key.startsWith('Arrow')) {
+                        moveSelection(e.key);
+                    }
+                });
+            }
+
+            function moveSelection(key) {
+                if (selectedIndex === -1) {
+                    selectCell(0);
+                    return;
+                }
+                let r = Math.floor(selectedIndex / 9);
+                let c = selectedIndex % 9;
+                if (key === 'ArrowUp') r = (r + 8) % 9;
+                if (key === 'ArrowDown') r = (r + 1) % 9;
+                if (key === 'ArrowLeft') c = (c + 8) % 9;
+                if (key === 'ArrowRight') c = (c + 1) % 9;
+                selectCell(r * 9 + c);
+            }
+
+            window.resetGame = () => loadLevel(currentLevel);
+            window.closeVictory = () => DOM.victory.classList.remove('is-visible');
+
+            init();
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Neon-Noir Sudoku - 40 Variations across 4 Cyber-Levels">
+    <title>NEON-NOIR SUDOKU</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* Background Colors */
+            --bg-dark: #050505;
+            --bg-secondary: #0a0b10;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            
+            /* Neon Accent Colors */
+            --neon-primary: #00f3ff;      /* Cyber Cyan */
+            --neon-secondary: #ff00ff;    /* Electric Magenta */
+            --neon-danger: #e74a3b;
+            --neon-success: #1cc88a;
+            
+            /* Glow Effects */
+            --glow-primary: 0 0 5px rgba(0, 243, 255, 0.3), 0 0 20px rgba(0, 243, 255, 0.1);
+            --glow-secondary: 0 0 5px rgba(255, 0, 255, 0.3), 0 0 20px rgba(255, 0, 255, 0.1);
+            --text-glow-primary: 0 0 5px var(--neon-primary);
+            --text-glow-secondary: 0 0 5px var(--neon-secondary);
+
+            /* Typography */
+            --font-heading: 'Rajdhani', system-ui, sans-serif;
+            --font-mono: 'Fira Code', monospace;
+            
+            /* Sizes */
+            --board-size: clamp(280px, 90vw, 500px);
+            --cell-size: calc(var(--board-size) / 9);
+        }
+
+        /* Reset & Base */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #fff;
+            font-family: var(--font-heading);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Layout */
+        .l-header {
+            padding: 1.5rem 1rem;
+            text-align: center;
+        }
+
+        .l-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem;
+        }
+
+        .l-footer {
+            padding: 1.5rem 1rem;
+            text-align: center;
+        }
+
+        /* Typography */
+        h1 {
+            font-size: clamp(1.8rem, 6vw, 3rem);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--neon-primary);
+            text-shadow: var(--text-glow-primary);
+            margin-bottom: 0.2rem;
+        }
+
+        /* Level Selector */
+        .c-levels {
+            display: flex;
+            gap: 0.5rem;
+            margin: 1rem 0;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .c-level-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            color: rgba(0, 243, 255, 0.7);
+            padding: 0.4rem 0.8rem;
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .c-level-btn.is-active {
+            background: rgba(0, 243, 255, 0.15);
+            border-color: var(--neon-primary);
+            color: var(--neon-primary);
+            box-shadow: var(--glow-primary);
+            text-shadow: var(--text-glow-primary);
+        }
+
+        .c-mission-selector {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-family: var(--font-mono);
+            color: var(--neon-secondary);
+            text-shadow: var(--text-glow-secondary);
+        }
+
+        /* Sudoku Board */
+        .c-sudoku {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            grid-template-rows: repeat(9, 1fr);
+            width: var(--board-size);
+            height: var(--board-size);
+            background: var(--bg-card);
+            border: 2px solid rgba(0, 243, 255, 0.2);
+            box-shadow: var(--glow-primary);
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        .c-sudoku__cell {
+            width: 100%;
+            height: 100%;
+            border: 0.5px solid rgba(0, 243, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+            font-size: calc(var(--cell-size) * 0.5);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            user-select: none;
+        }
+
+        /* Subgrid borders */
+        .c-sudoku__cell:nth-child(3n) { border-right: 2px solid rgba(0, 243, 255, 0.3); }
+        .c-sudoku__cell:nth-child(9n) { border-right: none; }
+        .c-sudoku__cell:nth-child(n+19):nth-child(-n+27),
+        .c-sudoku__cell:nth-child(n+46):nth-child(-n+54) {
+            border-bottom: 2px solid rgba(0, 243, 255, 0.3);
+        }
+
+        .c-sudoku__cell:hover {
+            background: rgba(0, 243, 255, 0.1);
+        }
+
+        .c-sudoku__cell.is-active {
+            background: rgba(0, 243, 255, 0.2);
+            box-shadow: inset 0 0 10px rgba(0, 243, 255, 0.3);
+            color: var(--neon-primary);
+            text-shadow: var(--text-glow-primary);
+        }
+
+        .c-sudoku__cell.is-fixed {
+            color: rgba(255, 255, 255, 0.6);
+            cursor: default;
+        }
+
+        .c-sudoku__cell.has-error {
+            color: var(--neon-danger) !important;
+            text-shadow: 0 0 5px var(--neon-danger) !important;
+            background: rgba(231, 74, 59, 0.2) !important;
+            z-index: 2;
+        }
+
+        /* Diagonal highlighting */
+        .c-sudoku__cell.is-diagonal {
+            background: rgba(255, 0, 255, 0.05);
+        }
+        .c-sudoku__cell.is-diagonal:hover {
+            background: rgba(255, 0, 255, 0.1);
+        }
+
+        /* Controls */
+        .c-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .c-btn {
+            background: transparent;
+            border: 1px solid var(--neon-primary);
+            color: var(--neon-primary);
+            padding: 0.6rem 1.2rem;
+            font-family: var(--font-heading);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            font-size: 0.9rem;
+        }
+
+        .c-btn:hover {
+            box-shadow: var(--glow-primary);
+            text-shadow: var(--text-glow-primary);
+            background: rgba(0, 243, 255, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .c-btn--secondary {
+            border-color: var(--neon-secondary);
+            color: var(--neon-secondary);
+        }
+
+        .c-btn--secondary:hover {
+            box-shadow: var(--glow-secondary);
+            text-shadow: var(--text-glow-secondary);
+        }
+
+        .c-btn--small {
+            padding: 0.3rem 0.6rem;
+            font-size: 0.75rem;
+            min-width: 40px;
+        }
+
+        /* Number Pad */
+        .c-numpad {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+            width: var(--board-size);
+        }
+
+        .c-numpad__btn {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            color: var(--neon-primary);
+            padding: 0.8rem;
+            font-family: var(--font-mono);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.3rem;
+        }
+
+        .c-numpad__btn:hover {
+            background: rgba(0, 243, 255, 0.1);
+            box-shadow: var(--glow-primary);
+        }
+
+        /* Rules Overlay */
+        .c-rules-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 5, 5, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(8px);
+        }
+        .c-rules-overlay.is-visible { display: flex; }
+        .c-rules-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--neon-primary);
+            box-shadow: var(--glow-primary);
+            padding: 2rem;
+            max-width: 480px;
+            width: 95%;
+        }
+        .c-rules-card h2 {
+            color: var(--neon-primary);
+            text-shadow: var(--text-glow-primary);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .c-rules-card ul { list-style: none; }
+        .c-rules-card li {
+            margin-bottom: 1.2rem;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+        }
+        .c-rules-card strong { 
+            color: var(--neon-secondary); 
+            display: block; 
+            margin-bottom: 0.3rem; 
+            text-shadow: var(--text-glow-secondary);
+            text-transform: uppercase;
+        }
+
+        /* Utilities */
+        .u-skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--neon-primary);
+            color: var(--bg-dark);
+            padding: 8px;
+            z-index: 100;
+        }
+        .u-skip-link:focus { top: 0; }
+
+        @media (max-width: 400px) {
+            .c-numpad {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .c-levels {
+                gap: 0.3rem;
+            }
+            .c-level-btn {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body class="l-body">
+    <a href="#main" class="u-skip-link">Skip to content</a>
+
+    <header class="l-header">
+        <h1 id="title">NEON-NOIR SUDOKU</h1>
+        
+        <div class="c-levels" id="level-selector">
+            <button class="c-level-btn is-active" data-level="1">LEVEL 1</button>
+            <button class="c-level-btn" data-level="2">LEVEL 2</button>
+            <button class="c-level-btn" data-level="3">LEVEL 3</button>
+            <button class="c-level-btn" data-level="4">LEVEL 4</button>
+            <button class="c-level-btn" data-level="5">LEVEL 5</button>
+            <button class="c-level-btn" data-level="6">LEVEL 6</button>
+        </div>
+        <div class="c-mission-selector">
+            <button class="c-btn c-btn--small c-btn--secondary" id="btn-prev-mission"><i class="fas fa-chevron-left"></i></button>
+            <span id="mission-display">MISSION 01 / 30</span>
+            <button class="c-btn c-btn--small c-btn--secondary" id="btn-next-mission"><i class="fas fa-chevron-right"></i></button>
+        </div>
+    </header>
+
+    <main id="main" class="l-main">
+        <div class="c-sudoku" id="sudoku-board" role="grid" aria-label="Sudoku Board">
+            <!-- Cells generated by JS -->
+        </div>
+
+        <div class="c-numpad" id="numpad">
+            <button class="c-numpad__btn" data-val="1">1</button>
+            <button class="c-numpad__btn" data-val="2">2</button>
+            <button class="c-numpad__btn" data-val="3">3</button>
+            <button class="c-numpad__btn" data-val="4">4</button>
+            <button class="c-numpad__btn" data-val="5">5</button>
+            <button class="c-numpad__btn" data-val="6">6</button>
+            <button class="c-numpad__btn" data-val="7">7</button>
+            <button class="c-numpad__btn" data-val="8">8</button>
+            <button class="c-numpad__btn" data-val="9">9</button>
+            <button class="c-numpad__btn" data-val="0" title="Clear Cell"><i class="fas fa-eraser"></i></button>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="c-controls">
+            <button class="c-btn" id="btn-new">Nova igra</button>
+            <button class="c-btn c-btn--secondary" id="btn-rules">PRAVILA</button>
+            <button class="c-btn" id="btn-clear" style="border-color: var(--neon-danger); color: var(--neon-danger);">Resetiraj</button>
+        </div>
+    </footer>
+
+    <div class="c-rules-overlay" id="rules-overlay">
+        <div class="c-rules-card">
+            <h2>NAVODILA</h2>
+            <ul>
+                <li><strong>Vsaka vrstica mora vsebovati številke od 1–9:</strong> Nobena številka se ne sme ponoviti v nobeni od devetih vodoravnih vrstic.</li>
+                <li><strong>Vsak stolpec mora vsebovati številke od 1–9:</strong> Nobena številka se ne sme ponoviti v nobenem od devetih navpičnih stolpcev.</li>
+                <li><strong>Vsak blok 3 × 3 mora vsebovati številke od 1–9:</strong> Mreža je razdeljena na devet manjših kvadratov velikosti 3 × 3. Vsak izmed njih mora vsebovati vsako številko natanko enkrat.</li>
+                <li><strong>Glavni diagonali morata vsebovati številke od 1–9:</strong> Obe diagonalni črti (od zgoraj levo do spodaj desno in od zgoraj desno do spodaj levo) morata vsebovati edinstvene številke od 1 do 9.</li>
+            </ul>
+            <div style="text-align: center; margin-top: 1.5rem;">
+                <button class="c-btn" id="btn-close-rules">RAZUMEM</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            const DIFFICULTIES = {
+                1: { name: 'EASY', removed: 30 },
+                2: { name: 'MEDIUM', removed: 42 },
+                3: { name: 'HARD', removed: 52 },
+                4: { name: 'EXPERT', removed: 60 },
+                5: { name: 'MASTER', removed: 62 },
+                6: { name: 'INSANE', removed: 64 }
+            };
+
+            const DOM = {
+                board: document.getElementById('sudoku-board'),
+                numpad: document.getElementById('numpad'),
+                btnNew: document.getElementById('btn-new'),
+                btnCheck: document.getElementById('btn-check'),
+                btnClear: document.getElementById('btn-clear'),
+                levelSelector: document.getElementById('level-selector'),
+                missionDisplay: document.getElementById('mission-display'),
+                btnPrev: document.getElementById('btn-prev-mission'),
+                btnNext: document.getElementById('btn-next-mission'),
+                btnRules: document.getElementById('btn-rules'),
+                rulesOverlay: document.getElementById('rules-overlay'),
+                btnCloseRules: document.getElementById('btn-close-rules')
+            };
+
+            let state = {
+                level: 1,
+                mission: 1,
+                initial: [],
+                current: [],
+                solution: [],
+                activeIndex: null
+            };
+
+            // Seeded Random for consistent 40 variations
+            function createRNG(seed) {
+                let s = seed;
+                return function() {
+                    s = (s * 9301 + 49297) % 233280;
+                    return s / 233280;
+                };
+            }
+
+            // Sudoku Logic
+            const Logic = {
+                generate(level, mission) {
+                    const seed = (level * 100) + mission;
+                    const rng = createRNG(seed);
+                    
+                    const board = Array(81).fill(0);
+                    this.fillBoard(board, rng);
+                    state.solution = [...board];
+                    
+                    const puzzle = [...board];
+                    let attempts = DIFFICULTIES[level].removed;
+                    
+                    const indices = Array.from({length: 81}, (_, i) => i);
+                    for (let i = indices.length - 1; i > 0; i--) {
+                        const j = Math.floor(rng() * (i + 1));
+                        [indices[i], indices[j]] = [indices[j], indices[i]];
+                    }
+
+                    for (let i = 0; i < attempts; i++) {
+                        puzzle[indices[i]] = 0;
+                    }
+                    
+                    return puzzle;
+                },
+
+                fillBoard(board, rng) {
+                    for (let i = 0; i < 81; i++) {
+                        if (board[i] === 0) {
+                            const nums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+                            for (let j = nums.length - 1; j > 0; j--) {
+                                const k = Math.floor(rng() * (j + 1));
+                                [nums[j], nums[k]] = [nums[k], nums[j]];
+                            }
+
+                            for (let num of nums) {
+                                if (this.isValid(board, i, num)) {
+                                    board[i] = num;
+                                    if (this.fillBoard(board, rng)) return true;
+                                    board[i] = 0;
+                                }
+                            }
+                            return false;
+                        }
+                    }
+                    return true;
+                },
+
+                isValid(board, idx, num) {
+                    const r = Math.floor(idx / 9);
+                    const c = idx % 9;
+                    
+                    // Basic Sudoku rules
+                    for (let i = 0; i < 9; i++) {
+                        if (board[r * 9 + i] === num) return false;
+                        if (board[i * 9 + c] === num) return false;
+                    }
+                    const br = Math.floor(r / 3) * 3;
+                    const bc = Math.floor(c / 3) * 3;
+                    for (let i = 0; i < 3; i++) {
+                        for (let j = 0; j < 3; j++) {
+                            if (board[(br + i) * 9 + (bc + j)] === num) return false;
+                        }
+                    }
+
+                    // Diagonal 1: Top-Left to Bottom-Right
+                    if (r === c) {
+                        for (let i = 0; i < 9; i++) {
+                            if (board[i * 9 + i] === num) return false;
+                        }
+                    }
+                    // Diagonal 2: Top-Right to Bottom-Left
+                    if (r + c === 8) {
+                        for (let i = 0; i < 9; i++) {
+                            if (board[i * 9 + (8 - i)] === num) return false;
+                        }
+                    }
+                    
+                    return true;
+                }
+            };
+
+            // UI Actions
+            function initBoard() {
+                if (!DOM.board) return;
+                DOM.board.innerHTML = '';
+                state.initial = Logic.generate(state.level, state.mission);
+                state.current = [...state.initial];
+                if (DOM.missionDisplay) {
+                    DOM.missionDisplay.textContent = `MISSION ${String(state.mission).padStart(2, '0')} / 30`;
+                }
+                
+                for (let i = 0; i < 81; i++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('c-sudoku__cell');
+                    cell.dataset.index = i;
+                    
+                    const r = Math.floor(i / 9);
+                    const c = i % 9;
+                    // Visually mark BOTH diagonals
+                    if (r === c || r + c === 8) {
+                        cell.classList.add('is-diagonal');
+                    }
+
+                    if (state.initial[i] !== 0) {
+                        cell.textContent = state.initial[i];
+                        cell.classList.add('is-fixed');
+                    }
+                    cell.addEventListener('click', () => selectCell(i));
+                    DOM.board.appendChild(cell);
+                }
+                state.activeIndex = null;
+                checkConflicts();
+            }
+
+            function selectCell(idx) {
+                const cells = DOM.board.querySelectorAll('.c-sudoku__cell');
+                cells.forEach(c => c.classList.remove('is-active'));
+                
+                if (state.initial[idx] === 0) {
+                    state.activeIndex = idx;
+                    cells[idx].classList.add('is-active');
+                } else {
+                    state.activeIndex = null;
+                }
+            }
+
+            function updateCellValue(val) {
+                if (state.activeIndex === null) return;
+                
+                const cell = DOM.board.children[state.activeIndex];
+                state.current[state.activeIndex] = val;
+                cell.textContent = val === 0 ? '' : val;
+                checkConflicts();
+            }
+
+            function checkConflicts() {
+                const cells = DOM.board.querySelectorAll('.c-sudoku__cell');
+                cells.forEach(c => c.classList.remove('has-error'));
+                
+                for (let i = 0; i < 81; i++) {
+                    const val = state.current[i];
+                    if (val === 0) continue;
+                    
+                    const r = Math.floor(i / 9);
+                    const c = i % 9;
+                    const br = Math.floor(r / 3) * 3;
+                    const bc = Math.floor(c / 3) * 3;
+                    
+                    let conflict = false;
+                    for (let j = 0; j < 81; j++) {
+                        if (i === j) continue;
+                        if (state.current[j] !== val) continue;
+                        
+                        const r2 = Math.floor(j / 9);
+                        const c2 = j % 9;
+                        const br2 = Math.floor(r2 / 3) * 3;
+                        const bc2 = Math.floor(c2 / 3) * 3;
+                        
+                        // Row/Col/Block
+                        if (r === r2 || c === c2 || (br === br2 && bc === bc2)) {
+                            conflict = true;
+                        }
+                        
+                        // Diagonals
+                        if (!conflict && r === c && r2 === c2) conflict = true;
+                        if (!conflict && (r + c === 8) && (r2 + c2 === 8)) conflict = true;
+
+                        if (conflict) break;
+                    }
+                    
+                    if (conflict) {
+                        cells[i].classList.add('has-error');
+                    }
+                }
+            }
+
+            function checkBoard() {
+                let allCorrect = true;
+                let incomplete = false;
+                
+                for (let i = 0; i < 81; i++) {
+                    if (state.current[i] === 0) {
+                        incomplete = true;
+                        continue;
+                    }
+                    if (state.current[i] !== state.solution[i]) {
+                        allCorrect = false;
+                    }
+                }
+                
+                if (allCorrect && !incomplete) {
+                    alert('SYSTEM CONQUERED. ENCRYPTION BROKEN.');
+                } else if (!allCorrect) {
+                    alert('INTEGRITY BREACH. INCORRECT VALUES DETECTED IN THE MATRIX.');
+                } else {
+                    alert('DECRYPTION IN PROGRESS... FILL ALL NODES.');
+                }
+            }
+
+            function resetBoard() {
+                state.current = [...state.initial];
+                const cells = DOM.board.querySelectorAll('.c-sudoku__cell');
+                cells.forEach((cell, i) => {
+                    cell.classList.remove('has-error', 'is-active');
+                    if (state.initial[i] === 0) {
+                        cell.textContent = '';
+                    }
+                });
+                state.activeIndex = null;
+                checkConflicts();
+            }
+
+            // Listeners with safety checks
+            if (DOM.btnNew) DOM.btnNew.addEventListener('click', () => {
+                state.mission = (state.mission % 30) + 1;
+                initBoard();
+            });
+
+            if (DOM.btnPrev) DOM.btnPrev.addEventListener('click', () => {
+                state.mission = state.mission > 1 ? state.mission - 1 : 30;
+                initBoard();
+            });
+
+            if (DOM.btnNext) DOM.btnNext.addEventListener('click', () => {
+                state.mission = (state.mission % 30) + 1;
+                initBoard();
+            });
+
+            if (DOM.btnRules) DOM.btnRules.addEventListener('click', () => {
+                if (DOM.rulesOverlay) DOM.rulesOverlay.classList.add('is-visible');
+            });
+
+            if (DOM.btnCloseRules) DOM.btnCloseRules.addEventListener('click', () => {
+                if (DOM.rulesOverlay) DOM.rulesOverlay.classList.remove('is-visible');
+            });
+
+            if (DOM.levelSelector) DOM.levelSelector.addEventListener('click', (e) => {
+                const btn = e.target.closest('.c-level-btn');
+                if (btn) {
+                    DOM.levelSelector.querySelectorAll('.c-level-btn').forEach(b => b.classList.remove('is-active'));
+                    btn.classList.add('is-active');
+                    state.level = parseInt(btn.dataset.level);
+                    state.mission = 1;
+                    initBoard();
+                }
+            });
+
+            if (DOM.btnCheck) DOM.btnCheck.addEventListener('click', checkBoard);
+            if (DOM.btnClear) DOM.btnClear.addEventListener('click', resetBoard);
+
+            if (DOM.numpad) DOM.numpad.addEventListener('click', (e) => {
+                const btn = e.target.closest('.c-numpad__btn');
+                if (btn) updateCellValue(parseInt(btn.dataset.val));
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key >= '1' && e.key <= '9') {
+                    updateCellValue(parseInt(e.key));
+                } else if (e.key === 'Backspace' || e.key === 'Delete' || e.key === '0') {
+                    updateCellValue(0);
+                } else if (e.key.startsWith('Arrow')) {
+                    if (state.activeIndex === null) state.activeIndex = 0;
+                    let idx = state.activeIndex;
+                    if (e.key === 'ArrowUp') idx = (idx - 9 + 81) % 81;
+                    if (e.key === 'ArrowDown') idx = (idx + 9) % 81;
+                    if (e.key === 'ArrowLeft') idx = (idx - 1 + 81) % 81;
+                    if (e.key === 'ArrowRight') idx = (idx + 1) % 81;
+                    selectCell(idx);
+                }
+            });
+
+            initBoard();
+
+        })();
+    </script>
+</body>
+</html>

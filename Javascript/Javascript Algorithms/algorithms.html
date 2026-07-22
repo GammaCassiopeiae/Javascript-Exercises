@@ -1,0 +1,1827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="C++ implementations of 20 search and sort algorithms with neon-noir styling">
+    <title>// Algorithm Vault — C++ Search &amp; Sort</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        /* =========================================================
+           Design tokens (neon.md §2.1)
+           ========================================================= */
+        :root {
+            /* Surfaces */
+            --bg-dark:        #050505;
+            --bg-secondary:   #0a0b10;
+            --bg-card:        rgba(255, 255, 255, 0.03);
+            --bg-code:        #0a0a0a;
+
+            /* Neon palette */
+            --neon-lime:      #00ff66;
+            --neon-lime-soft: rgba(0, 255, 102, 0.30);
+            --neon-lime-dim:  rgba(0, 255, 102, 0.55);
+            --neon-cyan:      #00f3ff;
+            --neon-cyan-soft: rgba(0, 243, 255, 0.30);
+
+            /* Glows */
+            --glow-lime: 0 0 5px rgba(0, 255, 102, 0.55), 0 0 20px rgba(0, 255, 102, 0.18);
+            --glow-cyan: 0 0 5px rgba(0, 243, 255, 0.45), 0 0 20px rgba(0, 243, 255, 0.15);
+
+            /* Type */
+            --font-heading: 'Rajdhani', system-ui, sans-serif;
+            --font-mono:    'Fira Code', ui-monospace, monospace;
+            --font-body:    system-ui, -apple-system, sans-serif;
+
+            --text-sm:   clamp(0.80rem, 0.75rem + 0.25vw, 0.875rem);
+            --text-base: clamp(0.90rem, 0.85rem + 0.25vw, 1.00rem);
+            --text-lg:   clamp(1.10rem, 1.00rem + 0.50vw, 1.25rem);
+            --text-xl:   clamp(1.25rem, 1.15rem + 0.50vw, 1.50rem);
+            --text-2xl:  clamp(1.50rem, 1.35rem + 0.75vw, 2.00rem);
+
+            --z-sticky: 100;
+            --z-modal:  1000;
+        }
+
+        /* =========================================================
+           Reset (neon.md §1.1 #5)
+           ========================================================= */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { font-size: 100%; }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-dark);
+            color: var(--neon-lime);
+            min-height: 100vh;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a { color: var(--neon-cyan); text-decoration: none; }
+
+        /* Skip link (neon.md §6.1 #356) */
+        .u-skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--neon-lime);
+            color: var(--bg-dark);
+            padding: 0.5rem 1rem;
+            font-family: var(--font-heading);
+            font-weight: 600;
+            z-index: var(--z-modal);
+            transition: top 0.2s;
+        }
+        .u-skip-link:focus { top: 0; }
+
+        /* =========================================================
+           Layout (neon.md §1.1 #8, §3.3)
+           ========================================================= */
+        .l-wrapper {
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            min-height: 100vh;
+        }
+
+        /* =========================================================
+           Topbar (neon.md §3.3)
+           ========================================================= */
+        .c-topbar {
+            position: sticky;
+            top: 0;
+            z-index: var(--z-sticky);
+            background: rgba(5, 5, 5, 0.85);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--neon-lime-soft);
+            padding: 1rem;
+        }
+
+        .c-topbar__inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+        }
+
+        .c-topbar__title {
+            font-family: var(--font-heading);
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--neon-lime);
+            text-shadow: var(--glow-lime);
+            line-height: 1.1;
+        }
+
+        .c-topbar__subtitle {
+            font-family: var(--font-mono);
+            font-size: var(--text-sm);
+            color: var(--neon-cyan);
+            text-shadow: var(--glow-cyan);
+            opacity: 0.9;
+            margin-top: 0.15rem;
+        }
+
+        /* =========================================================
+           Search (DOM API target)
+           ========================================================= */
+        .c-search { display: flex; flex-direction: column; gap: 0.35rem; }
+
+        .c-search__label {
+            font-family: var(--font-heading);
+            font-size: var(--text-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--neon-cyan);
+            text-shadow: var(--glow-cyan);
+        }
+
+        .c-search__input {
+            font-family: var(--font-mono);
+            font-size: var(--text-base);
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--neon-lime);
+            border: 1px solid var(--neon-lime-soft);
+            border-radius: 4px;
+            padding: 0.8rem 1.2rem;
+            caret-color: var(--neon-lime);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .c-search__input::placeholder { color: rgba(0, 255, 102, 0.35); }
+        .c-search__input:focus {
+            outline: none;
+            border-color: var(--neon-lime);
+            box-shadow: var(--glow-lime);
+        }
+
+        .c-search__hint {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--neon-lime-dim);
+        }
+        .c-search__hint kbd {
+            background: rgba(0, 255, 102, 0.10);
+            border: 1px solid var(--neon-lime-soft);
+            padding: 0.10em 0.45em;
+            border-radius: 3px;
+            font-family: inherit;
+        }
+
+        /* =========================================================
+           Main / Grid
+           ========================================================= */
+        .l-main {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem 1rem 3rem;
+        }
+
+        .c-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* =========================================================
+           Card (neon.md §4.3)
+           ========================================================= */
+        .c-card {
+            background: var(--bg-card);
+            border: 1px solid var(--neon-lime-soft);
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                        box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                        border-color 0.3s;
+            contain: layout style;
+        }
+
+        .c-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--glow-lime);
+            border-color: var(--neon-lime);
+        }
+
+        .c-card.is-hidden { display: none; }
+
+        .c-card__header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--neon-lime-soft);
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .c-card__title {
+            font-family: var(--font-heading);
+            font-size: var(--text-lg);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--neon-lime);
+            text-shadow: var(--glow-lime);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .c-card__num {
+            font-family: var(--font-mono);
+            color: var(--neon-cyan);
+            text-shadow: var(--glow-cyan);
+            font-size: 0.85em;
+        }
+
+        .c-card__tag {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.70rem;
+            text-transform: uppercase;
+            color: var(--neon-cyan);
+            background: rgba(0, 243, 255, 0.10);
+            border: 1px solid var(--neon-cyan-soft);
+            padding: 0.15rem 0.55rem;
+            border-radius: 3px;
+            margin-top: 0.5rem;
+        }
+
+        .c-card__body { flex: 1; }
+
+        .c-card__code {
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            line-height: 1.65;
+            color: var(--neon-lime);
+            background: var(--bg-code);
+            padding: 1.25rem;
+            margin: 0;
+            overflow-x: auto;
+            text-shadow: 0 0 3px rgba(0, 255, 102, 0.45);
+            white-space: pre;
+        }
+        .c-card__code code { font-family: inherit; color: inherit; background: none; }
+
+        /* Empty state */
+        .c-empty {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 3rem 1rem;
+            font-family: var(--font-mono);
+            color: var(--neon-cyan);
+            text-shadow: var(--glow-cyan);
+            display: none;
+        }
+        .c-empty.is-visible { display: block; }
+
+        /* =========================================================
+           Footer
+           ========================================================= */
+        .c-footer {
+            padding: 1.25rem 1rem;
+            text-align: center;
+            border-top: 1px solid var(--neon-lime-soft);
+            background: var(--bg-secondary);
+            font-family: var(--font-mono);
+            font-size: var(--text-sm);
+            color: var(--neon-lime-dim);
+        }
+
+        /* =========================================================
+           Focus / Reduced motion (neon.md §6.1, §6.2)
+           ========================================================= */
+        *:focus-visible {
+            outline: 2px solid var(--neon-cyan);
+            outline-offset: 2px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+            .c-card:hover { transform: none; }
+        }
+
+        /* Custom scrollbar (neon.md §2.2 #70) */
+        .c-card__code::-webkit-scrollbar { height: 8px; }
+        .c-card__code::-webkit-scrollbar-track { background: var(--bg-dark); }
+        .c-card__code::-webkit-scrollbar-thumb {
+            background: var(--neon-lime-soft);
+            border-radius: 4px;
+        }
+        .c-card__code::-webkit-scrollbar-thumb:hover { background: var(--neon-lime); }
+
+        /* Selection (neon.md §2.2 #69) */
+        ::selection { background: var(--neon-lime); color: var(--bg-dark); }
+
+        /* =========================================================
+           Responsive (mobile-first → min-width)
+           ========================================================= */
+        @media (min-width: 720px) {
+            .c-topbar__inner {
+                flex-direction: row;
+                align-items: center;
+                gap: 2rem;
+            }
+            .c-topbar__title-block { flex: 1; }
+            .c-search { min-width: 320px; }
+        }
+    </style>
+</head>
+<body class="l-body">
+    <a href="#main" class="u-skip-link">Skip to content</a>
+
+    <div class="l-wrapper">
+        <!-- =====================================================
+             Topbar
+             ===================================================== -->
+        <header class="c-topbar" role="banner">
+            <div class="c-topbar__inner">
+                <div class="c-topbar__title-block">
+                    <h1 class="c-topbar__title">// Algorithm Vault</h1>
+                    <p class="c-topbar__subtitle">C++ implementations · 50 search, sort, graph &amp; leetcode routines</p>
+                </div>
+
+                <form class="c-search" role="search" onsubmit="return false;">
+                    <label for="search" class="c-search__label">Filter</label>
+                    <input
+                        type="search"
+                        id="search"
+                        class="c-search__input"
+                        placeholder="type to filter (e.g. sort, search, o(nlogn))..."
+                        autocomplete="off"
+                        spellcheck="false"
+                        data-search-input
+                        aria-describedby="search-hint">
+                    <span id="search-hint" class="c-search__hint">
+                        Press <kbd>/</kbd> to focus · <kbd>Esc</kbd> to clear
+                    </span>
+                </form>
+            </div>
+        </header>
+
+        <!-- =====================================================
+             Algorithm grid
+             ===================================================== -->
+        <main id="main" class="l-main">
+            <section class="c-grid" data-grid aria-label="Algorithm library">
+
+                <p class="c-empty" data-empty role="status" aria-live="polite">
+                    // no matches — try a different query
+                </p>
+
+                <!-- 01 — Bubble Sort -->
+                <article class="c-card" data-card data-name="bubble sort o(n2)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">01</span> Bubble Sort
+                        </h2>
+                        <span class="c-card__tag">O(n²) · stable · comparison</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// Bubble Sort
+void bubbleSort(vector&lt;int&gt;&amp; arr) {
+    int n = arr.size();
+    for (int i = 0; i &lt; n - 1; ++i) {
+        bool swapped = false;
+        for (int j = 0; j &lt; n - i - 1; ++j) {
+            if (arr[j] &gt; arr[j + 1]) {
+                swap(arr[j], arr[j + 1]);
+                swapped = true;
+            }
+        }
+        if (!swapped) break;
+    }
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 02 — Selection Sort -->
+                <article class="c-card" data-card data-name="selection sort o(n2)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">02</span> Selection Sort
+                        </h2>
+                        <span class="c-card__tag">O(n²) · in-place</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// Selection Sort
+void selectionSort(vector&lt;int&gt;&amp; arr) {
+    int n = arr.size();
+    for (int i = 0; i &lt; n - 1; ++i) {
+        int minIdx = i;
+        for (int j = i + 1; j &lt; n; ++j) {
+            if (arr[j] &lt; arr[minIdx]) minIdx = j;
+        }
+        if (minIdx != i) swap(arr[i], arr[minIdx]);
+    }
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 03 — Insertion Sort -->
+                <article class="c-card" data-card data-name="insertion sort o(n2)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">03</span> Insertion Sort
+                        </h2>
+                        <span class="c-card__tag">O(n²) · stable · adaptive</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// Insertion Sort
+void insertionSort(vector&lt;int&gt;&amp; arr) {
+    int n = arr.size();
+    for (int i = 1; i &lt; n; ++i) {
+        int key = arr[i];
+        int j = i - 1;
+        while (j &gt;= 0 &amp;&amp; arr[j] &gt; key) {
+            arr[j + 1] = arr[j];
+            --j;
+        }
+        arr[j + 1] = key;
+    }
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 04 — Merge Sort -->
+                <article class="c-card" data-card data-name="merge sort divide conquer o(nlogn)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">04</span> Merge Sort
+                        </h2>
+                        <span class="c-card__tag">O(n log n) · stable · divide &amp; conquer</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// Merge Sort
+void merge(vector&lt;int&gt;&amp; a, int l, int m, int r) {
+    vector&lt;int&gt; L(a.begin() + l, a.begin() + m + 1);
+    vector&lt;int&gt; R(a.begin() + m + 1, a.begin() + r + 1);
+    int i = 0, j = 0, k = l;
+    while (i &lt; (int)L.size() &amp;&amp; j &lt; (int)R.size()) {
+        a[k++] = (L[i] &lt;= R[j]) ? L[i++] : R[j++];
+    }
+    while (i &lt; (int)L.size()) a[k++] = L[i++];
+    while (j &lt; (int)R.size()) a[k++] = R[j++];
+}
+
+void mergeSort(vector&lt;int&gt;&amp; a, int l, int r) {
+    if (l &gt;= r) return;
+    int m = l + (r - l) / 2;
+    mergeSort(a, l, m);
+    mergeSort(a, m + 1, r);
+    merge(a, l, m, r);
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 05 — Quick Sort -->
+                <article class="c-card" data-card data-name="quick sort divide conquer o(nlogn)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">05</span> Quick Sort
+                        </h2>
+                        <span class="c-card__tag">O(n log n) avg · in-place</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// Quick Sort (Lomuto partition)
+int partition(vector&lt;int&gt;&amp; a, int lo, int hi) {
+    int pivot = a[hi];
+    int i = lo - 1;
+    for (int j = lo; j &lt; hi; ++j) {
+        if (a[j] &lt;= pivot) {
+            ++i;
+            swap(a[i], a[j]);
+        }
+    }
+    swap(a[i + 1], a[hi]);
+    return i + 1;
+}
+
+void quickSort(vector&lt;int&gt;&amp; a, int lo, int hi) {
+    if (lo &gt;= hi) return;
+    int p = partition(a, lo, hi);
+    quickSort(a, lo, p - 1);
+    quickSort(a, p + 1, hi);
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 06 — Heap Sort -->
+                <article class="c-card" data-card data-name="heap sort o(nlogn)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">06</span> Heap Sort
+                        </h2>
+                        <span class="c-card__tag">O(n log n) · in-place</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// Heap Sort
+void heapify(vector&lt;int&gt;&amp; a, int n, int i) {
+    int largest = i;
+    int l = 2 * i + 1, r = 2 * i + 2;
+    if (l &lt; n &amp;&amp; a[l] &gt; a[largest]) largest = l;
+    if (r &lt; n &amp;&amp; a[r] &gt; a[largest]) largest = r;
+    if (largest != i) {
+        swap(a[i], a[largest]);
+        heapify(a, n, largest);
+    }
+}
+
+void heapSort(vector&lt;int&gt;&amp; a) {
+    int n = a.size();
+    for (int i = n / 2 - 1; i &gt;= 0; --i) heapify(a, n, i);
+    for (int i = n - 1; i &gt; 0; --i) {
+        swap(a[0], a[i]);
+        heapify(a, i, 0);
+    }
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 07 — Counting Sort -->
+                <article class="c-card" data-card data-name="counting sort o(n+k) non-comparison">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">07</span> Counting Sort
+                        </h2>
+                        <span class="c-card__tag">O(n + k) · non-comparison</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// Counting Sort (assumes non-negative ints)
+void countingSort(vector&lt;int&gt;&amp; a) {
+    if (a.empty()) return;
+    int k = *max_element(a.begin(), a.end()) + 1;
+    vector&lt;int&gt; count(k, 0);
+    for (int x : a) ++count[x];
+    int idx = 0;
+    for (int v = 0; v &lt; k; ++v) {
+        while (count[v]-- &gt; 0) a[idx++] = v;
+    }
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 08 — Shell Sort -->
+                <article class="c-card" data-card data-name="shell sort gap insertion">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">08</span> Shell Sort
+                        </h2>
+                        <span class="c-card__tag">O(n^1.3) typical · gap-based</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// Shell Sort
+void shellSort(vector&lt;int&gt;&amp; a) {
+    int n = a.size();
+    for (int gap = n / 2; gap &gt; 0; gap /= 2) {
+        for (int i = gap; i &lt; n; ++i) {
+            int temp = a[i];
+            int j = i;
+            while (j &gt;= gap &amp;&amp; a[j - gap] &gt; temp) {
+                a[j] = a[j - gap];
+                j -= gap;
+            }
+            a[j] = temp;
+        }
+    }
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 09 — Linear Search -->
+                <article class="c-card" data-card data-name="linear search sequential o(n)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">09</span> Linear Search
+                        </h2>
+                        <span class="c-card__tag">O(n) · unsorted input</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// Linear Search — returns index, or -1
+int linearSearch(const vector&lt;int&gt;&amp; a, int target) {
+    for (int i = 0; i &lt; (int)a.size(); ++i) {
+        if (a[i] == target) return i;
+    }
+    return -1;
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 10 — Binary Search -->
+                <article class="c-card" data-card data-name="binary search sorted o(logn)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">10</span> Binary Search
+                        </h2>
+                        <span class="c-card__tag">O(log n) · sorted input</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// Binary Search (iterative) — returns index, or -1
+int binarySearch(const vector&lt;int&gt;&amp; a, int target) {
+    int lo = 0, hi = (int)a.size() - 1;
+    while (lo &lt;= hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (a[mid] == target) return mid;
+        if (a[mid] &lt; target) lo = mid + 1;
+        else                  hi = mid - 1;
+    }
+    return -1;
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 11 — Radix Sort (LSD) -->
+                <article class="c-card" data-card data-name="radix sort lsd non-comparison o(n·k)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">11</span> Radix Sort
+                        </h2>
+                        <span class="c-card__tag">O(n·k) · non-comparison · LSD</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// Radix Sort (LSD) — assumes non-negative ints
+void radixSort(vector&lt;int&gt;&amp; a) {
+    if (a.empty()) return;
+    int maxVal = *max_element(a.begin(), a.end());
+    vector&lt;int&gt; buf(a.size());
+    for (int exp = 1; maxVal / exp &gt; 0; exp *= 10) {
+        vector&lt;int&gt; count(10, 0);
+        for (int x : a)           ++count[(x / exp) % 10];
+        for (int i = 1; i &lt; 10; ++i) count[i] += count[i - 1];
+        for (int i = (int)a.size() - 1; i &gt;= 0; --i) {
+            buf[--count[(a[i] / exp) % 10]] = a[i];
+        }
+        a = buf;
+    }
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 12 — Bucket Sort -->
+                <article class="c-card" data-card data-name="bucket sort uniform distribution o(n+k)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">12</span> Bucket Sort
+                        </h2>
+                        <span class="c-card__tag">O(n + k) · uniform input</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// Bucket Sort — for values in [0, 1)
+void bucketSort(vector&lt;double&gt;&amp; a) {
+    int n = a.size();
+    if (n &lt;= 0) return;
+    vector&lt;vector&lt;double&gt;&gt; buckets(n);
+    for (double x : a) {
+        int idx = (int)(x * n);
+        if (idx == n) --idx;
+        buckets[idx].push_back(x);
+    }
+    int k = 0;
+    for (auto&amp; b : buckets) {
+        sort(b.begin(), b.end());
+        for (double x : b) a[k++] = x;
+    }
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 13 — Comb Sort -->
+                <article class="c-card" data-card data-name="comb sort shrink gap o(n2/2^p)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">13</span> Comb Sort
+                        </h2>
+                        <span class="c-card__tag">O(n²/2^p) · bubble improvement</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// Comb Sort
+void combSort(vector&lt;int&gt;&amp; a) {
+    int n = a.size();
+    int gap = n;
+    bool sorted = false;
+    const double shrink = 1.3;
+    while (!sorted) {
+        gap = (int)(gap / shrink);
+        if (gap &lt;= 1) { gap = 1; sorted = true; }
+        for (int i = 0; i + gap &lt; n; ++i) {
+            if (a[i] &gt; a[i + gap]) {
+                swap(a[i], a[i + gap]);
+                sorted = false;
+            }
+        }
+    }
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 14 — Cocktail Shaker Sort -->
+                <article class="c-card" data-card data-name="cocktail shaker sort bidirectional o(n2)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">14</span> Cocktail Shaker
+                        </h2>
+                        <span class="c-card__tag">O(n²) · stable · bidirectional</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// Cocktail Shaker Sort
+void cocktailSort(vector&lt;int&gt;&amp; a) {
+    int lo = 0, hi = (int)a.size() - 1;
+    while (lo &lt; hi) {
+        bool swapped = false;
+        for (int i = lo; i &lt; hi; ++i) {
+            if (a[i] &gt; a[i + 1]) { swap(a[i], a[i + 1]); swapped = true; }
+        }
+        --hi;
+        for (int i = hi; i &gt; lo; --i) {
+            if (a[i] &lt; a[i - 1]) { swap(a[i], a[i - 1]); swapped = true; }
+        }
+        ++lo;
+        if (!swapped) break;
+    }
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 15 — Bogo Sort (for fun) -->
+                <article class="c-card" data-card data-name="bogo sort random shuffle o(n·n!)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">15</span> Bogo Sort
+                        </h2>
+                        <span class="c-card__tag">O(n·n!) avg · for fun only</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// Bogo Sort — shuffles until sorted (expectancy: O(n·n!))
+#include &lt;random&gt;
+static std::mt19937&amp; rng() {
+    static std::mt19937 gen{ std::random_device{}() };
+    return gen;
+}
+bool isSorted(const vector&lt;int&gt;&amp; a) {
+    for (size_t i = 1; i &lt; a.size(); ++i)
+        if (a[i] &lt; a[i - 1]) return false;
+    return true;
+}
+void bogoSort(vector&lt;int&gt;&amp; a) {
+    while (!isSorted(a)) {
+        shuffle(a.begin(), a.end(), rng());
+    }
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 16 — Ternary Search -->
+                <article class="c-card" data-card data-name="ternary search unimodal o(log3 n)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">16</span> Ternary Search
+                        </h2>
+                        <span class="c-card__tag">O(log₃ n) · unimodal function</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// Ternary Search — finds min of unimodal f on [lo, hi]
+double ternarySearch(double lo, double hi,
+                     const function&lt;double(double)&gt;&amp; f) {
+    for (int i = 0; i &lt; 200; ++i) {
+        double m1 = lo + (hi - lo) / 3.0;
+        double m2 = hi - (hi - lo) / 3.0;
+        if (f(m1) &lt; f(m2)) hi = m2;
+        else                lo = m1;
+    }
+    return (lo + hi) / 2.0;
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 17 — Jump Search -->
+                <article class="c-card" data-card data-name="jump search block o(sqrt n)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">17</span> Jump Search
+                        </h2>
+                        <span class="c-card__tag">O(√n) · sorted input</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// Jump Search — returns index, or -1
+int jumpSearch(const vector&lt;int&gt;&amp; a, int target) {
+    int n = a.size();
+    if (n == 0) return -1;
+    int step = (int)sqrt(n);
+    int prev = 0;
+    while (prev &lt; n &amp;&amp; a[min(step, n) - 1] &lt; target) {
+        prev = step;
+        step += (int)sqrt(n);
+        if (prev &gt;= n) return -1;
+    }
+    for (int i = prev; i &lt; min(step, n); ++i) {
+        if (a[i] == target) return i;
+    }
+    return -1;
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 18 — Exponential Search -->
+                <article class="c-card" data-card data-name="exponential search unbounded o(logn)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">18</span> Exponential Search
+                        </h2>
+                        <span class="c-card__tag">O(log n) · unbounded arrays</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// Exponential Search — find range, then binary search
+int binarySearch(const vector&lt;int&gt;&amp; a, int lo, int hi, int t);
+int exponentialSearch(const vector&lt;int&gt;&amp; a, int target) {
+    if (a.empty()) return -1;
+    if (a[0] == target) return 0;
+    int i = 1;
+    while (i &lt; (int)a.size() &amp;&amp; a[i] &lt;= target) i *= 2;
+    return binarySearch(a, i / 2, min(i, (int)a.size() - 1), target);
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 19 — Interpolation Search -->
+                <article class="c-card" data-card data-name="interpolation search uniform o(loglogn)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">19</span> Interpolation Search
+                        </h2>
+                        <span class="c-card__tag">O(log log n) · uniform sorted</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// Interpolation Search — returns index, or -1
+int interpolationSearch(const vector&lt;int&gt;&amp; a, int target) {
+    int lo = 0, hi = (int)a.size() - 1;
+    while (lo &lt;= hi &amp;&amp; target &gt;= a[lo] &amp;&amp; target &lt;= a[hi]) {
+        if (lo == hi) return (a[lo] == target) ? lo : -1;
+        int pos = lo + ((double)(target - a[lo]) *
+                       (hi - lo) / (a[hi] - a[lo]));
+        if (a[pos] == target) return pos;
+        if (a[pos] &lt;  target) lo = pos + 1;
+        else                   hi = pos - 1;
+    }
+    return -1;
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 20 — Fibonacci Search -->
+                <article class="c-card" data-card data-name="fibonacci search divide conquer o(logn)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">20</span> Fibonacci Search
+                        </h2>
+                        <span class="c-card__tag">O(log n) · divide &amp; conquer</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// Fibonacci Search — returns index, or -1
+int fibSearch(const vector&lt;int&gt;&amp; a, int target) {
+    int n = a.size();
+    int fib2 = 0, fib1 = 1, fib = fib1 + fib2;
+    while (fib &lt; n) { fib2 = fib1; fib1 = fib; fib = fib1 + fib2; }
+    int offset = -1;
+    while (fib &gt; 1) {
+        int i = min(offset + fib2, n - 1);
+        if (a[i] &lt; target)      { fib = fib1;  fib1 = fib2; fib2 = fib - fib1; offset = i; }
+        else if (a[i] &gt; target) { fib = fib2;  fib1 -= fib2; fib2 = fib - fib1; }
+        else return i;
+    }
+    return (fib1 &amp;&amp; offset + 1 &lt; n &amp;&amp; a[offset + 1] == target)
+            ? offset + 1 : -1;
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 21 — Tim Sort (run + merge sketch) -->
+                <article class="c-card" data-card data-name="tim sort run merge hybrid o(nlogn)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">21</span> Tim Sort
+                        </h2>
+                        <span class="c-card__tag">O(n log n) · stable · hybrid</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// Tim Sort — simplified: insertion-sort runs + merge
+static const int RUN = 32;
+void insertionRun(vector&lt;int&gt;&amp; a, int l, int r) {
+    for (int i = l + 1; i &lt;= r; ++i) {
+        int key = a[i], j = i - 1;
+        while (j &gt;= l &amp;&amp; a[j] &gt; key) { a[j + 1] = a[j]; --j; }
+        a[j + 1] = key;
+    }
+}
+void mergeRun(vector&lt;int&gt;&amp; a, int l, int m, int r) {
+    vector&lt;int&gt; L(a.begin() + l, a.begin() + m + 1);
+    vector&lt;int&gt; R(a.begin() + m + 1, a.begin() + r + 1);
+    int i = 0, j = 0, k = l;
+    while (i &lt; (int)L.size() &amp;&amp; j &lt; (int)R.size())
+        a[k++] = (L[i] &lt;= R[j]) ? L[i++] : R[j++];
+    while (i &lt; (int)L.size()) a[k++] = L[i++];
+    while (j &lt; (int)R.size()) a[k++] = R[j++];
+}
+void timSort(vector&lt;int&gt;&amp; a) {
+    int n = a.size();
+    for (int i = 0; i &lt; n; i += RUN)
+        insertionRun(a, i, min(i + RUN - 1, n - 1));
+    for (int size = RUN; size &lt; n; size *= 2) {
+        for (int lo = 0; lo &lt; n; lo += 2 * size) {
+            int mid = lo + size - 1;
+            int hi  = min(lo + 2 * size - 1, n - 1);
+            if (mid &lt; hi) mergeRun(a, lo, mid, hi);
+        }
+    }
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 22 — Intro Sort (quicksort + heapsort fallback) -->
+                <article class="c-card" data-card data-name="intro sort introsort quicksort heapsort o(nlogn)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">22</span> Intro Sort
+                        </h2>
+                        <span class="c-card__tag">O(n log n) · quicksort+heapsort</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// Intro Sort — quicksort with heapsort fallback
+static const int DEPTH_LIMIT = 16;
+void heapifyIntro(vector&lt;int&gt;&amp; a, int n, int i) {
+    int L = 2*i+1, R = 2*i+2, big = i;
+    if (L &lt; n &amp;&amp; a[L] &gt; a[big]) big = L;
+    if (R &lt; n &amp;&amp; a[R] &gt; a[big]) big = R;
+    if (big != i) { swap(a[i], a[big]); heapifyIntro(a, n, big); }
+}
+void heapsortIntro(vector&lt;int&gt;&amp; a, int n) {
+    for (int i = n/2 - 1; i &gt;= 0; --i) heapifyIntro(a, n, i);
+    for (int i = n - 1; i &gt; 0; --i) { swap(a[0], a[i]); heapifyIntro(a, i, 0); }
+}
+int partIntro(vector&lt;int&gt;&amp; a, int lo, int hi) {
+    int p = a[hi], i = lo - 1;
+    for (int j = lo; j &lt; hi; ++j)
+        if (a[j] &lt;= p) swap(a[++i], a[j]);
+    swap(a[i + 1], a[hi]);
+    return i + 1;
+}
+void introSortUtil(vector&lt;int&gt;&amp; a, int lo, int hi, int depth) {
+    if (hi - lo &lt; 16) {
+        for (int i = lo + 1; i &lt;= hi; ++i) {
+            int k = a[i], j = i - 1;
+            while (j &gt;= lo &amp;&amp; a[j] &gt; k) { a[j+1] = a[j]; --j; }
+            a[j+1] = k;
+        }
+        return;
+    }
+    if (depth == 0) { heapsortIntro(a + lo, hi - lo + 1); return; }
+    int p = partIntro(a, lo, hi);
+    introSortUtil(a, lo, p - 1, depth - 1);
+    introSortUtil(a, p + 1, hi, depth - 1);
+}
+void introSort(vector&lt;int&gt;&amp; a) {
+    introSortUtil(a, 0, (int)a.size() - 1,
+                  2 * (int)log2(max((int)a.size(), 1)));
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 23 — Gnome Sort -->
+                <article class="c-card" data-card data-name="gnome sort stupid o(n2)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">23</span> Gnome Sort
+                        </h2>
+                        <span class="c-card__tag">O(n²) · stable · simple</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// Gnome Sort
+void gnomeSort(vector&lt;int&gt;&amp; a) {
+    int i = 0, n = (int)a.size();
+    while (i &lt; n) {
+        if (i == 0 || a[i - 1] &lt;= a[i]) ++i;
+        else { swap(a[i], a[i - 1]); --i; }
+    }
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 24 — Pancake Sort -->
+                <article class="c-card" data-card data-name="pancake sort flip prefix o(n2)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">24</span> Pancake Sort
+                        </h2>
+                        <span class="c-card__tag">O(n²) · flip-based</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// Pancake Sort
+void flip(vector&lt;int&gt;&amp; a, int k) {
+    int i = 0;
+    while (i &lt; k) { swap(a[i], a[k]); ++i; --k; }
+}
+int findMax(const vector&lt;int&gt;&amp; a, int n) {
+    int idx = 0;
+    for (int i = 1; i &lt; n; ++i) if (a[i] &gt; a[idx]) idx = i;
+    return idx;
+}
+void pancakeSort(vector&lt;int&gt;&amp; a) {
+    for (int n = (int)a.size(); n &gt; 1; --n) {
+        int mi = findMax(a, n);
+        if (mi == n - 1) continue;
+        if (mi &gt; 0)      flip(a, mi);
+        flip(a, n - 1);
+    }
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 25 — Cycle Sort -->
+                <article class="c-card" data-card data-name="cycle sort in-place o(n2)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">25</span> Cycle Sort
+                        </h2>
+                        <span class="c-card__tag">O(n²) · in-place · min writes</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// Cycle Sort — minimizes memory writes
+void cycleSort(vector&lt;int&gt;&amp; a) {
+    int n = a.size();
+    for (int cycleStart = 0; cycleStart &lt; n - 1; ++cycleStart) {
+        int item = a[cycleStart];
+        int pos  = cycleStart;
+        for (int i = cycleStart + 1; i &lt; n; ++i)
+            if (a[i] &lt; item) ++pos;
+        if (pos == cycleStart) continue;
+        while (item == a[pos]) ++pos;
+        swap(item, a[pos]);
+        while (pos != cycleStart) {
+            pos = cycleStart;
+            for (int i = cycleStart + 1; i &lt; n; ++i)
+                if (a[i] &lt; item) ++pos;
+            while (item == a[pos]) ++pos;
+            swap(item, a[pos]);
+        }
+    }
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 26 — Strand Sort -->
+                <article class="c-card" data-card data-name="strand sort merge sublist o(n2)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">26</span> Strand Sort
+                        </h2>
+                        <span class="c-card__tag">O(n²) · stable · sublist merge</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// Strand Sort
+void strandSort(vector&lt;int&gt;&amp; a) {
+    vector&lt;int&gt; out;
+    while (!a.empty()) {
+        vector&lt;int&gt; strand;
+        auto it = a.begin();
+        strand.push_back(*it);
+        a.erase(it);
+        for (auto jt = a.begin(); jt != a.end(); ) {
+            if (*jt &gt;= strand.back()) {
+                strand.push_back(*jt);
+                jt = a.erase(jt);
+            } else ++jt;
+        }
+        // merge strand into out
+        vector&lt;int&gt; merged;
+        size_t i = 0, j = 0;
+        while (i &lt; out.size() &amp;&amp; j &lt; strand.size()) {
+            if (out[i] &lt; strand[j]) merged.push_back(out[i++]);
+            else                     merged.push_back(strand[j++]);
+        }
+        while (i &lt; out.size())   merged.push_back(out[i++]);
+        while (j &lt; strand.size()) merged.push_back(strand[j++]);
+        out = move(merged);
+    }
+    a = move(out);
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 27 — Patience Sort (Longest Increasing Subsequence) -->
+                <article class="c-card" data-card data-name="patience sort lis binary search o(nlogn)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">27</span> Patience Sort
+                        </h2>
+                        <span class="c-card__tag">O(n log n) · LIS-based</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// Patience Sort (simplified — LIS via patience piles)
+int patienceSort(const vector&lt;int&gt;&amp; a) {
+    vector&lt;int&gt; piles;
+    for (int x : a) {
+        auto it = lower_bound(piles.begin(), piles.end(), x);
+        if (it == piles.end()) piles.push_back(x);
+        else                   *it = x;
+    }
+    return (int)piles.size(); // length of LIS
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 28 — Flash Sort -->
+                <article class="c-card" data-card data-name="flash sort classification o(n)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">28</span> Flash Sort
+                        </h2>
+                        <span class="c-card__tag">O(n) avg · distribution</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// Flash Sort
+#include &lt;algorithm&gt;
+void flashSort(vector&lt;int&gt;&amp; a) {
+    int n = a.size();
+    if (n &lt;= 1) return;
+    int m = max(1, (int)(0.43 * n));
+    auto [mn, mx] = minmax_element(a.begin(), a.end());
+    if (*mn == *mx) return;
+    double c1 = (double)(m - 1) / (*mx - *mn);
+    vector&lt;int&gt; L(m, 0);
+    for (int x : a) {
+        int k = (int)(c1 * (x - *mn));
+        ++L[k];
+    }
+    for (int i = 1; i &lt; m; ++i) L[i] += L[i - 1];
+    // permutation pass
+    int i = 0, k = m - 1;
+    while (i &lt; n) {
+        k = (int)(c1 * (a[i] - *mn));
+        while (i &gt;= L[k]) { --k; k = max(k, 0); }
+        swap(a[i], a[L[k] - 1]);
+        --L[k];
+    }
+    // final insertion sort
+    for (int i = 1; i &lt; n; ++i) {
+        int key = a[i], j = i - 1;
+        while (j &gt;= 0 &amp;&amp; a[j] &gt; key) { a[j+1] = a[j]; --j; }
+        a[j+1] = key;
+    }
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 29 — Search in Rotated Sorted Array -->
+                <article class="c-card" data-card data-name="rotated sorted array search o(logn)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">29</span> Rotated Array Search
+                        </h2>
+                        <span class="c-card__tag">O(log n) · rotated sorted</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// Search in Rotated Sorted Array — returns index, or -1
+int rotatedSearch(const vector&lt;int&gt;&amp; a, int target) {
+    int lo = 0, hi = (int)a.size() - 1;
+    while (lo &lt;= hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (a[mid] == target) return mid;
+        if (a[lo] &lt;= a[mid]) { // left half sorted
+            if (target &gt;= a[lo] &amp;&amp; target &lt; a[mid]) hi = mid - 1;
+            else                                       lo = mid + 1;
+        } else {                 // right half sorted
+            if (target &gt; a[mid] &amp;&amp; target &lt;= a[hi]) lo = mid + 1;
+            else                                       hi = mid - 1;
+        }
+    }
+    return -1;
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 30 — Meta Binary / Bitwise Search -->
+                <article class="c-card" data-card data-name="meta binary bitwise search o(logn)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">30</span> Meta Binary Search
+                        </h2>
+                        <span class="c-card__tag">O(log n) · bitwise probe</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// Meta Binary Search (one-sided, bitwise) — returns index, or -1
+int metaBinarySearch(const vector&lt;int&gt;&amp; a, int target) {
+    int n = a.size();
+    if (n == 0) return -1;
+    int lo = 0, hi = n - 1;
+    int p  = 1 &lt;&lt; (31 - __builtin_clz(n)); // largest power of 2 &lt;= n
+    while (p &gt; 0) {
+        int mid = lo + p - 1;
+        if (mid &lt;= hi &amp;&amp; a[mid] == target) return mid;
+        if (mid &lt;= hi &amp;&amp; a[mid] &lt;  target) lo = mid + 1;
+        p &gt;&gt;= 1;
+    }
+    return -1;
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 31 — BFS (graph) -->
+                <article class="c-card" data-card data-name="bfs breadth first search graph o(v+e)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">31</span> BFS
+                        </h2>
+                        <span class="c-card__tag">O(V+E) · graph · queue</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// BFS — graph traversal, returns visit order
+vector&lt;int&gt; bfs(int n, const vector&lt;vector&lt;int&gt;&gt;&amp; adj, int src) {
+    vector&lt;int&gt; order, visited(n, 0);
+    queue&lt;int&gt; q;
+    q.push(src); visited[src] = 1;
+    while (!q.empty()) {
+        int u = q.front(); q.pop();
+        order.push_back(u);
+        for (int v : adj[u]) {
+            if (!visited[v]) { visited[v] = 1; q.push(v); }
+        }
+    }
+    return order;
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 32 — DFS (graph, recursive) -->
+                <article class="c-card" data-card data-name="dfs depth first search graph o(v+e)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">32</span> DFS
+                        </h2>
+                        <span class="c-card__tag">O(V+E) · graph · recursive</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// DFS — graph traversal, returns visit order
+void dfs(int u, const vector&lt;vector&lt;int&gt;&gt;&amp; adj,
+         vector&lt;int&gt;&amp; visited, vector&lt;int&gt;&amp; order) {
+    visited[u] = 1;
+    order.push_back(u);
+    for (int v : adj[u]) {
+        if (!visited[v]) dfs(v, adj, visited, order);
+    }
+}
+
+vector&lt;int&gt; dfsAll(int n, const vector&lt;vector&lt;int&gt;&gt;&amp; adj) {
+    vector&lt;int&gt; visited(n, 0), order;
+    for (int i = 0; i &lt; n; ++i)
+        if (!visited[i]) dfs(i, adj, visited, order);
+    return order;
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 33 — Dijkstra (single-source shortest path) -->
+                <article class="c-card" data-card data-name="dijkstra shortest path graph o((v+e)logv)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">33</span> Dijkstra
+                        </h2>
+                        <span class="c-card__tag">O((V+E) log V) · weighted graph</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// Dijkstra — single-source shortest paths (non-negative weights)
+vector&lt;long long&gt; dijkstra(int n, const vector&lt;vector&lt;pair&lt;int,int&gt;&gt;&gt;&amp; adj,
+                            int src) {
+    const long long INF = LLONG_MAX / 4;
+    vector&lt;long long&gt; dist(n, INF);
+    dist[src] = 0;
+    priority_queue&lt;pair&lt;long long,int&gt;,
+                   vector&lt;pair&lt;long long,int&gt;&gt;,
+                   greater&lt;pair&lt;long long,int&gt;&gt;&gt; pq;
+    pq.push({0, src});
+    while (!pq.empty()) {
+        auto [d, u] = pq.top(); pq.pop();
+        if (d &gt; dist[u]) continue;
+        for (auto [v, w] : adj[u]) {
+            if (dist[v] &gt; d + w) {
+                dist[v] = d + w;
+                pq.push({dist[v], v});
+            }
+        }
+    }
+    return dist;
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 34 — Bellman-Ford (handles negative weights) -->
+                <article class="c-card" data-card data-name="bellman ford shortest path graph o(ve)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">34</span> Bellman-Ford
+                        </h2>
+                        <span class="c-card__tag">O(V·E) · handles negative weights</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// Bellman-Ford — single-source shortest paths
+// Returns false if a negative cycle is reachable.
+bool bellmanFord(int n,
+                 const vector&lt;tuple&lt;int,int,int&gt;&gt;&amp; edges,
+                 int src, vector&lt;long long&gt;&amp; dist) {
+    const long long INF = LLONG_MAX / 4;
+    dist.assign(n, INF);
+    dist[src] = 0;
+    for (int i = 0; i &lt; n - 1; ++i) {
+        bool any = false;
+        for (auto [u, v, w] : edges) {
+            if (dist[u] != INF &amp;&amp; dist[v] &gt; dist[u] + w) {
+                dist[v] = dist[u] + w;
+                any = true;
+            }
+        }
+        if (!any) break;
+    }
+    for (auto [u, v, w] : edges)
+        if (dist[u] != INF &amp;&amp; dist[v] &gt; dist[u] + w) return false;
+    return true;
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 35 — Two Sum (LeetCode 1) -->
+                <article class="c-card" data-card data-name="two sum leetcode o(n) hashmap">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">35</span> Two Sum
+                        </h2>
+                        <span class="c-card__tag">O(n) · leetcode #1 · hashmap</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// LeetCode #1 — Two Sum
+// Returns indices (i, j) such that nums[i] + nums[j] == target.
+vector&lt;int&gt; twoSum(const vector&lt;int&gt;&amp; nums, int target) {
+    unordered_map&lt;int, int&gt; seen; // value -> index
+    for (int i = 0; i &lt; (int)nums.size(); ++i) {
+        int need = target - nums[i];
+        auto it = seen.find(need);
+        if (it != seen.end()) return {it-&gt;second, i};
+        seen[nums[i]] = i;
+    }
+    return {}; // no solution
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 36 — Valid Parentheses (LeetCode 20) -->
+                <article class="c-card" data-card data-name="valid parentheses leetcode o(n) stack">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">36</span> Valid Parentheses
+                        </h2>
+                        <span class="c-card__tag">O(n) · leetcode #20 · stack</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// LeetCode #20 — Valid Parentheses
+bool isValid(const string&amp; s) {
+    unordered_map&lt;char, char&gt; pair_{ {')','('}, {']','['}, {'}','{'} };
+    stack&lt;char&gt; st;
+    for (char c : s) {
+        if (c == '(' || c == '[' || c == '{') st.push(c);
+        else {
+            if (st.empty() || st.top() != pair_[c]) return false;
+            st.pop();
+        }
+    }
+    return st.empty();
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 37 — Reverse Linked List (LeetCode 206) -->
+                <article class="c-card" data-card data-name="reverse linked list leetcode o(n)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">37</span> Reverse Linked List
+                        </h2>
+                        <span class="c-card__tag">O(n) · leetcode #206 · iterative</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// LeetCode #206 — Reverse Linked List
+struct ListNode { int val; ListNode* next; };
+
+ListNode* reverseList(ListNode* head) {
+    ListNode* prev = nullptr;
+    ListNode* cur  = head;
+    while (cur) {
+        ListNode* nxt = cur-&gt;next;
+        cur-&gt;next = prev;
+        prev = cur;
+        cur  = nxt;
+    }
+    return prev;
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 38 — Kadane's Max Subarray (LeetCode 53) -->
+                <article class="c-card" data-card data-name="kadane max subarray leetcode o(n) dp">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">38</span> Max Subarray
+                        </h2>
+                        <span class="c-card__tag">O(n) · leetcode #53 · kadane</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// LeetCode #53 — Maximum Subarray (Kadane's algorithm)
+int maxSubArray(const vector&lt;int&gt;&amp; nums) {
+    int best = nums[0], cur = nums[0];
+    for (size_t i = 1; i &lt; nums.size(); ++i) {
+        cur  = max(nums[i], cur + nums[i]);
+        best = max(best, cur);
+    }
+    return best;
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 39 — Climbing Stairs (LeetCode 70, Fibonacci) -->
+                <article class="c-card" data-card data-name="climbing stairs leetcode o(n) dp fibonacci">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">39</span> Climbing Stairs
+                        </h2>
+                        <span class="c-card__tag">O(n) · leetcode #70 · dp</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// LeetCode #70 — Climbing Stairs
+// 1 or 2 steps at a time. Answer is the n-th Fibonacci number.
+int climbStairs(int n) {
+    if (n &lt;= 2) return n;
+    int a = 1, b = 2;
+    for (int i = 3; i &lt;= n; ++i) {
+        int c = a + b;
+        a = b;
+        b = c;
+    }
+    return b;
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 40 — Merge Intervals (LeetCode 56) -->
+                <article class="c-card" data-card data-name="merge intervals leetcode o(nlogn)">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">40</span> Merge Intervals
+                        </h2>
+                        <span class="c-card__tag">O(n log n) · leetcode #56 · sort</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// LeetCode #56 — Merge Intervals
+vector&lt;vector&lt;int&gt;&gt; mergeIntervals(vector&lt;vector&lt;int&gt;&gt;&amp; iv) {
+    sort(iv.begin(), iv.end());
+    vector&lt;vector&lt;int&gt;&gt; out;
+    for (auto&amp; cur : iv) {
+        if (out.empty() || out.back()[1] &lt; cur[0]) {
+            out.push_back(cur);
+        } else {
+            out.back()[1] = max(out.back()[1], cur[1]);
+        }
+    }
+    return out;
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 41 — Best Time to Buy and Sell Stock (LeetCode 121) -->
+                <article class="c-card" data-card data-name="best time buy sell stock leetcode o(n) kadane">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">41</span> Buy &amp; Sell Stock
+                        </h2>
+                        <span class="c-card__tag">O(n) · leetcode #121 · kadane</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// LeetCode #121 — Best Time to Buy and Sell Stock
+// Max profit from one buy/sell. Equivalent to max subarray on price differences.
+int maxProfit(const vector&lt;int&gt;&amp; prices) {
+    int minSoFar = INT_MAX, best = 0;
+    for (int p : prices) {
+        minSoFar = min(minSoFar, p);
+        best     = max(best, p - minSoFar);
+    }
+    return best;
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 42 — Contains Duplicate (LeetCode 217) -->
+                <article class="c-card" data-card data-name="contains duplicate leetcode o(n) hashset">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">42</span> Contains Duplicate
+                        </h2>
+                        <span class="c-card__tag">O(n) · leetcode #217 · hashset</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// LeetCode #217 — Contains Duplicate
+bool containsDuplicate(const vector&lt;int&gt;&amp; nums) {
+    unordered_set&lt;int&gt; seen;
+    for (int x : nums) {
+        if (seen.count(x)) return true;
+        seen.insert(x);
+    }
+    return false;
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 43 — Product of Array Except Self (LeetCode 238) -->
+                <article class="c-card" data-card data-name="product array except self leetcode o(n) prefix">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">43</span> Product Except Self
+                        </h2>
+                        <span class="c-card__tag">O(n) · leetcode #238 · prefix</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// LeetCode #238 — Product of Array Except Self
+// answer[i] = product of all nums except nums[i] (no division)
+vector&lt;int&gt; productExceptSelf(const vector&lt;int&gt;&amp; nums) {
+    int n = nums.size();
+    vector&lt;int&gt; ans(n, 1);
+    int left = 1;
+    for (int i = 0; i &lt; n; ++i) { ans[i] = left; left *= nums[i]; }
+    int right = 1;
+    for (int i = n - 1; i &gt;= 0; --i) { ans[i] *= right; right *= nums[i]; }
+    return ans;
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 44 — Longest Substring Without Repeating Chars (LC 3) -->
+                <article class="c-card" data-card data-name="longest substring no repeat leetcode o(n) sliding window">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">44</span> Longest No-Repeat
+                        </h2>
+                        <span class="c-card__tag">O(n) · leetcode #3 · sliding window</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// LeetCode #3 — Longest Substring Without Repeating Characters
+int lengthOfLongestSubstring(const string&amp; s) {
+    unordered_map&lt;char, int&gt; last;
+    int best = 0, lo = 0;
+    for (int hi = 0; hi &lt; (int)s.size(); ++hi) {
+        if (last.count(s[hi])) lo = max(lo, last[s[hi]] + 1);
+        last[s[hi]] = hi;
+        best = max(best, hi - lo + 1);
+    }
+    return best;
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 45 — 3Sum (LeetCode 15) -->
+                <article class="c-card" data-card data-name="3sum three sum leetcode o(n2) two pointers">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">45</span> 3Sum
+                        </h2>
+                        <span class="c-card__tag">O(n²) · leetcode #15 · two pointers</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// LeetCode #15 — 3Sum (unique triplets summing to 0)
+vector&lt;vector&lt;int&gt;&gt; threeSum(vector&lt;int&gt;&amp; nums) {
+    sort(nums.begin(), nums.end());
+    vector&lt;vector&lt;int&gt;&gt; res;
+    int n = nums.size();
+    for (int i = 0; i &lt; n - 2; ++i) {
+        if (i &amp;&amp; nums[i] == nums[i - 1]) continue;
+        int l = i + 1, r = n - 1;
+        while (l &lt; r) {
+            int s = nums[i] + nums[l] + nums[r];
+            if (s &lt; 0)      ++l;
+            else if (s &gt; 0) --r;
+            else {
+                res.push_back({nums[i], nums[l], nums[r]});
+                while (l &lt; r &amp;&amp; nums[l] == nums[l + 1]) ++l;
+                while (l &lt; r &amp;&amp; nums[r] == nums[r - 1]) --r;
+                ++l; --r;
+            }
+        }
+    }
+    return res;
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 46 — Container With Most Water (LeetCode 11) -->
+                <article class="c-card" data-card data-name="container most water leetcode o(n) two pointers">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">46</span> Container Water
+                        </h2>
+                        <span class="c-card__tag">O(n) · leetcode #11 · two pointers</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// LeetCode #11 — Container With Most Water
+int maxArea(const vector&lt;int&gt;&amp; h) {
+    int l = 0, r = (int)h.size() - 1, best = 0;
+    while (l &lt; r) {
+        int area = (r - l) * min(h[l], h[r]);
+        best = max(best, area);
+        if (h[l] &lt; h[r]) ++l;
+        else             --r;
+    }
+    return best;
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 47 — Binary Tree Inorder Traversal (LeetCode 94) -->
+                <article class="c-card" data-card data-name="binary tree inorder traversal leetcode o(n) stack">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">47</span> Inorder Traversal
+                        </h2>
+                        <span class="c-card__tag">O(n) · leetcode #94 · stack</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// LeetCode #94 — Binary Tree Inorder Traversal (iterative)
+struct TreeNode { int val; TreeNode* left; TreeNode* right; };
+
+vector&lt;int&gt; inorderTraversal(TreeNode* root) {
+    vector&lt;int&gt; out;
+    stack&lt;TreeNode*&gt; st;
+    TreeNode* cur = root;
+    while (cur || !st.empty()) {
+        while (cur) { st.push(cur); cur = cur-&gt;left; }
+        cur = st.top(); st.pop();
+        out.push_back(cur-&gt;val);
+        cur = cur-&gt;right;
+    }
+    return out;
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 48 — House Robber (LeetCode 198) -->
+                <article class="c-card" data-card data-name="house robber leetcode o(n) dp">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">48</span> House Robber
+                        </h2>
+                        <span class="c-card__tag">O(n) · leetcode #198 · dp</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// LeetCode #198 — House Robber
+// rob[i] = max loot up to house i (can't rob two adjacent)
+int rob(const vector&lt;int&gt;&amp; nums) {
+    int prev2 = 0, prev1 = 0;
+    for (int x : nums) {
+        int cur = max(prev1, prev2 + x);
+        prev2 = prev1;
+        prev1 = cur;
+    }
+    return prev1;
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 49 — Coin Change (LeetCode 322) -->
+                <article class="c-card" data-card data-name="coin change leetcode o(n·amount) dp bfs">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">49</span> Coin Change
+                        </h2>
+                        <span class="c-card__tag">O(n·A) · leetcode #322 · dp</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// LeetCode #322 — Coin Change (fewest coins, or -1 if impossible)
+int coinChange(const vector&lt;int&gt;&amp; coins, int amount) {
+    vector&lt;int&gt; dp(amount + 1, INT_MAX);
+    dp[0] = 0;
+    for (int a = 1; a &lt;= amount; ++a) {
+        for (int c : coins) {
+            if (c &lt;= a &amp;&amp; dp[a - c] != INT_MAX)
+                dp[a] = min(dp[a], dp[a - c] + 1);
+        }
+    }
+    return dp[amount] == INT_MAX ? -1 : dp[amount];
+}</code></pre>
+                    </div>
+                </article>
+
+                <!-- 50 — LRU Cache (LeetCode 146) -->
+                <article class="c-card" data-card data-name="lru cache leetcode o(1) hashmap linked list">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">50</span> LRU Cache
+                        </h2>
+                        <span class="c-card__tag">O(1) · leetcode #146 · list+map</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>// LeetCode #146 — LRU Cache (get/put in O(1))
+class LRUCache {
+    list&lt;pair&lt;int,int&gt;&gt; lst; // {key, value}, front = most recent
+    unordered_map&lt;int, list&lt;pair&lt;int,int&gt;&gt;::iterator&gt; idx;
+    int cap;
+public:
+    LRUCache(int capacity) : cap(capacity) {}
+    int get(int key) {
+        if (!idx.count(key)) return -1;
+        lst.splice(lst.begin(), lst, idx[key]);
+        return idx[key]-&gt;second;
+    }
+    void put(int key, int value) {
+        if (idx.count(key)) {
+            idx[key]-&gt;second = value;
+            lst.splice(lst.begin(), lst, idx[key]);
+            return;
+        }
+        if ((int)lst.size() == cap) {
+            idx.erase(lst.back().first);
+            lst.pop_back();
+        }
+        lst.push_front({key, value});
+        idx[key] = lst.begin();
+    }
+};</code></pre>
+                    </div>
+                </article>
+
+            </section>
+        </main>
+
+        <!-- =====================================================
+             Footer
+             ===================================================== -->
+        <footer class="c-footer" role="contentinfo">
+            <p>// 50 algorithms · neon-noir · vanilla html/css/dom</p>
+        </footer>
+    </div>
+
+    <script>
+        /* =========================================================
+           DOM API: live filter + keyboard shortcuts
+           ========================================================= */
+        (function () {
+            'use strict';
+
+            var input = document.querySelector('[data-search-input]');
+            var grid  = document.querySelector('[data-grid]');
+            var cards = Array.prototype.slice.call(
+                document.querySelectorAll('[data-card]')
+            );
+            var empty = document.querySelector('[data-empty]');
+
+            if (!input || !grid || !empty) return;
+
+            function applyFilter(rawQuery) {
+                var q = (rawQuery || '').trim().toLowerCase();
+                var visible = 0;
+
+                cards.forEach(function (card) {
+                    var name = (card.getAttribute('data-name') || '').toLowerCase();
+                    var match = q === '' || name.indexOf(q) !== -1;
+                    card.classList.toggle('is-hidden', !match);
+                    if (match) visible++;
+                });
+
+                empty.classList.toggle('is-visible', visible === 0);
+            }
+
+            // Live filter on input
+            input.addEventListener('input', function (e) {
+                applyFilter(e.target.value);
+            });
+
+            // Keyboard: "/" focuses search, "Esc" clears & blurs
+            document.addEventListener('keydown', function (e) {
+                var isTyping = e.target.matches('input, textarea, [contenteditable]');
+
+                if (e.key === '/' && !isTyping) {
+                    e.preventDefault();
+                    input.focus();
+                    input.select();
+                }
+
+                if (e.key === 'Escape' && document.activeElement === input) {
+                    input.value = '';
+                    applyFilter('');
+                    input.blur();
+                }
+            });
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "id": 50,
+  "title": "Find Minimum in Rotated Sorted Array",
+  "difficulty": "medium",
+  "tags": ["array", "binary-search"],
+  "description": "<p>Suppose an array of length <code>n</code> sorted in ascending order is <strong>rotated</strong> between <code>1</code> and <code>n</code> times.</p><p>Given the sorted rotated array <code>nums</code> of unique elements, return <em>the minimum element of this array</em>.</p><p>You must write an algorithm that runs in <code>O(log n)</code> time.</p>",
+  "code": "function findMin(nums: number[]): number {\n  let left = 0;\n  let right = nums.length - 1;\n  \n  while (left < right) {\n    const mid = Math.floor((left + right) / 2);\n    \n    if (nums[mid] > nums[right]) {\n      // Minimum is in the right half\n      left = mid + 1;\n    } else {\n      // Minimum is in the left half (including mid)\n      right = mid;\n    }\n  }\n  \n  return nums[left];\n}\n\n// Time Complexity: O(log n)\n// Space Complexity: O(1)"
+}

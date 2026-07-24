@@ -1,0 +1,8 @@
+{
+  "id": 6,
+  "title": "Longest Substring Without Repeating Characters",
+  "difficulty": "medium",
+  "tags": ["string", "sliding-window"],
+  "description": "<p>Given a string <code>s</code>, find the length of the <strong>longest substring</strong> without repeating characters.</p><h3>Example 1:</h3><pre>Input: s = \"abcabcbb\"\nOutput: 3\nExplanation: The answer is \"abc\", with the length of 3.\n</pre><h3>Example 2:</h3><pre>Input: s = \"bbbbb\"\nOutput: 1\nExplanation: The answer is \"b\", with the length of 1.\n</pre><h3>Example 3:</h3><pre>Input: s = \"pwwkew\"\nOutput: 3\nExplanation: The answer is \"wke\", with the length of 3.\n</pre>",
+  "code": "function lengthOfLongestSubstring(s: string): number {\n  const seen = new Map<string, number>();\n  let maxLength = 0;\n  let left = 0;\n  \n  for (let right = 0; right < s.length; right++) {\n    const char = s[right];\n    \n    if (seen.has(char) && seen.get(char)! >= left) {\n      left = seen.get(char)! + 1;\n    }\n    \n    seen.set(char, right);\n    maxLength = Math.max(maxLength, right - left + 1);\n  }\n  \n  return maxLength;\n}\n\n// Time Complexity: O(n)\n// Space Complexity: O(min(m, n))"
+}

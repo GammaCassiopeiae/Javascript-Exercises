@@ -1,0 +1,8 @@
+{
+  "id": 20,
+  "title": "Word Ladder",
+  "difficulty": "hard",
+  "tags": ["string", "graph", "bfs"],
+  "description": "<p>A <strong>transformation sequence</strong> from word <code>beginWord</code> to word <code>endWord</code> using a dictionary <code>wordList</code> is a sequence of words <code>beginWord -> s1 -> s2 -> ... -> sk</code> such that:</p><ul><li>Every adjacent pair of words differs by a single letter.</li><li>Every <code>si</code> for <code>1 <= i <= k</code> is in <code>wordList</code>.</li><li><code>sk == endWord</code></li></ul><p>Given the two words <code>beginWord</code> and <code>endWord</code> and a dictionary <code>wordList</code>, return <em>the <strong>number of words</strong> in the <strong>shortest transformation sequence</strong></em>.</p>",
+  "code": "function ladderLength(beginWord: string, endWord: string, wordList: string[]): number {\n  const wordSet = new Set(wordList);\n  if (!wordSet.has(endWord)) return 0;\n  \n  const queue: [string, number][] = [[beginWord, 1]];\n  const visited = new Set<string>([beginWord]);\n  \n  while (queue.length > 0) {\n    const [word, level] = queue.shift()!;\n    \n    for (let i = 0; i < word.length; i++) {\n      for (let c = 0; c < 26; c++) {\n        const newWord = word.slice(0, i) + String.fromCharCode(97 + c) + word.slice(i + 1);\n        \n        if (newWord === endWord) return level + 1;\n        \n        if (wordSet.has(newWord) && !visited.has(newWord)) {\n          visited.add(newWord);\n          queue.push([newWord, level + 1]);\n        }\n      }\n    }\n  }\n  \n  return 0;\n}\n\n// Time Complexity: O(M^2 * N)\n// Space Complexity: O(M^2 * N)"
+}

@@ -1,0 +1,8 @@
+{
+  "id": 7,
+  "title": "Container With Most Water",
+  "difficulty": "medium",
+  "tags": ["array", "two-pointers"],
+  "description": "<p>You are given an integer array <code>height</code> of length <code>n</code>. There are <code>n</code> vertical lines drawn such that the two endpoints of the <code>i<sup>th</sup></code> line are <code>(i, 0)</code> and <code>(i, height[i])</code>.</p><p>Find two lines that together with the x-axis form a container, such that the container contains the most water.</p><p>Return <em>the maximum amount of water a container can store</em>.</p><h3>Example 1:</h3><pre>Input: height = [1,8,6,2,5,4,8,3,7]\nOutput: 49\n</pre><h3>Example 2:</h3><pre>Input: height = [1,1]\nOutput: 1\n</pre>",
+  "code": "function maxArea(height: number[]): number {\n  let left = 0;\n  let right = height.length - 1;\n  let maxArea = 0;\n  \n  while (left < right) {\n    const width = right - left;\n    const h = Math.min(height[left], height[right]);\n    maxArea = Math.max(maxArea, width * h);\n    \n    if (height[left] < height[right]) {\n      left++;\n    } else {\n      right--;\n    }\n  }\n  \n  return maxArea;\n}\n\n// Time Complexity: O(n)\n// Space Complexity: O(1)"
+}

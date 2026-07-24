@@ -1,0 +1,8 @@
+{
+  "id": 42,
+  "title": "Kth Largest Element in an Array",
+  "difficulty": "medium",
+  "tags": ["array", "sorting", "heap"],
+  "description": "<p>Given an integer array <code>nums</code> and an integer <code>k</code>, return <em>the</em> <code>k<sup>th</sup></code> <em>largest element in the array</em>.</p><p>Note that it is the k<sup>th</sup> largest element in the sorted order, not the k<sup>th</sup> distinct element.</p><p>You must write an algorithm with <code>O(n)</code> time complexity.</p>",
+  "code": "function findKthLargest(nums: number[], k: number): number {\n  function partition(left: number, right: number, pivotIndex: number): number {\n    const pivot = nums[pivotIndex];\n    [nums[pivotIndex], nums[right]] = [nums[right], nums[pivotIndex]];\n    \n    let storeIndex = left;\n    for (let i = left; i < right; i++) {\n      if (nums[i] > pivot) {\n        [nums[storeIndex], nums[i]] = [nums[i], nums[storeIndex]];\n        storeIndex++;\n      }\n    }\n    \n    [nums[right], nums[storeIndex]] = [nums[storeIndex], nums[right]];\n    return storeIndex;\n  }\n  \n  function quickSelect(left: number, right: number): number {\n    if (left === right) return nums[left];\n    \n    const pivotIndex = Math.floor((left + right) / 2);\n    const partitionIndex = partition(left, right, pivotIndex);\n    \n    if (partitionIndex === k - 1) return nums[partitionIndex];\n    else if (partitionIndex < k - 1) return quickSelect(partitionIndex + 1, right);\n    else return quickSelect(left, partitionIndex - 1);\n  }\n  \n  return quickSelect(0, nums.length - 1);\n}\n\n// Time Complexity: O(n) average\n// Space Complexity: O(1)"
+}

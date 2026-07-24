@@ -1,0 +1,8 @@
+{
+  "id": 28,
+  "title": "Rotate Image",
+  "difficulty": "medium",
+  "tags": ["array", "matrix"],
+  "description": "<p>You are given an <code>n x n</code> 2D <code>matrix</code> representing an image, rotate the image by <strong>90</strong> degrees (clockwise).</p><p>You have to rotate the image <strong><a href=\"https://en.wikipedia.org/wiki/In-place_algorithm\" target=\"_blank\" rel=\"noopener noreferrer\">in-place</a></strong>.</p>",
+  "code": "function rotate(matrix: number[][]): void {\n  const n = matrix.length;\n  \n  // Transpose\n  for (let i = 0; i < n; i++) {\n    for (let j = i + 1; j < n; j++) {\n      [matrix[i][j], matrix[j][i]] = [matrix[j][i], matrix[i][j]];\n    }\n  }\n  \n  // Reverse each row\n  for (let i = 0; i < n; i++) {\n    matrix[i].reverse();\n  }\n}\n\n// Time Complexity: O(n^2)\n// Space Complexity: O(1)"
+}

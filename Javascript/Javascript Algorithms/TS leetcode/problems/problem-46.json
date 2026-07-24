@@ -1,0 +1,8 @@
+{
+  "id": 46,
+  "title": "Remove Nth Node From End of List",
+  "difficulty": "medium",
+  "tags": ["linked-list", "two-pointers"],
+  "description": "<p>Given the <code>head</code> of a linked list, remove the <code>n<sup>th</sup></code> node from the end of the list and return its head.</p><h3>Example 1:</h3><pre>Input: head = [1,2,3,4,5], n = 2\nOutput: [1,2,3,5]\n</pre><h3>Example 2:</h3><pre>Input: head = [1], n = 1\nOutput: []\n</pre>",
+  "code": "class ListNode {\n  val: number;\n  next: ListNode | null;\n  \n  constructor(val?: number, next?: ListNode | null) {\n    this.val = (val === undefined ? 0 : val);\n    this.next = (next === undefined ? null : next);\n  }\n}\n\nfunction removeNthFromEnd(head: ListNode | null, n: number): ListNode | null {\n  const dummy = new ListNode(0, head);\n  let slow: ListNode | null = dummy;\n  let fast: ListNode | null = dummy;\n  \n  for (let i = 0; i <= n; i++) {\n    fast = fast!.next;\n  }\n  \n  while (fast !== null) {\n    slow = slow!.next;\n    fast = fast.next;\n  }\n  \n  slow!.next = slow!.next!.next;\n  return dummy.next;\n}\n\n// Time Complexity: O(n)\n// Space Complexity: O(1)"
+}

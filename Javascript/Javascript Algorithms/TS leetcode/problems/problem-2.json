@@ -1,0 +1,8 @@
+{
+  "id": 2,
+  "title": "Reverse Linked List",
+  "difficulty": "easy",
+  "tags": ["linked-list"],
+  "description": "<p>Given the <code>head</code> of a singly linked list, reverse the list, and return <em>the reversed list</em>.</p><h3>Example 1:</h3><pre>Input: head = [1,2,3,4,5]\nOutput: [5,4,3,2,1]\n</pre><h3>Example 2:</h3><pre>Input: head = [1,2]\nOutput: [2,1]\n</pre><h3>Example 3:</h3><pre>Input: head = []\nOutput: []\n</pre><h3>Constraints:</h3><ul><li>The number of nodes in the list is in the range <code>[0, 5000]</code>.</li><li><code>-5000 <= Node.val <= 5000</code></li></ul>",
+  "code": "class ListNode {\n  val: number;\n  next: ListNode | null;\n  \n  constructor(val?: number, next?: ListNode | null) {\n    this.val = (val === undefined ? 0 : val);\n    this.next = (next === undefined ? null : next);\n  }\n}\n\nfunction reverseList(head: ListNode | null): ListNode | null {\n  let prev: ListNode | null = null;\n  let current: ListNode | null = head;\n  \n  while (current !== null) {\n    const nextTemp = current.next;\n    current.next = prev;\n    prev = current;\n    current = nextTemp;\n  }\n  \n  return prev;\n}\n\n// Time Complexity: O(n)\n// Space Complexity: O(1)"
+}

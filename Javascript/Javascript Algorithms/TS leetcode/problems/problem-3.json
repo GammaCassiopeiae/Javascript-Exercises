@@ -1,0 +1,8 @@
+{
+  "id": 3,
+  "title": "Valid Parentheses",
+  "difficulty": "easy",
+  "tags": ["string", "stack"],
+  "description": "<p>Given a string <code>s</code> containing just the characters <code>'('</code>, <code>')'</code>, <code>'{'</code>, <code>'}'</code>, <code>'['</code> and <code>']'</code>, determine if the input string is valid.</p><p>An input string is valid if:</p><ol><li>Open brackets must be closed by the same type of brackets.</li><li>Open brackets must be closed in the correct order.</li><li>Every close bracket has a corresponding open bracket of the same type.</li></ol><h3>Example 1:</h3><pre>Input: s = \"()\"\nOutput: true\n</pre><h3>Example 2:</h3><pre>Input: s = \"()[]{}\"\nOutput: true\n</pre><h3>Example 3:</h3><pre>Input: s = \"(]\"\nOutput: false\n</pre>",
+  "code": "function isValid(s: string): boolean {\n  const stack: string[] = [];\n  const map: Record<string, string> = {\n    ')': '(',\n    '}': '{',\n    ']': '['\n  };\n  \n  for (const char of s) {\n    if (char in map) {\n      const top = stack.pop() || '#';\n      if (top !== map[char]) return false;\n    } else {\n      stack.push(char);\n    }\n  }\n  \n  return stack.length === 0;\n}\n\n// Time Complexity: O(n)\n// Space Complexity: O(n)"
+}

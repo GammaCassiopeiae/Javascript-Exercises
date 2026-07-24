@@ -1,0 +1,8 @@
+{
+  "id": 18,
+  "title": "Climbing Stairs",
+  "difficulty": "easy",
+  "tags": ["dp"],
+  "description": "<p>You are climbing a staircase. It takes <code>n</code> steps to reach the top.</p><p>Each time you can either climb <code>1</code> or <code>2</code> steps. In how many distinct ways can you climb to the top?</p><h3>Example 1:</h3><pre>Input: n = 2\nOutput: 2\nExplanation: There are two ways to climb to the top.\n1. 1 step + 1 step\n2. 2 steps\n</pre><h3>Example 2:</h3><pre>Input: n = 3\nOutput: 3\nExplanation: There are three ways to climb to the top.\n1. 1 step + 1 step + 1 step\n2. 1 step + 2 steps\n3. 2 steps + 1 step\n</pre>",
+  "code": "function climbStairs(n: number): number {\n  if (n <= 2) return n;\n  \n  let prev1 = 1;\n  let prev2 = 2;\n  \n  for (let i = 3; i <= n; i++) {\n    const current = prev1 + prev2;\n    prev1 = prev2;\n    prev2 = current;\n  }\n  \n  return prev2;\n}\n\n// Time Complexity: O(n)\n// Space Complexity: O(1)"
+}

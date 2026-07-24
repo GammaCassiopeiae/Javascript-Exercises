@@ -1,0 +1,668 @@
+/* ============================================
+   NEON-NOIR DESIGN SYSTEM - LeetCode App
+   ============================================ */
+
+/* 1. Box Model Reset (Directive 5) */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 2. CSS Variables (Directive 6) */
+:root {
+  /* Backgrounds */
+  --bg-deep: #050505;
+  --bg-surface: #0a0b10;
+  --bg-glass: rgba(255, 255, 255, 0.05);
+  --bg-card: rgba(10, 11, 16, 0.8);
+
+  /* Neon Accents */
+  --neon-cyan: #00f3ff;
+  --neon-magenta: #ff00ff;
+  --neon-green: #00ff9d;
+  --neon-purple: #bd00ff;
+  --neon-blue: #0066ff;
+
+  /* Text */
+  --text-primary: #ffffff;
+  --text-muted: rgba(255, 255, 255, 0.7);
+  --text-code: #e0e0e0;
+
+  /* Glows */
+  --glow-cyan: 0 0 5px var(--neon-cyan), 0 0 15px rgba(0, 243, 255, 0.3);
+  --glow-magenta: 0 0 5px var(--neon-magenta), 0 0 15px rgba(255, 0, 255, 0.3);
+  --glow-green: 0 0 5px var(--neon-green), 0 0 15px rgba(0, 255, 157, 0.3);
+  --glow-purple: 0 0 5px var(--neon-purple), 0 0 15px rgba(189, 0, 255, 0.3);
+
+  /* Z-Index Tokens (Directive 10) */
+  --z-sticky: 100;
+  --z-modal: 1000;
+  --z-tooltip: 500;
+
+  /* Spacing Scale */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+
+  /* Typography (Directive 9 - Fluid) */
+  --font-heading: 'Rajdhani', 'Orbitron', sans-serif;
+  --font-body: 'Inter', 'Sora', sans-serif;
+  --font-mono: 'Fira Code', 'Consolas', monospace;
+
+  --text-xs: clamp(0.75rem, 2vw, 0.875rem);
+  --text-sm: clamp(0.875rem, 2.5vw, 1rem);
+  --text-base: clamp(1rem, 3vw, 1.125rem);
+  --text-lg: clamp(1.125rem, 3.5vw, 1.25rem);
+  --text-xl: clamp(1.25rem, 4vw, 1.5rem);
+  --text-2xl: clamp(1.5rem, 5vw, 2rem);
+  --text-3xl: clamp(2rem, 6vw, 3rem);
+
+  /* Borders */
+  --border-neon: 1px solid rgba(0, 243, 255, 0.2);
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms ease;
+}
+
+/* 3. Base Styles */
+html {
+  scroll-behavior: smooth; /* Directive 14 */
+  font-size: 16px;
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-deep);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column; /* Directive 13 */
+  margin: 0;
+  padding: 0;
+}
+
+/* 4. Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height: 1.2;
+  text-shadow: var(--glow-cyan); /* Directive 52 */
+}
+
+h1 { font-size: var(--text-3xl); }
+h2 { font-size: var(--text-2xl); }
+h3 { font-size: var(--text-xl); }
+
+a {
+  color: var(--neon-cyan);
+  text-decoration: none;
+  transition: color var(--transition-fast), text-shadow var(--transition-fast);
+}
+
+a:hover {
+  color: var(--neon-magenta);
+  text-shadow: var(--glow-magenta);
+}
+
+/* 5. Layout - Holy Trinity (Directives 7, 8, 12) */
+.l-header {
+  grid-area: header;
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  background: var(--bg-surface);
+  backdrop-filter: blur(12px); /* Directive 54 */
+  border-bottom: var(--border-neon);
+  padding: var(--space-md) var(--space-lg);
+}
+
+/* App Container */
+#app-container {
+  flex: 1;
+  width: 100%;
+}
+
+.l-main {
+  grid-area: main;
+  flex: 1;
+  padding: var(--space-xl);
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  display: block;
+}
+
+.l-footer {
+  grid-area: footer;
+  background: var(--bg-surface);
+  border-top: var(--border-neon);
+  padding: var(--space-lg);
+  text-align: center;
+  color: var(--text-muted);
+}
+
+/* 6. Header Component */
+.c-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.c-logo {
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  color: var(--neon-cyan);
+  text-shadow: var(--glow-cyan);
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.c-nav__list {
+  display: flex;
+  list-style: none;
+  gap: var(--space-lg);
+}
+
+.c-nav__link {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-base);
+}
+
+.c-nav__link:hover,
+.c-nav__link.is-active {
+  background: var(--bg-glass);
+  box-shadow: var(--glow-cyan);
+}
+
+/* Theme Toggle Button */
+.c-theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--bg-glass);
+  border: var(--border-neon);
+  border-radius: var(--border-radius-md);
+  color: var(--neon-cyan);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.c-theme-toggle:hover {
+  background: var(--neon-cyan);
+  color: var(--bg-deep);
+  box-shadow: var(--glow-cyan);
+}
+
+.c-theme-toggle svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Hero Section */
+.c-hero {
+  padding: var(--space-2xl) 0;
+  margin-bottom: var(--space-xl);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Scanlines Effect (Directive 57) */
+.c-hero::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%,
+    rgba(0, 0, 0, 0.1) 50%
+  ),
+  linear-gradient(
+    90deg,
+    rgba(255, 0, 0, 0.03),
+    rgba(0, 255, 0, 0.01),
+    rgba(0, 0, 255, 0.03)
+  );
+  background-size: 100% 4px, 3px 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.c-hero h1 {
+  margin-bottom: var(--space-md);
+  position: relative;
+  z-index: 2;
+}
+
+/* Chromatic Aberration Glitch (Directive 60) */
+.c-logo:hover,
+.c-hero h1:hover {
+  text-shadow: 
+    2px 0 var(--neon-magenta), 
+    -2px 0 var(--neon-cyan);
+  animation: glitch 0.3s cubic-bezier(.25,.46,.45,.94) both infinite;
+}
+
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+.c-hero__subtitle {
+  font-size: var(--text-lg);
+  color: var(--text-muted);
+  margin-top: var(--space-md);
+  position: relative;
+  z-index: 2;
+}
+
+/* 7. Grid for Problem Cards */
+.l-problem-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-lg);
+  margin-top: var(--space-xl);
+  padding: 0 var(--space-md);
+}
+
+/* 8. Problem Card Component */
+.c-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(12px); /* Directive 54 */
+  border: var(--border-neon);
+  border-radius: var(--border-radius-md);
+  padding: var(--space-lg);
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.c-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta), var(--neon-purple));
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.c-card:hover {
+  transform: translateY(-5px); /* Directive 62 */
+  box-shadow: var(--glow-cyan); /* Directive 53 */
+}
+
+.c-card:hover::before {
+  opacity: 1;
+}
+
+.c-card__number {
+  font-family: var(--font-mono);
+  color: var(--neon-magenta);
+  font-size: var(--text-xs);
+  margin-bottom: var(--space-sm);
+}
+
+.c-card__title {
+  font-size: var(--text-lg);
+  margin-bottom: var(--space-md);
+  color: var(--text-primary);
+}
+
+.c-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-md);
+}
+
+.c-tag {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--border-radius-sm);
+  background: var(--bg-glass);
+  border: 1px solid rgba(0, 243, 255, 0.1);
+  color: var(--neon-cyan);
+}
+
+.c-tag--array { color: var(--neon-green); border-color: rgba(0, 255, 157, 0.2); }
+.c-tag--string { color: var(--neon-magenta); border-color: rgba(255, 0, 255, 0.2); }
+.c-tag--tree { color: var(--neon-purple); border-color: rgba(189, 0, 255, 0.2); }
+.c-tag--graph { color: var(--neon-blue); border-color: rgba(0, 102, 255, 0.2); }
+.c-tag--dp { color: var(--neon-cyan); border-color: rgba(0, 243, 255, 0.2); }
+.c-tag--backtrack { color: #ff6b6b; border-color: rgba(255, 107, 107, 0.2); }
+
+.c-card__link {
+  display: inline-block;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--neon-cyan);
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-base);
+}
+
+.c-card__link:hover {
+  background: var(--neon-cyan);
+  color: var(--bg-deep);
+  box-shadow: var(--glow-cyan);
+}
+
+/* 9. Problem Detail Page */
+.c-problem-detail {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.c-problem-detail__header {
+  margin-bottom: var(--space-xl);
+  padding-bottom: var(--space-lg);
+  border-bottom: var(--border-neon);
+}
+
+.c-problem-detail__title {
+  margin-bottom: var(--space-md);
+}
+
+.c-problem-detail__meta {
+  display: flex;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+}
+
+.c-problem-detail__difficulty {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--border-radius-sm);
+}
+
+.c-difficulty--easy { color: var(--neon-green); }
+.c-difficulty--medium { color: var(--neon-cyan); }
+.c-difficulty--hard { color: var(--neon-magenta); }
+
+.c-problem-detail__description {
+  font-size: var(--text-base);
+  line-height: 1.8;
+  color: var(--text-muted);
+  margin-bottom: var(--space-xl);
+}
+
+/* Code Section */
+.c-code-section {
+  margin-top: var(--space-xl);
+}
+
+.c-code-section h2 {
+  font-size: var(--text-xl);
+  margin-bottom: var(--space-lg);
+  color: var(--neon-cyan);
+}
+
+/* 10. Code Display Component */
+.c-code-block {
+  background: var(--bg-surface);
+  border: var(--border-neon);
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+  margin-bottom: var(--space-lg);
+}
+
+.c-code-block__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-glass);
+  border-bottom: var(--border-neon);
+}
+
+.c-code-block__title {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--neon-cyan);
+}
+
+.c-code-block__copy {
+  font-family: var(--font-heading);
+  font-size: var(--text-xs);
+  padding: var(--space-xs) var(--space-sm);
+  background: transparent;
+  border: 1px solid var(--neon-cyan);
+  border-radius: var(--border-radius-sm);
+  color: var(--neon-cyan);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.c-code-block__copy:hover {
+  background: var(--neon-cyan);
+  color: var(--bg-deep);
+}
+
+.c-code-block__content {
+  padding: var(--space-lg);
+  overflow-x: auto;
+}
+
+.c-code-block pre {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.8;
+  color: var(--text-code);
+  white-space: pre;
+  word-wrap: normal;
+}
+
+.c-code-block code {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.8;
+  color: var(--text-code);
+}
+
+/* Syntax Highlighting */
+.token-keyword { color: var(--neon-magenta); }
+.token-type { color: var(--neon-cyan); }
+.token-string { color: var(--neon-green); }
+.token-number { color: var(--neon-purple); }
+.token-comment { color: var(--text-muted); font-style: italic; }
+.token-function { color: var(--neon-cyan); }
+.token-operator { color: var(--neon-magenta); }
+
+/* 11. Back Button */
+.c-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: var(--neon-cyan);
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--neon-cyan);
+  border-radius: var(--border-radius-sm);
+  background: transparent;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  margin-bottom: var(--space-lg);
+}
+
+.c-back-btn:hover {
+  background: var(--neon-cyan);
+  color: var(--bg-deep);
+  box-shadow: var(--glow-cyan);
+}
+
+/* 12. Footer */
+.c-footer-text {
+  font-size: var(--text-sm);
+}
+
+.c-footer-link {
+  color: var(--neon-cyan);
+}
+
+/* 13. Custom Scrollbar (Directive 64) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-deep);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--neon-cyan), var(--neon-purple));
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--neon-magenta), var(--neon-purple));
+}
+
+/* 14. Selection (Directive 63) */
+::selection {
+  background: var(--neon-cyan);
+  color: var(--bg-deep);
+}
+
+/* 15. Focus Visible (Directive 15) */
+:focus-visible {
+  outline: 2px solid var(--neon-cyan);
+  outline-offset: 2px;
+  box-shadow: var(--glow-cyan);
+}
+
+/* 16. Utility Classes */
+.u-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.u-text-center { text-align: center; }
+
+/* 17. Animations */
+@keyframes neon-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; } /* Directive 56 */
+}
+
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+.is-pulsing {
+  animation: neon-pulse 2s ease-in-out infinite;
+}
+
+/* 18. Responsive Breakpoints (Directive 1) */
+@media (max-width: 768px) {
+  .l-header,
+  .l-main,
+  .l-footer {
+    padding: var(--space-md);
+  }
+
+  .c-header {
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .c-nav__list {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-sm);
+  }
+
+  .l-problem-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .c-problem-detail__meta {
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .c-theme-toggle {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* 19. Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 20. Loading Skeleton (Directive 65) */
+.c-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-surface) 25%,
+    var(--bg-glass) 50%,
+    var(--bg-surface) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--border-radius-sm);
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

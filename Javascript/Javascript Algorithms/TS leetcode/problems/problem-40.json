@@ -1,0 +1,8 @@
+{
+  "id": 40,
+  "title": "Find Peak Element",
+  "difficulty": "medium",
+  "tags": ["array", "binary-search"],
+  "description": "<p>A peak element is an element that is strictly greater than its neighbors.</p><p>Given a <strong>0-indexed</strong> integer array <code>nums</code>, find a peak element, and return its index. If the array contains multiple peaks, return the index to <strong>any of the peaks</strong>.</p><p>You may imagine that <code>nums[-1] = nums[n] = -∞</code>.</p>",
+  "code": "function findPeakElement(nums: number[]): number {\n  let left = 0;\n  let right = nums.length - 1;\n  \n  while (left < right) {\n    const mid = Math.floor((left + right) / 2);\n    \n    if (nums[mid] > nums[mid + 1]) {\n      // Peak is in the left half (including mid)\n      right = mid;\n    } else {\n      // Peak is in the right half\n      left = mid + 1;\n    }\n  }\n  \n  return left;\n}\n\n// Time Complexity: O(log n)\n// Space Complexity: O(1)"
+}

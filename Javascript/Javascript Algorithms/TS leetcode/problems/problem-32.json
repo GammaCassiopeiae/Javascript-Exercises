@@ -1,0 +1,8 @@
+{
+  "id": 32,
+  "title": "House Robber",
+  "difficulty": "medium",
+  "tags": ["dp"],
+  "description": "<p>You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed, the only constraint stopping you from robbing each of them is that adjacent houses have security systems connected and <strong>it will automatically contact the police if two adjacent houses were broken into on the same night</strong>.</p><p>Given an integer array <code>nums</code> representing the amount of money of each house, return <em>the maximum amount of money you can rob tonight <strong>without alerting the police</strong></em>.</p>",
+  "code": "function rob(nums: number[]): number {\n  if (nums.length === 0) return 0;\n  if (nums.length === 1) return nums[0];\n  \n  let prev1 = 0;\n  let prev2 = 0;\n  \n  for (const num of nums) {\n    const current = Math.max(prev1, prev2 + num);\n    prev2 = prev1;\n    prev1 = current;\n  }\n  \n  return prev1;\n}\n\n// Time Complexity: O(n)\n// Space Complexity: O(1)"
+}

@@ -1,0 +1,8 @@
+{
+  "id": 44,
+  "title": "Find All Anagrams in a String",
+  "difficulty": "medium",
+  "tags": ["string", "sliding-window"],
+  "description": "<p>Given two strings <code>s</code> and <code>p</code>, return <em>an array of all the start indices of </em><code>p</code><em>'s anagrams in </em><code>s</code>. You may return the answer in <strong>any order</strong>.</p><p>An <strong>Anagram</strong> is a word or phrase formed by rearranging the letters of a different word or phrase, using all the original letters exactly once.</p>",
+  "code": "function findAnagrams(s: string, p: string): number[] {\n  const result: number[] = [];\n  if (p.length > s.length) return result;\n  \n  const pCount = new Map<string, number>();\n  const windowCount = new Map<string, number>();\n  \n  for (const char of p) {\n    pCount.set(char, (pCount.get(char) || 0) + 1);\n  }\n  \n  let left = 0;\n  \n  for (let right = 0; right < s.length; right++) {\n    const rightChar = s[right];\n    windowCount.set(rightChar, (windowCount.get(rightChar) || 0) + 1);\n    \n    if (right >= p.length) {\n      const leftChar = s[left];\n      const count = windowCount.get(leftChar)!;\n      if (count === 1) windowCount.delete(leftChar);\n      else windowCount.set(leftChar, count - 1);\n      left++;\n    }\n    \n    if (mapsEqual(pCount, windowCount)) {\n      result.push(left);\n    }\n  }\n  \n  return result;\n}\n\nfunction mapsEqual(a: Map<string, number>, b: Map<string, number>): boolean {\n  if (a.size !== b.size) return false;\n  for (const [key, val] of a.entries()) {\n    if (b.get(key) !== val) return false;\n  }\n  return true;\n}\n\n// Time Complexity: O(n)\n// Space Complexity: O(1)"
+}

@@ -1,0 +1,8 @@
+{
+  "id": 8,
+  "title": "Add Two Numbers",
+  "difficulty": "medium",
+  "tags": ["linked-list", "math"],
+  "description": "<p>You are given two <strong>non-empty</strong> linked lists representing two non-negative integers. The digits are stored in <strong>reverse order</strong>, and each of their nodes contains a single digit. Add the two numbers and return the sum as a linked list.</p><p>You may assume the two numbers do not contain any leading zero, except the number 0 itself.</p><h3>Example 1:</h3><pre>Input: l1 = [2,4,3], l2 = [5,6,4]\nOutput: [7,0,8]\nExplanation: 342 + 465 = 807.\n</pre><h3>Example 2:</h3><pre>Input: l1 = [0], l2 = [0]\nOutput: [0]\n</pre>",
+  "code": "class ListNode {\n  val: number;\n  next: ListNode | null;\n  \n  constructor(val?: number, next?: ListNode | null) {\n    this.val = (val === undefined ? 0 : val);\n    this.next = (next === undefined ? null : next);\n  }\n}\n\nfunction addTwoNumbers(l1: ListNode | null, l2: ListNode | null): ListNode | null {\n  const dummy = new ListNode(0);\n  let current = dummy;\n  let carry = 0;\n  \n  while (l1 || l2 || carry) {\n    const val1 = l1 ? l1.val : 0;\n    const val2 = l2 ? l2.val : 0;\n    const sum = val1 + val2 + carry;\n    \n    carry = Math.floor(sum / 10);\n    current.next = new ListNode(sum % 10);\n    current = current.next;\n    \n    if (l1) l1 = l1.next;\n    if (l2) l2 = l2.next;\n  }\n  \n  return dummy.next;\n}\n\n// Time Complexity: O(max(m, n))\n// Space Complexity: O(max(m, n))"
+}

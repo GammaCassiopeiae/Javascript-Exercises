@@ -1,0 +1,8 @@
+{
+  "id": 21,
+  "title": "Group Anagrams",
+  "difficulty": "medium",
+  "tags": ["string", "hash"],
+  "description": "<p>Given an array of strings <code>strs</code>, group <strong>the anagrams</strong> together. You can return the answer in <strong>any order</strong>.</p><p>An <strong>Anagram</strong> is a word or phrase formed by rearranging the letters of a different word or phrase, using all the original letters exactly once.</p><h3>Example 1:</h3><pre>Input: strs = [\"eat\",\"tea\",\"tan\",\"ate\",\"nat\",\"bat\"]\nOutput: [[\"bat\"],[\"nat\",\"tan\"],[\"ate\",\"eat\",\"tea\"]]\n</pre>",
+  "code": "function groupAnagrams(strs: string[]): string[][] {\n  const map = new Map<string, string[]>();\n  \n  for (const str of strs) {\n    const sorted = str.split('').sort().join('');\n    if (!map.has(sorted)) {\n      map.set(sorted, []);\n    }\n    map.get(sorted)!.push(str);\n  }\n  \n  return Array.from(map.values());\n}\n\n// Time Complexity: O(N * K * log(K))\n// Space Complexity: O(N * K)"
+}

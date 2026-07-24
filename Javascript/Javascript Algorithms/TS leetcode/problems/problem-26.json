@@ -1,0 +1,8 @@
+{
+  "id": 26,
+  "title": "Trapping Rain Water",
+  "difficulty": "hard",
+  "tags": ["array", "two-pointers"],
+  "description": "<p>Given <code>n</code> non-negative integers representing an elevation map where the width of each bar is <code>1</code>, compute how much water it can trap after raining.</p><h3>Example 1:</h3><pre>Input: height = [0,1,0,2,1,0,1,3,2,1,2,1]\nOutput: 6\n</pre><h3>Example 2:</h3><pre>Input: height = [4,2,0,3,2,5]\nOutput: 9\n</pre>",
+  "code": "function trap(height: number[]): number {\n  if (height.length === 0) return 0;\n  \n  let left = 0;\n  let right = height.length - 1;\n  let leftMax = 0;\n  let rightMax = 0;\n  let water = 0;\n  \n  while (left < right) {\n    if (height[left] < height[right]) {\n      if (height[left] >= leftMax) {\n        leftMax = height[left];\n      } else {\n        water += leftMax - height[left];\n      }\n      left++;\n    } else {\n      if (height[right] >= rightMax) {\n        rightMax = height[right];\n      } else {\n        water += rightMax - height[right];\n      }\n      right--;\n    }\n  }\n  \n  return water;\n}\n\n// Time Complexity: O(n)\n// Space Complexity: O(1)"
+}

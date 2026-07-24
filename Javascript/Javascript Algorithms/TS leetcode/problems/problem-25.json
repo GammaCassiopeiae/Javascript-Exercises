@@ -1,0 +1,8 @@
+{
+  "id": 25,
+  "title": "Combination Sum",
+  "difficulty": "medium",
+  "tags": ["backtrack"],
+  "description": "<p>Given an array of <strong>distinct</strong> integers <code>candidates</code> and a target integer <code>target</code>, return <em>a list of all <strong>unique combinations</strong> of </em><code>candidates</code><em> where the chosen numbers sum to </em><code>target</code>.</p><p>The <strong>same</strong> number may be chosen from <code>candidates</code> an <strong>unlimited number of times</strong>.</p>",
+  "code": "function combinationSum(candidates: number[], target: number): number[][] {\n  const result: number[][] = [];\n  \n  function backtrack(start: number, path: number[], remaining: number) {\n    if (remaining === 0) {\n      result.push([...path]);\n      return;\n    }\n    \n    if (remaining < 0) return;\n    \n    for (let i = start; i < candidates.length; i++) {\n      path.push(candidates[i]);\n      backtrack(i, path, remaining - candidates[i]);\n      path.pop();\n    }\n  }\n  \n  backtrack(0, [], target);\n  return result;\n}\n\n// Time Complexity: O(2^t)\n// Space Complexity: O(t)"
+}

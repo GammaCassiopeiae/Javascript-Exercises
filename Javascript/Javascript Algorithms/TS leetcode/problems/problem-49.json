@@ -1,0 +1,8 @@
+{
+  "id": 49,
+  "title": "Find the Duplicate Number",
+  "difficulty": "medium",
+  "tags": ["array", "two-pointers", "binary-search"],
+  "description": "<p>Given an array of integers <code>nums</code> containing <code>n + 1</code> integers where each integer is in the range <code>[1, n]</code> inclusive.</p><p>There is only <strong>one repeated number</strong> in <code>nums</code>, return <em>this repeated number</em>.</p><p>You must solve the problem <strong>without</strong> modifying the array <code>nums</code> and uses only constant extra space.</p>",
+  "code": "function findDuplicate(nums: number[]): number {\n  // Floyd's Tortoise and Hare (Cycle Detection)\n  let slow = nums[0];\n  let fast = nums[0];\n  \n  do {\n    slow = nums[slow];\n    fast = nums[nums[fast]];\n  } while (slow !== fast);\n  \n  slow = nums[0];\n  while (slow !== fast) {\n    slow = nums[slow];\n    fast = nums[fast];\n  }\n  \n  return slow;\n}\n\n// Time Complexity: O(n)\n// Space Complexity: O(1)"
+}

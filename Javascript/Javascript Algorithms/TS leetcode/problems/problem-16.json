@@ -1,0 +1,8 @@
+{
+  "id": 16,
+  "title": "Path Sum",
+  "difficulty": "easy",
+  "tags": ["tree"],
+  "description": "<p>Given the <code>root</code> of a binary tree and an integer <code>targetSum</code>, return <code>true</code> if the tree has a root-to-leaf path such that adding up all the values along the path equals <code>targetSum</code>.</p><p>A <strong>leaf</strong> is a node with no children.</p>",
+  "code": "class TreeNode {\n  val: number;\n  left: TreeNode | null;\n  right: TreeNode | null;\n  \n  constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n    this.val = (val === undefined ? 0 : val);\n    this.left = (left === undefined ? null : left);\n    this.right = (right === undefined ? null : right);\n  }\n}\n\nfunction hasPathSum(root: TreeNode | null, targetSum: number): boolean {\n  if (!root) return false;\n  \n  if (!root.left && !root.right) {\n    return targetSum === root.val;\n  }\n  \n  const remainingSum = targetSum - root.val;\n  return hasPathSum(root.left, remainingSum) || \n         hasPathSum(root.right, remainingSum);\n}\n\n// Time Complexity: O(n)\n// Space Complexity: O(h)"
+}

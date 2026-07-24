@@ -1,0 +1,8 @@
+{
+  "id": 38,
+  "title": "Course Schedule",
+  "difficulty": "medium",
+  "tags": ["graph", "dfs", "bfs"],
+  "description": "<p>There are a total of <code>numCourses</code> courses you have to take, labeled from <code>0</code> to <code>numCourses - 1</code>. You are given an array <code>prerequisites</code> where <code>prerequisites[i] = [a<sub>i</sub>, b<sub>i</sub>]</code> indicates that you <strong>must</strong> take course <code>b<sub>i</sub></code> first if you want to take course <code>a<sub>i</sub></code>.</p><p>Return <code>true</code> if you can finish all courses. Otherwise, return <code>false</code>.</p>",
+  "code": "function canFinish(numCourses: number, prerequisites: number[][]): boolean {\n  const graph: number[][] = Array.from({ length: numCourses }, () => []);\n  const visited: number[] = new Array(numCourses).fill(0);\n  \n  for (const [course, prereq] of prerequisites) {\n    graph[prereq].push(course);\n  }\n  \n  function dfs(course: number): boolean {\n    if (visited[course] === 1) return false; // Cycle detected\n    if (visited[course] === 2) return true;  // Already processed\n    \n    visited[course] = 1; // Mark as visiting\n    \n    for (const neighbor of graph[course]) {\n      if (!dfs(neighbor)) return false;\n    }\n    \n    visited[course] = 2; // Mark as visited\n    return true;\n  }\n  \n  for (let i = 0; i < numCourses; i++) {\n    if (!dfs(i)) return false;\n  }\n  \n  return true;\n}\n\n// Time Complexity: O(V + E)\n// Space Complexity: O(V + E)"
+}

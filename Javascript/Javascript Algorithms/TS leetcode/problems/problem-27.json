@@ -1,0 +1,8 @@
+{
+  "id": 27,
+  "title": "Spiral Matrix",
+  "difficulty": "medium",
+  "tags": ["array", "matrix"],
+  "description": "<p>Given an <code>m x n</code> <code>matrix</code>, return <em>all elements of the</em> <code>matrix</code> <em>in spiral order</em>.</p><h3>Example 1:</h3><pre>Input: matrix = [[1,2,3],[4,5,6],[7,8,9]]\nOutput: [1,2,3,6,9,8,7,4,5]\n</pre>",
+  "code": "function spiralOrder(matrix: number[][]): number[] {\n  const result: number[] = [];\n  if (matrix.length === 0) return result;\n  \n  let top = 0;\n  let bottom = matrix.length - 1;\n  let left = 0;\n  let right = matrix[0].length - 1;\n  \n  while (top <= bottom && left <= right) {\n    // Traverse right\n    for (let i = left; i <= right; i++) {\n      result.push(matrix[top][i]);\n    }\n    top++;\n    \n    // Traverse down\n    for (let i = top; i <= bottom; i++) {\n      result.push(matrix[i][right]);\n    }\n    right--;\n    \n    // Traverse left\n    if (top <= bottom) {\n      for (let i = right; i >= left; i--) {\n        result.push(matrix[bottom][i]);\n      }\n      bottom--;\n    }\n    \n    // Traverse up\n    if (left <= right) {\n      for (let i = bottom; i >= top; i--) {\n        result.push(matrix[i][left]);\n      }\n      left++;\n    }\n  }\n  \n  return result;\n}\n\n// Time Complexity: O(m * n)\n// Space Complexity: O(1)"
+}

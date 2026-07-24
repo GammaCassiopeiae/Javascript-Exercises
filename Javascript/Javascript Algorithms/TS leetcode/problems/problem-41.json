@@ -1,0 +1,8 @@
+{
+  "id": 41,
+  "title": "Minimum Path Sum",
+  "difficulty": "medium",
+  "tags": ["dp"],
+  "description": "<p>Given a <code>m x n</code> <code>grid</code> filled with non-negative numbers, find a path from top left to bottom right, which minimizes the sum of all numbers along its path.</p><p><strong>Note:</strong> You can only move either down or right at any point in time.</p>",
+  "code": "function minPathSum(grid: number[][]): number {\n  const m = grid.length;\n  const n = grid[0].length;\n  \n  for (let i = 0; i < m; i++) {\n    for (let j = 0; j < n; j++) {\n      if (i === 0 && j === 0) continue;\n      else if (i === 0) grid[i][j] += grid[i][j - 1];\n      else if (j === 0) grid[i][j] += grid[i - 1][j];\n      else grid[i][j] += Math.min(grid[i - 1][j], grid[i][j - 1]);\n    }\n  }\n  \n  return grid[m - 1][n - 1];\n}\n\n// Time Complexity: O(m * n)\n// Space Complexity: O(1)"
+}

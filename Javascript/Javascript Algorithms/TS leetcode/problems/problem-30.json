@@ -1,0 +1,8 @@
+{
+  "id": 30,
+  "title": "Longest Palindromic Substring",
+  "difficulty": "medium",
+  "tags": ["string", "dp"],
+  "description": "<p>Given a string <code>s</code>, return <em>the longest palindromic substring</em> in <code>s</code>.</p><h3>Example 1:</h3><pre>Input: s = \"babad\"\nOutput: \"bab\"\nExplanation: \"aba\" is also a valid answer.\n</pre><h3>Example 2:</h3><pre>Input: s = \"cbbd\"\nOutput: \"bb\"\n</pre>",
+  "code": "function longestPalindrome(s: string): string {\n  if (s.length === 0) return '';\n  \n  let start = 0;\n  let maxLen = 0;\n  \n  function expandAroundCenter(left: number, right: number): number {\n    while (left >= 0 && right < s.length && s[left] === s[right]) {\n      left--;\n      right++;\n    }\n    return right - left - 1;\n  }\n  \n  for (let i = 0; i < s.length; i++) {\n    const len1 = expandAroundCenter(i, i);\n    const len2 = expandAroundCenter(i, i + 1);\n    const len = Math.max(len1, len2);\n    \n    if (len > maxLen) {\n      start = i - Math.floor((len - 1) / 2);\n      maxLen = len;\n    }\n  }\n  \n  return s.substring(start, start + maxLen);\n}\n\n// Time Complexity: O(n^2)\n// Space Complexity: O(1)"
+}

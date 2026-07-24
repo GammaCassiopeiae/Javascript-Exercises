@@ -1,0 +1,8 @@
+{
+  "id": 48,
+  "title": "Serialize and Deserialize Binary Tree",
+  "difficulty": "hard",
+  "tags": ["tree"],
+  "description": "<p>Serialization is the process of converting a data structure or object into a sequence of bits so that it can be stored in a file or memory buffer, or transmitted across a network connection link to be reconstructed later in the same or another computer environment.</p><p>Design an algorithm to serialize and deserialize a binary tree.</p>",
+  "code": "class TreeNode {\n  val: number;\n  left: TreeNode | null;\n  right: TreeNode | null;\n  \n  constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n    this.val = (val === undefined ? 0 : val);\n    this.left = (left === undefined ? null : left);\n    this.right = (right === undefined ? null : right);\n  }\n}\n\nfunction serialize(root: TreeNode | null): string {\n  const result: string[] = [];\n  \n  function dfs(node: TreeNode | null) {\n    if (!node) {\n      result.push('null');\n      return;\n    }\n    result.push(String(node.val));\n    dfs(node.left);\n    dfs(node.right);\n  }\n  \n  dfs(root);\n  return result.join(',');\n}\n\nfunction deserialize(data: string): TreeNode | null {\n  const nodes = data.split(',');\n  let index = 0;\n  \n  function dfs(): TreeNode | null {\n    if (nodes[index] === 'null') {\n      index++;\n      return null;\n    }\n    \n    const node = new TreeNode(Number(nodes[index]));\n    index++;\n    node.left = dfs();\n    node.right = dfs();\n    return node;\n  }\n  \n  return dfs();\n}\n\n// Time Complexity: O(n)\n// Space Complexity: O(n)"
+}

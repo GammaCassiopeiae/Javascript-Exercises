@@ -1,0 +1,8 @@
+{
+  "id": 1,
+  "title": "Two Sum",
+  "difficulty": "easy",
+  "tags": ["array", "hash"],
+  "description": "<p>Given an array of integers <code>nums</code> and an integer <code>target</code>, return indices of the two numbers such that they add up to <code>target</code>.</p><p>You may assume that each input would have <strong>exactly one solution</strong>, and you may not use the same element twice.</p><p>You can return the answer in any order.</p><h3>Example 1:</h3><pre>Input: nums = [2,7,11,15], target = 9\nOutput: [0,1]\nExplanation: Because nums[0] + nums[1] == 9, we return [0, 1].\n</pre><h3>Example 2:</h3><pre>Input: nums = [3,2,4], target = 6\nOutput: [1,2]\n</pre><h3>Example 3:</h3><pre>Input: nums = [3,3], target = 6\nOutput: [0,1]\n</pre><h3>Constraints:</h3><ul><li><code>2 <= nums.length <= 10^4</code></li><li><code>-10^9 <= nums[i] <= 10^9</code></li><li><code>-10^9 <= target <= 10^9</code></li><li><strong>Only one valid answer exists.</strong></li></ul>",
+  "code": "function twoSum(nums: number[], target: number): number[] {\n  const map = new Map<number, number>();\n  \n  for (let i = 0; i < nums.length; i++) {\n    const complement = target - nums[i];\n    \n    if (map.has(complement)) {\n      return [map.get(complement)!, i];\n    }\n    \n    map.set(nums[i], i);\n  }\n  \n  return [];\n}\n\n// Time Complexity: O(n)\n// Space Complexity: O(n)"
+}

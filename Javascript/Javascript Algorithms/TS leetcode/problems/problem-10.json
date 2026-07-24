@@ -1,0 +1,8 @@
+{
+  "id": 10,
+  "title": "Remove Duplicates from Sorted Array",
+  "difficulty": "easy",
+  "tags": ["array", "two-pointers"],
+  "description": "<p>Given an integer array <code>nums</code> sorted in <strong>non-decreasing order</strong>, remove the duplicates in-place such that each unique element appears only once. Return <code>k</code> after placing the final result in the first <code>k</code> slots of <code>nums</code>.</p><h3>Example 1:</h3><pre>Input: nums = [1,1,2]\nOutput: 2, nums = [1,2,_]\n</pre><h3>Example 2:</h3><pre>Input: nums = [0,0,1,1,1,2,2,3,3,4]\nOutput: 5, nums = [0,1,2,3,4,_,_,_,_,_]\n</pre>",
+  "code": "function removeDuplicates(nums: number[]): number {\n  if (nums.length === 0) return 0;\n  \n  let slow = 0;\n  \n  for (let fast = 1; fast < nums.length; fast++) {\n    if (nums[fast] !== nums[slow]) {\n      slow++;\n      nums[slow] = nums[fast];\n    }\n  }\n  \n  return slow + 1;\n}\n\n// Time Complexity: O(n)\n// Space Complexity: O(1)"
+}

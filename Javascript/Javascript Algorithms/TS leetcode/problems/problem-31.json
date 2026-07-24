@@ -1,0 +1,8 @@
+{
+  "id": 31,
+  "title": "Unique Paths",
+  "difficulty": "medium",
+  "tags": ["dp"],
+  "description": "<p>There is a robot on an <code>m x n</code> grid. The robot is initially located at the <strong>top-left corner</strong>. The robot tries to move to the <strong>bottom-right corner</strong>. The robot can only move either down or right at any point in time.</p><p>Given the two integers <code>m</code> and <code>n</code>, return <em>the number of possible unique paths</em>.</p>",
+  "code": "function uniquePaths(m: number, n: number): number {\n  const dp: number[][] = Array.from({ length: m }, () => new Array(n).fill(1));\n  \n  for (let i = 1; i < m; i++) {\n    for (let j = 1; j < n; j++) {\n      dp[i][j] = dp[i - 1][j] + dp[i][j - 1];\n    }\n  }\n  \n  return dp[m - 1][n - 1];\n}\n\n// Time Complexity: O(m * n)\n// Space Complexity: O(m * n)"
+}

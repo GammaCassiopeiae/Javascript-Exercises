@@ -1,0 +1,8 @@
+{
+  "id": 11,
+  "title": "Search in Rotated Sorted Array",
+  "difficulty": "medium",
+  "tags": ["array", "binary-search"],
+  "description": "<p>There is an integer array <code>nums</code> sorted in ascending order (with <strong>distinct</strong> values).</p><p>Prior to being passed to your function, <code>nums</code> is <strong>possibly rotated</strong> at an unknown pivot index <code>k</code>.</p><p>Given the array <code>nums</code> after the possible rotation and an integer <code>target</code>, return <em>the index of </em><code>target</code><em> if it is in </em><code>nums</code><em>, or </em><code>-1</code><em> if it is not in </em><code>nums</code>.</p><p>You must write an algorithm with <code>O(log n)</code> runtime complexity.</p>",
+  "code": "function search(nums: number[], target: number): number {\n  let left = 0;\n  let right = nums.length - 1;\n  \n  while (left <= right) {\n    const mid = Math.floor((left + right) / 2);\n    \n    if (nums[mid] === target) return mid;\n    \n    // Left half is sorted\n    if (nums[left] <= nums[mid]) {\n      if (nums[left] <= target && target < nums[mid]) {\n        right = mid - 1;\n      } else {\n        left = mid + 1;\n      }\n    } else {\n      // Right half is sorted\n      if (nums[mid] < target && target <= nums[right]) {\n        left = mid + 1;\n      } else {\n        right = mid - 1;\n      }\n    }\n  }\n  \n  return -1;\n}\n\n// Time Complexity: O(log n)\n// Space Complexity: O(1)"
+}

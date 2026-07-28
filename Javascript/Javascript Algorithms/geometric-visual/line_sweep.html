@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Line Sweep - Bentley–Ottmann</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Line Sweep Algorithm</h1>
+        <p>Bentley–Ottmann Segment Intersection</p>
+    </header>
+
+    <div class="description">
+        <p>The Bentley–Ottmann algorithm finds all intersections in a set of line segments. 
+        It uses a vertical sweep line that moves from left to right. 
+        Event points are segment endpoints and intersection points. 
+        It maintains a sorted list of segments currently intersecting the sweep line, 
+        allowing it to find intersections in O((n + k) log n) time, where k is the number of intersections.</p>
+    </div>
+
+    <div class="controls">
+        <button id="generateBtn">Generate Segments</button>
+        <button id="runBtn">Run Sweep</button>
+        <button id="resetBtn">Reset</button>
+        <span id="statusText" style="margin-left: 10px;"></span>
+    </div>
+
+    <canvas id="canvas" width="800" height="600"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const generateBtn = document.getElementById('generateBtn');
+        const runBtn = document.getElementById('runBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const statusText = document.getElementById('statusText');
+
+        let segments = [];
+        let intersections = [];
+        let sweepX = 0;
+        let animationId = null;
+        let events = [];
+        let activeSegments = [];
+
+        class Segment {
+            constructor(p1, p2, id) {
+                this.p1 = p1.x < p2.x ? p1 : p2;
+                this.p2 = p1.x < p2.x ? p2 : p1;
+                this.id = id;
+            }
+            getY(x) {
+                if (this.p1.x === this.p2.x) return this.p1.y;
+                const t = (x - this.p1.x) / (this.p2.x - this.p1.x);
+                return this.p1.y + t * (this.p2.y - this.p1.y);
+            }
+        }
+
+        function generateSegments() {
+            stopAnimation();
+            segments = [];
+            intersections = [];
+            sweepX = 0;
+            for (let i = 0; i < 15; i++) {
+                const p1 = { x: Math.random() * 700 + 50, y: Math.random() * 500 + 50 };
+                const p2 = { x: Math.random() * 700 + 50, y: Math.random() * 500 + 50 };
+                segments.push(new Segment(p1, p2, i));
+            }
+            findIntersectionsBrute(); // For visualization simplicity in finding them all
+            draw();
+        }
+
+        // Simplification for the visual: Find all intersections first
+        function findIntersectionsBrute() {
+            intersections = [];
+            for (let i = 0; i < segments.length; i++) {
+                for (let j = i + 1; j < segments.length; j++) {
+                    const intersect = getIntersection(segments[i], segments[j]);
+                    if (intersect) {
+                        intersections.push(intersect);
+                    }
+                }
+            }
+        }
+
+        function getIntersection(s1, s2) {
+            const x1 = s1.p1.x, y1 = s1.p1.y, x2 = s1.p2.x, y2 = s1.p2.y;
+            const x3 = s2.p1.x, y3 = s2.p1.y, x4 = s2.p2.x, y4 = s2.p2.y;
+
+            const denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
+            if (denom === 0) return null;
+
+            const ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / denom;
+            const ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / denom;
+
+            if (ua >= 0 && ua <= 1 && ub >= 0 && ub <= 1) {
+                return {
+                    x: x1 + ua * (x2 - x1),
+                    y: y1 + ua * (y2 - y1)
+                };
+            }
+            return null;
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw segments
+            ctx.lineWidth = 2;
+            segments.forEach(s => {
+                const isActive = sweepX >= s.p1.x && sweepX <= s.p2.x;
+                ctx.strokeStyle = isActive ? '#4CAF50' : '#555';
+                ctx.beginPath();
+                ctx.moveTo(s.p1.x, s.p1.y);
+                ctx.lineTo(s.p2.x, s.p2.y);
+                ctx.stroke();
+            });
+
+            // Draw intersections found so far
+            ctx.fillStyle = '#F44336';
+            intersections.forEach(p => {
+                if (p.x <= sweepX) {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+
+            // Draw sweep line
+            if (sweepX > 0) {
+                ctx.strokeStyle = '#2196F3';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(sweepX, 0);
+                ctx.lineTo(sweepX, canvas.height);
+                ctx.stroke();
+            }
+        }
+
+        function animate() {
+            sweepX += 2;
+            if (sweepX > canvas.width) {
+                stopAnimation();
+                statusText.innerText = `Total intersections: ${intersections.length}`;
+            } else {
+                draw();
+                animationId = requestAnimationFrame(animate);
+            }
+        }
+
+        function stopAnimation() {
+            if (animationId) cancelAnimationFrame(animationId);
+            animationId = null;
+        }
+
+        generateBtn.addEventListener('click', generateSegments);
+        runBtn.addEventListener('click', () => {
+            sweepX = 0;
+            statusText.innerText = "Sweeping...";
+            stopAnimation();
+            animate();
+        });
+        resetBtn.addEventListener('click', () => {
+            stopAnimation();
+            sweepX = 0;
+            statusText.innerText = "";
+            draw();
+        });
+
+        generateSegments();
+    </script>
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AABB & OBB Collision - Geometry Visualizations</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="math3d.js"></script>
+</head>
+<body>
+    <header>
+        <h1>AABB & OBB Collision</h1>
+        <p>Visualizing Axis-Aligned and Oriented Bounding Box collision detection.</p>
+    </header>
+
+    <div class="description">
+        <h2>AABB (Axis-Aligned Bounding Box)</h2>
+        <p>AABBs are aligned with the coordinate axes. Collision is a simple check: <code>(minA.x <= maxB.x && maxA.x >= minB.x)</code> for all axes.</p>
+        
+        <h2>OBB (Oriented Bounding Box)</h2>
+        <p>OBBs can be rotated. We use the <b>Separating Axis Theorem (SAT)</b>: two convex shapes do not collide if there exists an axis on which their projections do not overlap. For two OBBs, there are 15 potential separating axes.</p>
+    </div>
+
+    <div class="controls">
+        <button onclick="toggleAnimation()">Toggle Animation</button>
+        <span>Drag to rotate the view</span>
+    </div>
+
+    <canvas id="canvas" width="800" height="600"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let angleX = 0.3;
+        let angleY = 0.5;
+        let isDragging = false;
+        let lastX, lastY;
+        let animTime = 0;
+        let animate = true;
+
+        canvas.onmousedown = (e) => { isDragging = true; lastX = e.clientX; lastY = e.clientY; };
+        window.onmouseup = () => { isDragging = false; };
+        window.onmousemove = (e) => {
+            if (isDragging) {
+                angleY += (e.clientX - lastX) * 0.01;
+                angleX += (e.clientY - lastY) * 0.01;
+                lastX = e.clientX;
+                lastY = e.clientY;
+                draw();
+            }
+        };
+
+        function toggleAnimation() {
+            animate = !animate;
+            if(animate) requestAnimationFrame(runAnimation);
+        }
+
+        function runAnimation() {
+            if(!animate) return;
+            animTime += 0.02;
+            draw();
+            requestAnimationFrame(runAnimation);
+        }
+
+        class Box {
+            constructor(center, size, rotation) {
+                this.center = center;
+                this.size = size; // half-extents
+                this.rotation = rotation; // Vec3 for simplicity (Euler)
+            }
+
+            getAxes() {
+                const rx = Mat4.rotationX(this.rotation.x);
+                const ry = Mat4.rotationY(this.rotation.y);
+                const rot = ry.multiply(rx);
+                return [
+                    rot.transform(new Vec3(1,0,0)).normalize(),
+                    rot.transform(new Vec3(0,1,0)).normalize(),
+                    rot.transform(new Vec3(0,0,1)).normalize()
+                ];
+            }
+
+            getVertices() {
+                const axes = this.getAxes();
+                const verts = [];
+                for(let i=0; i<8; i++) {
+                    let v = new Vec3(this.center.x, this.center.y, this.center.z);
+                    v = v.add(axes[0].mul(this.size.x * (i & 1 ? 1 : -1)));
+                    v = v.add(axes[1].mul(this.size.y * (i & 2 ? 1 : -1)));
+                    v = v.add(axes[2].mul(this.size.z * (i & 4 ? 1 : -1)));
+                    verts.push(v);
+                }
+                return verts;
+            }
+        }
+
+        function testOverlap(axis, boxA, boxB) {
+            const vertsA = boxA.getVertices();
+            const vertsB = boxB.getVertices();
+            let minA = Infinity, maxA = -Infinity;
+            let minB = Infinity, maxB = -Infinity;
+            
+            vertsA.forEach(v => {
+                const p = v.dot(axis);
+                minA = Math.min(minA, p);
+                maxA = Math.max(maxA, p);
+            });
+            vertsB.forEach(v => {
+                const p = v.dot(axis);
+                minB = Math.min(minB, p);
+                maxB = Math.max(maxB, p);
+            });
+
+            return maxA >= minB && maxB >= minA;
+        }
+
+        function checkOBBCollision(boxA, boxB) {
+            const axesA = boxA.getAxes();
+            const axesB = boxB.getAxes();
+            const axes = [...axesA, ...axesB];
+            
+            for(let a of axesA) {
+                for(let b of axesB) {
+                    const cross = a.cross(b);
+                    if(cross.mag() > 0.001) axes.push(cross.normalize());
+                }
+            }
+
+            for(let axis of axes) {
+                if(!testOverlap(axis, boxA, boxB)) return false;
+            }
+            return true;
+        }
+
+        function getTransform() {
+            const aspect = canvas.width / canvas.height;
+            const proj = Mat4.perspective(Math.PI / 4, aspect, 0.1, 100);
+            const rotX = Mat4.rotationX(angleX);
+            const rotY = Mat4.rotationY(angleY);
+            const view = rotY.multiply(rotX);
+            view.m[14] = -20; 
+            return proj.multiply(view);
+        }
+
+        function drawBox(box, color) {
+            const t = getTransform();
+            const v = box.getVertices();
+            const edges = [
+                [0,1], [1,3], [3,2], [2,0],
+                [4,5], [5,7], [7,6], [6,4],
+                [0,4], [1,5], [2,6], [3,7]
+            ];
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            edges.forEach(e => {
+                const p1 = project(t.transform(v[e[0]]), canvas.width, canvas.height);
+                const p2 = project(t.transform(v[e[1]]), canvas.width, canvas.height);
+                ctx.beginPath();
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.stroke();
+            });
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // AABB demo
+            const aabb1 = new Box(new Vec3(-5, 0, 0), new Vec3(1, 1, 1), new Vec3(0, 0, 0));
+            const aabb2 = new Vec3(-5 + Math.sin(animTime)*3, 0.5, 0);
+            const aabbBox2 = new Box(aabb2, new Vec3(1, 1, 1), new Vec3(0, 0, 0));
+            
+            const aabbColliding = (
+                Math.abs(aabb1.center.x - aabbBox2.center.x) <= (aabb1.size.x + aabbBox2.size.x) &&
+                Math.abs(aabb1.center.y - aabbBox2.center.y) <= (aabb1.size.y + aabbBox2.size.y) &&
+                Math.abs(aabb1.center.z - aabbBox2.center.z) <= (aabb1.size.z + aabbBox2.size.z)
+            );
+
+            drawBox(aabb1, '#2196F3');
+            drawBox(aabbBox2, aabbColliding ? '#ff0000' : '#4CAF50');
+            ctx.fillStyle = '#fff';
+            ctx.fillText("AABB Collision", ...Object.values(project(getTransform().transform(new Vec3(-5, 3, 0)), canvas.width, canvas.height)));
+
+            // OBB demo
+            const obb1 = new Box(new Vec3(5, 0, 0), new Vec3(1, 1, 1), new Vec3(animTime * 0.5, animTime * 0.3, 0));
+            const obb2Pos = new Vec3(5 + Math.cos(animTime)*3, 0, Math.sin(animTime)*2);
+            const obb2 = new Box(obb2Pos, new Vec3(1, 1, 1), new Vec3(0, animTime * 0.7, 0));
+            
+            const obbColliding = checkOBBCollision(obb1, obb2);
+
+            drawBox(obb1, '#2196F3');
+            drawBox(obb2, obbColliding ? '#ff0000' : '#4CAF50');
+            ctx.fillText("OBB Collision (SAT)", ...Object.values(project(getTransform().transform(new Vec3(5, 3, 0)), canvas.width, canvas.height)));
+        }
+
+        runAnimation();
+    </script>
+</body>
+</html>

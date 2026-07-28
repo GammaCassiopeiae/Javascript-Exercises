@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Euler</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400&family=Inter:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="l-grid-main">
+        <header class="c-header">
+            <div class="l-container c-header__content">
+                <a href="index.html" class="c-brand">
+                    <span>//</span> NEON_EULER
+                </a>
+            </div>
+        </header>
+
+        <main class="l-container l-section">
+            <div class="u-mb-2">
+                <a href="index.html" class="c-btn c-btn--back">← Back to Grid</a>
+            </div>
+            
+            <div class="c-problem-layout">
+                <section class="c-panel">
+                    <h2 class="u-text-glow">#34 Digit Factorials</h2>
+                    <p class="u-mb-2">Find the sum of all numbers which are equal to the sum of the factorial of their digits.</p>
+                    
+                    <button id="runBtn" class="c-btn">Execute Algorithm</button>
+                    <div id="result" class="c-result-display">Waiting for input...</div>
+                </section>
+                
+                <section class="c-panel c-panel--console">
+                    <div class="u-mb-1" style="color: var(--neon-secondary)">// SOURCE CODE</div>
+                    <pre class="c-code-block"><code>const solve = () => {
+    const facts = [1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880];
+    let total = 0;
+    
+    // Upper bound: 7 * 9! = 2540160
+    for (let i = 3; i < 2540160; i++) {
+        let sum = 0;
+        let temp = i;
+        while (temp > 0) {
+            sum += facts[temp % 10];
+            temp = Math.floor(temp / 10);
+        }
+        if (sum === i) total += i;
+    }
+    return total;
+};</code></pre>
+                </section>
+            </div>
+        </main>
+        
+        <script>
+            // Algorithm Logic
+            
+const solve = () => {
+    const facts = [1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880];
+    let total = 0;
+    
+    // Upper bound: 7 * 9! = 2540160
+    for (let i = 3; i < 2540160; i++) {
+        let sum = 0;
+        let temp = i;
+        while (temp > 0) {
+            sum += facts[temp % 10];
+            temp = Math.floor(temp / 10);
+        }
+        if (sum === i) total += i;
+    }
+    return total;
+};
+        
+
+            // DOM Interaction
+            document.getElementById('runBtn').addEventListener('click', () => {
+                const display = document.getElementById('result');
+                display.innerHTML = '<span style="color:var(--neon-primary)">Computing...</span>';
+                
+                // Small delay to allow UI to update before blocking
+                setTimeout(() => {
+                    const startTime = performance.now();
+                    try {
+                        const result = solve();
+                        const endTime = performance.now();
+                        const time = (endTime - startTime).toFixed(2);
+                        display.innerHTML = `${result} <span style="font-size:0.8em; color:var(--text-muted); margin-left:1rem">(${time}ms)</span>`;
+                        display.classList.remove('is-error');
+                    } catch (e) {
+                        display.innerText = "Error: " + e.message;
+                        display.classList.add('is-error');
+                    }
+                }, 10);
+            });
+        </script>
+        
+        <footer class="c-footer">
+            <div class="l-container">
+                <p>NEON GRID ARCHITECT // v2.0</p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

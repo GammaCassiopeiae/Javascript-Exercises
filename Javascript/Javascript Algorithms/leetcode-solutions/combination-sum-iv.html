@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Combination Sum IV - LeetCode Solution</title>
+    <style>
+        :root {
+            --lime-green: #00ff9d;
+            --lime-dim: rgba(0, 255, 157, 0.3);
+            --bg-black: #050505;
+            --bg-surface: rgba(255, 255, 255, 0.05);
+            --text-primary: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.7);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg-black);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            border-bottom: 1px solid var(--lime-dim);
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            color: var(--lime-green);
+            text-shadow: 0 0 10px var(--lime-dim);
+            margin-bottom: 0.5rem;
+        }
+
+        .problem-desc {
+            background: var(--bg-surface);
+            border: 1px solid var(--lime-dim);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .problem-desc h2 {
+            color: var(--lime-green);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .code-section {
+            background: var(--bg-surface);
+            border: 1px solid var(--lime-dim);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .code-section h2 {
+            color: var(--lime-green);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        pre {
+            background: #0a0a0a;
+            border: 1px solid var(--lime-dim);
+            border-radius: 6px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .keyword { color: #ff00ff; }
+        .function { color: #00f3ff; }
+        .string { color: #00ff9d; }
+        .number { color: #bd00ff; }
+        .comment { color: rgba(255, 255, 255, 0.4); }
+
+        .demo-section {
+            background: var(--bg-surface);
+            border: 1px solid var(--lime-dim);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .demo-section h2 {
+            color: var(--lime-green);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            color: var(--lime-green);
+            margin-bottom: 0.5rem;
+        }
+
+        input, button {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--lime-dim);
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--text-primary);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+        }
+
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 10px var(--lime-dim);
+        }
+
+        button {
+            background: var(--lime-dim);
+            color: var(--bg-black);
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: var(--lime-green);
+            box-shadow: 0 0 20px var(--lime-dim);
+        }
+
+        .result {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(0, 255, 157, 0.1);
+            border-radius: 6px;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .result span {
+            color: var(--lime-green);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Combination Sum IV</h1>
+            <p style="color: var(--text-muted);">LeetCode Problem - Dynamic Programming</p>
+        </header>
+
+        <section class="problem-desc">
+            <h2>Problem Description</h2>
+            <p>Given an array of distinct integers nums and a target integer target, return the number of possible combinations that add up to target. Different sequences are counted as different combinations.</p>
+        </section>
+
+        <section class="code-section">
+            <h2>JavaScript Solution</h2>
+            <pre><code><span class="keyword">function</span> <span class="function">combinationSum4</span>(nums, target) {
+    <span class="keyword">const</span> dp = <span class="keyword">new</span> <span class="function">Array</span>(target + <span class="number">1</span>).<span class="function">fill</span>(<span class="number">0</span>);
+    dp[<span class="number">0</span>] = <span class="number">1</span>; <span class="comment">// One way to make 0</span>
+    
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">1</span>; i <= target; i++) {
+        <span class="keyword">for</span> (<span class="keyword">const</span> num <span class="keyword">of</span> nums) {
+            <span class="keyword">if</span> (i >= num) {
+                dp[i] += dp[i - num];
+            }
+        }
+    }
+    
+    <span class="keyword">return</span> dp[target];
+}
+
+<span class="comment">// Usage Example:</span>
+<span class="keyword">const</span> nums = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];
+<span class="keyword">const</span> target = <span class="number">4</span>;
+console.<span class="function">log</span>(<span class="function">combinationSum4</span>(nums, target)); <span class="comment">// 7</span>
+<span class="comment">// Possible: (1,1,1,1), (1,1,2), (1,2,1), (1,3), (2,1,1), (2,2), (3,1)</span></code></pre>
+        </section>
+
+        <section class="demo-section">
+            <h2>Interactive Demo</h2>
+            <div class="input-group">
+                <label for="nums-input">Numbers (comma-separated):</label>
+                <input type="text" id="nums-input" value="1,2,3" style="width: 100%;">
+            </div>
+            <div class="input-group">
+                <label for="target-input">Target:</label>
+                <input type="number" id="target-input" value="4" min="1">
+            </div>
+            <button onclick="runDemo()">Calculate Combinations</button>
+            <div class="result" id="result">
+                Result: <span id="output">-</span>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        function combinationSum4(nums, target) {
+            const dp = new Array(target + 1).fill(0);
+            dp[0] = 1;
+            
+            for (let i = 1; i <= target; i++) {
+                for (const num of nums) {
+                    if (i >= num) {
+                        dp[i] += dp[i - num];
+                    }
+                }
+            }
+            
+            return dp[target];
+        }
+
+        function runDemo() {
+            const numsInput = document.getElementById('nums-input').value;
+            const target = parseInt(document.getElementById('target-input').value);
+            
+            const nums = numsInput.split(',').map(x => parseInt(x.trim()));
+            const result = combinationSum4(nums, target);
+            
+            document.getElementById('output').textContent = result;
+        }
+    </script>
+</body>
+</html>

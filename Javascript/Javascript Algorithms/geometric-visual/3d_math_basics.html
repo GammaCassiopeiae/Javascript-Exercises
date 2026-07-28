@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Math Basics - Geometry Visualizations</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="math3d.js"></script>
+</head>
+<body>
+    <header>
+        <h1>3D Math Basics</h1>
+        <p>Interactive visualizations of fundamental 3D vector and plane operations.</p>
+    </header>
+
+    <div class="description">
+        <h2>Dot Product & Projection</h2>
+        <p>The dot product <b>A · B</b> measures how much of vector <b>A</b> is in the direction of <b>B</b>. The projection of <b>A</b> onto <b>B</b> is <code>(A · B / |B|²) * B</code>.</p>
+        
+        <h2>Cross Product</h2>
+        <p>The cross product <b>A × B</b> produces a vector perpendicular to both <b>A</b> and <b>B</b>, with a magnitude equal to the area of the parallelogram they span.</p>
+
+        <h2>Plane Normal & Equation</h2>
+        <p>A plane can be defined by 3 points (P1, P2, P3). The normal <b>n</b> is <code>(P2 - P1) × (P3 - P1)</code>. The plane equation is <code>ax + by + cz + d = 0</code>, where <code>(a, b, c)</code> is the normal.</p>
+
+        <h2>Point-to-Plane Distance</h2>
+        <p>The distance from point <b>Q</b> to a plane with normal <b>n</b> and a point <b>P</b> is <code>| (Q - P) · n | / |n|</code>.</p>
+    </div>
+
+    <div class="controls">
+        <button onclick="resetScene()">Reset Scene</button>
+        <span>Drag to rotate the view</span>
+    </div>
+
+    <canvas id="canvas" width="800" height="600"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let angleX = 0.3;
+        let angleY = 0.5;
+        let isDragging = false;
+        let lastX, lastY;
+
+        canvas.onmousedown = (e) => { isDragging = true; lastX = e.clientX; lastY = e.clientY; };
+        window.onmouseup = () => { isDragging = false; };
+        window.onmousemove = (e) => {
+            if (isDragging) {
+                angleY += (e.clientX - lastX) * 0.01;
+                angleX += (e.clientY - lastY) * 0.01;
+                lastX = e.clientX;
+                lastY = e.clientY;
+                draw();
+            }
+        };
+
+        function resetScene() {
+            angleX = 0.3;
+            angleY = 0.5;
+            draw();
+        }
+
+        function getTransform() {
+            const aspect = canvas.width / canvas.height;
+            const proj = Mat4.perspective(Math.PI / 4, aspect, 0.1, 100);
+            const rotX = Mat4.rotationX(angleX);
+            const rotY = Mat4.rotationY(angleY);
+            const view = rotY.multiply(rotX);
+            // Translate back
+            view.m[14] = -10; 
+            return proj.multiply(view);
+        }
+
+        function drawLine(p1, p2, color, width = 2) {
+            const t = getTransform();
+            const pt1 = project(t.transform(p1), canvas.width, canvas.height);
+            const pt2 = project(t.transform(p2), canvas.width, canvas.height);
+            ctx.beginPath();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = width;
+            ctx.moveTo(pt1.x, pt1.y);
+            ctx.lineTo(pt2.x, pt2.y);
+            ctx.stroke();
+        }
+
+        function drawPoint(p, color, label) {
+            const t = getTransform();
+            const pt = project(t.transform(p), canvas.width, canvas.height);
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
+            ctx.fill();
+            if (label) {
+                ctx.fillText(label, pt.x + 5, pt.y - 5);
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw Axis
+            drawLine(new Vec3(-5, 0, 0), new Vec3(5, 0, 0), '#333', 1);
+            drawLine(new Vec3(0, -5, 0), new Vec3(0, 5, 0), '#333', 1);
+            drawLine(new Vec3(0, 0, -5), new Vec3(0, 0, 5), '#333', 1);
+
+            // 1. Dot Product & Projection
+            const A = new Vec3(2, 3, 0);
+            const B = new Vec3(4, 0, 0);
+            const dot = A.dot(B);
+            const projMag = dot / B.mag();
+            const projection = B.normalize().mul(projMag);
+
+            drawLine(new Vec3(0,0,0), A, '#ff4444', 3); // Vector A
+            drawLine(new Vec3(0,0,0), B, '#4444ff', 3); // Vector B
+            drawLine(A, projection, '#ffffff', 1); // Dash line to projection
+            drawLine(new Vec3(0,0,0), projection, '#44ff44', 3); // Projection
+
+            ctx.fillStyle = '#ff4444'; ctx.fillText("A", ...Object.values(project(getTransform().transform(A), canvas.width, canvas.height)));
+            ctx.fillStyle = '#4444ff'; ctx.fillText("B", ...Object.values(project(getTransform().transform(B), canvas.width, canvas.height)));
+            ctx.fillStyle = '#44ff44'; ctx.fillText("Proj A onto B", ...Object.values(project(getTransform().transform(projection), canvas.width, canvas.height)));
+
+            // 2. Cross Product
+            const C1 = new Vec3(0, 0, 0);
+            const C2 = new Vec3(0, 2, 2);
+            const C3 = new Vec3(2, 0, 2);
+            const cross = C2.cross(C3).normalize().mul(2);
+            
+            drawLine(C1, C2, '#ffaa00', 2);
+            drawLine(C1, C3, '#00aaff', 2);
+            drawLine(C1, cross, '#ff00ff', 3);
+            ctx.fillStyle = '#ff00ff'; ctx.fillText("Cross Product", ...Object.values(project(getTransform().transform(cross), canvas.width, canvas.height)));
+
+            // 3. Plane from 3 points
+            const p1 = new Vec3(-3, -2, -1);
+            const p2 = new Vec3(-1, -2, -3);
+            const p3 = new Vec3(-2, -1, -2);
+            const v1 = p2.sub(p1);
+            const v2 = p3.sub(p1);
+            const normal = v1.cross(v2).normalize();
+            
+            drawPoint(p1, '#fff', 'P1');
+            drawPoint(p2, '#fff', 'P2');
+            drawPoint(p3, '#fff', 'P3');
+            drawLine(p1, p1.add(normal), '#00ffff', 2); // Normal
+            ctx.fillStyle = '#00ffff'; ctx.fillText("Plane Normal", ...Object.values(project(getTransform().transform(p1.add(normal)), canvas.width, canvas.height)));
+
+            // 4. Point to plane distance
+            const Q = new Vec3(-2, 1, -1);
+            const dist = Math.abs(Q.sub(p1).dot(normal));
+            const closestPoint = Q.sub(normal.mul(Q.sub(p1).dot(normal)));
+            
+            drawPoint(Q, '#ffff00', 'Point Q');
+            drawLine(Q, closestPoint, '#ffff00', 1);
+            ctx.fillStyle = '#ffff00';
+            const screenQ = project(getTransform().transform(Q), canvas.width, canvas.height);
+            ctx.fillText(`Dist to plane: ${dist.toFixed(2)}`, screenQ.x, screenQ.y + 20);
+
+            // Draw a small grid representing the plane
+            for(let i=-1; i<=1; i+=0.5) {
+                drawLine(p1.add(v1.mul(i)).add(v2.mul(-1)), p1.add(v1.mul(i)).add(v2.mul(1)), 'rgba(0, 255, 255, 0.2)', 1);
+                drawLine(p1.add(v1.mul(-1)).add(v2.mul(i)), p1.add(v1.mul(1)).add(v2.mul(i)), 'rgba(0, 255, 255, 0.2)', 1);
+            }
+        }
+
+        draw();
+    </script>
+</body>
+</html>

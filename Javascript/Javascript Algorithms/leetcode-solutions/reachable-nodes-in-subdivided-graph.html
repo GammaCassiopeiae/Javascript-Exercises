@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reachable Nodes In Subdivided Graph - LeetCode Solution</title>
+    <style>
+        :root {
+            --lime-green: #00ff9d;
+            --lime-dim: rgba(0, 255, 157, 0.3);
+            --bg-black: #050505;
+            --bg-surface: rgba(255, 255, 255, 0.05);
+            --text-primary: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.7);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg-black);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            border-bottom: 1px solid var(--lime-dim);
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            color: var(--lime-green);
+            text-shadow: 0 0 10px var(--lime-dim);
+            margin-bottom: 0.5rem;
+        }
+
+        .problem-desc {
+            background: var(--bg-surface);
+            border: 1px solid var(--lime-dim);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .problem-desc h2 {
+            color: var(--lime-green);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .code-section {
+            background: var(--bg-surface);
+            border: 1px solid var(--lime-dim);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .code-section h2 {
+            color: var(--lime-green);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        pre {
+            background: #0a0a0a;
+            border: 1px solid var(--lime-dim);
+            border-radius: 6px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .keyword { color: #ff00ff; }
+        .function { color: #00f3ff; }
+        .string { color: #00ff9d; }
+        .number { color: #bd00ff; }
+        .comment { color: rgba(255, 255, 255, 0.4); }
+
+        .demo-section {
+            background: var(--bg-surface);
+            border: 1px solid var(--lime-dim);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .demo-section h2 {
+            color: var(--lime-green);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            color: var(--lime-green);
+            margin-bottom: 0.5rem;
+        }
+
+        input, button {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--lime-dim);
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--text-primary);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+        }
+
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 10px var(--lime-dim);
+        }
+
+        button {
+            background: var(--lime-dim);
+            color: var(--bg-black);
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: var(--lime-green);
+            box-shadow: 0 0 20px var(--lime-dim);
+        }
+
+        .result {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(0, 255, 157, 0.1);
+            border-radius: 6px;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .result span {
+            color: var(--lime-green);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Reachable Nodes In Subdivided Graph</h1>
+            <p style="color: var(--text-muted);">LeetCode Problem - Dijkstra's Algorithm</p>
+        </header>
+
+        <section class="problem-desc">
+            <h2>Problem Description</h2>
+            <p>You are given an undirected graph with subdivided edges. Each edge can be subdivided into multiple nodes. Find the number of nodes reachable from node 0 within maxMoves steps.</p>
+        </section>
+
+        <section class="code-section">
+            <h2>JavaScript Solution</h2>
+            <pre><code><span class="keyword">function</span> <span class="function">reachableNodes</span>(edges, maxMoves, n) {
+    <span class="comment">// Build adjacency list</span>
+    <span class="keyword">const</span> graph = <span class="keyword">new</span> <span class="function">Map</span>();
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < n; i++) {
+        graph.<span class="function">set</span>(i, []);
+    }
+    
+    <span class="keyword">for</span> (<span class="keyword">const</span> [u, v, cnt] <span class="keyword">of</span> edges) {
+        graph.<span class="function">get</span>(u).<span class="function">push</span>([v, cnt + <span class="number">1</span>]);
+        graph.<span class="function">get</span>(v).<span class="function">push</span>([u, cnt + <span class="number">1</span>]);
+    }
+    
+    <span class="comment">// Dijkstra's algorithm</span>
+    <span class="keyword">const</span> dist = <span class="keyword">new</span> <span class="function">Array</span>(n).<span class="function">fill</span>(Infinity);
+    dist[<span class="number">0</span>] = <span class="number">0</span>;
+    
+    <span class="keyword">const</span> pq = [[<span class="number">0</span>, <span class="number">0</span>]]; <span class="comment">// [distance, node]</span>
+    
+    <span class="keyword">while</span> (pq.length > <span class="number">0</span>) {
+        pq.<span class="function">sort</span>((a, b) => a[<span class="number">0</span>] - b[<span class="number">0</span>]);
+        <span class="keyword">const</span> [d, node] = pq.<span class="function">shift</span>();
+        
+        <span class="keyword">if</span> (d > dist[node]) <span class="keyword">continue</span>;
+        
+        <span class="keyword">for</span> (<span class="keyword">const</span> [neighbor, weight] <span class="keyword">of</span> graph.<span class="function">get</span>(node)) {
+            <span class="keyword">const</span> newDist = d + weight;
+            <span class="keyword">if</span> (newDist < dist[neighbor] && newDist <= maxMoves) {
+                dist[neighbor] = newDist;
+                pq.<span class="function">push</span>([newDist, neighbor]);
+            }
+        }
+    }
+    
+    <span class="comment">// Count reachable original nodes</span>
+    <span class="keyword">let</span> result = <span class="number">0</span>;
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < n; i++) {
+        <span class="keyword">if</span> (dist[i] <= maxMoves) result++;
+    }
+    
+    <span class="comment">// Count reachable subdivided nodes</span>
+    <span class="keyword">for</span> (<span class="keyword">const</span> [u, v, cnt] <span class="keyword">of</span> edges) {
+        <span class="keyword">const</span> fromU = Math.<span class="function">max</span>(<span class="number">0</span>, maxMoves - dist[u]);
+        <span class="keyword">const</span> fromV = Math.<span class="function">max</span>(<span class="number">0</span>, maxMoves - dist[v]);
+        result += Math.<span class="function">min</span>(cnt, fromU + fromV);
+    }
+    
+    <span class="keyword">return</span> result;
+}
+
+<span class="comment">// Usage Example:</span>
+<span class="keyword">const</span> edges = [[<span class="number">0</span>,<span class="number">1</span>,<span class="number">10</span>],[<span class="number">0</span>,<span class="number">2</span>,<span class="number">1</span>],[<span class="number">1</span>,<span class="number">2</span>,<span class="number">2</span>]];
+console.<span class="function">log</span>(<span class="function">reachableNodes</span>(edges, <span class="number">6</span>, <span class="number">3</span>)); <span class="comment">// Returns reachable count</span></code></pre>
+        </section>
+
+        <section class="demo-section">
+            <h2>Interactive Demo</h2>
+            <div class="input-group">
+                <label for="edges-input">Edges [[u,v,cnt],...]:</label>
+                <input type="text" id="edges-input" value="[[0,1,10],[0,2,1],[1,2,2]]" style="width: 100%;">
+            </div>
+            <div class="input-group">
+                <label for="maxmoves-input">Max Moves:</label>
+                <input type="number" id="maxmoves-input" value="6" min="0">
+            </div>
+            <div class="input-group">
+                <label for="n-input">Number of Nodes (n):</label>
+                <input type="number" id="n-input" value="3" min="1">
+            </div>
+            <button onclick="runDemo()">Calculate Reachable Nodes</button>
+            <div class="result" id="result">
+                Result: <span id="output">-</span>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        function reachableNodes(edges, maxMoves, n) {
+            const graph = new Map();
+            for (let i = 0; i < n; i++) {
+                graph.set(i, []);
+            }
+            
+            for (const [u, v, cnt] of edges) {
+                graph.get(u).push([v, cnt + 1]);
+                graph.get(v).push([u, cnt + 1]);
+            }
+            
+            const dist = new Array(n).fill(Infinity);
+            dist[0] = 0;
+            
+            const pq = [[0, 0]];
+            
+            while (pq.length > 0) {
+                pq.sort((a, b) => a[0] - b[0]);
+                const [d, node] = pq.shift();
+                
+                if (d > dist[node]) continue;
+                
+                for (const [neighbor, weight] of graph.get(node)) {
+                    const newDist = d + weight;
+                    if (newDist < dist[neighbor] && newDist <= maxMoves) {
+                        dist[neighbor] = newDist;
+                        pq.push([newDist, neighbor]);
+                    }
+                }
+            }
+            
+            let result = 0;
+            for (let i = 0; i < n; i++) {
+                if (dist[i] <= maxMoves) result++;
+            }
+            
+            for (const [u, v, cnt] of edges) {
+                const fromU = Math.max(0, maxMoves - dist[u]);
+                const fromV = Math.max(0, maxMoves - dist[v]);
+                result += Math.min(cnt, fromU + fromV);
+            }
+            
+            return result;
+        }
+
+        function runDemo() {
+            const edgesInput = document.getElementById('edges-input').value;
+            const maxMoves = parseInt(document.getElementById('maxmoves-input').value);
+            const n = parseInt(document.getElementById('n-input').value);
+            
+            const edges = JSON.parse(edgesInput);
+            const result = reachableNodes(edges, maxMoves, n);
+            
+            document.getElementById('output').textContent = result;
+        }
+    </script>
+</body>
+</html>

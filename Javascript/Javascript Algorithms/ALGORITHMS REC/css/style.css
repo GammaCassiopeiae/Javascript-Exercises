@@ -1,0 +1,331 @@
+/* 
+ * NEON-NOIR DESIGN SYSTEM & LAYOUT PATTERN 
+ * Project: ALGO_TWINS
+ * Protocol: Neon-Grid Architect Manifesto v2.0
+ */
+
+:root {
+    /* Palette - Directive 101, 103 */
+    --bg-dark: #050505;
+    --bg-panel: rgba(10, 11, 16, 0.7);
+    --neon-primary: #00f3ff;   /* Cyber-Cyan */
+    --neon-secondary: #ff00ff; /* Electric Magenta */
+    --neon-tertiary: #bd00ff;  /* Power-Purple */
+    --text-main: #ffffff;
+    --text-muted: rgba(255, 255, 255, 0.6);
+    --border-glow: rgba(0, 243, 255, 0.2);
+    
+    /* Spacing & Layout - Directive 12, 34 */
+    --gap-main: clamp(1rem, 2vw, 2rem);
+    --radius-lg: 12px;
+    --header-height: 70px;
+    --sidebar-width: clamp(250px, 20vw, 400px);
+
+    /* Fonts - Directive 111, 112 */
+    --font-mono: 'Fira Code', monospace;
+    --font-display: 'Rajdhani', sans-serif;
+
+    /* Animations */
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Base Reset - Directive 5, 6 */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: var(--font-mono);
+    min-height: 100vh;
+    overflow-x: hidden;
+    line-height: 1.5;
+}
+
+/* Layout - Holy Trinity Grid - Directive 2, 3 */
+.l-layout {
+    display: grid;
+    grid-template-areas: 
+        "header header"
+        "aside main"
+        "footer footer";
+    grid-template-columns: var(--sidebar-width) 1fr;
+    grid-template-rows: var(--header-height) 1fr auto;
+    min-height: 100vh;
+}
+
+/* Mobile Layout - Directive 1 */
+@media (max-width: 992px) {
+    .l-layout {
+        grid-template-columns: 1fr;
+        grid-template-areas: 
+            "header"
+            "aside"
+            "main"
+            "footer";
+    }
+    
+    .l-aside {
+        height: auto;
+        position: static;
+        border-right: none;
+        border-bottom: 1px solid var(--border-glow);
+    }
+}
+
+/* Header - Directive 11, 30 */
+.c-header {
+    grid-area: header;
+    background: rgba(5, 5, 5, 0.85);
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid var(--border-glow);
+    padding: 0 var(--gap-main);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.c-header__logo {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--neon-primary);
+    text-shadow: 0 0 10px var(--neon-primary);
+}
+
+.c-header__logo span {
+    color: var(--neon-secondary);
+    text-shadow: 0 0 10px var(--neon-secondary);
+}
+
+.c-header__status {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+}
+
+/* Sidebar - Directive 7, 51, 95 */
+.l-aside {
+    grid-area: aside;
+    background: var(--bg-panel);
+    border-right: 1px solid var(--border-glow);
+    padding: var(--gap-main);
+    height: calc(100vh - var(--header-height));
+    overflow-y: auto;
+    position: sticky;
+    top: var(--header-height);
+}
+
+.c-nav__title {
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    color: var(--neon-tertiary);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    letter-spacing: 2px;
+}
+
+.c-nav__list {
+    list-style: none;
+}
+
+.c-nav__item {
+    margin-bottom: 0.75rem;
+}
+
+.c-nav__link {
+    display: block;
+    padding: 0.8rem 1rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    transition: all 0.3s var(--ease-out);
+    cursor: pointer;
+}
+
+.c-nav__link:hover {
+    color: var(--neon-primary);
+    background: rgba(0, 243, 255, 0.05);
+    border-color: rgba(0, 243, 255, 0.2);
+    transform: translateX(5px); /* Directive 136 */
+}
+
+.c-nav__link.is-active {
+    color: #fff;
+    background: rgba(0, 243, 255, 0.1);
+    border-color: var(--neon-primary);
+    box-shadow: inset 0 0 10px rgba(0, 243, 255, 0.2);
+}
+
+/* Main Terminal - Directive 51 */
+.l-main {
+    grid-area: main;
+    padding: var(--gap-main);
+}
+
+.c-terminal__toolbar {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-glow);
+    padding: 0.8rem 1.5rem;
+    margin-bottom: var(--gap-main);
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+}
+
+.c-terminal__path {
+    color: var(--neon-primary);
+}
+
+.c-terminal__meta {
+    color: var(--text-muted);
+}
+
+/* Code Grid - Two Column Parallel */
+.l-code-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: var(--gap-main);
+}
+
+@media (max-width: 768px) {
+    .l-code-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Code Cards - Glassmorphism - Directive 102, 105, 119 */
+.c-code-card {
+    background: var(--bg-panel);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+}
+
+.c-code-card--iterative {
+    border-bottom: 2px solid var(--neon-primary);
+}
+
+.c-code-card--recursive {
+    border-bottom: 2px solid var(--neon-secondary);
+}
+
+.c-code-card__header {
+    padding: 1.2rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.c-code-card__title {
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+}
+
+.c-code-card--iterative .c-code-card__title { color: var(--neon-primary); }
+.c-code-card--recursive .c-code-card__title { color: var(--neon-secondary); }
+
+.c-code-card__tag {
+    font-size: 0.65rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    border: 1px solid currentColor;
+    opacity: 0.7;
+}
+
+.c-code-card__body {
+    padding: 1.5rem;
+    flex-grow: 1;
+    overflow: auto;
+    max-height: 600px;
+}
+
+/* Code Blocks */
+.u-code-block {
+    font-size: 0.95rem;
+    white-space: pre;
+    color: var(--text-main);
+}
+
+/* Footer - Directive 8, 48 */
+.c-footer {
+    grid-area: footer;
+    background: var(--bg-panel);
+    border-top: 1px solid var(--border-glow);
+    padding: 1rem var(--gap-main);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+.c-footer__content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Scanlines Effect - Directive 112 */
+.u-scanlines::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.1) 0px,
+        rgba(0, 0, 0, 0.1) 1px,
+        transparent 1px,
+        transparent 2px
+    );
+    pointer-events: none;
+    z-index: 10000;
+}
+
+/* Syntax Highlighting */
+.token-keyword { color: #ff00ff; font-weight: 700; }
+.token-function { color: #00f3ff; }
+.token-string { color: #ffff00; }
+.token-comment { color: #666; font-style: italic; }
+.token-number { color: #ff6b00; }
+.token-operator { color: #00f3ff; }
+
+/* Utilities */
+.u-text-neon-primary { color: var(--neon-primary); }
+.u-text-neon-secondary { color: var(--neon-secondary); }
+
+/* Scrollbar - Directive 26 */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-glow);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--neon-primary);
+}

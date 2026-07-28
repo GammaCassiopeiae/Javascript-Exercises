@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Swap For Longest Repeated Character Substring - Interactive Algorithm Visualization">
+  <title>Swap For Longest Repeated Character Substring | Algorithm Visualizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Inter:wght@300;400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --neon-cyan: #00f3ff;
+      --neon-magenta: #ff00ff;
+      --neon-green: #00ff9d;
+      --neon-purple: #bd00ff;
+      --neon-orange: #ff6b00;
+      --bg-deep: #050505;
+      --bg-surface: rgba(255, 255, 255, 0.05);
+      --bg-card: rgba(255, 255, 255, 0.08);
+      --text-primary: #ffffff;
+      --text-muted: rgba(255, 255, 255, 0.7);
+      --font-display: 'Rajdhani', system-ui, sans-serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'Fira Code', monospace;
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 2rem;
+      --space-xl: 4rem;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+      --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+      --glow-cyan: 0 0 5px var(--neon-cyan), 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan);
+      --glow-magenta: 0 0 5px var(--neon-magenta), 0 0 10px var(--neon-magenta), 0 0 20px var(--neon-magenta);
+      --glow-green: 0 0 5px var(--neon-green), 0 0 10px var(--neon-green), 0 0 20px var(--neon-green);
+      --transition-fast: 0.1s;
+      --transition-base: 0.3s;
+      --ease-out: cubic-bezier(0.4, 0, 0.2, 1);
+      --z-sticky: 100;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-body); background-color: var(--bg-deep); color: var(--text-primary); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+    ::selection { background: var(--neon-cyan); color: #000; }
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: var(--bg-deep); }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--neon-cyan), var(--neon-purple)); border-radius: 5px; }
+    .l-body { display: flex; flex-direction: column; min-height: 100vh; }
+    .l-header { position: sticky; top: 0; z-index: var(--z-sticky); background: rgba(5, 5, 5, 0.95); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(0, 243, 255, 0.2); }
+    .l-main { flex: 1; padding: var(--space-xl) var(--space-md); max-width: 1400px; margin-inline: auto; width: 100%; }
+    .l-single-column { max-width: 900px; margin-inline: auto; }
+    .c-header { padding: var(--space-md) var(--space-lg); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-md); }
+    .c-header__brand { font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; letter-spacing: 0.1em; background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-shadow: none; }
+    .c-header__nav { display: flex; gap: var(--space-md); }
+    .c-nav-link { color: var(--text-muted); text-decoration: none; font-weight: 500; padding: var(--space-sm) var(--space-md); border: 1px solid transparent; border-radius: 4px; transition: all var(--transition-base) var(--ease-out); position: relative; }
+    .c-nav-link::after { content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px; background: var(--neon-cyan); transform: translateX(-50%); transition: width var(--transition-base) var(--ease-out); }
+    .c-nav-link:hover { color: var(--neon-cyan); border-color: rgba(0, 243, 255, 0.3); }
+    .c-nav-link:hover::after { width: 80%; }
+    .c-card { background: var(--bg-card); border: 1px solid rgba(0, 243, 255, 0.15); border-radius: 12px; padding: var(--space-lg); backdrop-filter: blur(10px); transition: all var(--transition-base) var(--ease-out); position: relative; overflow: hidden; }
+    .c-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta), var(--neon-purple)); opacity: 0; transition: opacity var(--transition-base) var(--ease-out); }
+    .c-card:hover { transform: translateY(-5px); border-color: rgba(0, 243, 255, 0.4); box-shadow: var(--glow-cyan); }
+    .c-card:hover::before { opacity: 1; }
+    .c-card__header { margin-bottom: var(--space-md); }
+    .c-card__title { font-family: var(--font-display); font-size: clamp(1.25rem, 2.5vw, 1.5rem); font-weight: 700; color: var(--neon-cyan); letter-spacing: 0.05em; display: flex; align-items: center; gap: var(--space-sm); }
+    .c-card__title::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(0, 243, 255, 0.5), transparent); }
+    .c-card__content { color: var(--text-muted); }
+    .c-code-block { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(189, 0, 255, 0.2); border-radius: 8px; padding: var(--space-md); overflow-x: auto; font-family: var(--font-mono); font-size: 0.875rem; line-height: 1.8; position: relative; }
+    .c-code-block__header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm); padding-bottom: var(--space-sm); border-bottom: 1px solid rgba(189, 0, 255, 0.1); }
+    .c-code-block__lang { color: var(--neon-purple); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
+    .c-code-block__copy { background: transparent; border: 1px solid rgba(0, 243, 255, 0.3); color: var(--neon-cyan); padding: var(--space-xs) var(--space-sm); border-radius: 4px; cursor: pointer; font-size: 0.75rem; transition: all var(--transition-fast) var(--ease-out); }
+    .c-code-block__copy:hover { background: rgba(0, 243, 255, 0.1); box-shadow: 0 0 10px rgba(0, 243, 255, 0.3); }
+    .c-code-block pre { margin: 0; white-space: pre-wrap; word-wrap: break-word; }
+    .c-code-block code { color: var(--text-primary); }
+    .token-keyword { color: var(--neon-magenta); }
+    .token-function { color: var(--neon-cyan); }
+    .token-string { color: var(--neon-green); }
+    .token-comment { color: var(--text-muted); font-style: italic; }
+    .token-number { color: var(--neon-orange); }
+    .token-operator { color: var(--neon-purple); }
+    .c-input-group { margin-bottom: var(--space-md); }
+    .c-input-label { display: block; color: var(--neon-cyan); font-size: 0.875rem; font-weight: 500; margin-bottom: var(--space-sm); }
+    .c-input-label__required { color: var(--neon-magenta); margin-left: var(--space-xs); }
+    .c-input { width: 100%; padding: 0.8rem 1.2rem; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(0, 243, 255, 0.2); border-radius: 8px; color: var(--text-primary); font-family: var(--font-mono); font-size: 0.875rem; transition: all var(--transition-base) var(--ease-out); caret-color: var(--neon-cyan); }
+    .c-input:focus { outline: none; border-color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 243, 255, 0.3); }
+    .c-input::placeholder { opacity: 0.4; }
+    .c-button { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-sm); padding: 0.8rem 1.5rem; background: linear-gradient(135deg, rgba(0, 243, 255, 0.1), rgba(189, 0, 255, 0.1)); border: 1px solid rgba(0, 243, 255, 0.3); border-radius: 8px; color: var(--neon-cyan); font-family: var(--font-display); font-size: 0.875rem; font-weight: 700; letter-spacing: 0.05em; cursor: pointer; transition: all var(--transition-base) var(--ease-out); text-transform: uppercase; min-height: 44px; }
+    .c-button:hover { background: linear-gradient(135deg, rgba(0, 243, 255, 0.2), rgba(189, 0, 255, 0.2)); transform: translateY(-2px); box-shadow: 0 0 20px rgba(0, 243, 255, 0.4); }
+    .c-button:active { transform: translateY(0); }
+    .c-button--primary { background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple)); color: #000; border: none; }
+    .c-button--primary:hover { box-shadow: var(--glow-cyan); }
+    .c-button--success { background: linear-gradient(135deg, var(--neon-green), var(--neon-cyan)); color: #000; border: none; }
+    .c-button--success:hover { box-shadow: var(--glow-green); }
+    .c-button-group { display: flex; gap: var(--space-md); flex-wrap: wrap; }
+    .c-result { margin-top: var(--space-md); padding: var(--space-md); background: rgba(0, 255, 157, 0.05); border: 1px solid rgba(0, 255, 157, 0.3); border-radius: 8px; display: flex; align-items: center; gap: var(--space-md); opacity: 0; transform: translateY(10px); transition: all var(--transition-base) var(--ease-out); }
+    .c-result.is-visible { opacity: 1; transform: translateY(0); }
+    .c-result__icon { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(0, 255, 157, 0.1); border-radius: 50%; color: var(--neon-green); font-size: 1.5rem; }
+    .c-result__content { flex: 1; }
+    .c-result__title { font-family: var(--font-display); font-size: 1.125rem; font-weight: 700; color: var(--neon-green); margin-bottom: var(--space-xs); }
+    .c-result__value { font-family: var(--font-mono); font-size: 1.25rem; color: var(--text-primary); }
+    .c-explanation { margin-top: var(--space-lg); }
+    .c-explanation__list { list-style: none; padding-left: 0; }
+    .c-explanation__item { position: relative; padding-left: var(--space-lg); margin-bottom: var(--space-md); color: var(--text-muted); }
+    .c-explanation__item::before { content: '▸'; position: absolute; left: 0; color: var(--neon-cyan); font-size: 1.125rem; }
+    .c-complexity-badge { display: inline-flex; align-items: center; gap: var(--space-sm); padding: var(--space-sm) var(--space-md); background: rgba(189, 0, 255, 0.1); border: 1px solid rgba(189, 0, 255, 0.3); border-radius: 20px; font-family: var(--font-mono); font-size: 0.75rem; color: var(--neon-purple); margin-right: var(--space-sm); }
+    .c-footer { margin-top: auto; padding: var(--space-lg); border-top: 1px solid rgba(0, 243, 255, 0.1); text-align: center; color: var(--text-muted); font-size: 0.875rem; }
+    .c-footer__links { display: flex; justify-content: center; gap: var(--space-lg); margin-bottom: var(--space-md); }
+    .c-footer__link { color: var(--neon-cyan); text-decoration: none; transition: color var(--transition-fast); }
+    .c-footer__link:hover { color: var(--neon-magenta); }
+    @keyframes neon-pulse { 0%, 100% { box-shadow: 0 0 5px var(--neon-cyan); } 50% { box-shadow: 0 0 20px var(--neon-cyan), 0 0 30px var(--neon-cyan); } }
+    @keyframes glow-flicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+    .c-header__brand { animation: glow-flicker 3s ease-in-out infinite; }
+    @media (max-width: 768px) { .c-header { flex-direction: column; text-align: center; } .c-header__nav { justify-content: center; } .l-single-column { padding: 0; } .c-button-group { flex-direction: column; } .c-button { width: 100%; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; } }
+  </style>
+</head>
+<body class="l-body">
+  <header class="l-header">
+    <div class="c-header">
+      <h1 class="c-header__brand">⚡ ALGO_VISUALIZER</h1>
+      <nav class="c-header__nav">
+        <a href="#" class="c-nav-link">Problems</a>
+        <a href="#" class="c-nav-link">Visualize</a>
+        <a href="#" class="c-nav-link">About</a>
+      </nav>
+    </div>
+  </header>
+  <main class="l-main">
+    <div class="l-single-column">
+      <article class="c-card">
+        <header class="c-card__header">
+          <h2 class="c-card__title"><span>🔀</span> Swap For Longest Repeated Character Substring</h2>
+        </header>
+        <div class="c-card__content">
+          <p>Given a string text, swap two characters to maximize the length of the longest substring of repeated characters. Return the length of the longest such substring.</p>
+          <div style="margin-top: var(--space-md); display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+            <span class="c-complexity-badge">⏱️ Time: O(n)</span>
+            <span class="c-complexity-badge">💾 Space: O(1)</span>
+            <span class="c-complexity-badge">📊 Difficulty: Medium</span>
+          </div>
+        </div>
+      </article>
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title"><span>🎯</span> Input</h2>
+        </header>
+        <div class="c-card__content">
+          <div class="c-input-group">
+            <label class="c-input-label" for="inputString">String text <span class="c-input-label__required">*</span></label>
+            <input type="text" id="inputString" class="c-input" placeholder="e.g., ababa" value="ababa" autocomplete="off">
+          </div>
+          <div class="c-button-group">
+            <button id="btnCalculate" class="c-button c-button--primary"><span>🚀</span> Calculate</button>
+            <button id="btnVisualize" class="c-button"><span>👁️</span> Visualize</button>
+            <button id="btnClear" class="c-button"><span>🗑️</span> Clear</button>
+          </div>
+        </div>
+      </article>
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title"><span>📈</span> Result</h2>
+        </header>
+        <div class="c-card__content">
+          <div id="resultContainer" class="c-result">
+            <div class="c-result__icon">✓</div>
+            <div class="c-result__content">
+              <div class="c-result__title">Max Length</div>
+              <div id="resultValue" class="c-result__value">0</div>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title"><span>🔬</span> Visualization</h2>
+        </header>
+        <div class="c-card__content">
+          <div id="visualizationContainer" class="c-visualization">
+            <p style="color: var(--text-muted); text-align: center;">Click "Visualize" to see the swap analysis</p>
+          </div>
+        </div>
+      </article>
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title"><span>💻</span> Solution Code</h2>
+        </header>
+        <div class="c-card__content">
+          <div class="c-code-block">
+            <div class="c-code-block__header">
+              <span class="c-code-block__lang">JavaScript</span>
+              <button class="c-code-block__copy js-copy-code">Copy</button>
+            </div>
+            <pre><code id="solutionCode"><span class="token-keyword">function</span> <span class="token-function">maxRepOpt1</span>(text) {
+  <span class="token-keyword">const</span> n = text.length;
+  <span class="token-keyword">const</span> count = <span class="token-keyword">new</span> Map();
+  
+  <span class="token-comment">// Count frequency of each character</span>
+  <span class="token-keyword">for</span> (<span class="token-keyword">let</span> char of text) {
+    count.set(char, (count.get(char) || <span class="token-number">0</span>) + <span class="token-number">1</span>);
+  }
+  
+  <span class="token-keyword">let</span> maxLen = <span class="token-number">0</span>;
+  
+  <span class="token-comment">// For each character, find the longest substring</span>
+  <span class="token-keyword">for</span> (<span class="token-keyword">let</span> char of count.keys()) {
+    <span class="token-keyword">let</span> i = <span class="token-number">0</span>;
+    <span class="token-keyword">while</span> (i < n) {
+      <span class="token-comment">// Skip characters that don't match</span>
+      <span class="token-keyword">while</span> (i < n && text[i] !== char) i++;
+      <span class="token-keyword">if</span> (i >= n) <span class="token-keyword">break</span>;
+      
+      <span class="token-comment">// Count consecutive characters</span>
+      <span class="token-keyword">let</span> j = i;
+      <span class="token-keyword">while</span> (j < n && text[j] === char) j++;
+      <span class="token-keyword">let</span> len1 = j - i;
+      
+      <span class="token-comment">// Try to extend by skipping one different character</span>
+      <span class="token-keyword">let</span> k = j + <span class="token-number">1</span>;
+      <span class="token-keyword">while</span> (k < n && text[k] === char) k++;
+      <span class="token-keyword">let</span> len2 = k - j - <span class="token-number">1</span>;
+      
+      <span class="token-comment">// Can we swap to connect them?</span>
+      <span class="token-keyword">let</span> combined = len1 + len2;
+      <span class="token-keyword">if</span> (j < n && count.get(char) > combined) {
+        combined++; <span class="token-comment">// Can swap one more character</span>
+      }
+      
+      maxLen = Math.max(maxLen, Math.min(combined, count.get(char)));
+      i = j;
+    }
+  }
+  
+  <span class="token-keyword">return</span> maxLen;
+}</code></pre>
+          </div>
+        </div>
+      </article>
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title"><span>📖</span> Algorithm Explanation</h2>
+        </header>
+        <div class="c-card__content c-explanation">
+          <ul class="c-explanation__list">
+            <li class="c-explanation__item">Count the frequency of each character in the string.</li>
+            <li class="c-explanation__item">For each character, find all consecutive groups.</li>
+            <li class="c-explanation__item">Try to merge two groups by swapping one character in between.</li>
+            <li class="c-explanation__item">The result is limited by the total count of that character.</li>
+          </ul>
+        </div>
+      </article>
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title"><span>📝</span> Example Walkthrough</h2>
+        </header>
+        <div class="c-card__content">
+          <div class="c-code-block">
+            <pre><code>Input: text = "ababa"
+
+Character counts: a=3, b=2
+
+For 'a':
+- Group 1: positions 0-2 (length 1)
+- Group 2: positions 3-4 (length 2)
+- Can swap 'b' at position 2 to connect
+- Result: "aaaba" → longest 'a' substring = 3
+
+Maximum length = <span class="token-number">3</span></code></pre>
+          </div>
+        </div>
+      </article>
+    </div>
+  </main>
+  <footer class="c-footer">
+    <div class="c-footer__links">
+      <a href="#" class="c-footer__link">GitHub</a>
+      <a href="#" class="c-footer__link">Documentation</a>
+      <a href="#" class="c-footer__link">Contact</a>
+    </div>
+    <p>&copy; 2026 Algo Visualizer. Built with 💜 and neon dreams.</p>
+  </footer>
+  <script>
+    (function() {
+      'use strict';
+      const inputString = document.getElementById('inputString');
+      const btnCalculate = document.getElementById('btnCalculate');
+      const btnVisualize = document.getElementById('btnVisualize');
+      const btnClear = document.getElementById('btnClear');
+      const resultContainer = document.getElementById('resultContainer');
+      const resultValue = document.getElementById('resultValue');
+      const visualizationContainer = document.getElementById('visualizationContainer');
+      const copyButtons = document.querySelectorAll('.js-copy-code');
+
+      function maxRepOpt1(text) {
+        const n = text.length;
+        const count = new Map();
+        for (let char of text) {
+          count.set(char, (count.get(char) || 0) + 1);
+        }
+        let maxLen = 0;
+        for (let char of count.keys()) {
+          let i = 0;
+          while (i < n) {
+            while (i < n && text[i] !== char) i++;
+            if (i >= n) break;
+            let j = i;
+            while (j < n && text[j] === char) j++;
+            let len1 = j - i;
+            let k = j + 1;
+            while (k < n && text[k] === char) k++;
+            let len2 = k - j - 1;
+            let combined = len1 + len2;
+            if (j < n && count.get(char) > combined) {
+              combined++;
+            }
+            maxLen = Math.max(maxLen, Math.min(combined, count.get(char)));
+            i = j;
+          }
+        }
+        return maxLen;
+      }
+
+      function handleCalculate() {
+        const text = inputString.value.trim();
+        if (!text) { alert('Please enter a string'); return; }
+        const result = maxRepOpt1(text);
+        resultValue.textContent = result;
+        resultContainer.classList.add('is-visible');
+        resultContainer.style.animation = 'neon-pulse 1s ease-in-out';
+        setTimeout(() => { resultContainer.style.animation = ''; }, 1000);
+      }
+
+      function handleVisualize() {
+        const text = inputString.value.trim();
+        if (!text) { alert('Please enter a string'); return; }
+        const count = new Map();
+        for (let char of text) {
+          count.set(char, (count.get(char) || 0) + 1);
+        }
+        let html = '<div style="margin-bottom: 1rem;">';
+        html += '<p style="color: var(--neon-cyan); margin-bottom: 0.5rem; font-family: var(--font-mono);">Original String:</p>';
+        html += `<div style="display: flex; gap: 0.25rem; flex-wrap: wrap;">`;
+        for (let i = 0; i < text.length; i++) {
+          html += `<span style="padding: 0.5rem; background: rgba(0, 243, 255, 0.2); border: 1px solid var(--neon-cyan); border-radius: 4px; font-family: var(--font-mono);">${text[i]}[${i}]</span>`;
+        }
+        html += '</div></div>';
+        html += '<div style="margin-top: 1rem;">';
+        html += '<p style="color: var(--neon-magenta); margin-bottom: 0.5rem; font-family: var(--font-mono);">Character Counts:</p>';
+        for (let [char, cnt] of count.entries()) {
+          html += `<span style="display: inline-block; padding: 0.5rem 1rem; margin: 0.25rem; background: rgba(255, 0, 255, 0.2); border: 1px solid var(--neon-magenta); border-radius: 4px; font-family: var(--font-mono);">'${char}': ${cnt}</span>`;
+        }
+        html += '</div>';
+        html += `<div style="margin-top: 1rem; padding: 1rem; background: rgba(0, 255, 157, 0.1); border: 1px solid var(--neon-green); border-radius: 8px;">`;
+        html += `<span style="color: var(--neon-green); font-weight: 700;">Maximum Length After Swap: ${maxRepOpt1(text)}</span>`;
+        html += '</div>';
+        visualizationContainer.innerHTML = html;
+      }
+
+      function handleClear() {
+        inputString.value = '';
+        resultContainer.classList.remove('is-visible');
+        visualizationContainer.innerHTML = '<p style="color: var(--text-muted); text-align: center;">Click "Visualize" to see the swap analysis</p>';
+      }
+
+      function handleCopyCode(event) {
+        const codeBlock = event.target.closest('.c-code-block');
+        const code = codeBlock.querySelector('code');
+        navigator.clipboard.writeText(code.textContent).then(() => {
+          const originalText = event.target.textContent;
+          event.target.textContent = 'Copied!';
+          event.target.style.background = 'rgba(0, 255, 157, 0.2)';
+          event.target.style.borderColor = 'var(--neon-green)';
+          setTimeout(() => {
+            event.target.textContent = originalText;
+            event.target.style.background = '';
+            event.target.style.borderColor = '';
+          }, 2000);
+        });
+      }
+
+      btnCalculate.addEventListener('click', handleCalculate);
+      btnVisualize.addEventListener('click', handleVisualize);
+      btnClear.addEventListener('click', handleClear);
+      copyButtons.forEach(button => { button.addEventListener('click', handleCopyCode); });
+      inputString.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleCalculate(); });
+      window.addEventListener('load', handleCalculate);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Median of Two Sorted Arrays - LeetCode Solution</title>
+    <style>
+        :root { --lime-green: #00ff9d; --lime-dim: rgba(0, 255, 157, 0.3); --bg-black: #050505; --bg-surface: rgba(255, 255, 255, 0.05); --text-primary: #ffffff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg-black); color: var(--text-primary); min-height: 100vh; line-height: 1.6; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+        header { border-bottom: 1px solid var(--lime-dim); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+        h1 { font-size: clamp(1.5rem, 3vw, 2rem); color: var(--lime-green); text-shadow: 0 0 10px var(--lime-dim); margin-bottom: 0.5rem; }
+        .problem-desc, .code-section, .demo-section { background: var(--bg-surface); border: 1px solid var(--lime-dim); border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; }
+        h2 { color: var(--lime-green); font-size: 1.25rem; margin-bottom: 1rem; }
+        pre { background: #0a0a0a; border: 1px solid var(--lime-dim); border-radius: 6px; padding: 1.5rem; overflow-x: auto; font-family: 'Fira Code', monospace; font-size: 0.9rem; }
+        .keyword { color: #ff00ff; } .function { color: #00f3ff; } .string { color: #00ff9d; } .number { color: #bd00ff; } .comment { color: rgba(255, 255, 255, 0.4); }
+        input, button { padding: 0.75rem 1rem; border: 1px solid var(--lime-dim); border-radius: 6px; background: rgba(0, 0, 0, 0.3); color: var(--text-primary); font-family: 'Fira Code', monospace; margin-bottom: 0.5rem; }
+        input:focus { outline: none; box-shadow: 0 0 10px var(--lime-dim); }
+        button { background: var(--lime-dim); color: var(--bg-black); cursor: pointer; font-weight: 700; }
+        button:hover { background: var(--lime-green); box-shadow: 0 0 20px var(--lime-dim); }
+        .result { margin-top: 1rem; padding: 1rem; background: rgba(0, 255, 157, 0.1); border-radius: 6px; font-family: 'Fira Code', monospace; }
+        .result span { color: var(--lime-green); }
+        label { display: block; color: var(--lime-green); margin-bottom: 0.5rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Median of Two Sorted Arrays</h1>
+            <p style="color: var(--text-muted);">LeetCode Problem - Binary Search (Hard)</p>
+        </header>
+        <section class="problem-desc">
+            <h2>Problem Description</h2>
+            <p>Given two sorted arrays nums1 and nums2, return the median of the two sorted arrays in O(log(m+n)) time.</p>
+        </section>
+        <section class="code-section">
+            <h2>JavaScript Solution</h2>
+            <pre><code><span class="keyword">function</span> <span class="function">findMedianSortedArrays</span>(nums1, nums2) {
+    <span class="comment">// Ensure nums1 is smaller</span>
+    <span class="keyword">if</span> (nums1.length > nums2.length) {
+        [nums1, nums2] = [nums2, nums1];
+    }
+    
+    <span class="keyword">const</span> m = nums1.length, n = nums2.length;
+    <span class="keyword">let</span> left = <span class="number">0</span>, right = m;
+    
+    <span class="keyword">while</span> (left <= right) {
+        <span class="keyword">const</span> partitionX = <span class="function">Math</span>.<span class="function">floor</span>((left + right) / <span class="number">2</span>);
+        <span class="keyword">const</span> partitionY = <span class="function">Math</span>.<span class="function">floor</span>((m + n + <span class="number">1</span>) / <span class="number">2</span>) - partitionX;
+        
+        <span class="keyword">const</span> maxX = partitionX === <span class="number">0</span> ? -Infinity : nums1[partitionX - <span class="number">1</span>];
+        <span class="keyword">const</span> minX = partitionX === m ? Infinity : nums1[partitionX];
+        <span class="keyword">const</span> maxY = partitionY === <span class="number">0</span> ? -Infinity : nums2[partitionY - <span class="number">1</span>];
+        <span class="keyword">const</span> minY = partitionY === n ? Infinity : nums2[partitionY];
+        
+        <span class="keyword">if</span> (maxX <= minY && maxY <= minX) {
+            <span class="keyword">if</span> ((m + n) % <span class="number">2</span> === <span class="number">0</span>) {
+                <span class="keyword">return</span> (Math.<span class="function">max</span>(maxX, maxY) + Math.<span class="function">min</span>(minX, minY)) / <span class="number">2</span>;
+            } <span class="keyword">else</span> {
+                <span class="keyword">return</span> Math.<span class="function">max</span>(maxX, maxY);
+            }
+        } <span class="keyword">else</span> <span class="keyword">if</span> (maxX > minY) {
+            right = partitionX - <span class="number">1</span>;
+        } <span class="keyword">else</span> {
+            left = partitionX + <span class="number">1</span>;
+        }
+    }
+    
+    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="function">Error</span>(<span class="string">"Invalid input"</span>);
+}
+
+<span class="comment">// Usage:</span>
+console.<span class="function">log</span>(<span class="function">findMedianSortedArrays</span>([<span class="number">1</span>,<span class="number">3</span>], [<span class="number">2</span>])); <span class="comment">// 2.0</span>
+console.<span class="function">log</span>(<span class="function">findMedianSortedArrays</span>([<span class="number">1</span>,<span class="number">2</span>], [<span class="number">3</span>,<span class="number">4</span>])); <span class="comment">// 2.5</span></code></pre>
+        </section>
+        <section class="demo-section">
+            <h2>Interactive Demo</h2>
+            <div class="input-group">
+                <label for="nums1-input">Array 1 (comma-separated):</label>
+                <input type="text" id="nums1-input" value="1,3" style="width: 100%;">
+            </div>
+            <div class="input-group">
+                <label for="nums2-input">Array 2 (comma-separated):</label>
+                <input type="text" id="nums2-input" value="2" style="width: 100%;">
+            </div>
+            <button onclick="runDemo()">Find Median</button>
+            <div class="result"><span id="output">-</span></div>
+        </section>
+    </div>
+    <script>
+        function findMedianSortedArrays(nums1, nums2) {
+            if (nums1.length > nums2.length) [nums1, nums2] = [nums2, nums1];
+            const m = nums1.length, n = nums2.length;
+            let left = 0, right = m;
+            while (left <= right) {
+                const partitionX = Math.floor((left + right) / 2);
+                const partitionY = Math.floor((m + n + 1) / 2) - partitionX;
+                const maxX = partitionX === 0 ? -Infinity : nums1[partitionX - 1];
+                const minX = partitionX === m ? Infinity : nums1[partitionX];
+                const maxY = partitionY === 0 ? -Infinity : nums2[partitionY - 1];
+                const minY = partitionY === n ? Infinity : nums2[partitionY];
+                if (maxX <= minY && maxY <= minX) {
+                    if ((m + n) % 2 === 0) {
+                        return (Math.max(maxX, maxY) + Math.min(minX, minY)) / 2;
+                    } else {
+                        return Math.max(maxX, maxY);
+                    }
+                } else if (maxX > minY) {
+                    right = partitionX - 1;
+                } else {
+                    left = partitionX + 1;
+                }
+            }
+            throw new Error("Invalid input");
+        }
+        function runDemo() {
+            const nums1 = document.getElementById('nums1-input').value.split(',').map(Number);
+            const nums2 = document.getElementById('nums2-input').value.split(',').map(Number);
+            document.getElementById('output').textContent = findMedianSortedArrays(nums1, nums2);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reverse Only Letters - LeetCode Solution</title>
+    <style>
+        :root { --lime-green: #00ff9d; --lime-dim: rgba(0, 255, 157, 0.3); --bg-black: #050505; --bg-surface: rgba(255, 255, 255, 0.05); --text-primary: #ffffff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg-black); color: var(--text-primary); min-height: 100vh; line-height: 1.6; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+        header { border-bottom: 1px solid var(--lime-dim); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+        h1 { font-size: clamp(1.5rem, 3vw, 2rem); color: var(--lime-green); text-shadow: 0 0 10px var(--lime-dim); margin-bottom: 0.5rem; }
+        .problem-desc, .code-section, .demo-section { background: var(--bg-surface); border: 1px solid var(--lime-dim); border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; }
+        h2 { color: var(--lime-green); font-size: 1.25rem; margin-bottom: 1rem; }
+        pre { background: #0a0a0a; border: 1px solid var(--lime-dim); border-radius: 6px; padding: 1.5rem; overflow-x: auto; font-family: 'Fira Code', monospace; font-size: 0.9rem; }
+        .keyword { color: #ff00ff; } .function { color: #00f3ff; } .string { color: #00ff9d; } .number { color: #bd00ff; } .comment { color: rgba(255, 255, 255, 0.4); }
+        input, button { padding: 0.75rem 1rem; border: 1px solid var(--lime-dim); border-radius: 6px; background: rgba(0, 0, 0, 0.3); color: var(--text-primary); font-family: 'Fira Code', monospace; margin-bottom: 0.5rem; }
+        input:focus { outline: none; box-shadow: 0 0 10px var(--lime-dim); }
+        button { background: var(--lime-dim); color: var(--bg-black); cursor: pointer; font-weight: 700; }
+        button:hover { background: var(--lime-green); box-shadow: 0 0 20px var(--lime-dim); }
+        .result { margin-top: 1rem; padding: 1rem; background: rgba(0, 255, 157, 0.1); border-radius: 6px; font-family: 'Fira Code', monospace; }
+        .result span { color: var(--lime-green); }
+        label { display: block; color: var(--lime-green); margin-bottom: 0.5rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Reverse Only Letters</h1>
+            <p style="color: var(--text-muted);">LeetCode Problem - Two Pointers</p>
+        </header>
+        <section class="problem-desc">
+            <h2>Problem Description</h2>
+            <p>Given a string, reverse only the English letters. All non-letter characters stay in the same position.</p>
+        </section>
+        <section class="code-section">
+            <h2>JavaScript Solution</h2>
+            <pre><code><span class="keyword">function</span> <span class="function">reverseOnlyLetters</span>(s) {
+    <span class="keyword">const</span> chars = s.<span class="function">split</span>(<span class="string">''</span>);
+    <span class="keyword">let</span> left = <span class="number">0</span>, right = chars.length - <span class="number">1</span>;
+    
+    <span class="keyword">while</span> (left < right) {
+        <span class="keyword">if</span> (!/[a-zA-Z]/.<span class="function">test</span>(chars[left])) {
+            left++;
+        } <span class="keyword">else</span> <span class="keyword">if</span> (!/[a-zA-Z]/.<span class="function">test</span>(chars[right])) {
+            right--;
+        } <span class="keyword">else</span> {
+            [chars[left], chars[right]] = [chars[right], chars[left]];
+            left++;
+            right--;
+        }
+    }
+    
+    <span class="keyword">return</span> chars.<span class="function">join</span>(<span class="string">''</span>);
+}
+
+<span class="comment">// Usage:</span>
+console.<span class="function">log</span>(<span class="function">reverseOnlyLetters</span>(<span class="string">"ab-cd"</span>)); <span class="comment">// "dc-ba"</span>
+console.<span class="function">log</span>(<span class="function">reverseOnlyLetters</span>(<span class="string">"Test1ng-Leet=code-Q!"</span>)); <span class="comment">// "Qedo1ct-eeLg=ntse-T!"</span></code></pre>
+        </section>
+        <section class="demo-section">
+            <h2>Interactive Demo</h2>
+            <div class="input-group">
+                <label for="s-input">String s:</label>
+                <input type="text" id="s-input" value="ab-cd" style="width: 100%;">
+            </div>
+            <button onclick="runDemo()">Reverse Letters</button>
+            <div class="result"><span id="output">-</span></div>
+        </section>
+    </div>
+    <script>
+        function reverseOnlyLetters(s) {
+            const chars = s.split('');
+            let left = 0, right = chars.length - 1;
+            while (left < right) {
+                if (!/[a-zA-Z]/.test(chars[left])) left++;
+                else if (!/[a-zA-Z]/.test(chars[right])) right--;
+                else {
+                    [chars[left], chars[right]] = [chars[right], chars[left]];
+                    left++; right--;
+                }
+            }
+            return chars.join('');
+        }
+        function runDemo() {
+            const s = document.getElementById('s-input').value;
+            document.getElementById('output').textContent = reverseOnlyLetters(s);
+        }
+    </script>
+</body>
+</html>

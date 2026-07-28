@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Convex Hull - Geometry Visualizations</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="math3d.js"></script>
+</head>
+<body>
+    <header>
+        <h1>3D Convex Hull</h1>
+        <p>Visualizing the smallest convex set that contains a given set of 3D points.</p>
+    </header>
+
+    <div class="description">
+        <h2>Incremental Algorithm</h2>
+        <p>The incremental algorithm starts with a simple hull (like a tetrahedron) and adds points one by one. If a point is outside the current hull, it identifies "visible" faces, removes them, and creates new faces connecting the boundary to the new point.</p>
+    </div>
+
+    <div class="controls">
+        <button onclick="generatePoints()">Random Points</button>
+        <button onclick="computeHull()">Compute Hull</button>
+        <span>Drag to rotate the view</span>
+    </div>
+
+    <canvas id="canvas" width="800" height="600"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let angleX = 0.3;
+        let angleY = 0.5;
+        let isDragging = false;
+        let lastX, lastY;
+
+        let points = [];
+        let hullFaces = [];
+
+        function generatePoints() {
+            points = [];
+            hullFaces = [];
+            for(let i=0; i<30; i++) {
+                points.push(new Vec3(
+                    (Math.random() - 0.5) * 6,
+                    (Math.random() - 0.5) * 6,
+                    (Math.random() - 0.5) * 6
+                ));
+            }
+            draw();
+        }
+
+        // Simplified 3D Convex Hull (Incremental)
+        function computeHull() {
+            if (points.length < 4) return;
+            
+            // 1. Initial tetrahedron
+            // (For simplicity, assume first 4 points are non-coplanar)
+            hullFaces = [
+                { a: 0, b: 1, c: 2 },
+                { a: 0, b: 2, c: 3 },
+                { a: 0, b: 3, c: 1 },
+                { a: 1, b: 3, c: 2 }
+            ];
+
+            // Correct orientation of initial faces
+            const center = points[0].add(points[1]).add(points[2]).add(points[3]).mul(0.25);
+            hullFaces.forEach(f => {
+                const v1 = points[f.b].sub(points[f.a]);
+                const v2 = points[f.c].sub(points[f.a]);
+                let norm = v1.cross(v2);
+                if (norm.dot(points[f.a].sub(center)) < 0) {
+                    const tmp = f.b; f.b = f.c; f.c = tmp;
+                }
+            });
+
+            // 2. Add points one by one
+            for(let i=4; i<points.length; i++) {
+                const p = points[i];
+                let visibleFaces = [];
+                let nonVisibleFaces = [];
+
+                for(let f of hullFaces) {
+                    const v1 = points[f.b].sub(points[f.a]);
+                    const v2 = points[f.c].sub(points[f.a]);
+                    const norm = v1.cross(v2);
+                    if (norm.dot(p.sub(points[f.a])) > 0.001) {
+                        visibleFaces.push(f);
+                    } else {
+                        nonVisibleFaces.push(f);
+                    }
+                }
+
+                if (visibleFaces.length === 0) continue;
+
+                // Find boundary edges of visible faces
+                let edges = [];
+                visibleFaces.forEach(f => {
+                    edges.push({a: f.a, b: f.b});
+                    edges.push({a: f.b, b: f.c});
+                    edges.push({a: f.c, b: f.a});
+                });
+
+                let boundary = [];
+                for(let e of edges) {
+                    let count = 0;
+                    for(let e2 of edges) {
+                        if((e.a === e2.a && e.b === e2.b) || (e.a === e2.b && e.b === e2.a)) count++;
+                    }
+                    if(count === 1) boundary.push(e);
+                }
+
+                hullFaces = nonVisibleFaces;
+                boundary.forEach(e => {
+                    hullFaces.push({a: e.a, b: e.b, c: i});
+                });
+            }
+            draw();
+        }
+
+        canvas.onmousedown = (e) => { isDragging = true; lastX = e.clientX; lastY = e.clientY; };
+        window.onmouseup = () => { isDragging = false; };
+        window.onmousemove = (e) => {
+            if (isDragging) {
+                angleY += (e.clientX - lastX) * 0.01;
+                angleX += (e.clientY - lastY) * 0.01;
+                lastX = e.clientX;
+                lastY = e.clientY;
+                draw();
+            }
+        };
+
+        function getTransform() {
+            const aspect = canvas.width / canvas.height;
+            const proj = Mat4.perspective(Math.PI / 4, aspect, 0.1, 100);
+            const rotX = Mat4.rotationX(angleX);
+            const rotY = Mat4.rotationY(angleY);
+            const view = rotY.multiply(rotX);
+            view.m[14] = -15; 
+            return proj.multiply(view);
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const t = getTransform();
+
+            // Draw Hull Faces
+            ctx.lineWidth = 1;
+            hullFaces.forEach(f => {
+                const p1 = project(t.transform(points[f.a]), canvas.width, canvas.height);
+                const p2 = project(t.transform(points[f.b]), canvas.width, canvas.height);
+                const p3 = project(t.transform(points[f.c]), canvas.width, canvas.height);
+
+                // Backface culling for visualization
+                const v1 = points[f.b].sub(points[f.a]);
+                const v2 = points[f.c].sub(points[f.a]);
+                const norm = v1.cross(v2);
+                // Rotate normal to view space (simplified)
+                const rotX = Mat4.rotationX(angleX);
+                const rotY = Mat4.rotationY(angleY);
+                const viewNorm = rotY.multiply(rotX).transform(norm);
+
+                if (viewNorm.z > 0) {
+                    ctx.beginPath();
+                    ctx.fillStyle = 'rgba(76, 175, 80, 0.3)';
+                    ctx.strokeStyle = 'rgba(76, 175, 80, 0.8)';
+                    ctx.moveTo(p1.x, p1.y);
+                    ctx.lineTo(p2.x, p2.y);
+                    ctx.lineTo(p3.x, p3.y);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.stroke();
+                }
+            });
+
+            // Draw Points
+            points.forEach(p => {
+                const pt = project(t.transform(p), canvas.width, canvas.height);
+                ctx.fillStyle = '#fff';
+                ctx.beginPath();
+                ctx.arc(pt.x, pt.y, 3, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
+        generatePoints();
+    </script>
+</body>
+</html>

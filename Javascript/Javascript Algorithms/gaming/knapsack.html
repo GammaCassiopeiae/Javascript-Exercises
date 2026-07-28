@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Knapsack Algoritem (Dinamično programiranje)</title>
+    <style>
+        body { background: #0f172a; color: #f8fafc; font-family: system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { background: #1e293b; padding: 20px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 100%; max-width: 500px; }
+        .item-list { margin: 15px 0; border-top: 1px solid #334155; padding-top: 10px; }
+        .item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px dotted #334155; }
+        .capacity-control { margin-bottom: 20px; text-align: center; }
+        input { background: #0f172a; border: 1px solid #334155; color: #fbbf24; padding: 8px; border-radius: 4px; width: 60px; text-align: center; }
+        button { background: #38bdf8; color: #0f172a; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 15px; }
+        .result { margin-top: 20px; padding: 15px; background: #064e3b; color: #34d399; border-radius: 6px; display: none; text-align: center; font-size: 1.2rem; }
+        b { color: #f43f5e; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Problem Nahrbtnika 🎒</h2>
+    <div class="capacity-control">
+        Max nosilnost (kg): <input type="number" id="capacity" value="10">
+    </div>
+
+    <div class="item-list" id="itemList">
+        <!-- Predmeti bodo dodani tukaj -->
+    </div>
+
+    <button onclick="solveKnapsack()">Izračunaj optimalno vrednost</button>
+
+    <div id="resultBox" class="result"></div>
+</div>
+
+<script>
+    // Seznam predmetov: { ime, teža, vrednost }
+    const items = [
+        { name: "Diamant", weight: 2, value: 3000 },
+        { name: "Zlata krogla", weight: 5, value: 2000 },
+        { name: "Srebrni kip", weight: 4, value: 1500 },
+        { name: "Starinski meč", weight: 3, value: 2500 }
+    ];
+
+    // Prikaz predmetov v DOM
+    const listEl = document.getElementById('itemList');
+    items.forEach(item => {
+        listEl.innerHTML += `
+            <div class="item">
+                <span>${item.name} (${item.weight}kg)</span>
+                <b>${item.value} €</b>
+            </div>`;
+    });
+
+    /**
+     * Algoritem 0/1 Knapsack (Dinamično programiranje)
+     * Časovna zahtevnost: O(n * W), kjer je n št. predmetov, W pa nosilnost.
+     */
+    function solveKnapsack() {
+        const W = parseInt(document.getElementById('capacity').value);
+        const n = items.length;
+        
+        // Ustvarimo 2D matriko (tabelo), napolnjeno z ničlami
+        let dp = Array.from({ length: n + 1 }, () => Array(W + 1).fill(0));
+
+        // Gradimo tabelo od spodaj navzgor
+        for (let i = 1; i <= n; i++) {
+            let currentItem = items[i - 1];
+            for (let w = 1; w <= W; w++) {
+                if (currentItem.weight <= w) {
+                    // Maksimum med: (predmet vzamemo) ALI (predmeta ne vzamemo)
+                    dp[i][w] = Math.max(
+                        currentItem.value + dp[i - 1][w - currentItem.weight], 
+                        dp[i - 1][w]
+                    );
+                } else {
+                    dp[i][w] = dp[i - 1][w];
+                }
+            }
+        }
+
+        const maxVal = dp[n][W];
+        const resBox = document.getElementById('resultBox');
+        resBox.style.display = 'block';
+        resBox.innerHTML = `Max vrednost: <strong>${maxVal} €</strong>`;
+    }
+</script>
+
+</body>
+</html>

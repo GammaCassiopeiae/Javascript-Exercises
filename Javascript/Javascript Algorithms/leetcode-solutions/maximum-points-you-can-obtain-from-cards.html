@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maximum Points You Can Obtain from Cards - LeetCode Solution</title>
+    <style>
+        :root {
+            --lime-green: #00ff9d;
+            --lime-dim: rgba(0, 255, 157, 0.3);
+            --bg-black: #050505;
+            --bg-surface: rgba(255, 255, 255, 0.05);
+            --text-primary: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.7);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg-black);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            border-bottom: 1px solid var(--lime-dim);
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            color: var(--lime-green);
+            text-shadow: 0 0 10px var(--lime-dim);
+            margin-bottom: 0.5rem;
+        }
+
+        .problem-desc {
+            background: var(--bg-surface);
+            border: 1px solid var(--lime-dim);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .problem-desc h2 {
+            color: var(--lime-green);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .code-section {
+            background: var(--bg-surface);
+            border: 1px solid var(--lime-dim);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .code-section h2 {
+            color: var(--lime-green);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        pre {
+            background: #0a0a0a;
+            border: 1px solid var(--lime-dim);
+            border-radius: 6px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .keyword { color: #ff00ff; }
+        .function { color: #00f3ff; }
+        .string { color: #00ff9d; }
+        .number { color: #bd00ff; }
+        .comment { color: rgba(255, 255, 255, 0.4); }
+
+        .demo-section {
+            background: var(--bg-surface);
+            border: 1px solid var(--lime-dim);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .demo-section h2 {
+            color: var(--lime-green);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            color: var(--lime-green);
+            margin-bottom: 0.5rem;
+        }
+
+        input, button {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--lime-dim);
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--text-primary);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+        }
+
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 10px var(--lime-dim);
+        }
+
+        button {
+            background: var(--lime-dim);
+            color: var(--bg-black);
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: var(--lime-green);
+            box-shadow: 0 0 20px var(--lime-dim);
+        }
+
+        .result {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(0, 255, 157, 0.1);
+            border-radius: 6px;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .result span {
+            color: var(--lime-green);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Maximum Points from Cards</h1>
+            <p style="color: var(--text-muted);">LeetCode Problem - Sliding Window</p>
+        </header>
+
+        <section class="problem-desc">
+            <h2>Problem Description</h2>
+            <p>Given an array of card points and integer k. You can take exactly k cards from either beginning or end. Return maximum points you can obtain.</p>
+        </section>
+
+        <section class="code-section">
+            <h2>JavaScript Solution</h2>
+            <pre><code><span class="keyword">function</span> <span class="function">maxScore</span>(cardPoints, k) {
+    <span class="keyword">const</span> n = cardPoints.length;
+    
+    <span class="comment">// Total sum of all cards</span>
+    <span class="keyword">const</span> totalSum = cardPoints.<span class="function">reduce</span>((a, b) => a + b, <span class="number">0</span>);
+    
+    <span class="comment">// If we need all cards</span>
+    <span class="keyword">if</span> (k === n) <span class="keyword">return</span> totalSum;
+    
+    <span class="comment">// Find minimum sum subarray of size (n - k)</span>
+    <span class="keyword">const</span> windowSize = n - k;
+    <span class="keyword">let</span> windowSum = <span class="number">0</span>;
+    
+    <span class="comment">// First window</span>
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < windowSize; i++) {
+        windowSum += cardPoints[i];
+    }
+    
+    <span class="keyword">let</span> minWindowSum = windowSum;
+    
+    <span class="comment">// Slide window</span>
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = windowSize; i < n; i++) {
+        windowSum += cardPoints[i] - cardPoints[i - windowSize];
+        minWindowSum = Math.<span class="function">min</span>(minWindowSum, windowSum);
+    }
+    
+    <span class="comment">// Maximum points = total - minimum window</span>
+    <span class="keyword">return</span> totalSum - minWindowSum;
+}
+
+<span class="comment">// Usage Example:</span>
+<span class="keyword">const</span> cardPoints = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">1</span>];
+<span class="keyword">const</span> k = <span class="number">3</span>;
+console.<span class="function">log</span>(<span class="function">maxScore</span>(cardPoints, k)); <span class="comment">// 12 (take 1+6+5 from ends)</span></code></pre>
+        </section>
+
+        <section class="demo-section">
+            <h2>Interactive Demo</h2>
+            <div class="input-group">
+                <label for="cards-input">Card Points (comma-separated):</label>
+                <input type="text" id="cards-input" value="1,2,3,4,5,6,1" style="width: 100%;">
+            </div>
+            <div class="input-group">
+                <label for="k-input">Number of Cards (k):</label>
+                <input type="number" id="k-input" value="3" min="1">
+            </div>
+            <button onclick="runDemo()">Calculate Max Score</button>
+            <div class="result" id="result">
+                Result: <span id="output">-</span>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        function maxScore(cardPoints, k) {
+            const n = cardPoints.length;
+            const totalSum = cardPoints.reduce((a, b) => a + b, 0);
+            
+            if (k === n) return totalSum;
+            
+            const windowSize = n - k;
+            let windowSum = 0;
+            
+            for (let i = 0; i < windowSize; i++) {
+                windowSum += cardPoints[i];
+            }
+            
+            let minWindowSum = windowSum;
+            
+            for (let i = windowSize; i < n; i++) {
+                windowSum += cardPoints[i] - cardPoints[i - windowSize];
+                minWindowSum = Math.min(minWindowSum, windowSum);
+            }
+            
+            return totalSum - minWindowSum;
+        }
+
+        function runDemo() {
+            const cardsInput = document.getElementById('cards-input').value;
+            const k = parseInt(document.getElementById('k-input').value);
+            
+            const cardPoints = cardsInput.split(',').map(x => parseInt(x.trim()));
+            const result = maxScore(cardPoints, k);
+            
+            document.getElementById('output').textContent = result;
+        }
+    </script>
+</body>
+</html>

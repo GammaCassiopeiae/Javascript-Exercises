@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voronoi & Delaunay</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Voronoi & Delaunay</h1>
+        <p>Dual Geometric Structures</p>
+    </header>
+
+    <div class="description">
+        <p>Delaunay triangulation for a set of points is a triangulation such that no point is inside the circumcircle of any triangle. 
+        The Voronoi diagram is its dual; each point has a cell consisting of all locations closer to that point than to any other. 
+        This visualization uses the Bowyer–Watson incremental algorithm for Delaunay triangulation.</p>
+    </div>
+
+    <div class="controls">
+        <button id="addPointsBtn">Generate Points</button>
+        <button id="toggleBtn">Toggle: Delaunay</button>
+        <button id="clearBtn">Clear</button>
+        <span id="countText" style="margin-left: 10px;"></span>
+    </div>
+
+    <canvas id="canvas" width="800" height="600"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const addPointsBtn = document.getElementById('addPointsBtn');
+        const toggleBtn = document.getElementById('toggleBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const countText = document.getElementById('countText');
+
+        let points = [];
+        let triangles = [];
+        let showVoronoi = false;
+
+        class Triangle {
+            constructor(p1, p2, p3) {
+                this.p1 = p1;
+                this.p2 = p2;
+                this.p3 = p3;
+                this.calcCircumcircle();
+            }
+
+            calcCircumcircle() {
+                const x1 = this.p1.x, y1 = this.p1.y;
+                const x2 = this.p2.x, y2 = this.p2.y;
+                const x3 = this.p3.x, y3 = this.p3.y;
+
+                const D = 2 * (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2));
+                this.centerX = ((x1 * x1 + y1 * y1) * (y2 - y3) + (x2 * x2 + y2 * y2) * (y3 - y1) + (x3 * x3 + y3 * y3) * (y1 - y2)) / D;
+                this.centerY = ((x1 * x1 + y1 * y1) * (x3 - x2) + (x2 * x2 + y2 * y2) * (x1 - x3) + (x3 * x3 + y3 * y3) * (x2 - x1)) / D;
+                this.radiusSq = (x1 - this.centerX) ** 2 + (y1 - this.centerY) ** 2;
+            }
+
+            containsPoint(p) {
+                const distSq = (p.x - this.centerX) ** 2 + (p.y - this.centerY) ** 2;
+                return distSq < this.radiusSq;
+            }
+
+            hasVertex(p) {
+                return this.p1 === p || this.p2 === p || this.p3 === p;
+            }
+
+            getEdges() {
+                return [
+                    { a: this.p1, b: this.p2 },
+                    { a: this.p2, b: this.p3 },
+                    { a: this.p3, b: this.p1 }
+                ];
+            }
+        }
+
+        function bowyerWatson(pts) {
+            const superTriangle = new Triangle(
+                { x: -5000, y: -5000 },
+                { x: 10000, y: -5000 },
+                { x: 2500, y: 10000 }
+            );
+
+            let triangulation = [superTriangle];
+
+            pts.forEach(p => {
+                const badTriangles = [];
+                triangulation.forEach(t => {
+                    if (t.containsPoint(p)) badTriangles.push(t);
+                });
+
+                const polygon = [];
+                badTriangles.forEach(t => {
+                    t.getEdges().forEach(edge => {
+                        let isShared = false;
+                        badTriangles.forEach(other => {
+                            if (t === other) return;
+                            other.getEdges().forEach(otherEdge => {
+                                if ((edge.a === otherEdge.a && edge.b === otherEdge.b) ||
+                                    (edge.a === otherEdge.b && edge.b === otherEdge.a)) {
+                                    isShared = true;
+                                }
+                            });
+                        });
+                        if (!isShared) polygon.push(edge);
+                    });
+                });
+
+                triangulation = triangulation.filter(t => !badTriangles.includes(t));
+
+                polygon.forEach(edge => {
+                    triangulation.push(new Triangle(edge.a, edge.b, p));
+                });
+            });
+
+            return triangulation.filter(t => 
+                !t.hasVertex(superTriangle.p1) && 
+                !t.hasVertex(superTriangle.p2) && 
+                !t.hasVertex(superTriangle.p3)
+            );
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (!showVoronoi) {
+                // Draw Delaunay
+                ctx.strokeStyle = '#2196F3';
+                ctx.lineWidth = 1;
+                triangles.forEach(t => {
+                    ctx.beginPath();
+                    ctx.moveTo(t.p1.x, t.p1.y);
+                    ctx.lineTo(t.p2.x, t.p2.y);
+                    ctx.lineTo(t.p3.x, t.p3.y);
+                    ctx.closePath();
+                    ctx.stroke();
+                });
+            } else {
+                // Draw Voronoi
+                ctx.strokeStyle = '#4CAF50';
+                ctx.lineWidth = 1;
+                triangles.forEach(t1 => {
+                    triangles.forEach(t2 => {
+                        if (t1 === t2) return;
+                        // If they share an edge, connect their circumcenters
+                        let shared = 0;
+                        if (t1.p1 === t2.p1 || t1.p1 === t2.p2 || t1.p1 === t2.p3) shared++;
+                        if (t1.p2 === t2.p1 || t1.p2 === t2.p2 || t1.p2 === t2.p3) shared++;
+                        if (t1.p3 === t2.p1 || t1.p3 === t2.p2 || t1.p3 === t2.p3) shared++;
+                        
+                        if (shared === 2) {
+                            ctx.beginPath();
+                            ctx.moveTo(t1.centerX, t1.centerY);
+                            ctx.lineTo(t2.centerX, t2.centerY);
+                            ctx.stroke();
+                        }
+                    });
+                });
+            }
+
+            // Draw points
+            ctx.fillStyle = '#FFC107';
+            points.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
+        function generatePoints() {
+            points = [];
+            for (let i = 0; i < 30; i++) {
+                points.push({
+                    x: Math.random() * (canvas.width - 100) + 50,
+                    y: Math.random() * (canvas.height - 100) + 50
+                });
+            }
+            triangles = bowyerWatson(points);
+            countText.innerText = `Points: ${points.length}`;
+            draw();
+        }
+
+        toggleBtn.addEventListener('click', () => {
+            showVoronoi = !showVoronoi;
+            toggleBtn.innerText = showVoronoi ? "Toggle: Voronoi" : "Toggle: Delaunay";
+            draw();
+        });
+
+        addPointsBtn.addEventListener('click', generatePoints);
+        clearBtn.addEventListener('click', () => {
+            points = [];
+            triangles = [];
+            countText.innerText = "";
+            draw();
+        });
+
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            points.push({
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            });
+            triangles = bowyerWatson(points);
+            countText.innerText = `Points: ${points.length}`;
+            draw();
+        });
+
+        generatePoints();
+    </script>
+</body>
+</html>

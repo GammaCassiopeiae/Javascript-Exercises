@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>LCS Algoritem (Dinamično programiranje)</title>
+    <style>
+        body { background: #0f172a; color: #f8fafc; font-family: 'Fira Code', monospace; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .card { background: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #334155; width: 100%; max-width: 600px; }
+        .inputs { display: flex; gap: 10px; margin-bottom: 20px; }
+        input { background: #0f172a; border: 1px solid #334155; color: #38bdf8; padding: 10px; border-radius: 4px; flex: 1; font-size: 1rem; }
+        button { background: #38bdf8; color: #0f172a; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        
+        table { border-collapse: collapse; margin-top: 20px; width: 100%; font-size: 0.8rem; }
+        td, th { border: 1px solid #334155; width: 30px; height: 30px; text-align: center; }
+        th { background: #0f172a; color: #94a3b8; }
+        .match { background: #064e3b; color: #34d399; font-weight: bold; }
+        
+        .result-box { margin-top: 20px; padding: 15px; background: #1e293b; border-left: 4px solid #38bdf8; }
+        b { color: #fbbf24; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Najdaljše skupno podzaporedje (LCS)</h2>
+        <div class="inputs">
+            <input type="text" id="str1" value="ABCBDAB" placeholder="Prvi niz">
+            <input type="text" id="str2" value="BDCABA" placeholder="Drugi niz">
+        </div>
+        <button onclick="calculateLCS()">Izračunaj LCS</button>
+
+        <div id="result" class="result-box">Vnesi niza in klikni gumb.</div>
+        <div id="tableContainer"></div>
+    </div>
+
+    <script>
+        function calculateLCS() {
+            const s1 = document.getElementById('str1').value;
+            const s2 = document.getElementById('str2').value;
+            const m = s1.length;
+            const n = s2.length;
+
+            // 1. Ustvarjanje DP tabele (m+1 x n+1)
+            // dp[i][j] hrani dolžino LCS za s1[0...i-1] in s2[0...j-1]
+            let dp = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
+
+            // 2. Polnjenje tabele (Dinamično programiranje)
+            for (let i = 1; i <= m; i++) {
+                for (let j = 1; j <= n; j++) {
+                    if (s1[i - 1] === s2[j - 1]) {
+                        // Znaka se ujemata -> povečamo prejšnji rezultat za 1
+                        dp[i][j] = dp[i - 1][j - 1] + 1;
+                    } else {
+                        // Znaka se ne ujemata -> vzamemo maksimum od zgoraj ali levo
+                        dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                    }
+                }
+            }
+
+            // 3. Rekonstrukcija niza (Backtracking skozi tabelo)
+            let lcsStr = "";
+            let i = m, j = n;
+            const matchCoords = [];
+
+            while (i > 0 && j > 0) {
+                if (s1[i - 1] === s2[j - 1]) {
+                    lcsStr = s1[i - 1] + lcsStr;
+                    matchCoords.push(`${i}-${j}`);
+                    i--; j--;
+                } else if (dp[i - 1][j] > dp[i][j - 1]) {
+                    i--;
+                } else {
+                    j--;
+                }
+            }
+
+            // 4. Izpis rezultatov
+            document.getElementById('result').innerHTML = 
+                `Dolžina: <b>${dp[m][n]}</b><br>` +
+                `Podzaporedje: <b style="color: #34d399;">${lcsStr || "Ni ujemanj"}</b>`;
+
+            drawTable(s1, s2, dp, matchCoords);
+        }
+
+        function drawTable(s1, s2, dp, matchCoords) {
+            let html = '<table><tr><th></th><th></th>';
+            for (let char of s2) html += `<th>${char}</th>`;
+            html += '</tr>';
+
+            for (let i = 0; i <= s1.length; i++) {
+                html += `<tr><th>${i === 0 ? '' : s1[i-1]}</th>`;
+                for (let j = 0; j <= s2.length; j++) {
+                    const isMatch = matchCoords.includes(`${i}-${j}`);
+                    html += `<td class="${isMatch ? 'match' : ''}">${dp[i][j]}</td>`;
+                }
+                html += '</tr>';
+            }
+            html += '</table>';
+            document.getElementById('tableContainer').innerHTML = html;
+        }
+    </script>
+</body>
+</html>

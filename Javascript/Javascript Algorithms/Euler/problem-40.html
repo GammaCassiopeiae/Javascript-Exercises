@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Euler</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400&family=Inter:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="l-grid-main">
+        <header class="c-header">
+            <div class="l-container c-header__content">
+                <a href="index.html" class="c-brand">
+                    <span>//</span> NEON_EULER
+                </a>
+            </div>
+        </header>
+
+        <main class="l-container l-section">
+            <div class="u-mb-2">
+                <a href="index.html" class="c-btn c-btn--back">← Back to Grid</a>
+            </div>
+            
+            <div class="c-problem-layout">
+                <section class="c-panel">
+                    <h2 class="u-text-glow">#40 Champernowne's Constant</h2>
+                    <p class="u-mb-2">If d_n represents the nth digit of the fractional part, find the value of the following expression.</p>
+                    
+                    <button id="runBtn" class="c-btn">Execute Algorithm</button>
+                    <div id="result" class="c-result-display">Waiting for input...</div>
+                </section>
+                
+                <section class="c-panel c-panel--console">
+                    <div class="u-mb-1" style="color: var(--neon-secondary)">// SOURCE CODE</div>
+                    <pre class="c-code-block"><code>const solve = () => {
+    let s = "";
+    let i = 1;
+    while (s.length <= 1000000) {
+        s += i.toString();
+        i++;
+    }
+    // 0-indexed in JS string, so s[0] is d1. 
+    // d1 * d10 * d100...
+    // indices: 0, 9, 99, 999, 9999, 99999, 999999
+    return parseInt(s[0]) * 
+           parseInt(s[9]) * 
+           parseInt(s[99]) * 
+           parseInt(s[999]) * 
+           parseInt(s[9999]) * 
+           parseInt(s[99999]) * 
+           parseInt(s[999999]);
+};</code></pre>
+                </section>
+            </div>
+        </main>
+        
+        <script>
+            // Algorithm Logic
+            
+const solve = () => {
+    let s = "";
+    let i = 1;
+    while (s.length <= 1000000) {
+        s += i.toString();
+        i++;
+    }
+    // 0-indexed in JS string, so s[0] is d1. 
+    // d1 * d10 * d100...
+    // indices: 0, 9, 99, 999, 9999, 99999, 999999
+    return parseInt(s[0]) * 
+           parseInt(s[9]) * 
+           parseInt(s[99]) * 
+           parseInt(s[999]) * 
+           parseInt(s[9999]) * 
+           parseInt(s[99999]) * 
+           parseInt(s[999999]);
+};
+        
+
+            // DOM Interaction
+            document.getElementById('runBtn').addEventListener('click', () => {
+                const display = document.getElementById('result');
+                display.innerHTML = '<span style="color:var(--neon-primary)">Computing...</span>';
+                
+                // Small delay to allow UI to update before blocking
+                setTimeout(() => {
+                    const startTime = performance.now();
+                    try {
+                        const result = solve();
+                        const endTime = performance.now();
+                        const time = (endTime - startTime).toFixed(2);
+                        display.innerHTML = `${result} <span style="font-size:0.8em; color:var(--text-muted); margin-left:1rem">(${time}ms)</span>`;
+                        display.classList.remove('is-error');
+                    } catch (e) {
+                        display.innerText = "Error: " + e.message;
+                        display.classList.add('is-error');
+                    }
+                }, 10);
+            });
+        </script>
+        
+        <footer class="c-footer">
+            <div class="l-container">
+                <p>NEON GRID ARCHITECT // v2.0</p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

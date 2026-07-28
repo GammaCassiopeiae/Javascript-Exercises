@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Index Pairs of a String | Algorithm Visualizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Inter:wght@300;400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --neon-cyan: #00f3ff; --neon-magenta: #ff00ff; --neon-green: #00ff9d; --neon-purple: #bd00ff; --neon-orange: #ff6b00; --bg-deep: #050505; --bg-card: rgba(255, 255, 255, 0.08); --text-primary: #ffffff; --text-muted: rgba(255, 255, 255, 0.7); --font-display: 'Rajdhani', system-ui, sans-serif; --font-body: 'Inter', system-ui, sans-serif; --font-mono: 'Fira Code', monospace; --space-xs: 0.25rem; --space-sm: 0.5rem; --space-md: 1rem; --space-lg: 2rem; --space-xl: 4rem; --glow-cyan: 0 0 5px var(--neon-cyan), 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan); --transition-fast: 0.1s; --transition-base: 0.3s; --ease-out: cubic-bezier(0.4, 0, 0.2, 1); --z-sticky: 100; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background-color: var(--bg-deep); color: var(--text-primary); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; }
+    ::selection { background: var(--neon-cyan); color: #000; }
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: var(--bg-deep); }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--neon-cyan), var(--neon-purple)); border-radius: 5px; }
+    .l-body { display: flex; flex-direction: column; min-height: 100vh; }
+    .l-header { position: sticky; top: 0; z-index: var(--z-sticky); background: rgba(5, 5, 5, 0.95); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(0, 243, 255, 0.2); }
+    .l-main { flex: 1; padding: var(--space-xl) var(--space-md); max-width: 1400px; margin-inline: auto; width: 100%; }
+    .l-single-column { max-width: 900px; margin-inline: auto; }
+    .c-header { padding: var(--space-md) var(--space-lg); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-md); }
+    .c-header__brand { font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; letter-spacing: 0.1em; background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .c-header__nav { display: flex; gap: var(--space-md); }
+    .c-nav-link { color: var(--text-muted); text-decoration: none; font-weight: 500; padding: var(--space-sm) var(--space-md); border: 1px solid transparent; border-radius: 4px; transition: all var(--transition-base) var(--ease-out); position: relative; }
+    .c-nav-link::after { content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px; background: var(--neon-cyan); transform: translateX(-50%); transition: width var(--transition-base) var(--ease-out); }
+    .c-nav-link:hover { color: var(--neon-cyan); }
+    .c-nav-link:hover::after { width: 80%; }
+    .c-card { background: var(--bg-card); border: 1px solid rgba(0, 243, 255, 0.15); border-radius: 12px; padding: var(--space-lg); backdrop-filter: blur(10px); transition: all var(--transition-base) var(--ease-out); position: relative; overflow: hidden; }
+    .c-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta), var(--neon-purple)); opacity: 0; transition: opacity var(--transition-base) var(--ease-out); }
+    .c-card:hover { transform: translateY(-5px); border-color: rgba(0, 243, 255, 0.4); box-shadow: var(--glow-cyan); }
+    .c-card:hover::before { opacity: 1; }
+    .c-card__header { margin-bottom: var(--space-md); }
+    .c-card__title { font-family: var(--font-display); font-size: clamp(1.25rem, 2.5vw, 1.5rem); font-weight: 700; color: var(--neon-cyan); letter-spacing: 0.05em; display: flex; align-items: center; gap: var(--space-sm); }
+    .c-card__title::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(0, 243, 255, 0.5), transparent); }
+    .c-card__content { color: var(--text-muted); }
+    .c-code-block { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(189, 0, 255, 0.2); border-radius: 8px; padding: var(--space-md); overflow-x: auto; font-family: var(--font-mono); font-size: 0.875rem; line-height: 1.8; position: relative; }
+    .c-code-block__header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm); padding-bottom: var(--space-sm); border-bottom: 1px solid rgba(189, 0, 255, 0.1); }
+    .c-code-block__lang { color: var(--neon-purple); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
+    .c-code-block__copy { background: transparent; border: 1px solid rgba(0, 243, 255, 0.3); color: var(--neon-cyan); padding: var(--space-xs) var(--space-sm); border-radius: 4px; cursor: pointer; font-size: 0.75rem; transition: all var(--transition-fast) var(--ease-out); }
+    .c-code-block__copy:hover { background: rgba(0, 243, 255, 0.1); box-shadow: 0 0 10px rgba(0, 243, 255, 0.3); }
+    .c-code-block pre { margin: 0; white-space: pre-wrap; word-wrap: break-word; }
+    .c-code-block code { color: var(--text-primary); }
+    .token-keyword { color: var(--neon-magenta); }
+    .token-function { color: var(--neon-cyan); }
+    .token-string { color: var(--neon-green); }
+    .token-comment { color: var(--text-muted); font-style: italic; }
+    .token-number { color: var(--neon-orange); }
+    .token-operator { color: var(--neon-purple); }
+    .c-input-group { margin-bottom: var(--space-md); }
+    .c-input-label { display: block; color: var(--neon-cyan); font-size: 0.875rem; font-weight: 500; margin-bottom: var(--space-sm); }
+    .c-input-label__required { color: var(--neon-magenta); margin-left: var(--space-xs); }
+    .c-input { width: 100%; padding: 0.8rem 1.2rem; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(0, 243, 255, 0.2); border-radius: 8px; color: var(--text-primary); font-family: var(--font-mono); font-size: 0.875rem; transition: all var(--transition-base) var(--ease-out); caret-color: var(--neon-cyan); }
+    .c-input:focus { outline: none; border-color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 243, 255, 0.3); }
+    .c-input::placeholder { opacity: 0.4; }
+    .c-button { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-sm); padding: 0.8rem 1.5rem; background: linear-gradient(135deg, rgba(0, 243, 255, 0.1), rgba(189, 0, 255, 0.1)); border: 1px solid rgba(0, 243, 255, 0.3); border-radius: 8px; color: var(--neon-cyan); font-family: var(--font-display); font-size: 0.875rem; font-weight: 700; letter-spacing: 0.05em; cursor: pointer; transition: all var(--transition-base) var(--ease-out); text-transform: uppercase; min-height: 44px; }
+    .c-button:hover { background: linear-gradient(135deg, rgba(0, 243, 255, 0.2), rgba(189, 0, 255, 0.2)); transform: translateY(-2px); box-shadow: 0 0 20px rgba(0, 243, 255, 0.4); }
+    .c-button:active { transform: translateY(0); }
+    .c-button--primary { background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple)); color: #000; border: none; }
+    .c-button--primary:hover { box-shadow: var(--glow-cyan); }
+    .c-button-group { display: flex; gap: var(--space-md); flex-wrap: wrap; }
+    .c-visualization { background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(0, 243, 255, 0.1); border-radius: 8px; padding: var(--space-md); margin-top: var(--space-md); }
+    .string-display { display: flex; gap: 2px; flex-wrap: wrap; justify-content: center; margin: 1rem 0; }
+    .char-cell { width: 30px; height: 40px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(0, 243, 255, 0.2); border-radius: 4px; font-family: var(--font-mono); font-size: 0.875rem; transition: all var(--transition-base) var(--ease-out); }
+    .char-cell.matched { background: rgba(0, 255, 157, 0.2); border-color: var(--neon-green); }
+    .char-index { font-size: 0.625rem; color: var(--text-muted); margin-top: 2px; }
+    .c-result { margin-top: var(--space-md); padding: var(--space-md); background: rgba(0, 255, 157, 0.05); border: 1px solid rgba(0, 255, 157, 0.3); border-radius: 8px; display: flex; align-items: center; gap: var(--space-md); opacity: 0; transform: translateY(10px); transition: all var(--transition-base) var(--ease-out); }
+    .c-result.is-visible { opacity: 1; transform: translateY(0); }
+    .c-result__icon { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(0, 255, 157, 0.1); border-radius: 50%; color: var(--neon-green); font-size: 1.5rem; }
+    .c-result__content { flex: 1; }
+    .c-result__title { font-family: var(--font-display); font-size: 1.125rem; font-weight: 700; color: var(--neon-green); margin-bottom: var(--space-xs); }
+    .c-result__value { font-family: var(--font-mono); font-size: 0.875rem; color: var(--text-primary); white-space: pre-wrap; }
+    .c-explanation { margin-top: var(--space-lg); }
+    .c-explanation__list { list-style: none; padding-left: 0; }
+    .c-explanation__item { position: relative; padding-left: var(--space-lg); margin-bottom: var(--space-md); color: var(--text-muted); }
+    .c-explanation__item::before { content: '▸'; position: absolute; left: 0; color: var(--neon-cyan); font-size: 1.125rem; }
+    .c-complexity-badge { display: inline-flex; align-items: center; gap: var(--space-sm); padding: var(--space-sm) var(--space-md); background: rgba(189, 0, 255, 0.1); border: 1px solid rgba(189, 0, 255, 0.3); border-radius: 20px; font-family: var(--font-mono); font-size: 0.75rem; color: var(--neon-purple); margin-right: var(--space-sm); }
+    .c-footer { margin-top: auto; padding: var(--space-lg); border-top: 1px solid rgba(0, 243, 255, 0.1); text-align: center; color: var(--text-muted); font-size: 0.875rem; }
+    .c-footer__links { display: flex; justify-content: center; gap: var(--space-lg); margin-bottom: var(--space-md); }
+    .c-footer__link { color: var(--neon-cyan); text-decoration: none; transition: color var(--transition-fast); }
+    .c-footer__link:hover { color: var(--neon-magenta); }
+    @media (max-width: 768px) { .c-header { flex-direction: column; text-align: center; } .c-header__nav { justify-content: center; } .c-button-group { flex-direction: column; } .c-button { width: 100%; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+  </style>
+</head>
+<body class="l-body">
+  <header class="l-header">
+    <div class="c-header">
+      <h1 class="c-header__brand">⚡ ALGO_VISUALIZER</h1>
+      <nav class="c-header__nav">
+        <a href="#" class="c-nav-link">Problems</a>
+        <a href="#" class="c-nav-link">Visualize</a>
+        <a href="#" class="c-nav-link">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="l-main">
+    <div class="l-single-column">
+      <article class="c-card">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>📍</span>
+            Index Pairs of a String
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <p>Given a text string and a list of words, find all index pairs [i, j] such that the substring text[i...j] is one of the words. Return pairs sorted by first index, then by second index.</p>
+          <div style="margin-top: var(--space-md); display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+            <span class="c-complexity-badge">⏱️ Time: O(n × m × w)</span>
+            <span class="c-complexity-badge">💾 Space: O(1)</span>
+            <span class="c-complexity-badge">📊 Difficulty: Easy</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>🎯</span>
+            Input
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <div class="c-input-group">
+            <label class="c-input-label" for="textInput">Text</label>
+            <input type="text" id="textInput" class="c-input" placeholder="e.g., thequickbrownfox" value="thestoryofthequickbrownfox">
+          </div>
+          <div class="c-input-group">
+            <label class="c-input-label" for="wordsInput">Words (comma-separated)</label>
+            <input type="text" id="wordsInput" class="c-input" placeholder="e.g., the,quick,brown" value="the,story,quick,brown,fox">
+          </div>
+          <div class="c-button-group">
+            <button id="btnFind" class="c-button c-button--primary">
+              <span>🚀</span> Find Pairs
+            </button>
+            <button id="btnVisualize" class="c-button">
+              <span>👁️</span> Visualize
+            </button>
+            <button id="btnClear" class="c-button">
+              <span>🗑️</span> Clear
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>📈</span>
+            Result
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <div id="resultContainer" class="c-result">
+            <div class="c-result__icon">✓</div>
+            <div class="c-result__content">
+              <div class="c-result__title">Index Pairs</div>
+              <div id="resultValue" class="c-result__value"></div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>🔬</span>
+            Visualization
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <div id="visualizationContainer" class="c-visualization">
+            <p style="color: var(--text-muted); text-align: center;">Click "Visualize" to see matched substrings</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>💻</span>
+            Solution Code
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <div class="c-code-block">
+            <div class="c-code-block__header">
+              <span class="c-code-block__lang">JavaScript</span>
+              <button class="c-code-block__copy js-copy-code">Copy</button>
+            </div>
+            <pre><code id="solutionCode"><span class="token-keyword">function</span> <span class="token-function">indexPairs</span>(text, words) {
+  <span class="token-keyword">const</span> result = [];
+  
+  <span class="token-comment">// Check each position in text</span>
+  <span class="token-keyword">for</span> (<span class="token-keyword">let</span> i = <span class="token-number">0</span>; i < text.length; i++) {
+    <span class="token-comment">// Check each word</span>
+    <span class="token-keyword">for</span> (<span class="token-keyword">const</span> word of words) {
+      <span class="token-comment">// Check if word matches at position i</span>
+      <span class="token-keyword">if</span> (text.substring(i, i + word.length) === word) {
+        result.push([i, i + word.length - <span class="token-number">1</span>]);
+      }
+    }
+  }
+  
+  <span class="token-comment">// Sort by first index, then second index</span>
+  result.sort((a, b) => {
+    <span class="token-keyword">if</span> (a[<span class="token-number">0</span>] !== b[<span class="token-number">0</span>]) <span class="token-keyword">return</span> a[<span class="token-number">0</span>] - b[<span class="token-number">0</span>];
+    <span class="token-keyword">return</span> a[<span class="token-number">1</span>] - b[<span class="token-number">1</span>];
+  });
+  
+  <span class="token-keyword">return</span> result;
+}</code></pre>
+          </div>
+        </div>
+      </article>
+
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>📖</span>
+            Algorithm Explanation
+          </h2>
+        </header>
+        <div class="c-card__content c-explanation">
+          <ul class="c-explanation__list">
+            <li class="c-explanation__item">
+              For each position i in the text, check if any word starts at that position.
+            </li>
+            <li class="c-explanation__item">
+              Use substring comparison to check if text[i...i+word.length] equals the word.
+            </li>
+            <li class="c-explanation__item">
+              When a match is found, record the pair [start_index, end_index].
+            </li>
+            <li class="c-explanation__item">
+              Sort results by first index, then by second index.
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>📝</span>
+            Example Walkthrough
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <div class="c-code-block">
+            <pre><code>Input: text = "thestoryofthequickbrownfox"
+       words = ["the", "story", "quick", "brown", "fox"]
+
+Checking each position:
+- Position 0: "the" matches → [0, 2]
+- Position 0: "thest" no match
+- Position 3: "story" matches → [3, 7]
+- Position 11: "the" matches → [11, 13]
+- Position 14: "quick" matches → [14, 18]
+- Position 19: "brown" matches → [19, 23]
+- Position 24: "fox" matches → [24, 26]
+
+Result: [[0,2], [3,7], [11,13], [14,18], [19,23], [24,26]]</code></pre>
+          </div>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <footer class="c-footer">
+    <div class="c-footer__links">
+      <a href="#" class="c-footer__link">GitHub</a>
+      <a href="#" class="c-footer__link">Documentation</a>
+      <a href="#" class="c-footer__link">Contact</a>
+    </div>
+    <p>&copy; 2026 Algo Visualizer. Built with 💜 and neon dreams.</p>
+  </footer>
+
+  <script>
+    (function() {
+      'use strict';
+
+      const textInput = document.getElementById('textInput');
+      const wordsInput = document.getElementById('wordsInput');
+      const btnFind = document.getElementById('btnFind');
+      const btnVisualize = document.getElementById('btnVisualize');
+      const btnClear = document.getElementById('btnClear');
+      const resultContainer = document.getElementById('resultContainer');
+      const resultValue = document.getElementById('resultValue');
+      const visualizationContainer = document.getElementById('visualizationContainer');
+      const copyButtons = document.querySelectorAll('.js-copy-code');
+
+      function indexPairs(text, words) {
+        const result = [];
+        for (let i = 0; i < text.length; i++) {
+          for (const word of words) {
+            if (text.substring(i, i + word.length) === word) {
+              result.push([i, i + word.length - 1]);
+            }
+          }
+        }
+        result.sort((a, b) => {
+          if (a[0] !== b[0]) return a[0] - b[0];
+          return a[1] - b[1];
+        });
+        return result;
+      }
+
+      function visualizeMatches(text, pairs, words) {
+        let html = '<div style="margin-bottom: 1rem;">';
+        html += '<p style="color: var(--neon-cyan); margin-bottom: 0.5rem;">Text with matches highlighted:</p>';
+        html += '<div class="string-display">';
+        
+        const matchMap = new Map();
+        for (const [start, end] of pairs) {
+          const word = text.substring(start, end + 1);
+          for (let i = start; i <= end; i++) {
+            if (!matchMap.has(i) || matchMap.get(i).length < word.length) {
+              matchMap.set(i, word);
+            }
+          }
+        }
+        
+        for (let i = 0; i < text.length; i++) {
+          const isMatched = matchMap.has(i);
+          html += `<div class="char-cell ${isMatched ? 'matched' : ''}">`;
+          html += `<span>${text[i]}</span>`;
+          html += `<span class="char-index">${i}</span>`;
+          html += '</div>';
+        }
+        html += '</div></div>';
+
+        html += '<div style="margin-top: 1rem;">';
+        html += '<p style="color: var(--neon-magenta); margin-bottom: 0.5rem;">Found matches:</p>';
+        html += '<div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">';
+        for (const [start, end] of pairs) {
+          const word = text.substring(start, end + 1);
+          html += `<div style="padding: 0.25rem 0.5rem; background: rgba(0, 255, 157, 0.1); border: 1px solid var(--neon-green); border-radius: 4px; font-family: var(--font-mono); font-size: 0.75rem;">`;
+          html += `[${start},${end}] = "${word}"`;
+          html += '</div>';
+        }
+        html += '</div></div>';
+
+        return html;
+      }
+
+      function handleFind() {
+        const text = textInput.value.trim();
+        const words = wordsInput.value.split(',').map(w => w.trim()).filter(w => w.length > 0);
+
+        if (!text || words.length === 0) {
+          alert('Please enter text and at least one word');
+          return;
+        }
+
+        const pairs = indexPairs(text, words);
+        resultValue.textContent = JSON.stringify(pairs);
+        resultContainer.classList.add('is-visible');
+        resultContainer.style.animation = 'neon-pulse 1s ease-in-out';
+        setTimeout(() => { resultContainer.style.animation = ''; }, 1000);
+      }
+
+      function handleVisualize() {
+        const text = textInput.value.trim();
+        const words = wordsInput.value.split(',').map(w => w.trim()).filter(w => w.length > 0);
+
+        if (!text || words.length === 0) {
+          alert('Please enter text and at least one word');
+          return;
+        }
+
+        const pairs = indexPairs(text, words);
+        visualizationContainer.innerHTML = visualizeMatches(text, pairs, words);
+      }
+
+      function handleClear() {
+        textInput.value = '';
+        wordsInput.value = '';
+        resultContainer.classList.remove('is-visible');
+        visualizationContainer.innerHTML = '<p style="color: var(--text-muted); text-align: center;">Click "Visualize" to see matched substrings</p>';
+      }
+
+      function handleCopyCode(event) {
+        const codeBlock = event.target.closest('.c-code-block');
+        const code = codeBlock.querySelector('code');
+        navigator.clipboard.writeText(code.textContent).then(() => {
+          const originalText = event.target.textContent;
+          event.target.textContent = 'Copied!';
+          event.target.style.background = 'rgba(0, 255, 157, 0.2)';
+          event.target.style.borderColor = 'var(--neon-green)';
+          setTimeout(() => {
+            event.target.textContent = originalText;
+            event.target.style.background = '';
+            event.target.style.borderColor = '';
+          }, 2000);
+        });
+      }
+
+      btnFind.addEventListener('click', handleFind);
+      btnVisualize.addEventListener('click', handleVisualize);
+      btnClear.addEventListener('click', handleClear);
+      copyButtons.forEach(button => { button.addEventListener('click', handleCopyCode); });
+      textInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleFind(); });
+      wordsInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleFind(); });
+      window.addEventListener('load', handleFind);
+    })();
+  </script>
+</body>
+</html>

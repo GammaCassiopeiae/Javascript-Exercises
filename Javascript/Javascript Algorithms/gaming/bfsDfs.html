@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>BFS vs DFS Pathfinding</title>
+    <style>
+        body { background: #0f172a; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; }
+        canvas { background: #1e293b; border: 2px solid #334155; cursor: pointer; }
+        .controls { margin: 20px; display: flex; gap: 10px; align-items: center; }
+        button { padding: 10px 20px; cursor: pointer; background: #38bdf8; border: none; border-radius: 4px; font-weight: bold; }
+        select { padding: 10px; border-radius: 4px; }
+        .info { color: #94a3b8; font-size: 0.9em; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Mrežno iskanje (BFS vs DFS)</h1>
+    <div class="info">Klikni na mrežo, da postaviš stene. BFS vedno najde najkrajšo pot, DFS pa ne.</div>
+    <div class="controls">
+        <select id="algoSelect">
+            <option value="BFS">BFS (Najkrajša pot)</option>
+            <option value="DFS">DFS (Raziskovanje v globino)</option>
+        </select>
+        <button onclick="startSearch()">Najdi pot</button>
+        <button onclick="resetGrid()" style="background:#475569">Počisti</button>
+    </div>
+    <canvas id="gridCanvas" width="600" height="400"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gridCanvas');
+        const ctx = canvas.getContext('2d');
+        const cols = 30, rows = 20;
+        const w = canvas.width / cols, h = canvas.height / rows;
+        
+        let grid = Array.from({ length: cols }, (_, i) => 
+            Array.from({ length: rows }, (_, j) => ({ x: i, y: j, wall: false, visited: false, parent: null }))
+        );
+
+        const start = { x: 2, y: 10 };
+        const end = { x: 27, y: 10 };
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < cols; i++) {
+                for (let j = 0; j < rows; j++) {
+                    ctx.strokeStyle = "#334155";
+                    ctx.strokeRect(i * w, j * h, w, h);
+                    if (grid[i][j].wall) {
+                        ctx.fillStyle = "#475569";
+                        ctx.fillRect(i * w, j * h, w, h);
+                    } else if (grid[i][j].visited) {
+                        ctx.fillStyle = "rgba(56, 189, 248, 0.3)";
+                        ctx.fillRect(i * w, j * h, w, h);
+                    }
+                }
+            }
+            ctx.fillStyle = "#22c55e"; ctx.fillRect(start.x * w, start.y * h, w, h);
+            ctx.fillStyle = "#ef4444"; ctx.fillRect(end.x * w, end.y * h, w, h);
+        }
+
+        async function startSearch() {
+            const algo = document.getElementById('algoSelect').value;
+            // Ponastavi obiske
+            grid.flat().forEach(n => { n.visited = false; n.parent = null; });
+            
+            let stack = [grid[start.x][start.y]];
+            let found = false;
+
+            while (stack.length > 0) {
+                // BFS uporablja vrsto (shift), DFS uporablja sklad (pop)
+                let current = (algo === "BFS") ? stack.shift() : stack.pop();
+
+                if (current.x === end.x && current.y === end.y) {
+                    found = true;
+                    break;
+                }
+
+                if (!current.visited) {
+                    current.visited = true;
+                    draw();
+                    await new Promise(r => setTimeout(r, 5)); // Vizualizacija
+
+                    let neighbors = [[0, 1], [1, 0], [0, -1], [-1, 0]];
+                    for (let [dx, dy] of neighbors) {
+                        let nx = current.x + dx, ny = current.y + dy;
+                        if (nx >= 0 && nx < cols && ny >= 0 && ny < rows && !grid[nx][ny].wall && !grid[nx][ny].visited) {
+                            grid[nx][ny].parent = current;
+                            stack.push(grid[nx][ny]);
+                        }
+                    }
+                }
+            }
+            if (found) drawPath();
+        }
+
+        function drawPath() {
+            let curr = grid[end.x][end.y];
+            ctx.strokeStyle = "#fbbf24";
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(curr.x * w + w/2, curr.y * h + h/2);
+            while (curr.parent) {
+                curr = curr.parent;
+                ctx.lineTo(curr.x * w + w/2, curr.y * h + h/2);
+            }
+            ctx.stroke();
+        }
+
+        canvas.onmousedown = (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = Math.floor((e.clientX - rect.left) / w);
+            const y = Math.floor((e.clientY - rect.top) / h);
+            grid[x][y].wall = !grid[x][y].wall;
+            draw();
+        };
+
+        function resetGrid() {
+            grid.flat().forEach(n => { n.wall = false; n.visited = false; n.parent = null; });
+            draw();
+        }
+
+        draw();
+    </script>
+</body>
+</html>

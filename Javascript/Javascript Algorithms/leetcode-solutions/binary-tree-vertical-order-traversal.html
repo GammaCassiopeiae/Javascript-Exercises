@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binary Tree Vertical Order Traversal - LeetCode Solution</title>
+    <style>
+        :root { --lime-green: #00ff9d; --lime-dim: rgba(0, 255, 157, 0.3); --bg-black: #050505; --bg-surface: rgba(255, 255, 255, 0.05); --text-primary: #ffffff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg-black); color: var(--text-primary); min-height: 100vh; line-height: 1.6; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+        header { border-bottom: 1px solid var(--lime-dim); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+        h1 { font-size: clamp(1.5rem, 3vw, 2rem); color: var(--lime-green); text-shadow: 0 0 10px var(--lime-dim); margin-bottom: 0.5rem; }
+        .problem-desc, .code-section, .demo-section { background: var(--bg-surface); border: 1px solid var(--lime-dim); border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; }
+        h2 { color: var(--lime-green); font-size: 1.25rem; margin-bottom: 1rem; }
+        pre { background: #0a0a0a; border: 1px solid var(--lime-dim); border-radius: 6px; padding: 1.5rem; overflow-x: auto; font-family: 'Fira Code', monospace; font-size: 0.9rem; }
+        .keyword { color: #ff00ff; } .function { color: #00f3ff; } .string { color: #00ff9d; } .number { color: #bd00ff; } .comment { color: rgba(255, 255, 255, 0.4); }
+        input, button { padding: 0.75rem 1rem; border: 1px solid var(--lime-dim); border-radius: 6px; background: rgba(0, 0, 0, 0.3); color: var(--text-primary); font-family: 'Fira Code', monospace; margin-bottom: 0.5rem; }
+        input:focus { outline: none; box-shadow: 0 0 10px var(--lime-dim); }
+        button { background: var(--lime-dim); color: var(--bg-black); cursor: pointer; font-weight: 700; }
+        button:hover { background: var(--lime-green); box-shadow: 0 0 20px var(--lime-dim); }
+        .result { margin-top: 1rem; padding: 1rem; background: rgba(0, 255, 157, 0.1); border-radius: 6px; font-family: 'Fira Code', monospace; }
+        .result span { color: var(--lime-green); }
+        label { display: block; color: var(--lime-green); margin-bottom: 0.5rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Binary Tree Vertical Order Traversal</h1>
+            <p style="color: var(--text-muted);">LeetCode Problem - BFS with Column Index</p>
+        </header>
+        <section class="problem-desc">
+            <h2>Problem Description</h2>
+            <p>Given the root of a binary tree, return the vertical order traversal of its nodes' values (from top to bottom, column by column).</p>
+        </section>
+        <section class="code-section">
+            <h2>JavaScript Solution</h2>
+            <pre><code><span class="keyword">class</span> <span class="function">TreeNode</span> {
+    <span class="keyword">constructor</span>(val, left = <span class="keyword">null</span>, right = <span class="keyword">null</span>) {
+        <span class="keyword">this</span>.val = val;
+        <span class="keyword">this</span>.left = left;
+        <span class="keyword">this</span>.right = right;
+    }
+}
+
+<span class="keyword">function</span> <span class="function">verticalOrder</span>(root) {
+    <span class="keyword">if</span> (!root) <span class="keyword">return</span> [];
+    
+    <span class="keyword">const</span> columnMap = <span class="keyword">new</span> <span class="function">Map</span>();
+    <span class="keyword">const</span> queue = [[root, <span class="number">0</span>]]; <span class="comment">// [node, column]</span>
+    <span class="keyword">let</span> minCol = <span class="number">0</span>, maxCol = <span class="number">0</span>;
+    
+    <span class="keyword">while</span> (queue.length > <span class="number">0</span>) {
+        <span class="keyword">const</span> [node, col] = queue.<span class="function">shift</span>();
+        
+        <span class="keyword">if</span> (!columnMap.<span class="function">has</span>(col)) {
+            columnMap.<span class="function">set</span>(col, []);
+        }
+        columnMap.<span class="function">get</span>(col).<span class="function">push</span>(node.val);
+        
+        minCol = Math.<span class="function">min</span>(minCol, col);
+        maxCol = Math.<span class="function">max</span>(maxCol, col);
+        
+        <span class="keyword">if</span> (node.left) queue.<span class="function">push</span>([node.left, col - <span class="number">1</span>]);
+        <span class="keyword">if</span> (node.right) queue.<span class="function">push</span>([node.right, col + <span class="number">1</span>]);
+    }
+    
+    <span class="keyword">const</span> result = [];
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = minCol; i <= maxCol; i++) {
+        <span class="keyword">if</span> (columnMap.<span class="function">has</span>(i)) {
+            result.<span class="function">push</span>(columnMap.<span class="function">get</span>(i));
+        }
+    }
+    
+    <span class="keyword">return</span> result;
+}
+
+<span class="comment">// Usage:</span>
+<span class="keyword">const</span> root = <span class="keyword">new</span> <span class="function">TreeNode</span>(<span class="number">3</span>,
+    <span class="keyword">new</span> <span class="function">TreeNode</span>(<span class="number">9</span>),
+    <span class="keyword">new</span> <span class="function">TreeNode</span>(<span class="number">20</span>, <span class="keyword">new</span> <span class="function">TreeNode</span>(<span class="number">15</span>), <span class="keyword">new</span> <span class="function">TreeNode</span>(<span class="number">7</span>))
+);
+console.<span class="function">log</span>(<span class="function">verticalOrder</span>(root)); <span class="comment">// [[9],[3,15],[20],[7]]</span></code></pre>
+        </section>
+        <section class="demo-section">
+            <h2>Interactive Demo</h2>
+            <div class="input-group">
+                <label for="tree-input">Tree (level-order):</label>
+                <input type="text" id="tree-input" value="3,9,20,null,null,15,7" style="width: 100%;">
+            </div>
+            <button onclick="runDemo()">Vertical Order</button>
+            <div class="result"><span id="output">-</span></div>
+        </section>
+    </div>
+    <script>
+        class TreeNode {
+            constructor(val, left = null, right = null) {
+                this.val = val; this.left = left; this.right = right;
+            }
+        }
+        function verticalOrder(root) {
+            if (!root) return [];
+            const columnMap = new Map();
+            const queue = [[root, 0]];
+            let minCol = 0, maxCol = 0;
+            while (queue.length > 0) {
+                const [node, col] = queue.shift();
+                if (!columnMap.has(col)) columnMap.set(col, []);
+                columnMap.get(col).push(node.val);
+                minCol = Math.min(minCol, col);
+                maxCol = Math.max(maxCol, col);
+                if (node.left) queue.push([node.left, col - 1]);
+                if (node.right) queue.push([node.right, col + 1]);
+            }
+            const result = [];
+            for (let i = minCol; i <= maxCol; i++) {
+                if (columnMap.has(i)) result.push(columnMap.get(i));
+            }
+            return result;
+        }
+        function buildTree(arr) {
+            if (arr.length === 0 || arr[0] === null) return null;
+            const root = new TreeNode(arr[0]);
+            const queue = [root];
+            let i = 1;
+            while (queue.length > 0 && i < arr.length) {
+                const node = queue.shift();
+                if (i < arr.length && arr[i] !== null) {
+                    node.left = new TreeNode(arr[i]);
+                    queue.push(node.left);
+                }
+                i++;
+                if (i < arr.length && arr[i] !== null) {
+                    node.right = new TreeNode(arr[i]);
+                    queue.push(node.right);
+                }
+                i++;
+            }
+            return root;
+        }
+        function runDemo() {
+            const arr = document.getElementById('tree-input').value.split(',').map(x => x.trim() === 'null' ? null : Number(x));
+            const root = buildTree(arr);
+            document.getElementById('output').textContent = JSON.stringify(verticalOrder(root));
+        }
+    </script>
+</body>
+</html>

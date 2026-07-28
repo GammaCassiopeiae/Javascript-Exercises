@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remove K Digits - LeetCode Solution</title>
+    <style>
+        :root { --lime-green: #00ff9d; --lime-dim: rgba(0, 255, 157, 0.3); --bg-black: #050505; --bg-surface: rgba(255, 255, 255, 0.05); --text-primary: #ffffff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg-black); color: var(--text-primary); min-height: 100vh; line-height: 1.6; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+        header { border-bottom: 1px solid var(--lime-dim); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+        h1 { font-size: clamp(1.5rem, 3vw, 2rem); color: var(--lime-green); text-shadow: 0 0 10px var(--lime-dim); margin-bottom: 0.5rem; }
+        .problem-desc, .code-section, .demo-section { background: var(--bg-surface); border: 1px solid var(--lime-dim); border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; }
+        h2 { color: var(--lime-green); font-size: 1.25rem; margin-bottom: 1rem; }
+        pre { background: #0a0a0a; border: 1px solid var(--lime-dim); border-radius: 6px; padding: 1.5rem; overflow-x: auto; font-family: 'Fira Code', monospace; font-size: 0.9rem; }
+        .keyword { color: #ff00ff; } .function { color: #00f3ff; } .string { color: #00ff9d; } .number { color: #bd00ff; } .comment { color: rgba(255, 255, 255, 0.4); }
+        input, button { padding: 0.75rem 1rem; border: 1px solid var(--lime-dim); border-radius: 6px; background: rgba(0, 0, 0, 0.3); color: var(--text-primary); font-family: 'Fira Code', monospace; margin-bottom: 0.5rem; }
+        input:focus { outline: none; box-shadow: 0 0 10px var(--lime-dim); }
+        button { background: var(--lime-dim); color: var(--bg-black); cursor: pointer; font-weight: 700; }
+        button:hover { background: var(--lime-green); box-shadow: 0 0 20px var(--lime-dim); }
+        .result { margin-top: 1rem; padding: 1rem; background: rgba(0, 255, 157, 0.1); border-radius: 6px; font-family: 'Fira Code', monospace; }
+        .result span { color: var(--lime-green); }
+        label { display: block; color: var(--lime-green); margin-bottom: 0.5rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Remove K Digits</h1>
+            <p style="color: var(--text-muted);">LeetCode Problem - Monotonic Stack</p>
+        </header>
+        <section class="problem-desc">
+            <h2>Problem Description</h2>
+            <p>Given a non-negative integer num represented as a string, remove k digits to create the smallest possible number.</p>
+        </section>
+        <section class="code-section">
+            <h2>JavaScript Solution</h2>
+            <pre><code><span class="keyword">function</span> <span class="function">removeKdigits</span>(num, k) {
+    <span class="keyword">const</span> stack = [];
+    
+    <span class="keyword">for</span> (<span class="keyword">const</span> digit <span class="keyword">of</span> num) {
+        <span class="keyword">while</span> (k > <span class="number">0</span> && stack.length > <span class="number">0</span> && stack[stack.length - <span class="number">1</span>] > digit) {
+            stack.<span class="function">pop</span>();
+            k--;
+        }
+        stack.<span class="function">push</span>(digit);
+    }
+    
+    <span class="comment">// Remove remaining from end</span>
+    <span class="keyword">while</span> (k > <span class="number">0</span>) {
+        stack.<span class="function">pop</span>();
+        k--;
+    }
+    
+    <span class="comment">// Remove leading zeros</span>
+    <span class="keyword">let</span> result = stack.<span class="function">join</span>(<span class="string">''</span>).<span class="function">replace</span>(<span class="string">/^0+/</span>, <span class="string">''</span>);
+    
+    <span class="keyword">return</span> result || <span class="string">"0"</span>;
+}
+
+<span class="comment">// Usage:</span>
+console.<span class="function">log</span>(<span class="function">removeKdigits</span>(<span class="string">"1432219"</span>, <span class="number">3</span>)); <span class="comment">// "1219"</span>
+console.<span class="function">log</span>(<span class="function">removeKdigits</span>(<span class="string">"10200"</span>, <span class="number">1</span>)); <span class="comment">// "200"</span></code></pre>
+        </section>
+        <section class="demo-section">
+            <h2>Interactive Demo</h2>
+            <div class="input-group">
+                <label for="num-input">Number (as string):</label>
+                <input type="text" id="num-input" value="1432219" style="width: 100%;">
+            </div>
+            <div class="input-group">
+                <label for="k-input">K digits to remove:</label>
+                <input type="number" id="k-input" value="3" min="0">
+            </div>
+            <button onclick="runDemo()">Remove K Digits</button>
+            <div class="result"><span id="output">-</span></div>
+        </section>
+    </div>
+    <script>
+        function removeKdigits(num, k) {
+            const stack = [];
+            for (const digit of num) {
+                while (k > 0 && stack.length > 0 && stack[stack.length - 1] > digit) {
+                    stack.pop();
+                    k--;
+                }
+                stack.push(digit);
+            }
+            while (k > 0) { stack.pop(); k--; }
+            let result = stack.join('').replace(/^0+/, '');
+            return result || "0";
+        }
+        function runDemo() {
+            const num = document.getElementById('num-input').value;
+            const k = parseInt(document.getElementById('k-input').value);
+            document.getElementById('output').textContent = removeKdigits(num, k);
+        }
+    </script>
+</body>
+</html>

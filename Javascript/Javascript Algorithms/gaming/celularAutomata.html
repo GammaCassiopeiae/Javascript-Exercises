@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Procedural Caves</title>
+    <style>
+        body { background: #1a1a1a; color: white; text-align: center; font-family: sans-serif; }
+        canvas { border: 4px solid #444; margin-top: 20px; image-rendering: pixelated; }
+        button { padding: 10px; margin: 10px; background: #444; color: #fff; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2>Cellular Automata Caves</h2>
+    <button onclick="generate()">Generate New Map</button>
+    <button onclick="smooth()">Smooth Step (Run 4-5 times)</button>
+    <br><canvas id="caveCanvas" width="400" height="400"></canvas>
+
+    <script>
+        const canvas = document.getElementById('caveCanvas');
+        const ctx = canvas.getContext('2d');
+        const size = 80;
+        const res = canvas.width / size;
+        let map = [];
+
+        function generate() {
+            map = Array.from({ length: size }, () => 
+                Array.from({ length: size }, () => Math.random() < 0.45 ? 1 : 0)
+            );
+            draw();
+        }
+
+        function smooth() {
+            let newMap = JSON.parse(JSON.stringify(map));
+            for(let x=0; x<size; x++) {
+                for(let y=0; y<size; y++) {
+                    let neighbors = 0;
+                    for(let i=-1; i<=1; i++) {
+                        for(let j=-1; j<=1; j++) {
+                            if(i==0 && j==0) continue;
+                            let nx = x+i, ny = y+j;
+                            if(nx<0 || ny<0 || nx>=size || ny>=size) neighbors++;
+                            else if(map[nx][ny]) neighbors++;
+                        }
+                    }
+                    newMap[x][y] = neighbors > 4 ? 1 : 0;
+                }
+            }
+            map = newMap;
+            draw();
+        }
+
+        function draw() {
+            ctx.clearRect(0,0,canvas.width, canvas.height);
+            for(let x=0; x<size; x++) {
+                for(let y=0; y<size; y++) {
+                    ctx.fillStyle = map[x][y] ? "#222" : "#888";
+                    ctx.fillRect(x*res, y*res, res, res);
+                }
+            }
+        }
+        generate();
+    </script>
+</body>
+</html>

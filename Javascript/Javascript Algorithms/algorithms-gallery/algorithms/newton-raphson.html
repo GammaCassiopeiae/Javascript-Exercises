@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Newton-Raphson Interactive Visualization - Neon Algorithms">
+  <meta name="theme-color" content="#050505">
+  <title>Newton-Raphson | Neon Algorithms</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Inter:wght@300;400;700&family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    .c-algorithm-viewer { padding: var(--space-2xl) 0; }
+    .c-canvas-container { background: var(--bg-card); border: 1px solid rgba(0, 255, 157, 0.15); border-radius: var(--radius-md); padding: var(--space-lg); margin-bottom: var(--space-lg); }
+    .c-canvas-wrapper { position: relative; width: 100%; height: 500px; background: rgba(0, 0, 0, 0.3); border-radius: var(--radius-sm); overflow: hidden; }
+    #algo-canvas { width: 100%; height: 100%; }
+    .c-controls { display: flex; flex-wrap: wrap; gap: var(--space-md); margin-top: var(--space-lg); align-items: center; }
+    .c-control-group { display: flex; align-items: center; gap: var(--space-sm); }
+    .c-control-label { font-family: var(--font-display); font-size: var(--text-sm); color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .c-range-input { width: 150px; height: 6px; -webkit-appearance: none; background: rgba(0, 255, 157, 0.2); border-radius: var(--radius-full); outline: none; }
+    .c-range-input::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: linear-gradient(135deg, var(--neon-lime), var(--neon-violet)); border-radius: 50%; cursor: pointer; box-shadow: var(--glow-lime); }
+    .c-info-panel { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--gap-md); margin-top: var(--space-lg); }
+    .c-info-card { background: var(--bg-surface); border: 1px solid rgba(0, 255, 157, 0.1); border-radius: var(--radius-sm); padding: var(--space-md); }
+    .c-info-card__title { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--neon-violet); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: var(--space-sm); }
+    .c-info-card__value { font-family: var(--font-display); font-size: var(--text-lg); font-weight: 700; color: var(--text-primary); }
+    .c-back-link { display: inline-flex; align-items: center; gap: var(--space-sm); font-family: var(--font-display); font-size: var(--text-sm); color: var(--neon-lime); text-decoration: none; margin-bottom: var(--space-lg); transition: all var(--transition-base) var(--ease-out); }
+    .c-back-link:hover { color: var(--neon-violet); transform: translateX(-5px); }
+    .c-algo-header { margin-bottom: var(--space-lg); }
+    .c-algo-title { font-family: var(--font-accent); font-size: var(--text-2xl); background: linear-gradient(135deg, var(--neon-lime), var(--neon-violet)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: var(--space-md); }
+    .c-algo-description { font-size: var(--text-base); color: var(--text-muted); line-height: 1.7; max-width: 800px; }
+    .c-status-display { font-family: var(--font-mono); font-size: var(--text-sm); color: var(--neon-cyan); padding: var(--space-md); background: rgba(0, 243, 255, 0.05); border: 1px solid rgba(0, 243, 255, 0.2); border-radius: var(--radius-sm); min-height: 24px; }
+  </style>
+</head>
+<body class="l-body" data-theme="dark">
+  <header class="c-header" role="banner">
+    <div class="c-header__content">
+      <div class="c-header__brand">
+        <h1 class="c-header__title">
+          <span class="c-header__neon">NEON</span>
+          <span class="c-header__subtitle">ALGORITHMS</span>
+        </h1>
+      </div>
+      <nav class="c-nav" role="navigation" aria-label="Main navigation">
+        <ul class="c-nav__list">
+          <li class="c-nav__item"><a href="../index.html#gallery" class="c-nav__link">Gallery</a></li>
+          <li class="c-nav__item"><a href="../index.html#categories" class="c-nav__link">Categories</a></li>
+          <li class="c-nav__item"><a href="../index.html#about" class="c-nav__link">About</a></li>
+        </ul>
+      </nav>
+      <button class="c-theme-toggle js-theme-toggle" aria-label="Toggle theme" type="button">
+        <span class="c-theme-toggle__icon" aria-hidden="true">🌙</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="l-main" role="main">
+    <section class="c-algorithm-viewer">
+      <div class="l-container">
+        <a href="../index.html" class="c-back-link"><span aria-hidden="true">←</span><span>Back to Gallery</span></a>
+        <header class="c-algo-header">
+          <h1 class="c-algo-title">Newton-Raphson</h1>
+          <p class="c-algo-description">Find roots of equations using iterative approximation.</p>
+        </header>
+        <div class="c-canvas-container">
+          <div class="c-canvas-wrapper">
+            <canvas id="algo-canvas"></canvas>
+          </div>
+          <div class="c-controls">
+            <div class="c-control-group">
+              <button class="c-button c-button--primary js-start-btn" type="button">Start</button>
+              <button class="c-button c-button--secondary js-reset-btn" type="button">Reset</button>
+              <button class="c-button c-button--secondary js-step-btn" type="button">Step</button>
+            </div>
+            <div class="c-control-group">
+              <span class="c-control-label">Speed:</span>
+              <input type="range" class="c-range-input js-speed-control" min="1" max="100" value="50">
+            </div>
+          </div>
+          <div class="c-status-display js-status-display">Ready to start visualization...</div>
+        </div>
+        <div class="c-info-panel">
+          <div class="c-info-card"><h3 class="c-info-card__title">Time Complexity</h3><p class="c-info-card__value">O(log n)</p></div>
+          <div class="c-info-card"><h3 class="c-info-card__title">Space Complexity</h3><p class="c-info-card__value">O(1)</p></div>
+          <div class="c-info-card"><h3 class="c-info-card__title">Category</h3><p class="c-info-card__value">Math</p></div>
+          <div class="c-info-card"><h3 class="c-info-card__title">Stable</h3><p class="c-info-card__value">N/A</p></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="c-footer" role="contentinfo">
+    <div class="l-container">
+      <div class="c-footer__content">
+        <p class="c-footer__copyright">&copy; <span class="js-current-year"></span> Neon Algorithms. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+      <script src="../js/algorithms/all-algorithms.js"></script>
+  <script>
+    (function() {
+      'use strict';
+      var viewerClass = window.PlaceholderViewer;
+      if (viewerClass) {
+        var viewer = new viewerClass('algo-canvas');
+        window.algorithmViewer = viewer;
+      } else {
+        var viewer = new window.PlaceholderViewer('algo-canvas');
+        window.algorithmViewer = viewer;
+      }
+    })();
+  </script>
+</body>
+</html>

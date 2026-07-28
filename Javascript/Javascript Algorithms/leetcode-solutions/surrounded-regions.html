@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Surrounded Regions | Algorithm Visualizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Inter:wght@300;400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --neon-cyan: #00f3ff; --neon-magenta: #ff00ff; --neon-green: #00ff9d; --neon-purple: #bd00ff; --neon-orange: #ff6b00;
+      --bg-deep: #050505; --bg-card: rgba(255, 255, 255, 0.08); --text-primary: #ffffff; --text-muted: rgba(255, 255, 255, 0.7);
+      --font-display: 'Rajdhani', system-ui, sans-serif; --font-body: 'Inter', system-ui, sans-serif; --font-mono: 'Fira Code', monospace;
+      --space-xs: 0.25rem; --space-sm: 0.5rem; --space-md: 1rem; --space-lg: 2rem; --space-xl: 4rem;
+      --glow-cyan: 0 0 5px var(--neon-cyan), 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan);
+      --glow-green: 0 0 5px var(--neon-green), 0 0 10px var(--neon-green), 0 0 20px var(--neon-green);
+      --transition-base: 0.3s; --ease-out: cubic-bezier(0.4, 0, 0.2, 1); --z-sticky: 100;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background-color: var(--bg-deep); color: var(--text-primary); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; }
+    ::selection { background: var(--neon-cyan); color: #000; }
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: var(--bg-deep); }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--neon-cyan), var(--neon-purple)); border-radius: 5px; }
+    .l-body { display: flex; flex-direction: column; min-height: 100vh; }
+    .l-header { position: sticky; top: 0; z-index: var(--z-sticky); background: rgba(5, 5, 5, 0.95); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(0, 243, 255, 0.2); }
+    .l-main { flex: 1; padding: var(--space-xl) var(--space-md); max-width: 1400px; margin-inline: auto; width: 100%; }
+    .l-single-column { max-width: 900px; margin-inline: auto; }
+    .c-header { padding: var(--space-md) var(--space-lg); display: flex; justify-content: space-between; align-items: center; }
+    .c-header__brand { font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; letter-spacing: 0.1em; background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .c-header__nav { display: flex; gap: var(--space-md); }
+    .c-nav-link { color: var(--text-muted); text-decoration: none; padding: var(--space-sm) var(--space-md); }
+    .c-nav-link:hover { color: var(--neon-cyan); }
+    .c-card { background: var(--bg-card); border: 1px solid rgba(0, 243, 255, 0.15); border-radius: 12px; padding: var(--space-lg); backdrop-filter: blur(10px); transition: all var(--transition-base) var(--ease-out); }
+    .c-card:hover { transform: translateY(-5px); border-color: rgba(0, 243, 255, 0.4); box-shadow: var(--glow-cyan); }
+    .c-card__header { margin-bottom: var(--space-md); }
+    .c-card__title { font-family: var(--font-display); font-size: clamp(1.25rem, 2.5vw, 1.5rem); font-weight: 700; color: var(--neon-cyan); display: flex; align-items: center; gap: var(--space-sm); }
+    .c-card__content { color: var(--text-muted); }
+    .c-code-block { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(189, 0, 255, 0.2); border-radius: 8px; padding: var(--space-md); overflow-x: auto; font-family: var(--font-mono); font-size: 0.875rem; line-height: 1.8; }
+    .c-code-block__header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm); padding-bottom: var(--space-sm); border-bottom: 1px solid rgba(189, 0, 255, 0.1); }
+    .c-code-block__lang { color: var(--neon-purple); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+    .c-code-block__copy { background: transparent; border: 1px solid rgba(0, 243, 255, 0.3); color: var(--neon-cyan); padding: var(--space-xs) var(--space-sm); border-radius: 4px; cursor: pointer; font-size: 0.75rem; }
+    .c-code-block__copy:hover { background: rgba(0, 243, 255, 0.1); }
+    .c-code-block pre { margin: 0; white-space: pre-wrap; }
+    .c-code-block code { color: var(--text-primary); }
+    .token-keyword { color: var(--neon-magenta); }
+    .token-function { color: var(--neon-cyan); }
+    .token-string { color: var(--neon-green); }
+    .token-comment { color: var(--text-muted); font-style: italic; }
+    .token-number { color: var(--neon-orange); }
+    .c-input-group { margin-bottom: var(--space-md); }
+    .c-input-label { display: block; color: var(--neon-cyan); font-size: 0.875rem; font-weight: 500; margin-bottom: var(--space-sm); }
+    .c-input-label__required { color: var(--neon-magenta); margin-left: var(--space-xs); }
+    .c-input { width: 100%; padding: 0.8rem 1.2rem; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(0, 243, 255, 0.2); border-radius: 8px; color: var(--text-primary); font-family: var(--font-mono); font-size: 0.875rem; }
+    .c-input:focus { outline: none; border-color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 243, 255, 0.3); }
+    .c-button { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-sm); padding: 0.8rem 1.5rem; background: linear-gradient(135deg, rgba(0, 243, 255, 0.1), rgba(189, 0, 255, 0.1)); border: 1px solid rgba(0, 243, 255, 0.3); border-radius: 8px; color: var(--neon-cyan); font-family: var(--font-display); font-size: 0.875rem; font-weight: 700; cursor: pointer; text-transform: uppercase; }
+    .c-button:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(0, 243, 255, 0.4); }
+    .c-button--primary { background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple)); color: #000; border: none; }
+    .c-button--primary:hover { box-shadow: var(--glow-cyan); }
+    .c-button-group { display: flex; gap: var(--space-md); flex-wrap: wrap; }
+    .c-result { margin-top: var(--space-md); padding: var(--space-md); background: rgba(0, 255, 157, 0.05); border: 1px solid rgba(0, 255, 157, 0.3); border-radius: 8px; display: flex; align-items: center; gap: var(--space-md); opacity: 0; transform: translateY(10px); transition: all var(--transition-base) var(--ease-out); }
+    .c-result.is-visible { opacity: 1; transform: translateY(0); }
+    .c-result__icon { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(0, 255, 157, 0.1); border-radius: 50%; color: var(--neon-green); font-size: 1.5rem; }
+    .c-result__content { flex: 1; }
+    .c-result__title { font-family: var(--font-display); font-size: 1.125rem; font-weight: 700; color: var(--neon-green); }
+    .c-result__value { font-family: var(--font-mono); font-size: 1.25rem; color: var(--text-primary); }
+    .c-explanation { margin-top: var(--space-lg); }
+    .c-explanation__list { list-style: none; padding-left: 0; }
+    .c-explanation__item { position: relative; padding-left: var(--space-lg); margin-bottom: var(--space-md); color: var(--text-muted); }
+    .c-explanation__item::before { content: '▸'; position: absolute; left: 0; color: var(--neon-cyan); font-size: 1.125rem; }
+    .c-complexity-badge { display: inline-flex; align-items: center; gap: var(--space-sm); padding: var(--space-sm) var(--space-md); background: rgba(189, 0, 255, 0.1); border: 1px solid rgba(189, 0, 255, 0.3); border-radius: 20px; font-family: var(--font-mono); font-size: 0.75rem; color: var(--neon-purple); margin-right: var(--space-sm); }
+    .c-footer { margin-top: auto; padding: var(--space-lg); border-top: 1px solid rgba(0, 243, 255, 0.1); text-align: center; color: var(--text-muted); font-size: 0.875rem; }
+    .c-footer__links { display: flex; justify-content: center; gap: var(--space-lg); margin-bottom: var(--space-md); }
+    .c-footer__link { color: var(--neon-cyan); text-decoration: none; }
+    .c-footer__link:hover { color: var(--neon-magenta); }
+    @keyframes neon-pulse { 0%, 100% { box-shadow: 0 0 5px var(--neon-cyan); } 50% { box-shadow: 0 0 20px var(--neon-cyan), 0 0 30px var(--neon-cyan); } }
+    @keyframes glow-flicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+    .c-header__brand { animation: glow-flicker 3s ease-in-out infinite; }
+    @media (max-width: 768px) { .c-header { flex-direction: column; text-align: center; } .c-button-group { flex-direction: column; } .c-button { width: 100%; } }
+    .c-visualization { background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(0, 243, 255, 0.1); border-radius: 8px; padding: var(--space-md); margin-top: var(--space-md); }
+    .board-grid { display: grid; gap: 2px; margin: 1rem 0; justify-content: center; }
+    .board-cell { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(0, 243, 255, 0.2); border-radius: 4px; font-family: var(--font-mono); font-weight: 700; font-size: 1.25rem; transition: all var(--transition-base) var(--ease-out); }
+    .board-cell.X { background: rgba(0, 243, 255, 0.2); border-color: var(--neon-cyan); color: var(--neon-cyan); }
+    .board-cell.O { background: rgba(255, 0, 255, 0.2); border-color: var(--neon-magenta); color: var(--neon-magenta); }
+    .board-cell.captured { background: rgba(0, 255, 157, 0.2); border-color: var(--neon-green); color: var(--neon-green); }
+  </style>
+</head>
+<body class="l-body">
+  <header class="l-header">
+    <div class="c-header">
+      <h1 class="c-header__brand">⚡ ALGO_VISUALIZER</h1>
+      <nav class="c-header__nav">
+        <a href="#" class="c-nav-link">Problems</a>
+        <a href="#" class="c-nav-link">Visualize</a>
+        <a href="#" class="c-nav-link">About</a>
+      </nav>
+    </div>
+  </header>
+  <main class="l-main">
+    <div class="l-single-column">
+      <article class="c-card">
+        <header class="c-card__header">
+          <h2 class="c-card__title"><span>⭕</span> Surrounded Regions</h2>
+        </header>
+        <div class="c-card__content">
+          <p>Given an m x n matrix board containing 'X' and 'O', capture all regions surrounded by 'X'. A region is captured by flipping all 'O's into 'X's in that surrounded region. Note: 'O's on the border or connected to border 'O's are not captured.</p>
+          <div style="margin-top: var(--space-md); display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+            <span class="c-complexity-badge">⏱️ Time: O(m × n)</span>
+            <span class="c-complexity-badge">💾 Space: O(m × n)</span>
+            <span class="c-complexity-badge">📊 Difficulty: Medium</span>
+          </div>
+        </div>
+      </article>
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title"><span>🎯</span> Input</h2>
+        </header>
+        <div class="c-card__content">
+          <div class="c-input-group">
+            <label class="c-input-label" for="inputBoard">Board (rows separated by |, cells by comma) <span class="c-input-label__required">*</span></label>
+            <input type="text" id="inputBoard" class="c-input" placeholder="e.g., X,O,X|O,X,O|X,O,X" value="X,O,X|O,X,O|X,O,X" autocomplete="off">
+          </div>
+          <div class="c-button-group">
+            <button id="btnCalculate" class="c-button c-button--primary"><span>🚀</span> Solve</button>
+            <button id="btnVisualize" class="c-button"><span>👁️</span> Visualize</button>
+            <button id="btnClear" class="c-button"><span>🗑️</span> Clear</button>
+          </div>
+        </div>
+      </article>
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title"><span>📈</span> Result</h2>
+        </header>
+        <div class="c-card__content">
+          <div id="resultContainer" class="c-result">
+            <div class="c-result__icon">✓</div>
+            <div class="c-result__content">
+              <div class="c-result__title">Solved Board</div>
+              <div id="resultValue" class="c-result__value">-</div>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title"><span>🔬</span> Visualization</h2>
+        </header>
+        <div class="c-card__content">
+          <div id="visualizationContainer" class="c-visualization">
+            <p style="color: var(--text-muted); text-align: center;">Click "Visualize" to see the board</p>
+          </div>
+        </div>
+      </article>
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title"><span>💻</span> Solution Code</h2>
+        </header>
+        <div class="c-card__content">
+          <div class="c-code-block">
+            <div class="c-code-block__header">
+              <span class="c-code-block__lang">JavaScript</span>
+              <button class="c-code-block__copy js-copy-code">Copy</button>
+            </div>
+            <pre><code id="solutionCode"><span class="token-keyword">function</span> <span class="token-function">solve</span>(board) {
+  <span class="token-keyword">if</span> (!board.length) <span class="token-keyword">return</span>;
+  <span class="token-keyword">const</span> m = board.length, n = board[<span class="token-number">0</span>].length;
+  
+  <span class="token-comment">// DFS to mark border-connected 'O's as 'T'</span>
+  <span class="token-keyword">function</span> <span class="token-function">dfs</span>(i, j) {
+    <span class="token-keyword">if</span> (i < <span class="token-number">0</span> || i >= m || j < <span class="token-number">0</span> || j >= n || board[i][j] !== <span class="token-string">'O'</span>) <span class="token-keyword">return</span>;
+    board[i][j] = <span class="token-string">'T'</span>;
+    dfs(i - <span class="token-number">1</span>, j); dfs(i + <span class="token-number">1</span>, j);
+    dfs(i, j - <span class="token-number">1</span>); dfs(i, j + <span class="token-number">1</span>);
+  }
+  
+  <span class="token-comment">// Mark border 'O's and their connected regions</span>
+  <span class="token-keyword">for</span> (<span class="token-keyword">let</span> i = <span class="token-number">0</span>; i < m; i++) {
+    dfs(i, <span class="token-number">0</span>); dfs(i, n - <span class="token-number">1</span>);
+  }
+  <span class="token-keyword">for</span> (<span class="token-keyword">let</span> j = <span class="token-number">0</span>; j < n; j++) {
+    dfs(<span class="token-number">0</span>, j); dfs(m - <span class="token-number">1</span>, j);
+  }
+  
+  <span class="token-comment">// Flip remaining 'O's to 'X', restore 'T' to 'O'</span>
+  <span class="token-keyword">for</span> (<span class="token-keyword">let</span> i = <span class="token-number">0</span>; i < m; i++) {
+    <span class="token-keyword">for</span> (<span class="token-keyword">let</span> j = <span class="token-number">0</span>; j < n; j++) {
+      <span class="token-keyword">if</span> (board[i][j] === <span class="token-string">'O'</span>) board[i][j] = <span class="token-string">'X'</span>;
+      <span class="token-keyword">else if</span> (board[i][j] === <span class="token-string">'T'</span>) board[i][j] = <span class="token-string">'O'</span>;
+    }
+  }
+}</code></pre>
+          </div>
+        </div>
+      </article>
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title"><span>📖</span> Algorithm Explanation</h2>
+        </header>
+        <div class="c-card__content c-explanation">
+          <ul class="c-explanation__list">
+            <li class="c-explanation__item">Instead of finding surrounded regions, find regions NOT surrounded (connected to border).</li>
+            <li class="c-explanation__item">Use DFS from all border 'O's to mark connected 'O's as temporary 'T'.</li>
+            <li class="c-explanation__item">After marking, flip all remaining 'O's to 'X' (these are surrounded).</li>
+            <li class="c-explanation__item">Restore 'T' back to 'O' (these are border-connected, not captured).</li>
+          </ul>
+        </div>
+      </article>
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title"><span>📝</span> Example Walkthrough</h2>
+        </header>
+        <div class="c-card__content">
+          <div class="c-code-block">
+            <pre><code>Input:
+X O X
+O X O
+X O X
+
+Step 1: Mark border-connected O's as T
+T O T  (top row O's connected to border)
+O X O  (side O's connected to border)
+T O T  (bottom row O's connected to border)
+
+Step 2: Flip remaining O's to X
+(No remaining O's in this case)
+
+Step 3: Restore T to O
+X O X
+O X O
+X O X
+
+Result: No regions captured (all O's touch border)</code></pre>
+          </div>
+        </div>
+      </article>
+    </div>
+  </main>
+  <footer class="c-footer">
+    <div class="c-footer__links">
+      <a href="#" class="c-footer__link">GitHub</a>
+      <a href="#" class="c-footer__link">Documentation</a>
+      <a href="#" class="c-footer__link">Contact</a>
+    </div>
+    <p>&copy; 2026 Algo Visualizer. Built with 💜 and neon dreams.</p>
+  </footer>
+  <script>
+    (function() {
+      'use strict';
+      const inputBoard = document.getElementById('inputBoard');
+      const btnCalculate = document.getElementById('btnCalculate');
+      const btnVisualize = document.getElementById('btnVisualize');
+      const btnClear = document.getElementById('btnClear');
+      const resultContainer = document.getElementById('resultContainer');
+      const resultValue = document.getElementById('resultValue');
+      const visualizationContainer = document.getElementById('visualizationContainer');
+      const copyButtons = document.querySelectorAll('.js-copy-code');
+
+      function parseBoard(input) {
+        return input.split('|').map(row => row.split(',').map(cell => cell.trim().toUpperCase()));
+      }
+
+      function solve(board) {
+        if (!board.length) return;
+        const m = board.length, n = board[0].length;
+        function dfs(i, j) {
+          if (i < 0 || i >= m || j < 0 || j >= n || board[i][j] !== 'O') return;
+          board[i][j] = 'T';
+          dfs(i - 1, j); dfs(i + 1, j);
+          dfs(i, j - 1); dfs(i, j + 1);
+        }
+        for (let i = 0; i < m; i++) {
+          dfs(i, 0); dfs(i, n - 1);
+        }
+        for (let j = 0; j < n; j++) {
+          dfs(0, j); dfs(m - 1, j);
+        }
+        for (let i = 0; i < m; i++) {
+          for (let j = 0; j < n; j++) {
+            if (board[i][j] === 'O') board[i][j] = 'X';
+            else if (board[i][j] === 'T') board[i][j] = 'O';
+          }
+        }
+      }
+
+      function boardToString(board) {
+        return board.map(row => row.join(',')).join('|');
+      }
+
+      function handleCalculate() {
+        const board = parseBoard(inputBoard.value);
+        solve(board);
+        resultValue.textContent = boardToString(board);
+        resultContainer.classList.add('is-visible');
+        resultContainer.style.animation = 'neon-pulse 1s ease-in-out';
+        setTimeout(() => { resultContainer.style.animation = ''; }, 1000);
+      }
+
+      function renderBoard(board, captured = null) {
+        const m = board.length, n = board[0].length;
+        let html = `<div class="board-grid" style="grid-template-columns: repeat(${n}, 1fr);">`;
+        for (let i = 0; i < m; i++) {
+          for (let j = 0; j < n; j++) {
+            const cell = board[i][j];
+            const isCaptured = captured && captured[i][j];
+            html += `<div class="board-cell${cell === 'X' ? ' X' : ''}${cell === 'O' ? ' O' : ''}${isCaptured ? ' captured' : ''}">${cell}</div>`;
+          }
+        }
+        html += '</div>';
+        return html;
+      }
+
+      function handleVisualize() {
+        const originalBoard = parseBoard(inputBoard.value);
+        const board = originalBoard.map(row => [...row]);
+        const m = board.length, n = board[0].length;
+        
+        // Find captured cells
+        const captured = Array.from({length: m}, () => Array(n).fill(false));
+        
+        // Mark border-connected O's
+        function dfs(i, j, b) {
+          if (i < 0 || i >= m || j < 0 || j >= n || b[i][j] !== 'O') return;
+          b[i][j] = 'T';
+          dfs(i - 1, j, b); dfs(i + 1, j, b);
+          dfs(i, j - 1, b); dfs(i, j + 1, b);
+        }
+        
+        const tempBoard = board.map(row => [...row]);
+        for (let i = 0; i < m; i++) { dfs(i, 0, tempBoard); dfs(i, n - 1, tempBoard); }
+        for (let j = 0; j < n; j++) { dfs(0, j, tempBoard); dfs(m - 1, j, tempBoard); }
+        
+        // Find which O's will be captured
+        for (let i = 0; i < m; i++) {
+          for (let j = 0; j < n; j++) {
+            if (originalBoard[i][j] === 'O' && tempBoard[i][j] !== 'T') {
+              captured[i][j] = true;
+            }
+          }
+        }
+        
+        solve(board);
+        
+        let html = '<div style="margin-bottom: 1rem;">';
+        html += '<p style="color: var(--neon-cyan); margin-bottom: 0.5rem; font-family: var(--font-mono);">Original Board:</p>';
+        html += renderBoard(originalBoard);
+        html += '</div>';
+        html += '<div style="margin-top: 1rem;">';
+        html += '<p style="color: var(--neon-green); margin-bottom: 0.5rem; font-family: var(--font-mono);">Solved Board:</p>';
+        html += renderBoard(board, captured);
+        html += '</div>';
+        html += '<div style="margin-top: 1rem; display: flex; gap: 1rem; flex-wrap: wrap;">';
+        html += '<div style="display: flex; align-items: center; gap: 0.5rem;"><span class="board-cell X" style="width: 30px; height: 30px; font-size: 1rem;">X</span><span style="color: var(--text-muted);">Wall</span></div>';
+        html += '<div style="display: flex; align-items: center; gap: 0.5rem;"><span class="board-cell O" style="width: 30px; height: 30px; font-size: 1rem;">O</span><span style="color: var(--text-muted);">Not captured</span></div>';
+        html += '<div style="display: flex; align-items: center; gap: 0.5rem;"><span class="board-cell captured" style="width: 30px; height: 30px; font-size: 1rem;">O</span><span style="color: var(--text-muted);">Captured (flipped to X)</span></div>';
+        html += '</div>';
+        visualizationContainer.innerHTML = html;
+      }
+
+      function handleClear() {
+        inputBoard.value = '';
+        resultContainer.classList.remove('is-visible');
+        visualizationContainer.innerHTML = '<p style="color: var(--text-muted); text-align: center;">Click "Visualize" to see the board</p>';
+      }
+
+      function handleCopyCode(event) {
+        const codeBlock = event.target.closest('.c-code-block');
+        const code = codeBlock.querySelector('code');
+        navigator.clipboard.writeText(code.textContent).then(() => {
+          const originalText = event.target.textContent;
+          event.target.textContent = 'Copied!';
+          event.target.style.background = 'rgba(0, 255, 157, 0.2)';
+          event.target.style.borderColor = 'var(--neon-green)';
+          setTimeout(() => {
+            event.target.textContent = originalText;
+            event.target.style.background = '';
+            event.target.style.borderColor = '';
+          }, 2000);
+        });
+      }
+
+      btnCalculate.addEventListener('click', handleCalculate);
+      btnVisualize.addEventListener('click', handleVisualize);
+      btnClear.addEventListener('click', handleClear);
+      copyButtons.forEach(button => { button.addEventListener('click', handleCopyCode); });
+      inputBoard.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleCalculate(); });
+      window.addEventListener('load', handleCalculate);
+    })();
+  </script>
+</body>
+</html>

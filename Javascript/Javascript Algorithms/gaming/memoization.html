@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Memorizacija: Optimizacija poti</title>
+    <style>
+        body { background: #0f172a; color: white; font-family: 'Fira Code', monospace; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .pyramid { display: flex; flex-direction: column; align-items: center; gap: 5px; margin: 20px; }
+        .row { display: flex; gap: 5px; }
+        .node { width: 40px; height: 40px; background: #1e293b; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid #334155; font-size: 0.8rem; transition: 0.3s; }
+        .active { background: #f59e0b; color: #0f172a; font-weight: bold; transform: scale(1.1); box-shadow: 0 0 15px #f59e0b; }
+        .controls { background: #1e293b; padding: 20px; border-radius: 12px; text-align: center; border: 1px solid #334155; }
+        button { background: #38bdf8; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; color: #0f172a; }
+        .stats { margin-top: 15px; color: #94a3b8; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <h2>Optimizacija poti (DFS + Memo)</h2>
+        <p>Iščemo pot z največjo vsoto od vrha do dna.</p>
+        <button onclick="solve(false)">Brez Memo (Počasi)</button>
+        <button onclick="solve(true)" style="background: #10b981;">Z Memo (Takoj)</button>
+        <div id="stats" class="stats">Klici funkcije: 0</div>
+    </div>
+
+    <div id="pyramid" class="pyramid"></div>
+
+    <script>
+        // Generiranje naključne piramide (12 vrstic)
+        const rows = 12;
+        const pyramidData = [];
+        for (let i = 1; i <= rows; i++) {
+            const row = [];
+            for (let j = 0; j < i; j++) row.push(Math.floor(Math.random() * 99) + 1);
+            pyramidData.push(row);
+        }
+
+        // Izris piramide v DOM
+        const pyramidEl = document.getElementById('pyramid');
+        pyramidData.forEach((row, rIdx) => {
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'row';
+            row.forEach((val, cIdx) => {
+                const node = document.createElement('div');
+                node.className = 'node';
+                node.id = `node-${rIdx}-${cIdx}`;
+                node.innerText = val;
+                rowDiv.appendChild(node);
+            });
+            pyramidEl.appendChild(rowDiv);
+        });
+
+        let callCount = 0;
+        let memo = {};
+
+        // REKURZIVNI DFS ALGORITEM
+        function findMaxPath(r, c, useMemo) {
+            callCount++;
+            
+            // Preveri memoizacijo
+            const key = `${r}-${c}`;
+            if (useMemo && memo[key]) return memo[key];
+
+            // Osnovni primer: dno piramide
+            if (r === rows - 1) return { val: pyramidData[r][c], path: [[r, c]] };
+
+            // Rekurzivni klic za levo in desno spodnjo opcijo
+            const left = findMaxPath(r + 1, c, useMemo);
+            const right = findMaxPath(r + 1, c + 1, useMemo);
+
+            // Izberi boljšo pot
+            const best = left.val > right.val ? left : right;
+            
+            const result = {
+                val: pyramidData[r][c] + best.val,
+                path: [[r, c], ...best.path]
+            };
+
+            // Shrani v spomin (Memoization)
+            if (useMemo) memo[key] = result;
+            return result;
+        }
+
+        function solve(useMemo) {
+            // Ponastavi vizualizacijo in števce
+            document.querySelectorAll('.node').forEach(n => n.classList.remove('active'));
+            callCount = 0;
+            memo = {};
+
+            const start = performance.now();
+            const result = findMaxPath(0, 0, useMemo);
+            const end = performance.now();
+
+            // Pobarvaj zmagovalno pot
+            result.path.forEach(([r, c]) => {
+                document.getElementById(`node-${r}-${c}`).classList.add('active');
+            });
+
+            document.getElementById('stats').innerHTML = 
+                `Klici funkcije: <b>${callCount}</b><br>` +
+                `Max vsota: <b>${result.val}</b> | Čas: ${(end - start).toFixed(2)}ms`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linked List In Binary Tree - LeetCode Solution</title>
+    <style>
+        :root {
+            --lime-green: #00ff9d;
+            --lime-dim: rgba(0, 255, 157, 0.3);
+            --bg-black: #050505;
+            --bg-surface: rgba(255, 255, 255, 0.05);
+            --text-primary: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.7);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg-black);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            border-bottom: 1px solid var(--lime-dim);
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            color: var(--lime-green);
+            text-shadow: 0 0 10px var(--lime-dim);
+            margin-bottom: 0.5rem;
+        }
+
+        .problem-desc {
+            background: var(--bg-surface);
+            border: 1px solid var(--lime-dim);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .problem-desc h2 {
+            color: var(--lime-green);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .code-section {
+            background: var(--bg-surface);
+            border: 1px solid var(--lime-dim);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .code-section h2 {
+            color: var(--lime-green);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        pre {
+            background: #0a0a0a;
+            border: 1px solid var(--lime-dim);
+            border-radius: 6px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .keyword { color: #ff00ff; }
+        .function { color: #00f3ff; }
+        .string { color: #00ff9d; }
+        .number { color: #bd00ff; }
+        .comment { color: rgba(255, 255, 255, 0.4); }
+
+        .demo-section {
+            background: var(--bg-surface);
+            border: 1px solid var(--lime-dim);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .demo-section h2 {
+            color: var(--lime-green);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            color: var(--lime-green);
+            margin-bottom: 0.5rem;
+        }
+
+        input, button {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--lime-dim);
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--text-primary);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+        }
+
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 10px var(--lime-dim);
+        }
+
+        button {
+            background: var(--lime-dim);
+            color: var(--bg-black);
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: var(--lime-green);
+            box-shadow: 0 0 20px var(--lime-dim);
+        }
+
+        .result {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(0, 255, 157, 0.1);
+            border-radius: 6px;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .result span {
+            color: var(--lime-green);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Linked List In Binary Tree</h1>
+            <p style="color: var(--text-muted);">LeetCode Problem - DFS Path Matching</p>
+        </header>
+
+        <section class="problem-desc">
+            <h2>Problem Description</h2>
+            <p>Given a binary tree root and a linked list, return true if all elements in the linked list starting from the head correspond to some downward path connected in the binary tree, otherwise return false.</p>
+        </section>
+
+        <section class="code-section">
+            <h2>JavaScript Solution</h2>
+            <pre><code><span class="comment">// TreeNode Definition</span>
+<span class="keyword">class</span> <span class="function">TreeNode</span> {
+    <span class="keyword">constructor</span>(val, left = <span class="keyword">null</span>, right = <span class="keyword">null</span>) {
+        <span class="keyword">this</span>.val = val;
+        <span class="keyword">this</span>.left = left;
+        <span class="keyword">this</span>.right = right;
+    }
+}
+
+<span class="comment">// ListNode Definition</span>
+<span class="keyword">class</span> <span class="function">ListNode</span> {
+    <span class="keyword">constructor</span>(val, next = <span class="keyword">null</span>) {
+        <span class="keyword">this</span>.val = val;
+        <span class="keyword">this</span>.next = next;
+    }
+}
+
+<span class="keyword">function</span> <span class="function">isSubPath</span>(head, root) {
+    <span class="keyword">if</span> (root === <span class="keyword">null</span>) <span class="keyword">return</span> <span class="keyword">false</span>;
+    
+    <span class="comment">// Check if path starts at current node, or try left/right subtrees</span>
+    <span class="keyword">return</span> <span class="function">dfs</span>(head, root) || 
+           <span class="function">isSubPath</span>(head, root.left) || 
+           <span class="function">isSubPath</span>(head, root.right);
+}
+
+<span class="keyword">function</span> <span class="function">dfs</span>(head, node) {
+    <span class="comment">// Reached end of linked list - success</span>
+    <span class="keyword">if</span> (head === <span class="keyword">null</span>) <span class="keyword">return</span> <span class="keyword">true</span>;
+    
+    <span class="comment">// Reached end of tree path or values don't match - failure</span>
+    <span class="keyword">if</span> (node === <span class="keyword">null</span> || head.val !== node.val) <span class="keyword">return</span> <span class="keyword">false</span>;
+    
+    <span class="comment">// Continue DFS on left or right child</span>
+    <span class="keyword">return</span> <span class="function">dfs</span>(head.next, node.left) || <span class="function">dfs</span>(head.next, node.right);
+}
+
+<span class="comment">// Helper: Build linked list from array</span>
+<span class="keyword">function</span> <span class="function">buildLinkedList</span>(arr) {
+    <span class="keyword">if</span> (arr.length === <span class="number">0</span>) <span class="keyword">return</span> <span class="keyword">null</span>;
+    <span class="keyword">const</span> head = <span class="keyword">new</span> <span class="function">ListNode</span>(arr[<span class="number">0</span>]);
+    <span class="keyword">let</span> current = head;
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">1</span>; i < arr.length; i++) {
+        current.next = <span class="keyword">new</span> <span class="function">ListNode</span>(arr[i]);
+        current = current.next;
+    }
+    <span class="keyword">return</span> head;
+}
+
+<span class="comment">// Usage Example:</span>
+<span class="keyword">const</span> head = <span class="function">buildLinkedList</span>([<span class="number">4</span>, <span class="number">2</span>, <span class="number">8</span>]);
+<span class="keyword">const</span> root = <span class="keyword">new</span> <span class="function">TreeNode</span>(<span class="number">1</span>, 
+    <span class="keyword">new</span> <span class="function">TreeNode</span>(<span class="number">4</span>, <span class="keyword">new</span> <span class="function">TreeNode</span>(<span class="number">2</span>, <span class="keyword">new</span> <span class="function">TreeNode</span>(<span class="number">7</span>))),
+    <span class="keyword">new</span> <span class="function">TreeNode</span>(<span class="number">4</span>, <span class="keyword">new</span> <span class="function">TreeNode</span>(<span class="number">2</span>, <span class="keyword">new</span> <span class="function">TreeNode</span>(<span class="number">1</span>), <span class="keyword">new</span> <span class="function">TreeNode</span>(<span class="number">8</span>)))
+);
+console.<span class="function">log</span>(<span class="function">isSubPath</span>(head, root)); <span class="comment">// true or false</span></code></pre>
+        </section>
+
+        <section class="demo-section">
+            <h2>Interactive Demo</h2>
+            <div class="input-group">
+                <label for="list-input">Linked List (comma-separated):</label>
+                <input type="text" id="list-input" value="4,2,8" style="width: 100%;">
+            </div>
+            <div class="input-group">
+                <label for="tree-input">Binary Tree (level-order, comma-separated):</label>
+                <input type="text" id="tree-input" value="1,4,4,2,2,1,8" style="width: 100%;">
+            </div>
+            <button onclick="runDemo()">Check Subpath</button>
+            <div class="result" id="result">
+                Result: <span id="output">-</span>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        class TreeNode {
+            constructor(val, left = null, right = null) {
+                this.val = val;
+                this.left = left;
+                this.right = right;
+            }
+        }
+
+        class ListNode {
+            constructor(val, next = null) {
+                this.val = val;
+                this.next = next;
+            }
+        }
+
+        function isSubPath(head, root) {
+            if (root === null) return false;
+            
+            return dfs(head, root) || 
+                   isSubPath(head, root.left) || 
+                   isSubPath(head, root.right);
+        }
+
+        function dfs(head, node) {
+            if (head === null) return true;
+            if (node === null || head.val !== node.val) return false;
+            return dfs(head.next, node.left) || dfs(head.next, node.right);
+        }
+
+        function buildLinkedList(arr) {
+            if (arr.length === 0) return null;
+            const head = new ListNode(arr[0]);
+            let current = head;
+            for (let i = 1; i < arr.length; i++) {
+                current.next = new ListNode(arr[i]);
+                current = current.next;
+            }
+            return head;
+        }
+
+        function buildTree(arr) {
+            if (arr.length === 0) return null;
+            
+            const root = new TreeNode(arr[0]);
+            const queue = [root];
+            let i = 1;
+            
+            while (queue.length > 0 && i < arr.length) {
+                const node = queue.shift();
+                
+                if (i < arr.length && arr[i] !== null) {
+                    node.left = new TreeNode(arr[i]);
+                    queue.push(node.left);
+                }
+                i++;
+                
+                if (i < arr.length && arr[i] !== null) {
+                    node.right = new TreeNode(arr[i]);
+                    queue.push(node.right);
+                }
+                i++;
+            }
+            
+            return root;
+        }
+
+        function runDemo() {
+            const listInput = document.getElementById('list-input').value;
+            const treeInput = document.getElementById('tree-input').value;
+            
+            const listArr = listInput.split(',').map(x => parseInt(x.trim()));
+            const treeArr = treeInput.split(',').map(x => {
+                const trimmed = x.trim();
+                return trimmed === 'null' ? null : parseInt(trimmed);
+            });
+            
+            const head = buildLinkedList(listArr);
+            const root = buildTree(treeArr);
+            const result = isSubPath(head, root);
+            
+            document.getElementById('output').textContent = result;
+        }
+    </script>
+</body>
+</html>

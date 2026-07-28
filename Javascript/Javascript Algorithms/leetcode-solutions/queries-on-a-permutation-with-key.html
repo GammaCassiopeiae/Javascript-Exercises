@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Queries on a Permutation With Key | Algorithm Visualizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Inter:wght@300;400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --neon-cyan: #00f3ff; --neon-magenta: #ff00ff; --neon-green: #00ff9d; --neon-purple: #bd00ff; --neon-orange: #ff6b00; --bg-deep: #050505; --bg-card: rgba(255, 255, 255, 0.08); --text-primary: #ffffff; --text-muted: rgba(255, 255, 255, 0.7); --font-display: 'Rajdhani', system-ui, sans-serif; --font-body: 'Inter', system-ui, sans-serif; --font-mono: 'Fira Code', monospace; --space-xs: 0.25rem; --space-sm: 0.5rem; --space-md: 1rem; --space-lg: 2rem; --space-xl: 4rem; --glow-cyan: 0 0 5px var(--neon-cyan), 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan); --transition-fast: 0.1s; --transition-base: 0.3s; --ease-out: cubic-bezier(0.4, 0, 0.2, 1); --z-sticky: 100; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background-color: var(--bg-deep); color: var(--text-primary); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; }
+    ::selection { background: var(--neon-cyan); color: #000; }
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: var(--bg-deep); }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--neon-cyan), var(--neon-purple)); border-radius: 5px; }
+    .l-body { display: flex; flex-direction: column; min-height: 100vh; }
+    .l-header { position: sticky; top: 0; z-index: var(--z-sticky); background: rgba(5, 5, 5, 0.95); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(0, 243, 255, 0.2); }
+    .l-main { flex: 1; padding: var(--space-xl) var(--space-md); max-width: 1400px; margin-inline: auto; width: 100%; }
+    .l-single-column { max-width: 900px; margin-inline: auto; }
+    .c-header { padding: var(--space-md) var(--space-lg); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-md); }
+    .c-header__brand { font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; letter-spacing: 0.1em; background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .c-header__nav { display: flex; gap: var(--space-md); }
+    .c-nav-link { color: var(--text-muted); text-decoration: none; font-weight: 500; padding: var(--space-sm) var(--space-md); border: 1px solid transparent; border-radius: 4px; transition: all var(--transition-base) var(--ease-out); position: relative; }
+    .c-nav-link::after { content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px; background: var(--neon-cyan); transform: translateX(-50%); transition: width var(--transition-base) var(--ease-out); }
+    .c-nav-link:hover { color: var(--neon-cyan); }
+    .c-nav-link:hover::after { width: 80%; }
+    .c-card { background: var(--bg-card); border: 1px solid rgba(0, 243, 255, 0.15); border-radius: 12px; padding: var(--space-lg); backdrop-filter: blur(10px); transition: all var(--transition-base) var(--ease-out); position: relative; overflow: hidden; }
+    .c-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta), var(--neon-purple)); opacity: 0; transition: opacity var(--transition-base) var(--ease-out); }
+    .c-card:hover { transform: translateY(-5px); border-color: rgba(0, 243, 255, 0.4); box-shadow: var(--glow-cyan); }
+    .c-card:hover::before { opacity: 1; }
+    .c-card__header { margin-bottom: var(--space-md); }
+    .c-card__title { font-family: var(--font-display); font-size: clamp(1.25rem, 2.5vw, 1.5rem); font-weight: 700; color: var(--neon-cyan); letter-spacing: 0.05em; display: flex; align-items: center; gap: var(--space-sm); }
+    .c-card__title::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(0, 243, 255, 0.5), transparent); }
+    .c-card__content { color: var(--text-muted); }
+    .c-code-block { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(189, 0, 255, 0.2); border-radius: 8px; padding: var(--space-md); overflow-x: auto; font-family: var(--font-mono); font-size: 0.875rem; line-height: 1.8; position: relative; }
+    .c-code-block__header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm); padding-bottom: var(--space-sm); border-bottom: 1px solid rgba(189, 0, 255, 0.1); }
+    .c-code-block__lang { color: var(--neon-purple); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
+    .c-code-block__copy { background: transparent; border: 1px solid rgba(0, 243, 255, 0.3); color: var(--neon-cyan); padding: var(--space-xs) var(--space-sm); border-radius: 4px; cursor: pointer; font-size: 0.75rem; transition: all var(--transition-fast) var(--ease-out); }
+    .c-code-block__copy:hover { background: rgba(0, 243, 255, 0.1); box-shadow: 0 0 10px rgba(0, 243, 255, 0.3); }
+    .c-code-block pre { margin: 0; white-space: pre-wrap; word-wrap: break-word; }
+    .c-code-block code { color: var(--text-primary); }
+    .token-keyword { color: var(--neon-magenta); }
+    .token-function { color: var(--neon-cyan); }
+    .token-string { color: var(--neon-green); }
+    .token-comment { color: var(--text-muted); font-style: italic; }
+    .token-number { color: var(--neon-orange); }
+    .token-operator { color: var(--neon-purple); }
+    .c-input-group { margin-bottom: var(--space-md); }
+    .c-input-label { display: block; color: var(--neon-cyan); font-size: 0.875rem; font-weight: 500; margin-bottom: var(--space-sm); }
+    .c-input-label__required { color: var(--neon-magenta); margin-left: var(--space-xs); }
+    .c-input { width: 100%; padding: 0.8rem 1.2rem; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(0, 243, 255, 0.2); border-radius: 8px; color: var(--text-primary); font-family: var(--font-mono); font-size: 0.875rem; transition: all var(--transition-base) var(--ease-out); caret-color: var(--neon-cyan); }
+    .c-input:focus { outline: none; border-color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 243, 255, 0.3); }
+    .c-input::placeholder { opacity: 0.4; }
+    .c-button { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-sm); padding: 0.8rem 1.5rem; background: linear-gradient(135deg, rgba(0, 243, 255, 0.1), rgba(189, 0, 255, 0.1)); border: 1px solid rgba(0, 243, 255, 0.3); border-radius: 8px; color: var(--neon-cyan); font-family: var(--font-display); font-size: 0.875rem; font-weight: 700; letter-spacing: 0.05em; cursor: pointer; transition: all var(--transition-base) var(--ease-out); text-transform: uppercase; min-height: 44px; }
+    .c-button:hover { background: linear-gradient(135deg, rgba(0, 243, 255, 0.2), rgba(189, 0, 255, 0.2)); transform: translateY(-2px); box-shadow: 0 0 20px rgba(0, 243, 255, 0.4); }
+    .c-button:active { transform: translateY(0); }
+    .c-button--primary { background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple)); color: #000; border: none; }
+    .c-button--primary:hover { box-shadow: var(--glow-cyan); }
+    .c-button-group { display: flex; gap: var(--space-md); flex-wrap: wrap; }
+    .c-visualization { background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(0, 243, 255, 0.1); border-radius: 8px; padding: var(--space-md); margin-top: var(--space-md); overflow-x: auto; }
+    .perm-grid { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin: 1rem 0; }
+    .perm-cell { display: flex; flex-direction: column; align-items: center; background: rgba(0, 243, 255, 0.1); border: 1px solid var(--neon-cyan); border-radius: 6px; padding: 0.5rem; min-width: 40px; }
+    .perm-cell.moved { background: rgba(255, 0, 255, 0.2); border-color: var(--neon-magenta); }
+    .perm-value { font-family: var(--font-mono); font-weight: 700; font-size: 1.25rem; }
+    .perm-index { font-size: 0.625rem; color: var(--text-muted); margin-top: 0.25rem; }
+    .c-result { margin-top: var(--space-md); padding: var(--space-md); background: rgba(0, 255, 157, 0.05); border: 1px solid rgba(0, 255, 157, 0.3); border-radius: 8px; display: flex; align-items: center; gap: var(--space-md); opacity: 0; transform: translateY(10px); transition: all var(--transition-base) var(--ease-out); }
+    .c-result.is-visible { opacity: 1; transform: translateY(0); }
+    .c-result__icon { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(0, 255, 157, 0.1); border-radius: 50%; color: var(--neon-green); font-size: 1.5rem; }
+    .c-result__content { flex: 1; }
+    .c-result__title { font-family: var(--font-display); font-size: 1.125rem; font-weight: 700; color: var(--neon-green); margin-bottom: var(--space-xs); }
+    .c-result__value { font-family: var(--font-mono); font-size: 1rem; color: var(--text-primary); white-space: pre-wrap; }
+    .c-explanation { margin-top: var(--space-lg); }
+    .c-explanation__list { list-style: none; padding-left: 0; }
+    .c-explanation__item { position: relative; padding-left: var(--space-lg); margin-bottom: var(--space-md); color: var(--text-muted); }
+    .c-explanation__item::before { content: '▸'; position: absolute; left: 0; color: var(--neon-cyan); font-size: 1.125rem; }
+    .c-complexity-badge { display: inline-flex; align-items: center; gap: var(--space-sm); padding: var(--space-sm) var(--space-md); background: rgba(189, 0, 255, 0.1); border: 1px solid rgba(189, 0, 255, 0.3); border-radius: 20px; font-family: var(--font-mono); font-size: 0.75rem; color: var(--neon-purple); margin-right: var(--space-sm); }
+    .c-footer { margin-top: auto; padding: var(--space-lg); border-top: 1px solid rgba(0, 243, 255, 0.1); text-align: center; color: var(--text-muted); font-size: 0.875rem; }
+    .c-footer__links { display: flex; justify-content: center; gap: var(--space-lg); margin-bottom: var(--space-md); }
+    .c-footer__link { color: var(--neon-cyan); text-decoration: none; transition: color var(--transition-fast); }
+    .c-footer__link:hover { color: var(--neon-magenta); }
+    @media (max-width: 768px) { .c-header { flex-direction: column; text-align: center; } .c-header__nav { justify-content: center; } .c-button-group { flex-direction: column; } .c-button { width: 100%; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+  </style>
+</head>
+<body class="l-body">
+  <header class="l-header">
+    <div class="c-header">
+      <h1 class="c-header__brand">⚡ ALGO_VISUALIZER</h1>
+      <nav class="c-header__nav">
+        <a href="#" class="c-nav-link">Problems</a>
+        <a href="#" class="c-nav-link">Visualize</a>
+        <a href="#" class="c-nav-link">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="l-main">
+    <div class="l-single-column">
+      <article class="c-card">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>🔑</span>
+            Queries on a Permutation With Key
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <p>Given an array of queries and a value m, process each query by finding the position of the queried element in a permutation P=[1,2,3,...,m], then moving that element to the front. Return the positions before each move.</p>
+          <div style="margin-top: var(--space-md); display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+            <span class="c-complexity-badge">⏱️ Time: O(n*m)</span>
+            <span class="c-complexity-badge">💾 Space: O(m)</span>
+            <span class="c-complexity-badge">📊 Difficulty: Medium</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>🎯</span>
+            Input
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <div class="c-input-group">
+            <label class="c-input-label" for="queriesInput">Queries (comma-separated)</label>
+            <input type="text" id="queriesInput" class="c-input" placeholder="e.g., 3,1,2,1" value="3,1,2,1">
+          </div>
+          <div class="c-input-group">
+            <label class="c-input-label" for="mInput">Value of m</label>
+            <input type="number" id="mInput" class="c-input" placeholder="e.g., 5" value="5">
+          </div>
+          <div class="c-button-group">
+            <button id="btnProcess" class="c-button c-button--primary">
+              <span>🚀</span> Process Queries
+            </button>
+            <button id="btnVisualize" class="c-button">
+              <span>👁️</span> Visualize Steps
+            </button>
+            <button id="btnClear" class="c-button">
+              <span>🗑️</span> Clear
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>📈</span>
+            Result
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <div id="resultContainer" class="c-result">
+            <div class="c-result__icon">✓</div>
+            <div class="c-result__content">
+              <div class="c-result__title">Positions Array</div>
+              <div id="resultValue" class="c-result__value"></div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>🔬</span>
+            Visualization
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <div id="visualizationContainer" class="c-visualization">
+            <p style="color: var(--text-muted); text-align: center;">Click "Visualize Steps" to see the permutation changes</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>💻</span>
+            Solution Code
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <div class="c-code-block">
+            <div class="c-code-block__header">
+              <span class="c-code-block__lang">JavaScript</span>
+              <button class="c-code-block__copy js-copy-code">Copy</button>
+            </div>
+            <pre><code id="solutionCode"><span class="token-keyword">function</span> <span class="token-function">processQueries</span>(queries, m) {
+  <span class="token-comment">// Initialize permutation P = [1, 2, 3, ..., m]</span>
+  <span class="token-keyword">const</span> P = <span class="token-function">Array</span>.from({ length: m }, (_, i) => i + <span class="token-number">1</span>);
+  <span class="token-keyword">const</span> result = [];
+
+  <span class="token-keyword">for</span> (<span class="token-keyword">const</span> query of queries) {
+    <span class="token-comment">// Find position of query element in P</span>
+    <span class="token-keyword">const</span> pos = P.indexOf(query);
+    result.push(pos);
+
+    <span class="token-comment">// Move element to front</span>
+    P.splice(pos, <span class="token-number">1</span>);  <span class="token-comment">// Remove from current position</span>
+    P.unshift(query);     <span class="token-comment">// Add to front</span>
+  }
+
+  <span class="token-keyword">return</span> result;
+}</code></pre>
+          </div>
+        </div>
+      </article>
+
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>📖</span>
+            Algorithm Explanation
+          </h2>
+        </header>
+        <div class="c-card__content c-explanation">
+          <ul class="c-explanation__list">
+            <li class="c-explanation__item">
+              Start with a permutation P = [1, 2, 3, ..., m].
+            </li>
+            <li class="c-explanation__item">
+              For each query, find the index of the queried element in P.
+            </li>
+            <li class="c-explanation__item">
+              Record this index as the answer for this query.
+            </li>
+            <li class="c-explanation__item">
+              Move the queried element to the front of P (remove and unshift).
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>📝</span>
+            Example Walkthrough
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <div class="c-code-block">
+            <pre><code>Input: queries = [3, 1, 2, 1], m = 5
+
+Initial P: [1, 2, 3, 4, 5]
+
+Query 3:
+- Position of 3 in P: index 2
+- Move 3 to front
+- P becomes: [3, 1, 2, 4, 5]
+- Result: [2]
+
+Query 1:
+- Position of 1 in P: index 1
+- Move 1 to front
+- P becomes: [1, 3, 2, 4, 5]
+- Result: [2, 1]
+
+Query 2:
+- Position of 2 in P: index 2
+- Move 2 to front
+- P becomes: [2, 1, 3, 4, 5]
+- Result: [2, 1, 2]
+
+Query 1:
+- Position of 1 in P: index 1
+- Move 1 to front
+- P becomes: [1, 2, 3, 4, 5]
+- Result: [2, 1, 2, 1]
+
+Final Answer: [2, 1, 2, 1]</code></pre>
+          </div>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <footer class="c-footer">
+    <div class="c-footer__links">
+      <a href="#" class="c-footer__link">GitHub</a>
+      <a href="#" class="c-footer__link">Documentation</a>
+      <a href="#" class="c-footer__link">Contact</a>
+    </div>
+    <p>&copy; 2026 Algo Visualizer. Built with 💜 and neon dreams.</p>
+  </footer>
+
+  <script>
+    (function() {
+      'use strict';
+
+      const queriesInput = document.getElementById('queriesInput');
+      const mInput = document.getElementById('mInput');
+      const btnProcess = document.getElementById('btnProcess');
+      const btnVisualize = document.getElementById('btnVisualize');
+      const btnClear = document.getElementById('btnClear');
+      const resultContainer = document.getElementById('resultContainer');
+      const resultValue = document.getElementById('resultValue');
+      const visualizationContainer = document.getElementById('visualizationContainer');
+      const copyButtons = document.querySelectorAll('.js-copy-code');
+
+      function processQueries(queries, m) {
+        const P = Array.from({ length: m }, (_, i) => i + 1);
+        const result = [];
+
+        for (const query of queries) {
+          const pos = P.indexOf(query);
+          result.push(pos);
+          P.splice(pos, 1);
+          P.unshift(query);
+        }
+
+        return result;
+      }
+
+      function visualizeQueries(queries, m) {
+        let html = '<div style="margin-bottom: 1rem;">';
+        html += '<p style="color: var(--neon-cyan); margin-bottom: 0.5rem;">Initial Permutation P = [1, 2, ..., ' + m + ']:</p>';
+        const initialP = Array.from({ length: m }, (_, i) => i + 1);
+        html += '<div class="perm-grid">';
+        initialP.forEach((val, i) => {
+          html += `<div class="perm-cell"><span class="perm-value">${val}</span><span class="perm-index">${i}</span></div>`;
+        });
+        html += '</div></div>';
+
+        html += '<div style="margin-top: 1.5rem;">';
+        html += '<p style="color: var(--neon-magenta); margin-bottom: 0.5rem;">Query Processing Steps:</p>';
+
+        let P = [...initialP];
+        const result = [];
+
+        queries.forEach((query, qIdx) => {
+          const pos = P.indexOf(query);
+          result.push(pos);
+
+          html += `<div style="margin-bottom: 1.5rem; padding: 0.75rem; background: rgba(0, 243, 255, 0.05); border: 1px solid rgba(0, 243, 255, 0.2); border-radius: 8px;">`;
+          html += `<p style="color: var(--neon-cyan); font-weight: 700; margin-bottom: 0.5rem;">Query ${qIdx + 1}: Process ${query}</p>`;
+          html += `<p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 0.5rem;">Position of ${query} in P: <span style="color: var(--neon-green); font-weight: 700;">${pos}</span></p>`;
+          
+          html += '<p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 0.5rem;">Before move:</p>';
+          html += '<div class="perm-grid">';
+          P.forEach((val, i) => {
+            const isMoved = i === pos;
+            html += `<div class="perm-cell ${isMoved ? 'moved' : ''}"><span class="perm-value">${val}</span><span class="perm-index">${i}</span></div>`;
+          });
+          html += '</div>';
+
+          P.splice(pos, 1);
+          P.unshift(query);
+
+          html += '<p style="color: var(--text-muted); font-size: 0.875rem; margin: 0.5rem 0;">After moving to front:</p>';
+          html += '<div class="perm-grid">';
+          P.forEach((val, i) => {
+            const isFront = i === 0;
+            html += `<div class="perm-cell ${isFront ? 'moved' : ''}"><span class="perm-value">${val}</span><span class="perm-index">${i}</span></div>`;
+          });
+          html += '</div></div>';
+        });
+
+        html += `<div style="margin-top: 1rem; padding: 1rem; background: rgba(0, 255, 157, 0.1); border: 1px solid var(--neon-green); border-radius: 8px;">`;
+        html += `<p style="color: var(--neon-green); font-weight: 700;">Final Result: [${result.join(', ')}]</p>`;
+        html += '</div></div>';
+
+        return html;
+      }
+
+      function handleProcess() {
+        const queries = queriesInput.value.split(',').map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n));
+        const m = parseInt(mInput.value, 10);
+
+        if (queries.length === 0 || isNaN(m) || m <= 0) {
+          alert('Please enter valid queries and m value');
+          return;
+        }
+
+        const result = processQueries(queries, m);
+        resultValue.textContent = '[' + result.join(', ') + ']';
+        resultContainer.classList.add('is-visible');
+        resultContainer.style.animation = 'neon-pulse 1s ease-in-out';
+        setTimeout(() => { resultContainer.style.animation = ''; }, 1000);
+      }
+
+      function handleVisualize() {
+        const queries = queriesInput.value.split(',').map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n));
+        const m = parseInt(mInput.value, 10);
+
+        if (queries.length === 0 || isNaN(m) || m <= 0) {
+          alert('Please enter valid queries and m value');
+          return;
+        }
+
+        visualizationContainer.innerHTML = visualizeQueries(queries, m);
+      }
+
+      function handleClear() {
+        queriesInput.value = '';
+        mInput.value = '';
+        resultContainer.classList.remove('is-visible');
+        visualizationContainer.innerHTML = '<p style="color: var(--text-muted); text-align: center;">Click "Visualize Steps" to see the permutation changes</p>';
+      }
+
+      function handleCopyCode(event) {
+        const codeBlock = event.target.closest('.c-code-block');
+        const code = codeBlock.querySelector('code');
+        navigator.clipboard.writeText(code.textContent).then(() => {
+          const originalText = event.target.textContent;
+          event.target.textContent = 'Copied!';
+          event.target.style.background = 'rgba(0, 255, 157, 0.2)';
+          event.target.style.borderColor = 'var(--neon-green)';
+          setTimeout(() => {
+            event.target.textContent = originalText;
+            event.target.style.background = '';
+            event.target.style.borderColor = '';
+          }, 2000);
+        });
+      }
+
+      btnProcess.addEventListener('click', handleProcess);
+      btnVisualize.addEventListener('click', handleVisualize);
+      btnClear.addEventListener('click', handleClear);
+      copyButtons.forEach(button => { button.addEventListener('click', handleCopyCode); });
+      queriesInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleProcess(); });
+      mInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleProcess(); });
+      window.addEventListener('load', handleProcess);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Predictive Aiming Demo</title>
+    <style>
+        body { background: #0a0a0a; color: #00ffcc; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; margin: 0; overflow: hidden; }
+        canvas { background: #111; border-bottom: 2px solid #333; cursor: crosshair; }
+        .hud { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.7); padding: 10px; border: 1px solid #00ffcc; pointer-events: none; }
+        b { color: #ff4444; }
+    </style>
+</head>
+<body>
+    <div class="hud">
+        <b>Predictive Aiming (Lead)</b><br>
+        Bela pika: Trenutna pozicija miške<br>
+        Modri krog: Predvidena točka zadetka<br>
+        Rdeči naboj: Leti proti prihodnosti!
+    </div>
+    <canvas id="aimCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('aimCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let mouse = { x: 0, y: 0, vx: 0, vy: 0, lastX: 0, lastY: 0 };
+        const turret = { x: 100, y: canvas.height / 2, bulletSpeed: 8 };
+        let bullets = [];
+
+        // Spremljanje hitrosti miške (tarče)
+        window.onmousemove = (e) => {
+            mouse.vx = e.clientX - mouse.lastX;
+            mouse.vy = e.clientY - mouse.lastY;
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+            mouse.lastX = e.clientX;
+            mouse.lastY = e.clientY;
+        };
+
+        function solveInterception() {
+            // Osnovna fizika: d = v * t
+            // Izračunamo čas 't', ko se razdalja med naboje in tarčo izniči
+            const dx = mouse.x - turret.x;
+            const dy = mouse.y - turret.y;
+            
+            // Kvadratna enačba za čas trka: (vx^2 + vy^2 - s^2)t^2 + 2(dx*vx + dy*vy)t + (dx^2 + dy^2) = 0
+            const a = mouse.vx * mouse.vx + mouse.vy * mouse.vy - turret.bulletSpeed * turret.bulletSpeed;
+            const b = 2 * (dx * mouse.vx + dy * mouse.vy);
+            const c = dx * dx + dy * dy;
+
+            const discriminant = b * b - 4 * a * c;
+            if (discriminant < 0) return null;
+
+            const t1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+            const t2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+            const t = Math.max(t1, t2); // Vzamemo pozitiven čas
+
+            return {
+                x: mouse.x + mouse.vx * t,
+                y: mouse.y + mouse.vy * t,
+                t: t
+            };
+        }
+
+        function shoot() {
+            const target = solveInterception();
+            if (target) {
+                const angle = Math.atan2(target.y - turret.y, target.x - turret.x);
+                bullets.push({
+                    x: turret.x, y: turret.y,
+                    vx: Math.cos(angle) * turret.bulletSpeed,
+                    vy: Math.sin(angle) * turret.bulletSpeed
+                });
+            }
+        }
+
+        setInterval(shoot, 500);
+
+        function draw() {
+            ctx.fillStyle = "rgba(0,0,0,0.1)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Turret
+            ctx.fillStyle = "#ff4444"; ctx.fillRect(turret.x - 10, turret.y - 10, 20, 20);
+
+            // Target Prediction
+            const prediction = solveInterception();
+            if (prediction) {
+                ctx.strokeStyle = "#00d4ff"; ctx.beginPath();
+                ctx.arc(prediction.x, prediction.y, 15, 0, Math.PI*2); ctx.stroke();
+            }
+
+            // Mouse Target
+            ctx.fillStyle = "white"; ctx.beginPath();
+            ctx.arc(mouse.x, mouse.y, 5, 0, Math.PI*2); ctx.fill();
+
+            // Bullets
+            bullets.forEach((b, i) => {
+                b.x += b.vx; b.y += b.vy;
+                ctx.fillStyle = "#ff4444"; ctx.beginPath();
+                ctx.arc(b.x, b.y, 4, 0, Math.PI*2); ctx.fill();
+                if (b.x > canvas.width || b.y < 0 || b.y > canvas.height) bullets.splice(i, 1);
+            });
+
+            requestAnimationFrame(draw);
+        }
+        draw();
+    </script>
+</body>
+</html>

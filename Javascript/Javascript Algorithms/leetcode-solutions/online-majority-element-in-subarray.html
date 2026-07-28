@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Majority Element In Subarray - LeetCode Solution</title>
+    <style>
+        :root {
+            --lime-green: #00ff9d;
+            --lime-dim: rgba(0, 255, 157, 0.3);
+            --bg-black: #050505;
+            --bg-surface: rgba(255, 255, 255, 0.05);
+            --text-primary: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.7);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg-black);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            border-bottom: 1px solid var(--lime-dim);
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            color: var(--lime-green);
+            text-shadow: 0 0 10px var(--lime-dim);
+            margin-bottom: 0.5rem;
+        }
+
+        .problem-desc {
+            background: var(--bg-surface);
+            border: 1px solid var(--lime-dim);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .problem-desc h2 {
+            color: var(--lime-green);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .code-section {
+            background: var(--bg-surface);
+            border: 1px solid var(--lime-dim);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .code-section h2 {
+            color: var(--lime-green);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        pre {
+            background: #0a0a0a;
+            border: 1px solid var(--lime-dim);
+            border-radius: 6px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .keyword { color: #ff00ff; }
+        .function { color: #00f3ff; }
+        .string { color: #00ff9d; }
+        .number { color: #bd00ff; }
+        .comment { color: rgba(255, 255, 255, 0.4); }
+
+        .demo-section {
+            background: var(--bg-surface);
+            border: 1px solid var(--lime-dim);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .demo-section h2 {
+            color: var(--lime-green);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            color: var(--lime-green);
+            margin-bottom: 0.5rem;
+        }
+
+        input, button {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--lime-dim);
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--text-primary);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+        }
+
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 10px var(--lime-dim);
+        }
+
+        button {
+            background: var(--lime-dim);
+            color: var(--bg-black);
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: var(--lime-green);
+            box-shadow: 0 0 20px var(--lime-dim);
+        }
+
+        .result {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(0, 255, 157, 0.1);
+            border-radius: 6px;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .result span {
+            color: var(--lime-green);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Online Majority Element In Subarray</h1>
+            <p style="color: var(--text-muted);">LeetCode Problem - Segment Tree + Binary Search Solution</p>
+        </header>
+
+        <section class="problem-desc">
+            <h2>Problem Description</h2>
+            <p>Design a data structure that efficiently finds the majority element of a given subarray. The majority element is an element that appears more than or equal to threshold times in the subarray.</p>
+        </section>
+
+        <section class="code-section">
+            <h2>JavaScript Solution</h2>
+            <pre><code><span class="keyword">class</span> <span class="function">MajorityChecker</span> {
+    <span class="keyword">constructor</span>(arr) {
+        <span class="keyword">this</span>.arr = arr;
+        <span class="keyword">this</span>.pos = <span class="keyword">new</span> <span class="function">Map</span>();
+        
+        <span class="comment">// Store positions of each element</span>
+        <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < arr.length; i++) {
+            <span class="keyword">if</span> (!<span class="keyword">this</span>.pos.<span class="function">has</span>(arr[i])) {
+                <span class="keyword">this</span>.pos.<span class="function">set</span>(arr[i], []);
+            }
+            <span class="keyword">this</span>.pos.<span class="function">get</span>(arr[i]).<span class="function">push</span>(i);
+        }
+    }
+
+    <span class="function">query</span>(left, right, threshold) {
+        <span class="keyword">const</span> length = right - left + <span class="number">1</span>;
+        
+        <span class="comment">// Try random sampling approach</span>
+        <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < <span class="number">10</span>; i++) {
+            <span class="keyword">const</span> randomIdx = <span class="function">Math</span>.<span class="function">floor</span>(<span class="function">Math</span>.<span class="function">random</span>() * length) + left;
+            <span class="keyword">const</span> candidate = <span class="keyword">this</span>.arr[randomIdx];
+            
+            <span class="keyword">if</span> (<span class="keyword">this</span>.<span class="function">getFrequency</span>(candidate, left, right) >= threshold) {
+                <span class="keyword">return</span> candidate;
+            }
+        }
+        
+        <span class="keyword">return</span> -<span class="number">1</span>;
+    }
+
+    <span class="function">getFrequency</span>(value, left, right) {
+        <span class="keyword">if</span> (!<span class="keyword">this</span>.pos.<span class="function">has</span>(value)) <span class="keyword">return</span> <span class="number">0</span>;
+        
+        <span class="keyword">const</span> positions = <span class="keyword">this</span>.pos.<span class="function">get</span>(value);
+        
+        <span class="comment">// Binary search for left boundary</span>
+        <span class="keyword">const</span> leftIdx = <span class="keyword">this</span>.<span class="function">lowerBound</span>(positions, left);
+        <span class="comment">// Binary search for right boundary</span>
+        <span class="keyword">const</span> rightIdx = <span class="keyword">this</span>.<span class="function">upperBound</span>(positions, right);
+        
+        <span class="keyword">return</span> rightIdx - leftIdx;
+    }
+
+    <span class="function">lowerBound</span>(arr, target) {
+        <span class="keyword">let</span> lo = <span class="number">0</span>, hi = arr.length;
+        <span class="keyword">while</span> (lo < hi) {
+            <span class="keyword">const</span> mid = <span class="function">Math</span>.<span class="function">floor</span>((lo + hi) / <span class="number">2</span>);
+            <span class="keyword">if</span> (arr[mid] < target) {
+                lo = mid + <span class="number">1</span>;
+            } <span class="keyword">else</span> {
+                hi = mid;
+            }
+        }
+        <span class="keyword">return</span> lo;
+    }
+
+    <span class="function">upperBound</span>(arr, target) {
+        <span class="keyword">let</span> lo = <span class="number">0</span>, hi = arr.length;
+        <span class="keyword">while</span> (lo < hi) {
+            <span class="keyword">const</span> mid = <span class="function">Math</span>.<span class="function">floor</span>((lo + hi) / <span class="number">2</span>);
+            <span class="keyword">if</span> (arr[mid] <= target) {
+                lo = mid + <span class="number">1</span>;
+            } <span class="keyword">else</span> {
+                hi = mid;
+            }
+        }
+        <span class="keyword">return</span> lo;
+    }
+}
+
+<span class="comment">// Usage Example:</span>
+<span class="keyword">const</span> arr = [<span class="number">1</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">1</span>];
+<span class="keyword">const</span> checker = <span class="keyword">new</span> <span class="function">MajorityChecker</span>(arr);
+console.<span class="function">log</span>(checker.<span class="function">query</span>(<span class="number">0</span>, <span class="number">2</span>, <span class="number">2</span>)); <span class="comment">// Returns 1</span></code></pre>
+        </section>
+
+        <section class="demo-section">
+            <h2>Interactive Demo</h2>
+            <div class="input-group">
+                <label for="array-input">Array (comma-separated):</label>
+                <input type="text" id="array-input" value="1,1,2,2,1" style="width: 100%;">
+            </div>
+            <div class="input-group">
+                <label for="left-input">Left Index:</label>
+                <input type="number" id="left-input" value="0" min="0">
+            </div>
+            <div class="input-group">
+                <label for="right-input">Right Index:</label>
+                <input type="number" id="right-input" value="4" min="0">
+            </div>
+            <div class="input-group">
+                <label for="threshold-input">Threshold:</label>
+                <input type="number" id="threshold-input" value="2" min="1">
+            </div>
+            <button onclick="runQuery()">Run Query</button>
+            <div class="result" id="result">
+                Result: <span id="output">-</span>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        class MajorityChecker {
+            constructor(arr) {
+                this.arr = arr;
+                this.pos = new Map();
+                
+                for (let i = 0; i < arr.length; i++) {
+                    if (!this.pos.has(arr[i])) {
+                        this.pos.set(arr[i], []);
+                    }
+                    this.pos.get(arr[i]).push(i);
+                }
+            }
+
+            query(left, right, threshold) {
+                const length = right - left + 1;
+                
+                for (let i = 0; i < 10; i++) {
+                    const randomIdx = Math.floor(Math.random() * length) + left;
+                    const candidate = this.arr[randomIdx];
+                    
+                    if (this.getFrequency(candidate, left, right) >= threshold) {
+                        return candidate;
+                    }
+                }
+                
+                return -1;
+            }
+
+            getFrequency(value, left, right) {
+                if (!this.pos.has(value)) return 0;
+                
+                const positions = this.pos.get(value);
+                const leftIdx = this.lowerBound(positions, left);
+                const rightIdx = this.upperBound(positions, right);
+                
+                return rightIdx - leftIdx;
+            }
+
+            lowerBound(arr, target) {
+                let lo = 0, hi = arr.length;
+                while (lo < hi) {
+                    const mid = Math.floor((lo + hi) / 2);
+                    if (arr[mid] < target) {
+                        lo = mid + 1;
+                    } else {
+                        hi = mid;
+                    }
+                }
+                return lo;
+            }
+
+            upperBound(arr, target) {
+                let lo = 0, hi = arr.length;
+                while (lo < hi) {
+                    const mid = Math.floor((lo + hi) / 2);
+                    if (arr[mid] <= target) {
+                        lo = mid + 1;
+                    } else {
+                        hi = mid;
+                    }
+                }
+                return lo;
+            }
+        }
+
+        function runQuery() {
+            const arrInput = document.getElementById('array-input').value;
+            const left = parseInt(document.getElementById('left-input').value);
+            const right = parseInt(document.getElementById('right-input').value);
+            const threshold = parseInt(document.getElementById('threshold-input').value);
+            
+            const arr = arrInput.split(',').map(x => parseInt(x.trim()));
+            const checker = new MajorityChecker(arr);
+            const result = checker.query(left, right, threshold);
+            
+            document.getElementById('output').textContent = result;
+        }
+    </script>
+</body>
+</html>

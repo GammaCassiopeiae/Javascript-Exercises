@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Dijkstra Algorithm Demo</title>
+    <style>
+        :root { --bg: #1a1a2e; --cell: #16213e; --wall: #0f3460; --text: #e94560; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; }
+        canvas { border: 3px solid var(--wall); box-shadow: 0 0 20px rgba(0,0,0,0.5); cursor: pointer; }
+        .controls { margin: 20px; padding: 15px; background: var(--cell); border-radius: 8px; }
+        button { background: var(--text); border: none; color: white; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        button:hover { opacity: 0.8; }
+        .legend { display: flex; gap: 15px; margin-bottom: 10px; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <h1>Dijkstrov Algoritem (Uteženi graf)</h1>
+    
+    <div class="controls">
+        <div class="legend">
+            <span>🟢 Start</span>
+            <span>🔴 Cilj</span>
+            <span>🟫 Težek teren (Utež 10)</span>
+            <span>🟦 Navadno (Utež 1)</span>
+        </div>
+        <button onclick="resetGrid()">Ponastavi mrežo</button>
+        <button onclick="findPath()">Zaženi Dijkstro</button>
+        <p>Klikni na mrežo, da dodaš "težek teren".</p>
+    </div>
+
+    <canvas id="dijkstraCanvas" width="600" height="400"></canvas>
+
+    <script>
+        const canvas = document.getElementById('dijkstraCanvas');
+        const ctx = canvas.getContext('2d');
+        const cols = 20, rows = 14;
+        const w = canvas.width / cols, h = canvas.height / rows;
+        let grid = [];
+
+        function initGrid() {
+            grid = [];
+            for (let i = 0; i < cols; i++) {
+                grid[i] = [];
+                for (let j = 0; j < rows; j++) {
+                    grid[i][j] = {
+                        x: i, y: j,
+                        weight: 1, // Osnovna utež
+                        dist: Infinity,
+                        parent: null,
+                        visited: false
+                    };
+                }
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < cols; i++) {
+                for (let j = 0; j < rows; j++) {
+                    let cell = grid[i][j];
+                    ctx.fillStyle = cell.weight > 1 ? '#3e2723' : '#16213e';
+                    ctx.strokeStyle = '#0f3460';
+                    ctx.fillRect(i * w, j * h, w, h);
+                    ctx.strokeRect(i * w, j * h, w, h);
+                }
+            }
+            // Označi Start (0,0) in Cilj (zadnji)
+            ctx.fillStyle = '#4caf50'; ctx.fillRect(0, 0, w, h);
+            ctx.fillStyle = '#e94560'; ctx.fillRect((cols-1)*w, (rows-1)*h, w, h);
+        }
+
+        async function findPath() {
+            let startNode = grid[0][0];
+            let endNode = grid[cols-1][rows-1];
+            startNode.dist = 0;
+            let unvisited = grid.flat();
+
+            while (unvisited.length > 0) {
+                // Sortiranje po razdalji (prioritetna vrsta)
+                unvisited.sort((a, b) => a.dist - b.dist);
+                let current = unvisited.shift();
+
+                if (current.dist === Infinity) break;
+                if (current === endNode) break;
+
+                current.visited = true;
+
+                // Preveri sosede (gor, dol, levo, desno)
+                const neighbors = [[0,1], [0,-1], [1,0], [-1,0]];
+                for (let [dx, dy] of neighbors) {
+                    let nx = current.x + dx, ny = current.y + dy;
+                    if (nx >= 0 && nx < cols && ny >= 0 && ny < rows) {
+                        let neighbor = grid[nx][ny];
+                        let alt = current.dist + neighbor.weight;
+                        if (alt < neighbor.dist) {
+                            neighbor.dist = alt;
+                            neighbor.parent = current;
+                        }
+                    }
+                }
+                
+                // Vizualizacija iskanja
+                if (current !== startNode) {
+                    ctx.fillStyle = 'rgba(233, 69, 96, 0.2)';
+                    ctx.fillRect(current.x * w, current.y * h, w, h);
+                }
+            }
+            drawPath(endNode);
+        }
+
+        function drawPath(endNode) {
+            let curr = endNode;
+            ctx.strokeStyle = '#00fff2';
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.moveTo(curr.x * w + w/2, curr.y * h + h/2);
+            while (curr.parent) {
+                curr = curr.parent;
+                ctx.lineTo(curr.x * w + w/2, curr.y * h + h/2);
+            }
+            ctx.stroke();
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = Math.floor((e.clientX - rect.left) / w);
+            const y = Math.floor((e.clientY - rect.top) / h);
+            if (grid[x] && grid[x][y]) {
+                grid[x][y].weight = grid[x][y].weight === 1 ? 10 : 1;
+                draw();
+            }
+        });
+
+        function resetGrid() { initGrid(); draw(); }
+        initGrid(); draw();
+    </script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maximum Number of Events That Can Be Attended - LeetCode Solution</title>
+    <style>
+        :root { --lime-green: #00ff9d; --lime-dim: rgba(0, 255, 157, 0.3); --bg-black: #050505; --bg-surface: rgba(255, 255, 255, 0.05); --text-primary: #ffffff; --text-muted: rgba(255, 255, 255, 0.7); }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg-black); color: var(--text-primary); min-height: 100vh; line-height: 1.6; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+        header { border-bottom: 1px solid var(--lime-dim); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+        h1 { font-size: clamp(1.5rem, 3vw, 2rem); color: var(--lime-green); text-shadow: 0 0 10px var(--lime-dim); margin-bottom: 0.5rem; }
+        .problem-desc, .code-section, .demo-section { background: var(--bg-surface); border: 1px solid var(--lime-dim); border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; }
+        h2 { color: var(--lime-green); font-size: 1.25rem; margin-bottom: 1rem; }
+        pre { background: #0a0a0a; border: 1px solid var(--lime-dim); border-radius: 6px; padding: 1.5rem; overflow-x: auto; font-family: 'Fira Code', monospace; font-size: 0.9rem; color: var(--text-primary); }
+        .keyword { color: #ff00ff; } .function { color: #00f3ff; } .string { color: #00ff9d; } .number { color: #bd00ff; } .comment { color: rgba(255, 255, 255, 0.4); }
+        input, button { padding: 0.75rem 1rem; border: 1px solid var(--lime-dim); border-radius: 6px; background: rgba(0, 0, 0, 0.3); color: var(--text-primary); font-family: 'Fira Code', monospace; font-size: 0.9rem; margin-bottom: 0.5rem; }
+        input:focus { outline: none; box-shadow: 0 0 10px var(--lime-dim); }
+        button { background: var(--lime-dim); color: var(--bg-black); cursor: pointer; font-weight: 700; transition: all 0.3s ease; }
+        button:hover { background: var(--lime-green); box-shadow: 0 0 20px var(--lime-dim); }
+        .result { margin-top: 1rem; padding: 1rem; background: rgba(0, 255, 157, 0.1); border-radius: 6px; font-family: 'Fira Code', monospace; }
+        .result span { color: var(--lime-green); }
+        label { display: block; color: var(--lime-green); margin-bottom: 0.5rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Maximum Number of Events That Can Be Attended</h1>
+            <p style="color: var(--text-muted);">LeetCode Problem - Greedy + Min-Heap</p>
+        </header>
+        <section class="problem-desc">
+            <h2>Problem Description</h2>
+            <p>Given an array of events where events[i] = [startDay, endDay], find the maximum number of events you can attend. You can only attend one event per day.</p>
+        </section>
+        <section class="code-section">
+            <h2>JavaScript Solution</h2>
+            <pre><code><span class="keyword">function</span> <span class="function">maxEvents</span>(events) {
+    <span class="comment">// Sort by start day</span>
+    events.<span class="function">sort</span>((a, b) => a[<span class="number">0</span>] - b[<span class="number">0</span>]);
+    
+    <span class="keyword">const</span> minHeap = [];
+    <span class="keyword">let</span> day = <span class="number">0</span>, idx = <span class="number">0</span>, count = <span class="number">0</span>;
+    
+    <span class="keyword">while</span> (idx < events.length || minHeap.length > <span class="number">0</span>) {
+        <span class="comment">// Add all events starting today</span>
+        <span class="keyword">if</span> (minHeap.length === <span class="number">0</span>) {
+            day = events[idx][<span class="number">0</span>];
+        }
+        
+        <span class="keyword">while</span> (idx < events.length && events[idx][<span class="number">0</span>] <= day) {
+            minHeap.<span class="function">push</span>(events[idx][<span class="number">1</span>]);
+            minHeap.<span class="function">sort</span>((a, b) => a - b);
+            idx++;
+        }
+        
+        <span class="comment">// Remove expired events</span>
+        <span class="keyword">while</span> (minHeap.length > <span class="number">0</span> && minHeap[<span class="number">0</span>] < day) {
+            minHeap.<span class="function">shift</span>();
+        }
+        
+        <span class="comment">// Attend event with earliest end day</span>
+        <span class="keyword">if</span> (minHeap.length > <span class="number">0</span>) {
+            minHeap.<span class="function">shift</span>();
+            count++;
+        }
+        
+        day++;
+    }
+    
+    <span class="keyword">return</span> count;
+}
+
+<span class="comment">// Usage:</span>
+console.<span class="function">log</span>(<span class="function">maxEvents</span>([[<span class="number">1</span>,<span class="number">2</span>],[<span class="number">2</span>,<span class="number">3</span>],[<span class="number">3</span>,<span class="number">4</span>]])); <span class="comment">// 3</span></code></pre>
+        </section>
+        <section class="demo-section">
+            <h2>Interactive Demo</h2>
+            <div class="input-group">
+                <label for="events-input">Events [[start,end],...]:</label>
+                <input type="text" id="events-input" value="[[1,2],[2,3],[3,4]]" style="width: 100%;">
+            </div>
+            <button onclick="runDemo()">Calculate Max Events</button>
+            <div class="result"><span id="output">-</span></div>
+        </section>
+    </div>
+    <script>
+        function maxEvents(events) {
+            events.sort((a, b) => a[0] - b[0]);
+            const minHeap = [];
+            let day = 0, idx = 0, count = 0;
+            while (idx < events.length || minHeap.length > 0) {
+                if (minHeap.length === 0) day = events[idx][0];
+                while (idx < events.length && events[idx][0] <= day) {
+                    minHeap.push(events[idx][1]);
+                    minHeap.sort((a, b) => a - b);
+                    idx++;
+                }
+                while (minHeap.length > 0 && minHeap[0] < day) minHeap.shift();
+                if (minHeap.length > 0) { minHeap.shift(); count++; }
+                day++;
+            }
+            return count;
+        }
+        function runDemo() {
+            const events = JSON.parse(document.getElementById('events-input').value);
+            document.getElementById('output').textContent = maxEvents(events);
+        }
+    </script>
+</body>
+</html>

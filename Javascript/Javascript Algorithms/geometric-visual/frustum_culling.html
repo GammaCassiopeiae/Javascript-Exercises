@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frustum Culling Visualization</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="math3d.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Frustum Culling</h1>
+    </header>
+    <div class="description">
+        <p>Frustum culling is the process of determining which objects in a 3D scene are visible within the camera's viewing frustum. Objects completely outside the frustum are "culled" and not rendered, which significantly improves performance.</p>
+        <p>In this visualization, the green pyramid represents the viewing frustum. Spheres are colored <b>green</b> if they are inside (visible) and <b>red</b> if they are outside (culled).</p>
+    </div>
+    <div class="controls">
+        <button id="resetBtn">Randomize Objects</button>
+    </div>
+    <canvas id="cullingCanvas" width="800" height="600"></canvas>
+
+    <script>
+        const canvas = document.getElementById('cullingCanvas');
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width;
+        const height = canvas.height;
+
+        let angleY = 0;
+        let angleX = 0.3;
+
+        class Sphere {
+            constructor(pos, radius) {
+                this.pos = pos;
+                this.radius = radius;
+                this.visible = true;
+            }
+        }
+
+        let spheres = [];
+        function initSpheres() {
+            spheres = [];
+            for (let i = 0; i < 50; i++) {
+                spheres.push(new Sphere(
+                    new Vec3((Math.random() - 0.5) * 10, (Math.random() - 0.5) * 10, (Math.random() - 0.5) * 10),
+                    0.3 + Math.random() * 0.4
+                ));
+            }
+        }
+
+        function isSphereInFrustum(sphere, planes) {
+            for (let plane of planes) {
+                const dist = plane.normal.dot(sphere.pos) + plane.d;
+                if (dist < -sphere.radius) return false;
+            }
+            return true;
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, width, height);
+
+            const viewMat = Mat4.rotationX(angleX).multiply(Mat4.rotationY(angleY));
+            const projMat = Mat4.perspective(Math.PI / 4, width / height, 1, 20);
+            const transform = projMat.multiply(viewMat);
+
+            // Simple camera/frustum planes in world space for culling
+            // For simplicity, we'll cull against a fixed frustum in world space
+            // Near at z=-1, Far at z=-10, and sides based on 45 deg FOV
+            const planes = [
+                { normal: new Vec3(0, 0, -1), d: -1 }, // Near
+                { normal: new Vec3(0, 0, 1), d: 10 },  // Far
+                { normal: new Vec3(1, 0, -1).normalize(), d: 0 }, // Left
+                { normal: new Vec3(-1, 0, -1).normalize(), d: 0 }, // Right
+                { normal: new Vec3(0, 1, -1).normalize(), d: 0 }, // Bottom
+                { normal: new Vec3(0, -1, -1).normalize(), d: 0 } // Top
+            ];
+
+            // Draw Frustum
+            const fNear = 1, fFar = 10, fFOV = Math.PI / 4;
+            const hNear = Math.tan(fFOV/2) * fNear;
+            const wNear = hNear * (width/height);
+            const hFar = Math.tan(fFOV/2) * fFar;
+            const wFar = hFar * (width/height);
+
+            const frustumPoints = [
+                new Vec3(-wNear, -hNear, -fNear), new Vec3(wNear, -hNear, -fNear),
+                new Vec3(wNear, hNear, -fNear), new Vec3(-wNear, hNear, -fNear),
+                new Vec3(-wFar, -hFar, -fFar), new Vec3(wFar, -hFar, -fFar),
+                new Vec3(wFar, hFar, -fFar), new Vec3(-wFar, hFar, -fFar)
+            ];
+
+            const projectedFrustum = frustumPoints.map(p => project(transform.transform(p), width, height));
+
+            ctx.strokeStyle = '#4CAF50';
+            ctx.beginPath();
+            // Near plane
+            ctx.moveTo(projectedFrustum[0].x, projectedFrustum[0].y);
+            for(let i=1; i<4; i++) ctx.lineTo(projectedFrustum[i].x, projectedFrustum[i].y);
+            ctx.closePath();
+            // Far plane
+            ctx.moveTo(projectedFrustum[4].x, projectedFrustum[4].y);
+            for(let i=5; i<8; i++) ctx.lineTo(projectedFrustum[i].x, projectedFrustum[i].y);
+            ctx.closePath();
+            // Connect
+            for(let i=0; i<4; i++) {
+                ctx.moveTo(projectedFrustum[i].x, projectedFrustum[i].y);
+                ctx.lineTo(projectedFrustum[i+4].x, projectedFrustum[i+4].y);
+            }
+            ctx.stroke();
+
+            // Draw Spheres
+            spheres.forEach(s => {
+                s.visible = isSphereInFrustum(s, planes);
+                const p = project(transform.transform(s.pos), width, height);
+                
+                // Approximate size based on distance
+                const dist = s.pos.mag();
+                const size = (s.radius * 400) / dist;
+
+                if (p.x > -50 && p.x < width + 50 && p.y > -50 && p.y < height + 50) {
+                    ctx.fillStyle = s.visible ? '#4CAF50' : '#F44336';
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, Math.max(1, size), 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+
+            angleY += 0.005;
+            requestAnimationFrame(draw);
+        }
+
+        document.getElementById('resetBtn').onclick = initSpheres;
+        initSpheres();
+        draw();
+    </script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curves Visualization</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Curves: Bezier, B-Splines, and NURBS</h1>
+    </header>
+    <div class="description">
+        <p>Bézier curves are defined by control points. B-splines and NURBS offer more local control and can represent more complex shapes. Drag the control points to modify the curves.</p>
+    </div>
+    <div class="controls">
+        <button onclick="setMode('bezier')">Bezier</button>
+        <button onclick="setMode('bspline')">B-Spline</button>
+        <button onclick="setMode('nurbs')">NURBS</button>
+    </div>
+    <canvas id="curvesCanvas" width="800" height="600"></canvas>
+
+    <script>
+        const canvas = document.getElementById('curvesCanvas');
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width;
+        const height = canvas.height;
+
+        let mode = 'bezier';
+        let points = [
+            { x: 100, y: 500, w: 1 },
+            { x: 200, y: 100, w: 1 },
+            { x: 600, y: 100, w: 1 },
+            { x: 700, y: 500, w: 1 }
+        ];
+
+        let draggingPoint = null;
+
+        function setMode(m) {
+            mode = m;
+        }
+
+        canvas.onmousedown = (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            points.forEach(p => {
+                if (Math.hypot(p.x - x, p.y - y) < 10) draggingPoint = p;
+            });
+        };
+
+        window.onmousemove = (e) => {
+            if (draggingPoint) {
+                const rect = canvas.getBoundingClientRect();
+                draggingPoint.x = e.clientX - rect.left;
+                draggingPoint.y = e.clientY - rect.top;
+            }
+        };
+
+        window.onmouseup = () => draggingPoint = null;
+
+        function lerp(a, b, t) {
+            return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
+        }
+
+        function getBezier(t) {
+            let p = [...points];
+            while (p.length > 1) {
+                let nextP = [];
+                for (let i = 0; i < p.length - 1; i++) {
+                    nextP.push(lerp(p[i], p[i+1], t));
+                }
+                p = nextP;
+            }
+            return p[0];
+        }
+
+        // B-spline basis function
+        function N(i, k, t, knots) {
+            if (k === 1) {
+                return (t >= knots[i] && t < knots[i+1]) ? 1 : 0;
+            }
+            let den1 = knots[i+k-1] - knots[i];
+            let den2 = knots[i+k] - knots[i+1];
+            let a = den1 === 0 ? 0 : ((t - knots[i]) / den1) * N(i, k - 1, t, knots);
+            let b = den2 === 0 ? 0 : ((knots[i+k] - t) / den2) * N(i + 1, k - 1, t, knots);
+            return a + b;
+        }
+
+        function getBSpline(t, k = 3) {
+            const n = points.length - 1;
+            // Uniform knots
+            const knots = [];
+            for (let i = 0; i <= n + k + 1; i++) knots.push(i);
+            
+            // Map t to knot range
+            const tMin = knots[k-1];
+            const tMax = knots[n+1];
+            const mappedT = tMin + t * (tMax - tMin);
+
+            let x = 0, y = 0;
+            for (let i = 0; i <= n; i++) {
+                const basis = N(i, k, mappedT, knots);
+                x += points[i].x * basis;
+                y += points[i].y * basis;
+            }
+            return { x, y };
+        }
+
+        function getNURBS(t, k = 3) {
+            const n = points.length - 1;
+            const knots = [];
+            // Clamped knots
+            for (let i = 0; i < k; i++) knots.push(0);
+            for (let i = 0; i <= n - k + 1; i++) knots.push(i + 1);
+            for (let i = 0; i < k; i++) knots.push(n - k + 2);
+
+            const tMin = knots[0];
+            const tMax = knots[knots.length - 1];
+            const mappedT = tMin + t * (tMax - tMin);
+            // Handle t=1 boundary
+            const mt = mappedT === tMax ? tMax - 0.0001 : mappedT;
+
+            let x = 0, y = 0, weightSum = 0;
+            const weights = [1, 2, 0.5, 1]; // Example weights
+
+            for (let i = 0; i <= n; i++) {
+                const basis = N(i, k, mt, knots);
+                const w = weights[i % weights.length];
+                x += points[i].x * basis * w;
+                y += points[i].y * basis * w;
+                weightSum += basis * w;
+            }
+            return { x: x / weightSum, y: y / weightSum };
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, width, height);
+
+            // Draw control polygon
+            ctx.strokeStyle = '#333';
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(points[0].x, points[0].y);
+            for (let i = 1; i < points.length; i++) ctx.lineTo(points[i].x, points[i].y);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Draw curve
+            ctx.strokeStyle = '#4CAF50';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            for (let t = 0; t <= 1; t += 0.01) {
+                let p;
+                if (mode === 'bezier') p = getBezier(t);
+                else if (mode === 'bspline') p = getBSpline(t);
+                else p = getNURBS(t);
+
+                if (t === 0) ctx.moveTo(p.x, p.y);
+                else ctx.lineTo(p.x, p.y);
+            }
+            ctx.stroke();
+
+            // Draw control points
+            points.forEach(p => {
+                ctx.fillStyle = '#2196F3';
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            ctx.fillStyle = '#fff';
+            ctx.fillText(`Mode: ${mode.toUpperCase()}`, 20, 30);
+
+            requestAnimationFrame(draw);
+        }
+
+        draw();
+    </script>
+</body>
+</html>

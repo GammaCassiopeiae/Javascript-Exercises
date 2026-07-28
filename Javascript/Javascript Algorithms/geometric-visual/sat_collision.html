@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAT Collision Visualization</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Separating Axis Theorem (SAT)</h1>
+    </header>
+    <div class="description">
+        <p>The Separating Axis Theorem (SAT) states that two convex shapes do not overlap if there exists an axis on which their projections do not overlap. For polygons, we only need to check axes perpendicular to the edges of the polygons.</p>
+        <p>Drag the shapes to see the collision detection and the projected axes in real-time. If they overlap on <b>all</b> axes, they are colliding (shown in red).</p>
+    </div>
+    <canvas id="satCanvas" width="800" height="600"></canvas>
+
+    <script>
+        const canvas = document.getElementById('satCanvas');
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width;
+        const height = canvas.height;
+
+        class Polygon {
+            constructor(vertices, color) {
+                this.vertices = vertices;
+                this.color = color;
+                this.pos = { x: 0, y: 0 };
+            }
+
+            getTransformedVertices() {
+                return this.vertices.map(v => ({ x: v.x + this.pos.x, y: v.y + this.pos.y }));
+            }
+
+            getAxes() {
+                const verts = this.getTransformedVertices();
+                const axes = [];
+                for (let i = 0; i < verts.length; i++) {
+                    const p1 = verts[i];
+                    const p2 = verts[(i + 1) % verts.length];
+                    const edge = { x: p1.x - p2.x, y: p1.y - p2.y };
+                    // Normal
+                    const normal = { x: -edge.y, y: edge.x };
+                    const len = Math.sqrt(normal.x * normal.x + normal.y * normal.y);
+                    axes.push({ x: normal.x / len, y: normal.y / len });
+                }
+                return axes;
+            }
+
+            project(axis) {
+                const verts = this.getTransformedVertices();
+                let min = Infinity;
+                let max = -Infinity;
+                for (let v of verts) {
+                    const dot = v.x * axis.x + v.y * axis.y;
+                    if (dot < min) min = dot;
+                    if (dot > max) max = dot;
+                }
+                return { min, max };
+            }
+
+            draw(isColliding) {
+                const verts = this.getTransformedVertices();
+                ctx.fillStyle = isColliding ? 'rgba(244, 67, 54, 0.6)' : this.color;
+                ctx.strokeStyle = isColliding ? '#F44336' : '#fff';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(verts[0].x, verts[0].y);
+                for (let i = 1; i < verts.length; i++) ctx.lineTo(verts[i].x, verts[i].y);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            }
+        }
+
+        const poly1 = new Polygon([{x:0, y:0}, {x:100, y:0}, {x:100, y:100}, {x:0, y:100}], 'rgba(76, 175, 80, 0.6)');
+        const poly2 = new Polygon([{x:0, y:0}, {x:80, y:-40}, {x:120, y:40}, {x:40, y:80}], 'rgba(33, 150, 243, 0.6)');
+
+        poly1.pos = { x: 200, y: 200 };
+        poly2.pos = { x: 400, y: 250 };
+
+        let draggingPoly = null;
+        let offset = { x: 0, y: 0 };
+
+        canvas.onmousedown = (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mouse = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+            [poly1, poly2].forEach(p => {
+                const verts = p.getTransformedVertices();
+                // Simple hit test
+                let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+                verts.forEach(v => {
+                    minX = Math.min(minX, v.x); maxX = Math.max(maxX, v.x);
+                    minY = Math.min(minY, v.y); maxY = Math.max(maxY, v.y);
+                });
+                if (mouse.x >= minX && mouse.x <= maxX && mouse.y >= minY && mouse.y <= maxY) {
+                    draggingPoly = p;
+                    offset = { x: mouse.x - p.pos.x, y: mouse.y - p.pos.y };
+                }
+            });
+        };
+
+        window.onmousemove = (e) => {
+            if (draggingPoly) {
+                const rect = canvas.getBoundingClientRect();
+                draggingPoly.pos.x = e.clientX - rect.left - offset.x;
+                draggingPoly.pos.y = e.clientY - rect.top - offset.y;
+            }
+        };
+
+        window.onmouseup = () => draggingPoly = null;
+
+        function checkCollision() {
+            const axes = [...poly1.getAxes(), ...poly2.getAxes()];
+            let colliding = true;
+            let currentAxes = [];
+
+            for (let axis of axes) {
+                const p1 = poly1.project(axis);
+                const p2 = poly2.project(axis);
+                const overlap = Math.min(p1.max, p2.max) - Math.max(p1.min, p2.min);
+                if (overlap < 0) {
+                    colliding = false;
+                }
+                currentAxes.push({ axis, p1, p2, overlap: overlap >= 0 });
+            }
+            return { colliding, currentAxes };
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, width, height);
+            const { colliding, currentAxes } = checkCollision();
+
+            // Draw axes and projections
+            currentAxes.forEach((data, i) => {
+                const axis = data.axis;
+                const p1 = data.p1;
+                const p2 = data.p2;
+
+                // Draw axis line
+                const centerX = 100 + (i % 4) * 200;
+                const centerY = 500 + Math.floor(i / 4) * 40;
+                
+                ctx.strokeStyle = '#555';
+                ctx.beginPath();
+                ctx.moveTo(centerX - axis.x * 80, centerY - axis.y * 80);
+                ctx.lineTo(centerX + axis.x * 80, centerY + axis.y * 80);
+                ctx.stroke();
+
+                // Draw projections
+                ctx.lineWidth = 4;
+                ctx.strokeStyle = 'rgba(76, 175, 80, 0.8)';
+                ctx.beginPath();
+                ctx.moveTo(centerX + axis.x * (p1.min - (p1.min+p1.max)/2), centerY + axis.y * (p1.min - (p1.min+p1.max)/2));
+                ctx.lineTo(centerX + axis.x * (p1.max - (p1.min+p1.max)/2), centerY + axis.y * (p1.max - (p1.min+p1.max)/2));
+                ctx.stroke();
+
+                ctx.strokeStyle = 'rgba(33, 150, 243, 0.8)';
+                ctx.beginPath();
+                ctx.moveTo(centerX + axis.x * (p2.min - (p1.min+p1.max)/2), centerY + axis.y * (p2.min - (p1.min+p1.max)/2));
+                ctx.lineTo(centerX + axis.x * (p2.max - (p1.min+p1.max)/2), centerY + axis.y * (p2.max - (p1.min+p1.max)/2));
+                ctx.stroke();
+                ctx.lineWidth = 1;
+            });
+
+            poly1.draw(colliding);
+            poly2.draw(colliding);
+
+            requestAnimationFrame(draw);
+        }
+
+        draw();
+    </script>
+</body>
+</html>

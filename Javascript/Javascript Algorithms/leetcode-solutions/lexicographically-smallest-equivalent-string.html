@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lexicographically Smallest Equivalent String | Algorithm Visualizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Inter:wght@300;400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --neon-cyan: #00f3ff; --neon-magenta: #ff00ff; --neon-green: #00ff9d; --neon-purple: #bd00ff; --neon-orange: #ff6b00;
+      --bg-deep: #050505; --bg-card: rgba(255, 255, 255, 0.08); --text-primary: #ffffff; --text-muted: rgba(255, 255, 255, 0.7);
+      --font-display: 'Rajdhani', system-ui, sans-serif; --font-body: 'Inter', system-ui, sans-serif; --font-mono: 'Fira Code', monospace;
+      --space-xs: 0.25rem; --space-sm: 0.5rem; --space-md: 1rem; --space-lg: 2rem; --space-xl: 4rem;
+      --glow-cyan: 0 0 5px var(--neon-cyan), 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan);
+      --glow-green: 0 0 5px var(--neon-green), 0 0 10px var(--neon-green), 0 0 20px var(--neon-green);
+      --transition-base: 0.3s; --ease-out: cubic-bezier(0.4, 0, 0.2, 1); --z-sticky: 100;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background-color: var(--bg-deep); color: var(--text-primary); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; }
+    ::selection { background: var(--neon-cyan); color: #000; }
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: var(--bg-deep); }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--neon-cyan), var(--neon-purple)); border-radius: 5px; }
+    .l-body { display: flex; flex-direction: column; min-height: 100vh; }
+    .l-header { position: sticky; top: 0; z-index: var(--z-sticky); background: rgba(5, 5, 5, 0.95); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(0, 243, 255, 0.2); }
+    .l-main { flex: 1; padding: var(--space-xl) var(--space-md); max-width: 1400px; margin-inline: auto; width: 100%; }
+    .l-single-column { max-width: 900px; margin-inline: auto; }
+    .c-header { padding: var(--space-md) var(--space-lg); display: flex; justify-content: space-between; align-items: center; }
+    .c-header__brand { font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; letter-spacing: 0.1em; background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .c-header__nav { display: flex; gap: var(--space-md); }
+    .c-nav-link { color: var(--text-muted); text-decoration: none; padding: var(--space-sm) var(--space-md); }
+    .c-nav-link:hover { color: var(--neon-cyan); }
+    .c-card { background: var(--bg-card); border: 1px solid rgba(0, 243, 255, 0.15); border-radius: 12px; padding: var(--space-lg); backdrop-filter: blur(10px); transition: all var(--transition-base) var(--ease-out); }
+    .c-card:hover { transform: translateY(-5px); border-color: rgba(0, 243, 255, 0.4); box-shadow: var(--glow-cyan); }
+    .c-card__header { margin-bottom: var(--space-md); }
+    .c-card__title { font-family: var(--font-display); font-size: clamp(1.25rem, 2.5vw, 1.5rem); font-weight: 700; color: var(--neon-cyan); display: flex; align-items: center; gap: var(--space-sm); }
+    .c-card__content { color: var(--text-muted); }
+    .c-code-block { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(189, 0, 255, 0.2); border-radius: 8px; padding: var(--space-md); overflow-x: auto; font-family: var(--font-mono); font-size: 0.875rem; line-height: 1.8; }
+    .c-code-block__header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm); padding-bottom: var(--space-sm); border-bottom: 1px solid rgba(189, 0, 255, 0.1); }
+    .c-code-block__lang { color: var(--neon-purple); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+    .c-code-block__copy { background: transparent; border: 1px solid rgba(0, 243, 255, 0.3); color: var(--neon-cyan); padding: var(--space-xs) var(--space-sm); border-radius: 4px; cursor: pointer; font-size: 0.75rem; }
+    .c-code-block__copy:hover { background: rgba(0, 243, 255, 0.1); }
+    .c-code-block pre { margin: 0; white-space: pre-wrap; }
+    .c-code-block code { color: var(--text-primary); }
+    .token-keyword { color: var(--neon-magenta); }
+    .token-function { color: var(--neon-cyan); }
+    .token-string { color: var(--neon-green); }
+    .token-comment { color: var(--text-muted); font-style: italic; }
+    .token-number { color: var(--neon-orange); }
+    .c-input-group { margin-bottom: var(--space-md); }
+    .c-input-label { display: block; color: var(--neon-cyan); font-size: 0.875rem; font-weight: 500; margin-bottom: var(--space-sm); }
+    .c-input-label__required { color: var(--neon-magenta); margin-left: var(--space-xs); }
+    .c-input { width: 100%; padding: 0.8rem 1.2rem; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(0, 243, 255, 0.2); border-radius: 8px; color: var(--text-primary); font-family: var(--font-mono); font-size: 0.875rem; }
+    .c-input:focus { outline: none; border-color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 243, 255, 0.3); }
+    .c-button { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-sm); padding: 0.8rem 1.5rem; background: linear-gradient(135deg, rgba(0, 243, 255, 0.1), rgba(189, 0, 255, 0.1)); border: 1px solid rgba(0, 243, 255, 0.3); border-radius: 8px; color: var(--neon-cyan); font-family: var(--font-display); font-size: 0.875rem; font-weight: 700; cursor: pointer; text-transform: uppercase; }
+    .c-button:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(0, 243, 255, 0.4); }
+    .c-button--primary { background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple)); color: #000; border: none; }
+    .c-button--primary:hover { box-shadow: var(--glow-cyan); }
+    .c-button-group { display: flex; gap: var(--space-md); flex-wrap: wrap; }
+    .c-result { margin-top: var(--space-md); padding: var(--space-md); background: rgba(0, 255, 157, 0.05); border: 1px solid rgba(0, 255, 157, 0.3); border-radius: 8px; display: flex; align-items: center; gap: var(--space-md); opacity: 0; transform: translateY(10px); transition: all var(--transition-base) var(--ease-out); }
+    .c-result.is-visible { opacity: 1; transform: translateY(0); }
+    .c-result__icon { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(0, 255, 157, 0.1); border-radius: 50%; color: var(--neon-green); font-size: 1.5rem; }
+    .c-result__content { flex: 1; }
+    .c-result__title { font-family: var(--font-display); font-size: 1.125rem; font-weight: 700; color: var(--neon-green); }
+    .c-result__value { font-family: var(--font-mono); font-size: 1.25rem; color: var(--text-primary); }
+    .c-explanation { margin-top: var(--space-lg); }
+    .c-explanation__list { list-style: none; padding-left: 0; }
+    .c-explanation__item { position: relative; padding-left: var(--space-lg); margin-bottom: var(--space-md); color: var(--text-muted); }
+    .c-explanation__item::before { content: '▸'; position: absolute; left: 0; color: var(--neon-cyan); font-size: 1.125rem; }
+    .c-complexity-badge { display: inline-flex; align-items: center; gap: var(--space-sm); padding: var(--space-sm) var(--space-md); background: rgba(189, 0, 255, 0.1); border: 1px solid rgba(189, 0, 255, 0.3); border-radius: 20px; font-family: var(--font-mono); font-size: 0.75rem; color: var(--neon-purple); margin-right: var(--space-sm); }
+    .c-footer { margin-top: auto; padding: var(--space-lg); border-top: 1px solid rgba(0, 243, 255, 0.1); text-align: center; color: var(--text-muted); font-size: 0.875rem; }
+    .c-footer__links { display: flex; justify-content: center; gap: var(--space-lg); margin-bottom: var(--space-md); }
+    .c-footer__link { color: var(--neon-cyan); text-decoration: none; }
+    .c-footer__link:hover { color: var(--neon-magenta); }
+    @keyframes neon-pulse { 0%, 100% { box-shadow: 0 0 5px var(--neon-cyan); } 50% { box-shadow: 0 0 20px var(--neon-cyan), 0 0 30px var(--neon-cyan); } }
+    @keyframes glow-flicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+    .c-header__brand { animation: glow-flicker 3s ease-in-out infinite; }
+    @media (max-width: 768px) { .c-header { flex-direction: column; text-align: center; } .c-button-group { flex-direction: column; } .c-button { width: 100%; } }
+    .c-visualization { background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(0, 243, 255, 0.1); border-radius: 8px; padding: var(--space-md); margin-top: var(--space-md); }
+  </style>
+</head>
+<body class="l-body">
+  <header class="l-header">
+    <div class="c-header">
+      <h1 class="c-header__brand">⚡ ALGO_VISUALIZER</h1>
+      <nav class="c-header__nav">
+        <a href="#" class="c-nav-link">Problems</a>
+        <a href="#" class="c-nav-link">Visualize</a>
+        <a href="#" class="c-nav-link">About</a>
+      </nav>
+    </div>
+  </header>
+  <main class="l-main">
+    <div class="l-single-column">
+      <article class="c-card">
+        <header class="c-card__header">
+          <h2 class="c-card__title"><span>🔤</span> Lexicographically Smallest Equivalent String</h2>
+        </header>
+        <div class="c-card__content">
+          <p>Given two strings s1 and s2 of the same length defining character equivalencies, and a base string baseStr, return the lexicographically smallest equivalent string. Characters in the same equivalence group can be swapped, so use the smallest character from each group.</p>
+          <div style="margin-top: var(--space-md); display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+            <span class="c-complexity-badge">⏱️ Time: O(n + m)</span>
+            <span class="c-complexity-badge">💾 Space: O(1)</span>
+            <span class="c-complexity-badge">📊 Difficulty: Medium</span>
+          </div>
+        </div>
+      </article>
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title"><span>🎯</span> Input</h2>
+        </header>
+        <div class="c-card__content">
+          <div class="c-input-group">
+            <label class="c-input-label" for="inputS1">String s1 <span class="c-input-label__required">*</span></label>
+            <input type="text" id="inputS1" class="c-input" placeholder="e.g., parker" value="parker" autocomplete="off">
+          </div>
+          <div class="c-input-group">
+            <label class="c-input-label" for="inputS2">String s2 <span class="c-input-label__required">*</span></label>
+            <input type="text" id="inputS2" class="c-input" placeholder="e.g., morris" value="morris" autocomplete="off">
+          </div>
+          <div class="c-input-group">
+            <label class="c-input-label" for="inputBase">Base string <span class="c-input-label__required">*</span></label>
+            <input type="text" id="inputBase" class="c-input" placeholder="e.g., parser" value="parser" autocomplete="off">
+          </div>
+          <div class="c-button-group">
+            <button id="btnCalculate" class="c-button c-button--primary"><span>🚀</span> Calculate</button>
+            <button id="btnVisualize" class="c-button"><span>👁️</span> Visualize</button>
+            <button id="btnClear" class="c-button"><span>🗑️</span> Clear</button>
+          </div>
+        </div>
+      </article>
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title"><span>📈</span> Result</h2>
+        </header>
+        <div class="c-card__content">
+          <div id="resultContainer" class="c-result">
+            <div class="c-result__icon">✓</div>
+            <div class="c-result__content">
+              <div class="c-result__title">Smallest Equivalent String</div>
+              <div id="resultValue" class="c-result__value">-</div>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title"><span>🔬</span> Visualization</h2>
+        </header>
+        <div class="c-card__content">
+          <div id="visualizationContainer" class="c-visualization">
+            <p style="color: var(--text-muted); text-align: center;">Click "Visualize" to see equivalence groups</p>
+          </div>
+        </div>
+      </article>
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title"><span>💻</span> Solution Code</h2>
+        </header>
+        <div class="c-card__content">
+          <div class="c-code-block">
+            <div class="c-code-block__header">
+              <span class="c-code-block__lang">JavaScript</span>
+              <button class="c-code-block__copy js-copy-code">Copy</button>
+            </div>
+            <pre><code id="solutionCode"><span class="token-keyword">function</span> <span class="token-function">smallestEquivalentString</span>(s1, s2, baseStr) {
+  <span class="token-comment">// Union-Find with path compression</span>
+  <span class="token-keyword">const</span> parent = <span class="token-keyword">new</span> Array(<span class="token-number">26</span>).fill(<span class="token-keyword">null</span>).map((_, i) => i);
+  
+  <span class="token-keyword">function</span> <span class="token-function">find</span>(x) {
+    <span class="token-keyword">if</span> (parent[x] !== x) {
+      parent[x] = find(parent[x]); <span class="token-comment">// Path compression</span>
+    }
+    <span class="token-keyword">return</span> parent[x];
+  }
+  
+  <span class="token-keyword">function</span> <span class="token-function">union</span>(x, y) {
+    <span class="token-keyword">const</span> rootX = find(x), rootY = find(y);
+    <span class="token-keyword">if</span> (rootX !== rootY) {
+      <span class="token-comment">// Always attach to smaller character</span>
+      parent[Math.max(rootX, rootY)] = Math.min(rootX, rootY);
+    }
+  }
+  
+  <span class="token-comment">// Build equivalence groups</span>
+  <span class="token-keyword">for</span> (<span class="token-keyword">let</span> i = <span class="token-number">0</span>; i < s1.length; i++) {
+    union(s1.charCodeAt(i) - <span class="token-number">97</span>, s2.charCodeAt(i) - <span class="token-number">97</span>);
+  }
+  
+  <span class="token-comment">// Transform baseStr using smallest equivalent</span>
+  <span class="token-keyword">return</span> baseStr.split(<span class="token-string">''</span>).map(c => {
+    <span class="token-keyword">const</span> root = find(c.charCodeAt(<span class="token-number">0</span>) - <span class="token-number">97</span>);
+    <span class="token-keyword">return</span> String.fromCharCode(root + <span class="token-number">97</span>);
+  }).join(<span class="token-string">''</span>);
+}</code></pre>
+          </div>
+        </div>
+      </article>
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title"><span>📖</span> Algorithm Explanation</h2>
+        </header>
+        <div class="c-card__content c-explanation">
+          <ul class="c-explanation__list">
+            <li class="c-explanation__item">Use Union-Find (Disjoint Set Union) to group equivalent characters.</li>
+            <li class="c-explanation__item">When unioning, always attach to the smaller character (lexicographically).</li>
+            <li class="c-explanation__item">Use path compression for efficient find operations.</li>
+            <li class="c-explanation__item">For each character in baseStr, replace it with its root (smallest equivalent).</li>
+          </ul>
+        </div>
+      </article>
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title"><span>📝</span> Example Walkthrough</h2>
+        </header>
+        <div class="c-card__content">
+          <div class="c-code-block">
+            <pre><code>Input: s1 = "parker", s2 = "morris", baseStr = "parser"
+
+Equivalencies:
+p↔m, a↔o, r↔r, k↔r, e↔i, r↔s
+
+Groups formed:
+{a, m, o, p} → smallest: a
+{e, i} → smallest: e
+{k, r, s} → smallest: k
+
+Transform "parser":
+p → a (from {a,m,o,p})
+a → a (from {a,m,o,p})
+r → k (from {k,r,s})
+s → k (from {k,r,s})
+e → e (from {e,i})
+r → k (from {k,r,s})
+
+Result: "aakkek"</code></pre>
+          </div>
+        </div>
+      </article>
+    </div>
+  </main>
+  <footer class="c-footer">
+    <div class="c-footer__links">
+      <a href="#" class="c-footer__link">GitHub</a>
+      <a href="#" class="c-footer__link">Documentation</a>
+      <a href="#" class="c-footer__link">Contact</a>
+    </div>
+    <p>&copy; 2026 Algo Visualizer. Built with 💜 and neon dreams.</p>
+  </footer>
+  <script>
+    (function() {
+      'use strict';
+      const inputS1 = document.getElementById('inputS1');
+      const inputS2 = document.getElementById('inputS2');
+      const inputBase = document.getElementById('inputBase');
+      const btnCalculate = document.getElementById('btnCalculate');
+      const btnVisualize = document.getElementById('btnVisualize');
+      const btnClear = document.getElementById('btnClear');
+      const resultContainer = document.getElementById('resultContainer');
+      const resultValue = document.getElementById('resultValue');
+      const visualizationContainer = document.getElementById('visualizationContainer');
+      const copyButtons = document.querySelectorAll('.js-copy-code');
+
+      function smallestEquivalentString(s1, s2, baseStr) {
+        const parent = new Array(26).fill(null).map((_, i) => i);
+        function find(x) {
+          if (parent[x] !== x) {
+            parent[x] = find(parent[x]);
+          }
+          return parent[x];
+        }
+        function union(x, y) {
+          const rootX = find(x), rootY = find(y);
+          if (rootX !== rootY) {
+            parent[Math.max(rootX, rootY)] = Math.min(rootX, rootY);
+          }
+        }
+        for (let i = 0; i < s1.length; i++) {
+          union(s1.charCodeAt(i) - 97, s2.charCodeAt(i) - 97);
+        }
+        return baseStr.split('').map(c => {
+          const root = find(c.charCodeAt(0) - 97);
+          return String.fromCharCode(root + 97);
+        }).join('');
+      }
+
+      function getEquivalenceGroups(s1, s2) {
+        const parent = new Array(26).fill(null).map((_, i) => i);
+        function find(x) {
+          if (parent[x] !== x) {
+            parent[x] = find(parent[x]);
+          }
+          return parent[x];
+        }
+        function union(x, y) {
+          const rootX = find(x), rootY = find(y);
+          if (rootX !== rootY) {
+            parent[Math.max(rootX, rootY)] = Math.min(rootX, rootY);
+          }
+        }
+        for (let i = 0; i < s1.length; i++) {
+          union(s1.charCodeAt(i) - 97, s2.charCodeAt(i) - 97);
+        }
+        const groups = new Map();
+        for (let i = 0; i < 26; i++) {
+          const root = find(i);
+          if (!groups.has(root)) groups.set(root, []);
+          groups.get(root).push(String.fromCharCode(i + 97));
+        }
+        return Array.from(groups.entries()).map(([root, chars]) => ({
+          smallest: String.fromCharCode(root + 97),
+          chars: chars.sort()
+        })).filter(g => g.chars.length > 1);
+      }
+
+      function handleCalculate() {
+        const s1 = inputS1.value.trim();
+        const s2 = inputS2.value.trim();
+        const baseStr = inputBase.value.trim();
+        if (!s1 || !s2 || !baseStr || s1.length !== s2.length) { alert('Please enter valid inputs'); return; }
+        const result = smallestEquivalentString(s1, s2, baseStr);
+        resultValue.textContent = result;
+        resultContainer.classList.add('is-visible');
+        resultContainer.style.animation = 'neon-pulse 1s ease-in-out';
+        setTimeout(() => { resultContainer.style.animation = ''; }, 1000);
+      }
+
+      function handleVisualize() {
+        const s1 = inputS1.value.trim();
+        const s2 = inputS2.value.trim();
+        const baseStr = inputBase.value.trim();
+        if (!s1 || !s2 || !baseStr || s1.length !== s2.length) { alert('Please enter valid inputs'); return; }
+        const result = smallestEquivalentString(s1, s2, baseStr);
+        const groups = getEquivalenceGroups(s1, s2);
+        let html = '<div style="margin-bottom: 1rem;">';
+        html += '<p style="color: var(--neon-cyan); margin-bottom: 0.5rem; font-family: var(--font-mono);">Equivalencies:</p>';
+        html += '<div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">';
+        for (let i = 0; i < s1.length; i++) {
+          html += `<span style="padding: 0.5rem; background: rgba(0, 243, 255, 0.15); border: 1px solid var(--neon-cyan); border-radius: 4px; font-family: var(--font-mono);">${s1[i]} ↔ ${s2[i]}</span>`;
+        }
+        html += '</div></div>';
+        if (groups.length > 0) {
+          html += '<div style="margin-top: 1rem;">';
+          html += '<p style="color: var(--neon-magenta); margin-bottom: 0.5rem; font-family: var(--font-mono);">Equivalence Groups:</p>';
+          html += '<div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">';
+          groups.forEach(g => {
+            html += `<span style="padding: 0.5rem 1rem; background: rgba(255, 0, 255, 0.15); border: 1px solid var(--neon-magenta); border-radius: 4px; font-family: var(--font-mono);">`;
+            html += `<span style="color: var(--neon-green); font-weight: 700;">${g.smallest}</span>: {${g.chars.join(', ')}}`;
+            html += '</span>';
+          });
+          html += '</div></div>';
+        }
+        html += '<div style="margin-top: 1rem;">';
+        html += '<p style="color: var(--neon-green); margin-bottom: 0.5rem; font-family: var(--font-mono);">Transformation:</p>';
+        html += '<div style="display: flex; gap: 0.25rem; flex-wrap: wrap; align-items: center;">';
+        html += `<span style="color: var(--text-muted);">${baseStr}</span>`;
+        html += `<span style="color: var(--neon-cyan);">→</span>`;
+        html += `<span style="padding: 0.5rem 1rem; background: rgba(0, 255, 157, 0.2); border: 2px solid var(--neon-green); border-radius: 4px; font-family: var(--font-mono); font-weight: 700;">${result}</span>`;
+        html += '</div></div>';
+        visualizationContainer.innerHTML = html;
+      }
+
+      function handleClear() {
+        inputS1.value = '';
+        inputS2.value = '';
+        inputBase.value = '';
+        resultContainer.classList.remove('is-visible');
+        visualizationContainer.innerHTML = '<p style="color: var(--text-muted); text-align: center;">Click "Visualize" to see equivalence groups</p>';
+      }
+
+      function handleCopyCode(event) {
+        const codeBlock = event.target.closest('.c-code-block');
+        const code = codeBlock.querySelector('code');
+        navigator.clipboard.writeText(code.textContent).then(() => {
+          const originalText = event.target.textContent;
+          event.target.textContent = 'Copied!';
+          event.target.style.background = 'rgba(0, 255, 157, 0.2)';
+          event.target.style.borderColor = 'var(--neon-green)';
+          setTimeout(() => {
+            event.target.textContent = originalText;
+            event.target.style.background = '';
+            event.target.style.borderColor = '';
+          }, 2000);
+        });
+      }
+
+      btnCalculate.addEventListener('click', handleCalculate);
+      btnVisualize.addEventListener('click', handleVisualize);
+      btnClear.addEventListener('click', handleClear);
+      copyButtons.forEach(button => { button.addEventListener('click', handleCopyCode); });
+      inputS1.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleCalculate(); });
+      window.addEventListener('load', handleCalculate);
+    })();
+  </script>
+</body>
+</html>

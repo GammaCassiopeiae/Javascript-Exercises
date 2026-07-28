@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Total Hamming Distance - Interactive Algorithm Visualization">
+  <title>Total Hamming Distance | Algorithm Visualizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Inter:wght@300;400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================
+       CSS VARIABLES - NEON NOIR THEME
+       ============================================ */
+    :root {
+      /* Neon Accents */
+      --neon-cyan: #00f3ff;
+      --neon-magenta: #ff00ff;
+      --neon-green: #00ff9d;
+      --neon-purple: #bd00ff;
+      --neon-orange: #ff6b00;
+
+      /* Backgrounds */
+      --bg-deep: #050505;
+      --bg-surface: rgba(255, 255, 255, 0.05);
+      --bg-card: rgba(255, 255, 255, 0.08);
+
+      /* Text */
+      --text-primary: #ffffff;
+      --text-muted: rgba(255, 255, 255, 0.7);
+
+      /* Typography */
+      --font-display: 'Rajdhani', system-ui, sans-serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'Fira Code', monospace;
+
+      /* Spacing */
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 2rem;
+      --space-xl: 4rem;
+
+      /* Shadows */
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+      --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+
+      --glow-cyan:
+        0 0 5px var(--neon-cyan),
+        0 0 10px var(--neon-cyan),
+        0 0 20px var(--neon-cyan);
+
+      --glow-magenta:
+        0 0 5px var(--neon-magenta),
+        0 0 10px var(--neon-magenta),
+        0 0 20px var(--neon-magenta);
+
+      --glow-green:
+        0 0 5px var(--neon-green),
+        0 0 10px var(--neon-green),
+        0 0 20px var(--neon-green);
+
+      /* Transitions */
+      --transition-fast: 0.1s;
+      --transition-base: 0.3s;
+      --transition-slow: 0.5s;
+      --ease-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+      /* Z-Index */
+      --z-base: 0;
+      --z-sticky: 100;
+      --z-dropdown: 500;
+      --z-modal-backdrop: 900;
+      --z-modal: 1000;
+      --z-tooltip: 1100;
+    }
+
+    /* ============================================
+       RESET & BASE STYLES
+       ============================================ */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--bg-deep);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Selection Styling */
+    ::selection {
+      background: var(--neon-cyan);
+      color: #000;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-deep);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, var(--neon-cyan), var(--neon-purple));
+      border-radius: 5px;
+    }
+
+    /* ============================================
+       LAYOUT GRID
+       ============================================ */
+    .l-body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .l-header {
+      position: sticky;
+      top: 0;
+      z-index: var(--z-sticky);
+      background: rgba(5, 5, 5, 0.95);
+      backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+    }
+
+    .l-main {
+      flex: 1;
+      padding: var(--space-xl) var(--space-md);
+      max-width: 1400px;
+      margin-inline: auto;
+      width: 100%;
+    }
+
+    .l-content-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: var(--space-lg);
+    }
+
+    .l-single-column {
+      max-width: 900px;
+      margin-inline: auto;
+    }
+
+    /* ============================================
+       HEADER COMPONENT
+       ============================================ */
+    .c-header {
+      padding: var(--space-md) var(--space-lg);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--space-md);
+    }
+
+    .c-header__brand {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: none;
+    }
+
+    .c-header__nav {
+      display: flex;
+      gap: var(--space-md);
+    }
+
+    .c-nav-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 500;
+      padding: var(--space-sm) var(--space-md);
+      border: 1px solid transparent;
+      border-radius: 4px;
+      transition: all var(--transition-base) var(--ease-out);
+      position: relative;
+    }
+
+    .c-nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 0;
+      height: 2px;
+      background: var(--neon-cyan);
+      transform: translateX(-50%);
+      transition: width var(--transition-base) var(--ease-out);
+    }
+
+    .c-nav-link:hover {
+      color: var(--neon-cyan);
+      border-color: rgba(0, 243, 255, 0.3);
+    }
+
+    .c-nav-link:hover::after {
+      width: 80%;
+    }
+
+    /* ============================================
+       CARD COMPONENT
+       ============================================ */
+    .c-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(0, 243, 255, 0.15);
+      border-radius: 12px;
+      padding: var(--space-lg);
+      backdrop-filter: blur(10px);
+      transition: all var(--transition-base) var(--ease-out);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .c-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta), var(--neon-purple));
+      opacity: 0;
+      transition: opacity var(--transition-base) var(--ease-out);
+    }
+
+    .c-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(0, 243, 255, 0.4);
+      box-shadow: var(--glow-cyan);
+    }
+
+    .c-card:hover::before {
+      opacity: 1;
+    }
+
+    .c-card__header {
+      margin-bottom: var(--space-md);
+    }
+
+    .c-card__title {
+      font-family: var(--font-display);
+      font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+      font-weight: 700;
+      color: var(--neon-cyan);
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .c-card__title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(0, 243, 255, 0.5), transparent);
+    }
+
+    .c-card__content {
+      color: var(--text-muted);
+    }
+
+    /* ============================================
+       CODE BLOCK
+       ============================================ */
+    .c-code-block {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(189, 0, 255, 0.2);
+      border-radius: 8px;
+      padding: var(--space-md);
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      line-height: 1.8;
+      position: relative;
+    }
+
+    .c-code-block__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-sm);
+      padding-bottom: var(--space-sm);
+      border-bottom: 1px solid rgba(189, 0, 255, 0.1);
+    }
+
+    .c-code-block__lang {
+      color: var(--neon-purple);
+      font-size: var(--text-xs);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .c-code-block__copy {
+      background: transparent;
+      border: 1px solid rgba(0, 243, 255, 0.3);
+      color: var(--neon-cyan);
+      padding: var(--space-xs) var(--space-sm);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: var(--text-xs);
+      transition: all var(--transition-fast) var(--ease-out);
+    }
+
+    .c-code-block__copy:hover {
+      background: rgba(0, 243, 255, 0.1);
+      box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+    }
+
+    .c-code-block pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .c-code-block code {
+      color: var(--text-primary);
+    }
+
+    /* Syntax Highlighting */
+    .token-keyword { color: var(--neon-magenta); }
+    .token-function { color: var(--neon-cyan); }
+    .token-string { color: var(--neon-green); }
+    .token-comment { color: var(--text-muted); font-style: italic; }
+    .token-number { color: var(--neon-orange); }
+    .token-operator { color: var(--neon-purple); }
+
+    /* ============================================
+       INPUT COMPONENT
+       ============================================ */
+    .c-input-group {
+      margin-bottom: var(--space-md);
+    }
+
+    .c-input-label {
+      display: block;
+      color: var(--neon-cyan);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      margin-bottom: var(--space-sm);
+    }
+
+    .c-input-label__required {
+      color: var(--neon-magenta);
+      margin-left: var(--space-xs);
+    }
+
+    .c-input {
+      width: 100%;
+      padding: 0.8rem 1.2rem;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(0, 243, 255, 0.2);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      transition: all var(--transition-base) var(--ease-out);
+      caret-color: var(--neon-cyan);
+    }
+
+    .c-input:focus {
+      outline: none;
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+    }
+
+    .c-input::placeholder {
+      opacity: 0.4;
+    }
+
+    /* ============================================
+       BUTTON COMPONENT
+       ============================================ */
+    .c-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+      padding: 0.8rem 1.5rem;
+      background: linear-gradient(135deg, rgba(0, 243, 255, 0.1), rgba(189, 0, 255, 0.1));
+      border: 1px solid rgba(0, 243, 255, 0.3);
+      border-radius: 8px;
+      color: var(--neon-cyan);
+      font-family: var(--font-display);
+      font-size: var(--text-sm);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: all var(--transition-base) var(--ease-out);
+      text-transform: uppercase;
+      min-height: 44px;
+    }
+
+    .c-button:hover {
+      background: linear-gradient(135deg, rgba(0, 243, 255, 0.2), rgba(189, 0, 255, 0.2));
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+    }
+
+    .c-button:active {
+      transform: translateY(0);
+    }
+
+    .c-button--primary {
+      background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+      color: #000;
+      border: none;
+    }
+
+    .c-button--primary:hover {
+      box-shadow: var(--glow-cyan);
+    }
+
+    .c-button--success {
+      background: linear-gradient(135deg, var(--neon-green), var(--neon-cyan));
+      color: #000;
+      border: none;
+    }
+
+    .c-button--success:hover {
+      box-shadow: var(--glow-green);
+    }
+
+    .c-button-group {
+      display: flex;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+
+    /* ============================================
+       VISUALIZATION COMPONENT
+       ============================================ */
+    .c-visualization {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(0, 243, 255, 0.1);
+      border-radius: 8px;
+      padding: var(--space-md);
+      margin-top: var(--space-md);
+    }
+
+    .c-visualization__grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+      gap: var(--space-sm);
+      margin-top: var(--space-md);
+    }
+
+    .c-bit-cell {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(0, 243, 255, 0.2);
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      font-weight: 700;
+      transition: all var(--transition-base) var(--ease-out);
+    }
+
+    .c-bit-cell--active {
+      background: rgba(0, 243, 255, 0.2);
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(0, 243, 255, 0.4);
+    }
+
+    .c-bit-cell--different {
+      background: rgba(255, 0, 255, 0.2);
+      border-color: var(--neon-magenta);
+      box-shadow: 0 0 10px rgba(255, 0, 255, 0.4);
+    }
+
+    /* ============================================
+       RESULT COMPONENT
+       ============================================ */
+    .c-result {
+      margin-top: var(--space-md);
+      padding: var(--space-md);
+      background: rgba(0, 255, 157, 0.05);
+      border: 1px solid rgba(0, 255, 157, 0.3);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all var(--transition-base) var(--ease-out);
+    }
+
+    .c-result.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .c-result__icon {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 255, 157, 0.1);
+      border-radius: 50%;
+      color: var(--neon-green);
+      font-size: 1.5rem;
+    }
+
+    .c-result__content {
+      flex: 1;
+    }
+
+    .c-result__title {
+      font-family: var(--font-display);
+      font-size: var(--text-lg);
+      font-weight: 700;
+      color: var(--neon-green);
+      margin-bottom: var(--space-xs);
+    }
+
+    .c-result__value {
+      font-family: var(--font-mono);
+      font-size: var(--text-xl);
+      color: var(--text-primary);
+    }
+
+    /* ============================================
+       EXPLANATION SECTION
+       ============================================ */
+    .c-explanation {
+      margin-top: var(--space-lg);
+    }
+
+    .c-explanation__list {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .c-explanation__item {
+      position: relative;
+      padding-left: var(--space-lg);
+      margin-bottom: var(--space-md);
+      color: var(--text-muted);
+    }
+
+    .c-explanation__item::before {
+      content: '▸';
+      position: absolute;
+      left: 0;
+      color: var(--neon-cyan);
+      font-size: var(--text-lg);
+    }
+
+    .c-complexity-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-sm) var(--space-md);
+      background: rgba(189, 0, 255, 0.1);
+      border: 1px solid rgba(189, 0, 255, 0.3);
+      border-radius: 20px;
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--neon-purple);
+      margin-right: var(--space-sm);
+    }
+
+    /* ============================================
+       FOOTER COMPONENT
+       ============================================ */
+    .c-footer {
+      margin-top: auto;
+      padding: var(--space-lg);
+      border-top: 1px solid rgba(0, 243, 255, 0.1);
+      text-align: center;
+      color: var(--text-muted);
+      font-size: var(--text-sm);
+    }
+
+    .c-footer__links {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-lg);
+      margin-bottom: var(--space-md);
+    }
+
+    .c-footer__link {
+      color: var(--neon-cyan);
+      text-decoration: none;
+      transition: color var(--transition-fast);
+    }
+
+    .c-footer__link:hover {
+      color: var(--neon-magenta);
+    }
+
+    /* ============================================
+       ANIMATIONS
+       ============================================ */
+    @keyframes neon-pulse {
+      0%, 100% {
+        box-shadow: 0 0 5px var(--neon-cyan);
+      }
+      50% {
+        box-shadow: 0 0 20px var(--neon-cyan), 0 0 30px var(--neon-cyan);
+      }
+    }
+
+    @keyframes glow-flicker {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.8; }
+    }
+
+    .c-header__brand {
+      animation: glow-flicker 3s ease-in-out infinite;
+    }
+
+    /* ============================================
+       RESPONSIVE DESIGN
+       ============================================ */
+    @media (max-width: 768px) {
+      .c-header {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .c-header__nav {
+        justify-content: center;
+      }
+
+      .l-content-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .c-button-group {
+        flex-direction: column;
+      }
+
+      .c-button {
+        width: 100%;
+      }
+    }
+
+    /* Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body class="l-body">
+  <!-- Header -->
+  <header class="l-header">
+    <div class="c-header">
+      <h1 class="c-header__brand">⚡ ALGO_VISUALIZER</h1>
+      <nav class="c-header__nav">
+        <a href="#" class="c-nav-link">Problems</a>
+        <a href="#" class="c-nav-link">Visualize</a>
+        <a href="#" class="c-nav-link">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="l-main">
+    <div class="l-single-column">
+      <!-- Problem Title Card -->
+      <article class="c-card">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>🔢</span>
+            Total Hamming Distance
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <p>The Hamming distance between two integers is the number of positions at which the corresponding bits are different. Given an array of integers, calculate the total Hamming distance between all pairs of numbers.</p>
+          
+          <div style="margin-top: var(--space-md); display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+            <span class="c-complexity-badge">⏱️ Time: O(n)</span>
+            <span class="c-complexity-badge">💾 Space: O(1)</span>
+            <span class="c-complexity-badge">📊 Difficulty: Medium</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Input Section -->
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>🎯</span>
+            Input Array
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <div class="c-input-group">
+            <label class="c-input-label" for="inputArray">
+              Enter integers (comma-separated)
+              <span class="c-input-label__required">*</span>
+            </label>
+            <input 
+              type="text" 
+              id="inputArray" 
+              class="c-input" 
+              placeholder="e.g., 4, 14, 2"
+              value="4, 14, 2"
+              autocomplete="off"
+            >
+          </div>
+          <div class="c-button-group">
+            <button id="btnCalculate" class="c-button c-button--primary">
+              <span>🚀</span> Calculate Distance
+            </button>
+            <button id="btnVisualize" class="c-button">
+              <span>👁️</span> Visualize
+            </button>
+            <button id="btnClear" class="c-button">
+              <span>🗑️</span> Clear
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Result Section -->
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>📈</span>
+            Result
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <div id="resultContainer" class="c-result">
+            <div class="c-result__icon">✓</div>
+            <div class="c-result__content">
+              <div class="c-result__title">Total Hamming Distance</div>
+              <div id="resultValue" class="c-result__value">0</div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Visualization Section -->
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>🔬</span>
+            Binary Visualization
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <div id="visualizationContainer" class="c-visualization">
+            <p style="color: var(--text-muted); text-align: center;">
+              Click "Visualize" to see the binary representation and bit differences
+            </p>
+          </div>
+        </div>
+      </article>
+
+      <!-- Solution Code -->
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>💻</span>
+            Solution Code
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <div class="c-code-block">
+            <div class="c-code-block__header">
+              <span class="c-code-block__lang">JavaScript</span>
+              <button class="c-code-block__copy js-copy-code">Copy</button>
+            </div>
+            <pre><code id="solutionCode"><span class="token-keyword">function</span> <span class="token-function">totalHammingDistance</span>(nums) {
+  <span class="token-keyword">let</span> totalDistance = <span class="token-number">0</span>;
+  <span class="token-keyword">const</span> n = nums.length;
+  
+  <span class="token-comment">// For each bit position (0-31)</span>
+  <span class="token-keyword">for</span> (<span class="token-keyword">let</span> bit = <span class="token-number">0</span>; bit < <span class="token-number">32</span>; bit++) {
+    <span class="token-keyword">let</span> countOnes = <span class="token-number">0</span>;
+    
+    <span class="token-comment">// Count numbers with this bit set</span>
+    <span class="token-keyword">for</span> (<span class="token-keyword">const</span> num of nums) {
+      countOnes += (num >> bit) & <span class="token-number">1</span>;
+    }
+    
+    <span class="token-comment">// Count numbers with this bit unset</span>
+    <span class="token-keyword">let</span> countZeros = n - countOnes;
+    
+    <span class="token-comment">// Add contribution to total distance</span>
+    totalDistance += countOnes * countZeros;
+  }
+  
+  <span class="token-keyword">return</span> totalDistance;
+}</code></pre>
+          </div>
+        </div>
+      </article>
+
+      <!-- Explanation Section -->
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>📖</span>
+            Algorithm Explanation
+          </h2>
+        </header>
+        <div class="c-card__content c-explanation">
+          <ul class="c-explanation__list">
+            <li class="c-explanation__item">
+              Instead of comparing all pairs (O(n²)), we count bit by bit for O(n) efficiency.
+            </li>
+            <li class="c-explanation__item">
+              For each bit position, count how many numbers have a 1 and how many have a 0.
+            </li>
+            <li class="c-explanation__item">
+              The contribution to total distance for each bit position is: countOnes × countZeros.
+            </li>
+            <li class="c-explanation__item">
+              Sum up contributions from all 32 bit positions to get the final answer.
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- Example Section -->
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>📝</span>
+            Example Walkthrough
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <div class="c-code-block">
+            <pre><code>Input: [4, 14, 2]
+
+Binary representations:
+4  → 0100
+14 → 1110
+2  → 0010
+
+Pairwise distances:
+HD(4, 14) = 2 (bits differ at positions 0 and 3)
+HD(4, 2)  = 1 (bit differs at position 2)
+HD(14, 2) = 1 (bit differs at position 1)
+
+Total = 2 + 1 + 1 = <span class="token-number">6</span></code></pre>
+          </div>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="c-footer">
+    <div class="c-footer__links">
+      <a href="#" class="c-footer__link">GitHub</a>
+      <a href="#" class="c-footer__link">Documentation</a>
+      <a href="#" class="c-footer__link">Privacy</a>
+      <a href="#" class="c-footer__link">Contact</a>
+    </div>
+    <p>&copy; 2026 Algo Visualizer. Built with 💜 and neon dreams.</p>
+  </footer>
+
+  <!-- JavaScript -->
+  <script>
+    (function() {
+      'use strict';
+
+      // DOM Elements
+      const inputArray = document.getElementById('inputArray');
+      const btnCalculate = document.getElementById('btnCalculate');
+      const btnVisualize = document.getElementById('btnVisualize');
+      const btnClear = document.getElementById('btnClear');
+      const resultContainer = document.getElementById('resultContainer');
+      const resultValue = document.getElementById('resultValue');
+      const visualizationContainer = document.getElementById('visualizationContainer');
+      const copyButtons = document.querySelectorAll('.js-copy-code');
+
+      // Calculate Total Hamming Distance
+      function calculateHammingDistance(nums) {
+        let totalDistance = 0;
+        const n = nums.length;
+        
+        for (let bit = 0; bit < 32; bit++) {
+          let countOnes = 0;
+          
+          for (const num of nums) {
+            countOnes += (num >> bit) & 1;
+          }
+          
+          let countZeros = n - countOnes;
+          totalDistance += countOnes * countZeros;
+        }
+        
+        return totalDistance;
+      }
+
+      // Get binary representation
+      function getBinary(num, bits = 4) {
+        return num.toString(2).padStart(bits, '0');
+      }
+
+      // Parse input
+      function parseInput(input) {
+        return input
+          .split(',')
+          .map(s => s.trim())
+          .filter(s => s !== '')
+          .map(s => parseInt(s, 10))
+          .filter(n => !isNaN(n));
+      }
+
+      // Calculate handler
+      function handleCalculate() {
+        const nums = parseInput(inputArray.value);
+        
+        if (nums.length < 2) {
+          alert('Please enter at least 2 integers');
+          return;
+        }
+        
+        const distance = calculateHammingDistance(nums);
+        resultValue.textContent = distance;
+        resultContainer.classList.add('is-visible');
+        
+        // Add pulse animation
+        resultContainer.style.animation = 'neon-pulse 1s ease-in-out';
+        setTimeout(() => {
+          resultContainer.style.animation = '';
+        }, 1000);
+      }
+
+      // Visualize handler
+      function handleVisualize() {
+        const nums = parseInput(inputArray.value);
+        
+        if (nums.length < 2) {
+          alert('Please enter at least 2 integers');
+          return;
+        }
+        
+        const maxNum = Math.max(...nums);
+        const bits = Math.max(4, Math.ceil(Math.log2(maxNum + 1)));
+        
+        let html = '<div style="margin-bottom: 1rem;">';
+        html += '<p style="color: var(--neon-cyan); margin-bottom: 0.5rem; font-family: var(--font-mono);">Binary Representations:</p>';
+        
+        nums.forEach(num => {
+          const binary = getBinary(num, bits);
+          html += `<div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">`;
+          html += `<span style="color: var(--neon-magenta); font-weight: 700; min-width: 60px;">${num} →</span>`;
+          html += `<div class="c-visualization__grid" style="grid-template-columns: repeat(${bits}, 1fr); gap: 0.25rem; margin: 0;">`;
+          
+          for (let i = 0; i < bits; i++) {
+            const bit = binary[i];
+            html += `<div class="c-bit-cell ${bit === '1' ? 'c-bit-cell--active' : ''}">${bit}</div>`;
+          }
+          
+          html += `</div></div>`;
+        });
+        
+        html += '</div>';
+        
+        // Show pairwise differences
+        html += '<div style="margin-top: 1.5rem;">';
+        html += '<p style="color: var(--neon-magenta); margin-bottom: 0.5rem; font-family: var(--font-mono);">Pairwise Differences:</p>';
+        
+        let totalDistance = 0;
+        for (let i = 0; i < nums.length; i++) {
+          for (let j = i + 1; j < nums.length; j++) {
+            const distance = countDifferentBits(nums[i], nums[j], bits);
+            totalDistance += distance;
+            html += `<div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; color: var(--text-muted);">`;
+            html += `<span style="color: var(--neon-cyan);">HD(${nums[i]}, ${nums[j]}) = </span>`;
+            html += `<span style="color: var(--neon-green); font-weight: 700;">${distance}</span>`;
+            html += `</div>`;
+          }
+        }
+        
+        html += `<div style="margin-top: 1rem; padding: 1rem; background: rgba(0, 255, 157, 0.1); border: 1px solid var(--neon-green); border-radius: 8px;">`;
+        html += `<span style="color: var(--neon-green); font-weight: 700;">Total Distance: ${totalDistance}</span>`;
+        html += `</div></div>`;
+        
+        visualizationContainer.innerHTML = html;
+      }
+
+      // Count different bits between two numbers
+      function countDifferentBits(num1, num2, bits) {
+        let count = 0;
+        for (let i = 0; i < bits; i++) {
+          const bit1 = (num1 >> i) & 1;
+          const bit2 = (num2 >> i) & 1;
+          if (bit1 !== bit2) count++;
+        }
+        return count;
+      }
+
+      // Clear handler
+      function handleClear() {
+        inputArray.value = '';
+        resultContainer.classList.remove('is-visible');
+        visualizationContainer.innerHTML = `
+          <p style="color: var(--text-muted); text-align: center;">
+            Click "Visualize" to see the binary representation and bit differences
+          </p>
+        `;
+      }
+
+      // Copy code handler
+      function handleCopyCode(event) {
+        const codeBlock = event.target.closest('.c-code-block');
+        const code = codeBlock.querySelector('code');
+        const textContent = code.textContent;
+        
+        navigator.clipboard.writeText(textContent).then(() => {
+          const originalText = event.target.textContent;
+          event.target.textContent = 'Copied!';
+          event.target.style.background = 'rgba(0, 255, 157, 0.2)';
+          event.target.style.borderColor = 'var(--neon-green)';
+          
+          setTimeout(() => {
+            event.target.textContent = originalText;
+            event.target.style.background = '';
+            event.target.style.borderColor = '';
+          }, 2000);
+        }).catch(err => {
+          console.error('Failed to copy:', err);
+        });
+      }
+
+      // Event Listeners
+      btnCalculate.addEventListener('click', handleCalculate);
+      btnVisualize.addEventListener('click', handleVisualize);
+      btnClear.addEventListener('click', handleClear);
+      
+      copyButtons.forEach(button => {
+        button.addEventListener('click', handleCopyCode);
+      });
+
+      // Enter key to calculate
+      inputArray.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+          handleCalculate();
+        }
+      });
+
+      // Initialize with default calculation
+      window.addEventListener('load', () => {
+        handleCalculate();
+      });
+    })();
+  </script>
+</body>
+</html>

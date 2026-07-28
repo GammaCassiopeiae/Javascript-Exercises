@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spatial Partitioning Visualization</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="math3d.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Spatial Partitioning</h1>
+    </header>
+    <div class="description">
+        <p>Spatial partitioning is a way of dividing space into non-overlapping regions to speed up operations like collision detection and visibility testing. <b>Quadtrees</b> are used for 2D space, while <b>Octrees</b> are used for 3D space.</p>
+        <p>Click on the canvas to add points (in Quadtree mode). In Octree mode, points are randomly distributed in 3D space.</p>
+    </div>
+    <div class="controls">
+        <button id="toggleMode">Switch to Octree (3D)</button>
+        <button id="clearBtn">Clear Points</button>
+    </div>
+    <canvas id="spatialCanvas" width="800" height="600"></canvas>
+
+    <script>
+        const canvas = document.getElementById('spatialCanvas');
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width;
+        const height = canvas.height;
+
+        let mode = 'quadtree'; // or 'octree'
+        let points = [];
+        let angleY = 0;
+
+        class Point {
+            constructor(x, y, z = 0) {
+                this.x = x; this.y = y; this.z = z;
+            }
+        }
+
+        class QuadNode {
+            constructor(x, y, w, h, capacity) {
+                this.boundary = { x, y, w, h };
+                this.capacity = capacity;
+                this.points = [];
+                this.divided = false;
+            }
+
+            subdivide() {
+                const { x, y, w, h } = this.boundary;
+                this.nw = new QuadNode(x, y, w / 2, h / 2, this.capacity);
+                this.ne = new QuadNode(x + w / 2, y, w / 2, h / 2, this.capacity);
+                this.sw = new QuadNode(x, y + h / 2, w / 2, h / 2, this.capacity);
+                this.se = new QuadNode(x + w / 2, y + h / 2, w / 2, h / 2, this.capacity);
+                this.divided = true;
+            }
+
+            insert(p) {
+                if (p.x < this.boundary.x || p.x > this.boundary.x + this.boundary.w ||
+                    p.y < this.boundary.y || p.y > this.boundary.y + this.boundary.h) {
+                    return false;
+                }
+
+                if (this.points.length < this.capacity && !this.divided) {
+                    this.points.push(p);
+                    return true;
+                }
+
+                if (!this.divided) this.subdivide();
+
+                return (this.nw.insert(p) || this.ne.insert(p) || this.sw.insert(p) || this.se.insert(p));
+            }
+
+            draw() {
+                ctx.strokeStyle = '#333';
+                ctx.strokeRect(this.boundary.x, this.boundary.y, this.boundary.w, this.boundary.h);
+                if (this.divided) {
+                    this.nw.draw(); this.ne.draw(); this.sw.draw(); this.se.draw();
+                }
+            }
+        }
+
+        class OctNode {
+            constructor(center, size, capacity) {
+                this.center = center; // Vec3
+                this.size = size;
+                this.capacity = capacity;
+                this.points = [];
+                this.children = null;
+            }
+
+            subdivide() {
+                this.children = [];
+                const s = this.size / 4;
+                for (let i = 0; i < 8; i++) {
+                    const offset = new Vec3(
+                        (i & 1 ? 1 : -1) * s,
+                        (i & 2 ? 1 : -1) * s,
+                        (i & 4 ? 1 : -1) * s
+                    );
+                    this.children.push(new OctNode(this.center.add(offset), this.size / 2, this.capacity));
+                }
+                this.children.forEach(c => this.points.forEach(p => c.insert(p)));
+                this.points = [];
+            }
+
+            insert(p) {
+                const s = this.size / 2;
+                if (Math.abs(p.x - this.center.x) > s || Math.abs(p.y - this.center.y) > s || Math.abs(p.z - this.center.z) > s) {
+                    return false;
+                }
+
+                if (this.children) {
+                    for (let child of this.children) {
+                        if (child.insert(p)) return true;
+                    }
+                } else {
+                    this.points.push(p);
+                    if (this.points.length > this.capacity && this.size > 0.5) {
+                        this.subdivide();
+                    }
+                    return true;
+                }
+                return false;
+            }
+
+            draw(transform) {
+                const s = this.size / 2;
+                const corners = [
+                    new Vec3(this.center.x - s, this.center.y - s, this.center.z - s),
+                    new Vec3(this.center.x + s, this.center.y - s, this.center.z - s),
+                    new Vec3(this.center.x + s, this.center.y + s, this.center.z - s),
+                    new Vec3(this.center.x - s, this.center.y + s, this.center.z - s),
+                    new Vec3(this.center.x - s, this.center.y - s, this.center.z + s),
+                    new Vec3(this.center.x + s, this.center.y - s, this.center.z + s),
+                    new Vec3(this.center.x + s, this.center.y + s, this.center.z + s),
+                    new Vec3(this.center.x - s, this.center.y + s, this.center.z + s)
+                ];
+
+                const proj = corners.map(c => project(transform.transform(c), width, height));
+
+                ctx.strokeStyle = 'rgba(50, 150, 255, 0.2)';
+                ctx.beginPath();
+                for(let i=0; i<4; i++) {
+                    ctx.moveTo(proj[i].x, proj[i].y); ctx.lineTo(proj[(i+1)%4].x, proj[(i+1)%4].y);
+                    ctx.moveTo(proj[i+4].x, proj[i+4].y); ctx.lineTo(proj[((i+1)%4)+4].x, proj[((i+1)%4)+4].y);
+                    ctx.moveTo(proj[i].x, proj[i].y); ctx.lineTo(proj[i+4].x, proj[i+4].y);
+                }
+                ctx.stroke();
+
+                if (this.children) {
+                    this.children.forEach(c => c.draw(transform));
+                }
+            }
+        }
+
+        function update() {
+            ctx.clearRect(0, 0, width, height);
+
+            if (mode === 'quadtree') {
+                const qt = new QuadNode(0, 0, width, height, 4);
+                points.forEach(p => qt.insert(p));
+                qt.draw();
+                
+                ctx.fillStyle = '#4CAF50';
+                points.forEach(p => {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+            } else {
+                const transform = Mat4.rotationX(0.3).multiply(Mat4.rotationY(angleY));
+                const ot = new OctNode(new Vec3(0, 0, 0), 2, 2);
+                points.forEach(p => ot.insert(p));
+                ot.draw(transform);
+
+                ctx.fillStyle = '#2196F3';
+                points.forEach(p => {
+                    const proj = project(transform.transform(new Vec3(p.x, p.y, p.z)), width, height);
+                    ctx.beginPath();
+                    ctx.arc(proj.x, proj.y, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+                angleY += 0.01;
+            }
+            requestAnimationFrame(update);
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            if (mode === 'quadtree') {
+                const rect = canvas.getBoundingClientRect();
+                points.push(new Point(e.clientX - rect.left, e.clientY - rect.top));
+            }
+        });
+
+        document.getElementById('toggleMode').onclick = () => {
+            mode = mode === 'quadtree' ? 'octree' : 'quadtree';
+            document.getElementById('toggleMode').textContent = mode === 'quadtree' ? 'Switch to Octree (3D)' : 'Switch to Quadtree (2D)';
+            points = [];
+            if (mode === 'octree') {
+                for (let i = 0; i < 100; i++) {
+                    points.push(new Point((Math.random() - 0.5) * 1.8, (Math.random() - 0.5) * 1.8, (Math.random() - 0.5) * 1.8));
+                }
+            }
+        };
+
+        document.getElementById('clearBtn').onclick = () => points = [];
+
+        update();
+    </script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Closest Pair of Points - Divide & Conquer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Closest Pair of Points</h1>
+        <p>A Divide & Conquer Visualization</p>
+    </header>
+
+    <div class="description">
+        <p>The Closest Pair of Points problem finds the pair of points with the smallest Euclidean distance between them. 
+        The Divide & Conquer algorithm sorts points by X, splits them into halves, recursively finds the closest pair in each half, 
+        and then checks for even closer pairs within a strip near the dividing line. 
+        Its time complexity is O(n log n).</p>
+    </div>
+
+    <div class="controls">
+        <button id="generateBtn">Generate Points</button>
+        <button id="solveBtn">Solve</button>
+        <button id="clearBtn">Clear</button>
+        <span id="resultText" style="margin-left: 10px;"></span>
+    </div>
+
+    <canvas id="canvas" width="800" height="600"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const generateBtn = document.getElementById('generateBtn');
+        const solveBtn = document.getElementById('solveBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const resultText = document.getElementById('resultText');
+
+        let points = [];
+        let closestPair = null;
+        let dividingLines = [];
+
+        function dist(p1, p2) {
+            return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
+        }
+
+        function generatePoints() {
+            points = [];
+            closestPair = null;
+            dividingLines = [];
+            resultText.innerText = "";
+            for (let i = 0; i < 50; i++) {
+                points.push({
+                    x: Math.random() * (canvas.width - 100) + 50,
+                    y: Math.random() * (canvas.height - 100) + 50
+                });
+            }
+            draw();
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw dividing lines
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 1;
+            dividingLines.forEach(x => {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            });
+
+            // Draw points
+            ctx.fillStyle = '#4CAF50';
+            points.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Draw closest pair
+            if (closestPair) {
+                const [p1, p2] = closestPair;
+                ctx.strokeStyle = '#2196F3';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.stroke();
+
+                ctx.fillStyle = '#2196F3';
+                ctx.beginPath();
+                ctx.arc(p1.x, p1.y, 6, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(p2.x, p2.y, 6, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function solve() {
+            if (points.length < 2) return;
+            const sortedX = [...points].sort((a, b) => a.x - b.x);
+            dividingLines = [];
+            const result = findClosest(sortedX);
+            closestPair = [result.p1, result.p2];
+            resultText.innerText = "Closest Distance: " + result.d.toFixed(2);
+            draw();
+        }
+
+        function findClosest(ptsX) {
+            const n = ptsX.length;
+            if (n <= 3) {
+                let minDist = Infinity;
+                let p1, p2;
+                for (let i = 0; i < n; i++) {
+                    for (let j = i + 1; j < n; j++) {
+                        const d = dist(ptsX[i], ptsX[j]);
+                        if (d < minDist) {
+                            minDist = d;
+                            p1 = ptsX[i];
+                            p2 = ptsX[j];
+                        }
+                    }
+                }
+                return { d: minDist, p1, p2 };
+            }
+
+            const mid = Math.floor(n / 2);
+            const midPt = ptsX[mid];
+            dividingLines.push(midPt.x);
+
+            const leftX = ptsX.slice(0, mid);
+            const rightX = ptsX.slice(mid);
+
+            const dl = findClosest(leftX);
+            const dr = findClosest(rightX);
+
+            let res = dl.d < dr.d ? dl : dr;
+
+            const strip = [];
+            for (let i = 0; i < n; i++) {
+                if (Math.abs(ptsX[i].x - midPt.x) < res.d) {
+                    strip.push(ptsX[i]);
+                }
+            }
+            strip.sort((a, b) => a.y - b.y);
+
+            for (let i = 0; i < strip.length; i++) {
+                for (let j = i + 1; j < strip.length && (strip[j].y - strip[i].y) < res.d; j++) {
+                    const d = dist(strip[i], strip[j]);
+                    if (d < res.d) {
+                        res = { d, p1: strip[i], p2: strip[j] };
+                    }
+                }
+            }
+
+            return res;
+        }
+
+        generateBtn.addEventListener('click', generatePoints);
+        solveBtn.addEventListener('click', solve);
+        clearBtn.addEventListener('click', () => {
+            points = [];
+            closestPair = null;
+            dividingLines = [];
+            resultText.innerText = "";
+            draw();
+        });
+
+        generatePoints();
+    </script>
+</body>
+</html>

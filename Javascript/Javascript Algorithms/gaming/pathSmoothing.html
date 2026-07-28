@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Path Smoothing Algoritem</title>
+    <style>
+        body { background: #111; color: #eee; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; }
+        canvas { background: #000; border: 2px solid #444; cursor: crosshair; }
+        .controls { margin: 15px; padding: 10px; background: #222; border-radius: 5px; }
+        .legend { display: flex; gap: 20px; font-size: 0.9em; margin-top: 5px; }
+        b { color: #ff9900; } i { color: #00d4ff; font-style: normal; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Path Smoothing (Glajenje poti)</h1>
+    <div class="controls">
+        Klikni na mrežo, da postaviš <b>oviro</b>. <br>
+        <div class="legend">
+            <span><b>—</b> Surova A* pot</span>
+            <span><i>—</i> Zglajena pot (Line-of-Sight)</span>
+        </div>
+    </div>
+    <canvas id="smoothCanvas" width="600" height="400"></canvas>
+
+    <script>
+        const canvas = document.getElementById('smoothCanvas');
+        const ctx = canvas.getContext('2d');
+        const cols = 20, rows = 14;
+        const w = canvas.width / cols, h = canvas.height / rows;
+        let grid = Array.from({length: cols}, () => Array(rows).fill(0));
+
+        // Enostavna A* implementacija za demonstracijo
+        function getPath() {
+            let path = [];
+            // Za demo uporabimo fiksno pot cik-cak okoli sredine
+            for(let i=0; i<cols; i++) {
+                path.push({x: i, y: (i % 4 < 2) ? 5 : 8});
+            }
+            return path;
+        }
+
+        // --- PATH SMOOTHING LOGIKA (String Pulling / Raycasting) ---
+        function smoothPath(rawPath) {
+            if (rawPath.length < 3) return rawPath;
+            let smooth = [rawPath[0]];
+            let curr = 0;
+
+            while (curr < rawPath.length - 1) {
+                let lastVisible = curr + 1;
+                for (let next = curr + 2; next < rawPath.length; next++) {
+                    if (isWalkable(rawPath[curr], rawPath[next])) {
+                        lastVisible = next;
+                    } else {
+                        break;
+                    }
+                }
+                smooth.push(rawPath[lastVisible]);
+                curr = lastVisible;
+            }
+            return smooth;
+        }
+
+        function isWalkable(p1, p2) {
+            // Poenostavljen Raycast: Preveri, če je na premici med p1 in p2 kakšna ovira
+            // V pravi igri bi tu uporabili Bresenhamov algoritem
+            let midX = Math.floor((p1.x + p2.x) / 2);
+            let midY = Math.floor((p1.y + p2.y) / 2);
+            return grid[midX][midY] === 0;
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Risanje mreže in ovir
+            for(let i=0; i<cols; i++) {
+                for(let j=0; j<rows; j++) {
+                    ctx.strokeStyle = "#222";
+                    ctx.strokeRect(i*w, j*h, w, h);
+                    if(grid[i][j]) { ctx.fillStyle = "#555"; ctx.fillRect(i*w, j*h, w, h); }
+                }
+            }
+
+            const raw = getPath();
+            const smoothed = smoothPath(raw);
+
+            // Izris surove poti (Oranžna)
+            ctx.setLineDash([5, 5]);
+            ctx.strokeStyle = "#ff9900";
+            ctx.beginPath();
+            raw.forEach((p, i) => i === 0 ? ctx.moveTo(p.x*w+w/2, p.y*h+h/2) : ctx.lineTo(p.x*w+w/2, p.y*h+h/2));
+            ctx.stroke();
+
+            // Izris zglajene poti (Modra)
+            ctx.setLineDash([]);
+            ctx.strokeStyle = "#00d4ff";
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            smoothed.forEach((p, i) => i === 0 ? ctx.moveTo(p.x*w+w/2, p.y*h+h/2) : ctx.lineTo(p.x*w+w/2, p.y*h+h/2));
+            ctx.stroke();
+        }
+
+        canvas.onmousedown = (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = Math.floor((e.clientX - rect.left) / w);
+            const y = Math.floor((e.clientY - rect.top) / h);
+            grid[x][y] = grid[x][y] ? 0 : 1;
+            draw();
+        };
+
+        draw();
+    </script>
+</body>
+</html>

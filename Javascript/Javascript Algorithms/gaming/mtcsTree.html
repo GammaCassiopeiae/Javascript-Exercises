@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>MCTS Algoritem Demo</title>
+    <style>
+        body { background: #1a1a1a; color: #fff; font-family: sans-serif; text-align: center; }
+        .board { display: grid; grid-template-columns: repeat(3, 100px); gap: 5px; margin: 20px auto; width: 310px; }
+        .cell { width: 100px; height: 100px; background: #333; display: flex; align-items: center; 
+                justify-content: center; font-size: 2em; cursor: pointer; border-radius: 4px; }
+        .cell:hover { background: #444; }
+        .info { margin-top: 10px; color: #aaa; }
+        #status { font-size: 1.2em; font-weight: bold; margin: 10px; color: #00ffcc; }
+    </style>
+</head>
+<body>
+    <h1>Monte Carlo Tree Search</h1>
+    <div id="status">Tvoja poteza (X)</div>
+    <div class="board" id="board"></div>
+    <div class="info">AI izvaja 1000 simulacij na potezo.</div>
+    <button onclick="resetGame()" style="margin-top:20px; padding:10px;">Ponastavi</button>
+
+    <script>
+        let board = Array(9).fill(null);
+        const boardEl = document.getElementById('board');
+        const statusEl = document.getElementById('status');
+
+        // --- MCTS LOGIKA ---
+        class MCTSNode {
+            constructor(state, parent = null, lastMove = null) {
+                this.state = [...state]; // Stanje plošče
+                this.parent = parent;
+                this.lastMove = lastMove;
+                this.children = [];
+                this.wins = 0;
+                this.visits = 0;
+                this.untriedMoves = this.getValidMoves(state);
+            }
+
+            getValidMoves(s) {
+                return s.map((v, i) => v === null ? i : null).filter(v => v !== null);
+            }
+
+            // UCT formula (Upper Confidence Bound applied to Trees)
+            selectChild() {
+                return this.children.reduce((best, child) => {
+                    const uct = (child.wins / child.visits) + 1.41 * Math.sqrt(Math.log(this.visits) / child.visits);
+                    return (!best || uct > best.uct) ? {node: child, uct} : best;
+                }, null).node;
+            }
+
+            expand(move, player) {
+                const nextState = [...this.state];
+                nextState[move] = player;
+                const child = new MCTSNode(nextState, this, move);
+                this.untriedMoves = this.untriedMoves.filter(m => m !== move);
+                this.children.push(child);
+                return child;
+            }
+
+            update(result) {
+                this.visits++;
+                this.wins += result;
+            }
+        }
+
+        function mctsSearch(rootState, iter = 1000) {
+            const root = new MCTSNode(rootState);
+            
+            for (let i = 0; i < iter; i++) {
+                let node = root;
+                let state = [...rootState];
+                let player = 'O';
+
+                // 1. Selection
+                while (node.untriedMoves.length === 0 && node.children.length > 0) {
+                    node = node.selectChild();
+                    state[node.lastMove] = player;
+                    player = player === 'O' ? 'X' : 'O';
+                }
+
+                // 2. Expansion
+                if (node.untriedMoves.length > 0) {
+                    const move = node.untriedMoves[Math.floor(Math.random() * node.untriedMoves.length)];
+                    state[move] = player;
+                    node = node.expand(move, player);
+                    player = player === 'O' ? 'X' : 'O';
+                }
+
+                // 3. Simulation (Playout)
+                while (getWinner(state) === null && state.includes(null)) {
+                    const moves = node.getValidMoves(state);
+                    const move = moves[Math.floor(Math.random() * moves.length)];
+                    state[move] = player;
+                    player = player === 'O' ? 'X' : 'O';
+                }
+
+                // 4. Backpropagation
+                const winner = getWinner(state);
+                let result = (winner === 'O') ? 1 : (winner === 'X' ? 0 : 0.5);
+                while (node) {
+                    node.update(result);
+                    node = node.parent;
+                }
+            }
+            return root.children.reduce((best, c) => (!best || c.visits > best.visits) ? c : best).lastMove;
+        }
+
+        // --- IGRENA LOGIKA ---
+        function getWinner(b) {
+            const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+            for (let [a,b1,c] of lines) if (b[a] && b[a] === b[b1] && b[a] === b[c]) return b[a];
+            return null;
+        }
+
+        function render() {
+            boardEl.innerHTML = '';
+            board.forEach((cell, i) => {
+                const div = document.createElement('div');
+                div.className = 'cell';
+                div.innerText = cell || '';
+                div.onclick = () => playerMove(i);
+                boardEl.appendChild(div);
+            });
+        }
+
+        function playerMove(i) {
+            if (board[i] || getWinner(board)) return;
+            board[i] = 'X';
+            render();
+            if (!getWinner(board) && board.includes(null)) {
+                statusEl.innerText = "AI razmišlja...";
+                setTimeout(() => {
+                    const aiMove = mctsSearch(board, 1000);
+                    board[aiMove] = 'O';
+                    render();
+                    const win = getWinner(board);
+                    statusEl.innerText = win ? `Zmagovalec: ${win}` : (board.includes(null) ? "Tvoja poteza (X)" : "Neodločeno");
+                }, 50);
+            }
+        }
+
+        function resetGame() { board = Array(9).fill(null); statusEl.innerText = "Tvoja poteza (X)"; render(); }
+        render();
+    </script>
+</body>
+</html>

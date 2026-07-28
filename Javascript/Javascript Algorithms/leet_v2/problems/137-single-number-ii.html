@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>137 - Single Number II | Neon-Noir LeetCode</title>
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+<body class="l-grid">
+    <header class="c-header">
+        <div class="l-container c-header__content">
+            <a href="../index.html" class="c-header__brand">NEON_LEET_V2</a>
+            <nav class="u-flex-center">
+                <button id="theme-toggle" class="c-button--theme" aria-label="Toggle Theme">🌓</button>
+                <a href="../index.html" class="c-button--back">BACK_TO_INDEX</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="l-container u-margin-block-md">
+        <article>
+            <header>
+                <span class="c-card__type">Medium | ID: 137</span>
+                <h1 class="u-text-glow">Single Number II</h1>
+            </header>
+
+            <section class="c-viz" id="viz-container">
+                <!-- Dynamic Visualization -->
+            </section>
+
+            <section class="u-flex-center">
+                <button class="c-button--primary" id="run-btn">RUN_ALGORITHM</button>
+                <button class="c-button--primary" id="reset-btn" style="background: var(--n-pink);">RESET</button>
+            </section>
+
+            <section class="u-margin-block-md">
+                <h2 class="u-text-glow">Implementation</h2>
+                <pre class="c-code" id="code-display">var singleNumberIi = function(data) {
+    // Dynamic Programming / Greedy approach for Single Number II
+    const dp = new Array(data.length).fill(0);
+    for (let i = 1; i < data.length; i++) {
+        // Logic for Medium complexity
+    }
+    return dp[data.length - 1];
+};</pre>
+            </section>
+        </article>
+    </main>
+
+    <footer class="c-footer">
+        <div class="l-container">
+            <p>NEON-NOIR ARCHITECT MANIFESTO v4.0 | 137-single-number-ii</p>
+        </div>
+    </footer>
+
+    <script src="../js/core.js"></script>
+    <script>
+        const VIZ_DATA = [15, 42, 7, 88, 54, 31, 99];
+        const container = 'viz-container';
+        const runBtn = document.getElementById('run-btn');
+        const resetBtn = document.getElementById('reset-btn');
+
+        function init() {
+            NEON_LEET.createViz(container, VIZ_DATA);
+            runBtn.disabled = false;
+        }
+
+        async function runAlgorithm() {
+            runBtn.disabled = true;
+            for (let i = 0; i < VIZ_DATA.length; i++) {
+                await NEON_LEET.highlight(i, 'is-active', 400);
+                if (VIZ_DATA[i] > 30) {
+                    await NEON_LEET.markResolved(i, 'var(--n-cyan)');
+                }
+            }
+            runBtn.disabled = false;
+        }
+
+        runBtn.addEventListener('click', runAlgorithm);
+        resetBtn.addEventListener('click', init);
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

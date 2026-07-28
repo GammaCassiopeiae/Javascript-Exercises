@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minkowski Sum</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Minkowski Sum</h1>
+        <p>Geometric Addition of Two Polygons</p>
+    </header>
+
+    <div class="description">
+        <p>The Minkowski sum of two sets of points A and B in Euclidean space is formed by adding every vector in A to every vector in B. 
+        For two convex polygons, the Minkowski sum is also a convex polygon. 
+        This visualization shows two original polygons and their Minkowski sum (A + B).</p>
+    </div>
+
+    <div class="controls">
+        <button id="randomizeBtn">Randomize Polygons</button>
+        <span id="infoText" style="margin-left: 10px;">Drag polygons to see how the sum changes.</span>
+    </div>
+
+    <canvas id="canvas" width="800" height="600"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const randomizeBtn = document.getElementById('randomizeBtn');
+
+        let polyA = [];
+        let polyB = [];
+        let offsetA = { x: 100, y: 100 };
+        let offsetB = { x: 300, y: 100 };
+        let dragging = null;
+        let dragStart = { x: 0, y: 0 };
+
+        function generateConvexPolygon(sides, radius, offset) {
+            const pts = [];
+            for (let i = 0; i < sides; i++) {
+                const angle = (i / sides) * Math.PI * 2;
+                pts.push({
+                    x: Math.cos(angle) * radius + (Math.random() * 20 - 10),
+                    y: Math.sin(angle) * radius + (Math.random() * 20 - 10)
+                });
+            }
+            // Sort to ensure convexity (it's mostly convex by generation)
+            return pts;
+        }
+
+        function randomize() {
+            polyA = generateConvexPolygon(5, 50, { x: 0, y: 0 });
+            polyB = generateConvexPolygon(4, 40, { x: 0, y: 0 });
+            draw();
+        }
+
+        function getMinkowskiSum(p1, off1, p2, off2) {
+            const combined = [];
+            for (const v1 of p1) {
+                for (const v2 of p2) {
+                    combined.push({
+                        x: (v1.x + off1.x) + (v2.x + off2.x),
+                        y: (v1.y + off1.y) + (v2.y + off2.y)
+                    });
+                }
+            }
+            return convexHull(combined);
+        }
+
+        function convexHull(points) {
+            points.sort((a, b) => a.x !== b.x ? a.x - b.x : a.y - b.y);
+            if (points.length < 3) return points;
+
+            const upper = [];
+            for (const p of points) {
+                while (upper.length >= 2 && crossProduct(upper[upper.length - 2], upper[upper.length - 1], p) <= 0) {
+                    upper.pop();
+                }
+                upper.push(p);
+            }
+
+            const lower = [];
+            for (let i = points.length - 1; i >= 0; i--) {
+                const p = points[i];
+                while (lower.length >= 2 && crossProduct(lower[lower.length - 2], lower[lower.length - 1], p) <= 0) {
+                    lower.pop();
+                }
+                lower.push(p);
+            }
+
+            upper.pop();
+            lower.pop();
+            return upper.concat(lower);
+        }
+
+        function crossProduct(a, b, c) {
+            return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+        }
+
+        function drawPolygon(pts, offset, color, label) {
+            ctx.fillStyle = color + '44';
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            pts.forEach((p, i) => {
+                const x = p.x + offset.x;
+                const y = p.y + offset.y;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = color;
+            ctx.fillText(label, pts[0].x + offset.x, pts[0].y + offset.y - 10);
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw axis/grid hint
+            ctx.strokeStyle = '#222';
+            ctx.beginPath();
+            for(let i=0; i<canvas.width; i+=50) { ctx.moveTo(i,0); ctx.lineTo(i, canvas.height); }
+            for(let i=0; i<canvas.height; i+=50) { ctx.moveTo(0,i); ctx.lineTo(canvas.width, i); }
+            ctx.stroke();
+
+            drawPolygon(polyA, offsetA, '#4CAF50', 'Polygon A');
+            drawPolygon(polyB, offsetB, '#2196F3', 'Polygon B');
+
+            const sum = getMinkowskiSum(polyA, offsetA, polyB, offsetB);
+            // We draw the sum at its absolute position (it incorporates offsets)
+            drawPolygon(sum, {x:0, y:0}, '#FF9800', 'Minkowski Sum (A+B)');
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mx = e.clientX - rect.left;
+            const my = e.clientY - rect.top;
+
+            if (Math.abs(mx - offsetA.x) < 100 && Math.abs(my - offsetA.y) < 100) {
+                dragging = 'A';
+            } else if (Math.abs(mx - offsetB.x) < 100 && Math.abs(my - offsetB.y) < 100) {
+                dragging = 'B';
+            }
+            dragStart = { x: mx, y: my };
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!dragging) return;
+            const rect = canvas.getBoundingClientRect();
+            const mx = e.clientX - rect.left;
+            const my = e.clientY - rect.top;
+
+            const dx = mx - dragStart.x;
+            const dy = my - dragStart.y;
+
+            if (dragging === 'A') {
+                offsetA.x += dx;
+                offsetA.y += dy;
+            } else {
+                offsetB.x += dx;
+                offsetB.y += dy;
+            }
+            dragStart = { x: mx, y: my };
+            draw();
+        });
+
+        window.addEventListener('mouseup', () => {
+            dragging = null;
+        });
+
+        randomizeBtn.addEventListener('click', randomize);
+
+        randomize();
+    </script>
+</body>
+</html>

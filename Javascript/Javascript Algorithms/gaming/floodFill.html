@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Flood Fill Algoritem</title>
+    <style>
+        body { background: #121212; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; }
+        canvas { border: 2px solid #444; background: #000; cursor: crosshair; image-rendering: pixelated; }
+        .controls { margin: 20px; display: flex; gap: 10px; align-items: center; }
+        input[type="color"] { border: none; width: 40px; height: 40px; cursor: pointer; background: none; }
+        button { padding: 10px 20px; cursor: pointer; background: #333; color: white; border: 1px solid #555; border-radius: 4px; }
+        button:hover { background: #444; }
+    </style>
+</head>
+<body>
+    <h1>Flood Fill Demo</h1>
+    <div class="controls">
+        <label>Barva polnila:</label>
+        <input type="color" id="colorPicker" value="#ff0055">
+        <button onclick="clearCanvas()">Počisti tablo</button>
+        <span>Leva tipka: Riši stene | Desna tipka: Flood Fill</span>
+    </div>
+    <canvas id="paintCanvas" width="500" height="500"></canvas>
+
+    <script>
+        const canvas = document.getElementById('paintCanvas');
+        const ctx = canvas.getContext('2d');
+        const colorPicker = document.getElementById('colorPicker');
+        const gridSize = 50; // 50x50 mreža
+        const pixelSize = canvas.width / gridSize;
+        
+        // Inicializacija mreže (0 = prazno, 1 = stena)
+        let grid = Array.from({ length: gridSize }, () => Array(gridSize).fill(0));
+
+        function drawGrid() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let x = 0; x < gridSize; x++) {
+                for (let y = 0; y < gridSize; y++) {
+                    if (grid[x][y] === 1) {
+                        ctx.fillStyle = "#ffffff";
+                        ctx.fillRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize);
+                    } else if (typeof grid[x][y] === 'string') {
+                        ctx.fillStyle = grid[x][y];
+                        ctx.fillRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize);
+                    }
+                }
+            }
+        }
+
+        // Glavni rekurzivni algoritem
+        function floodFill(x, y, targetColor, replacementColor) {
+            // Robni pogoji
+            if (x < 0 || x >= gridSize || y < 0 || y >= gridSize) return;
+            if (grid[x][y] === 1) return; // Ne polni skozi stene
+            if (grid[x][y] === replacementColor) return; // Že pobarvano
+            if (grid[x][y] !== targetColor) return;
+
+            // Pobarvaj trenutno celico
+            grid[x][y] = replacementColor;
+
+            // Rekurzivni klici za sosede (4-smerni)
+            floodFill(x + 1, y, targetColor, replacementColor);
+            floodFill(x - 1, y, targetColor, replacementColor);
+            floodFill(x, y + 1, targetColor, replacementColor);
+            floodFill(x, y - 1, targetColor, replacementColor);
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = Math.floor((e.clientX - rect.left) / pixelSize);
+            const y = Math.floor((e.clientY - rect.top) / pixelSize);
+
+            if (e.button === 0) { // Leva tipka: Risanje stene
+                grid[x][y] = 1;
+            } else if (e.button === 2) { // Desna tipka: Flood Fill
+                const targetColor = grid[x][y];
+                const newColor = colorPicker.value;
+                if (targetColor !== newColor) {
+                    floodFill(x, y, targetColor, newColor);
+                }
+            }
+            drawGrid();
+        });
+
+        // Prepreči desni klik meni
+        canvas.oncontextmenu = (e) => e.preventDefault();
+
+        function clearCanvas() {
+            grid = Array.from({ length: gridSize }, () => Array(gridSize).fill(0));
+            drawGrid();
+        }
+
+        drawGrid();
+    </script>
+</body>
+</html>

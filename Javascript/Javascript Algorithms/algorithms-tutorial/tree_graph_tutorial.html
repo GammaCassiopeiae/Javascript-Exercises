@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive Tree and Graph Algorithms Python Tutorial">
+    <title>TREE_GRAPH // PYTHON_ALGORITHM_ENGINE</title>
+    
+    <!-- Preconnect & Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Neon-Noir Palette */
+            --bg-dark: #050505;
+            --bg-secondary: #0a0b10;
+            --bg-card: rgba(255, 255, 255, 0.02);
+            --neon-primary: #00f3ff;
+            --neon-secondary: #ff00ff;
+            --neon-accent: #a855f7;
+            --neon-success: #32cd32; /* Lime Green */
+            --neon-danger: #e74a3b;
+            --glow-primary: 0 0 5px rgba(0, 243, 255, 0.3), 0 0 15px rgba(0, 243, 255, 0.1);
+            --glow-secondary: 0 0 5px rgba(255, 0, 255, 0.3), 0 0 15px rgba(255, 0, 255, 0.1);
+            --glow-success: 0 0 8px rgba(50, 205, 50, 0.4);
+            
+            --font-heading: 'Rajdhani', sans-serif;
+            --font-mono: 'Fira Code', monospace;
+            
+            --z-sticky: 100;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #fff;
+            font-family: var(--font-heading);
+            line-height: 1.6;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Scanlines Overlay */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 2px;
+            pointer-events: none;
+            z-index: 2000;
+            opacity: 0.15;
+        }
+
+        header {
+            padding: 1.5rem 2rem;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header__title {
+            font-size: 2rem;
+            letter-spacing: 0.3em;
+            color: var(--neon-primary);
+            text-shadow: var(--glow-primary);
+            text-transform: uppercase;
+        }
+
+        .header__subtitle {
+            color: #666;
+            letter-spacing: 0.15em;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        /* Holy Grail Wrapper */
+        .l-wrapper {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            flex: 1;
+            min-height: 0; /* Enable scrolling */
+        }
+
+        /* Sidebar Navigation */
+        .c-sidebar {
+            background: var(--bg-secondary);
+            border-right: 1px solid rgba(0, 243, 255, 0.1);
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .sidebar__group-title {
+            font-size: 0.8rem;
+            color: var(--neon-secondary);
+            text-shadow: var(--glow-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            margin-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255, 0, 255, 0.1);
+            padding-bottom: 0.25rem;
+        }
+
+        .sidebar__list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .sidebar__btn {
+            width: 100%;
+            background: transparent;
+            border: 1px solid transparent;
+            color: #888;
+            padding: 0.6rem 0.8rem;
+            text-align: left;
+            font-family: var(--font-heading);
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sidebar__btn:hover {
+            color: var(--neon-primary);
+            background: rgba(0, 243, 255, 0.02);
+            border-left: 2px solid var(--neon-primary);
+        }
+
+        .sidebar__btn.is-active {
+            color: #fff;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            border-left: 4px solid var(--neon-primary);
+            background: rgba(0, 243, 255, 0.05);
+            box-shadow: var(--glow-primary);
+        }
+
+        /* Main Workspace Container */
+        .l-workspace {
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            min-height: 0;
+        }
+
+        /* Controls & Info Top Bar */
+        .c-workspace-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.01);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .info__name {
+            font-size: 1.8rem;
+            color: #fff;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+        }
+
+        .info__desc {
+            color: #aaa;
+            max-width: 600px;
+            font-size: 0.95rem;
+        }
+
+        .controls__group {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .c-btn {
+            background: transparent;
+            border: 1px solid var(--neon-primary);
+            color: var(--neon-primary);
+            padding: 0.5rem 1.2rem;
+            font-family: var(--font-heading);
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .c-btn:hover:not(:disabled) {
+            background: rgba(0, 243, 255, 0.1);
+            box-shadow: var(--glow-primary);
+            transform: translateY(-2px);
+        }
+
+        .c-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            border-color: #555;
+            color: #555;
+        }
+
+        .c-btn--secondary {
+            border-color: var(--neon-secondary);
+            color: var(--neon-secondary);
+        }
+
+        .c-btn--secondary:hover:not(:disabled) {
+            background: rgba(255, 0, 255, 0.1);
+            box-shadow: var(--glow-secondary);
+        }
+
+        /* Two-Column split: Visualizer and Code */
+        .l-split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            padding: 1.5rem 2rem;
+            min-height: 0;
+            overflow-y: auto;
+        }
+
+        /* Visualizer Panel */
+        .c-panel-visualizer {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 243, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            border-radius: 4px;
+            overflow: hidden;
+            height: 480px;
+            position: relative;
+        }
+
+        .panel-header {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 0.75rem 1.2rem;
+            font-family: var(--font-heading);
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: var(--neon-primary);
+            text-shadow: var(--glow-primary);
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .visualizer__viewport {
+            flex: 1;
+            width: 100%;
+            background: #020205;
+            position: relative;
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* SVG Element Styling */
+        .svg-edge {
+            stroke: #444;
+            stroke-width: 2.5;
+            transition: stroke 0.3s, stroke-width 0.3s;
+        }
+
+        .svg-edge.is-active {
+            stroke: var(--neon-secondary);
+            stroke-width: 4;
+        }
+
+        .svg-edge.is-traversed {
+            stroke: var(--neon-success);
+            stroke-dasharray: 5, 5;
+            animation: dash 10s linear infinite;
+        }
+
+        @keyframes dash {
+            to {
+                stroke-dashoffset: -100;
+            }
+        }
+
+        .svg-node {
+            fill: #111;
+            stroke: #666;
+            stroke-width: 2;
+            transition: all 0.3s ease;
+        }
+
+        .svg-node.is-active {
+            fill: var(--bg-dark);
+            stroke: var(--neon-secondary);
+            stroke-width: 3.5;
+            filter: drop-shadow(0 0 5px rgba(255, 0, 255, 0.7));
+        }
+
+        .svg-node.is-visited {
+            fill: #0c2b0c;
+            stroke: var(--neon-success);
+            stroke-width: 3;
+            filter: drop-shadow(0 0 6px rgba(50, 205, 50, 0.5));
+        }
+
+        .svg-node.is-queued {
+            fill: #052636;
+            stroke: var(--neon-primary);
+            stroke-width: 2.5;
+            filter: drop-shadow(0 0 4px rgba(0, 243, 255, 0.4));
+        }
+
+        .svg-text {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            fill: #eee;
+            font-size: 14px;
+            pointer-events: none;
+            user-select: none;
+            text-anchor: middle;
+            dominant-baseline: middle;
+        }
+
+        .svg-weight {
+            font-family: var(--font-mono);
+            fill: var(--neon-primary);
+            font-size: 12px;
+            font-weight: 600;
+            text-anchor: middle;
+            background: #020205;
+        }
+
+        /* Code Panel */
+        .c-panel-code {
+            background: rgba(0, 0, 0, 0.85);
+            border: 1px solid rgba(50, 205, 50, 0.25); /* LimeGreen border hint */
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            height: 480px;
+        }
+
+        .c-panel-code .panel-header {
+            color: var(--neon-success);
+            text-shadow: var(--glow-success);
+            border-bottom: 1px solid rgba(50, 205, 50, 0.15);
+        }
+
+        .code__viewport {
+            flex: 1;
+            padding: 1.5rem;
+            overflow: auto;
+            background: #040804;
+        }
+
+        .code__content {
+            font-family: var(--font-mono) !important;
+            font-size: 16px !important; /* STRICT REQUIREMENT: size 16 */
+            color: var(--neon-success) !important; /* STRICT REQUIREMENT: limegreen */
+            line-height: 1.5;
+            white-space: pre;
+            margin: 0;
+        }
+
+        /* Output / Results Console */
+        .c-console {
+            background: #020502;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1rem 2rem;
+            min-height: 120px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+        }
+
+        .console__title {
+            color: var(--neon-secondary);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .console__line {
+            color: #ddd;
+            margin-bottom: 0.25rem;
+        }
+
+        .console__line--system {
+            color: var(--neon-primary);
+        }
+
+        .console__line--success {
+            color: var(--neon-success);
+        }
+
+        .console__line--output {
+            color: #a3e635; /* soft lime */
+            padding-left: 1rem;
+        }
+
+        footer {
+            padding: 1rem;
+            text-align: center;
+            background: var(--bg-secondary);
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: #444;
+            letter-spacing: 0.1em;
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+    </style>
+</head>
+<body class="l-body">
+
+    <header>
+        <div>
+            <h1 class="header__title">ALGO_TUTOR</h1>
+            <span class="header__subtitle">Trees & Graphs Interactive Python Lab</span>
+        </div>
+        <div class="header__subtitle">
+            [SYS_STATE: LAB_ACTIVE]
+        </div>
+    </header>
+
+    <div class="l-wrapper">
+        <!-- Sidebar Navigation -->
+        <aside class="c-sidebar">
+            <div>
+                <h3 class="sidebar__group-title">Tree Algorithms</h3>
+                <ul class="sidebar__list">
+                    <li><button class="sidebar__btn is-active" onclick="selectAlgo('tree_inorder')">01. Inorder Traversal <span>🌲</span></button></li>
+                    <li><button class="sidebar__btn" onclick="selectAlgo('tree_preorder')">02. Preorder Traversal <span>🌲</span></button></li>
+                    <li><button class="sidebar__btn" onclick="selectAlgo('tree_postorder')">03. Postorder Traversal <span>🌲</span></button></li>
+                    <li><button class="sidebar__btn" onclick="selectAlgo('tree_levelorder')">04. Levelorder / BFS <span>🌲</span></button></li>
+                </ul>
+            </div>
+            
+            <div>
+                <h3 class="sidebar__group-title">Graph Algorithms</h3>
+                <ul class="sidebar__list">
+                    <li><button class="sidebar__btn" onclick="selectAlgo('graph_dfs')">05. Depth-First Search <span>🕸️</span></button></li>
+                    <li><button class="sidebar__btn" onclick="selectAlgo('graph_bfs')">06. Breadth-First Search <span>🕸️</span></button></li>
+                    <li><button class="sidebar__btn" onclick="selectAlgo('graph_dijkstra')">07. Dijkstra's Path <span>🕸️</span></button></li>
+                    <li><button class="sidebar__btn" onclick="selectAlgo('graph_topo')">08. Topological Sort <span>🕸️</span></button></li>
+                    <li><button class="sidebar__btn" onclick="selectAlgo('graph_kruskal')">09. Kruskal's MST <span>🕸️</span></button></li>
+                    <li><button class="sidebar__btn" onclick="selectAlgo('graph_prim')">10. Prim's MST <span>🕸️</span></button></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Workspace Area -->
+        <main class="l-workspace">
+            
+            <!-- Context Header & Operations -->
+            <section class="c-workspace-header">
+                <div>
+                    <h2 class="info__name" id="js-algo-title">Inorder Traversal</h2>
+                    <p class="info__desc" id="js-algo-desc">Depth-first tree traversal visiting nodes in (Left, Root, Right) sequence. Used on Binary Search Trees to output values in ascending order.</p>
+                </div>
+                <div class="controls__group">
+                    <button class="c-btn" id="js-btn-run" onclick="startSimulation()">Run Simulation</button>
+                    <button class="c-btn c-btn--secondary" id="js-btn-reset" onclick="resetWorkspace()">Reset</button>
+                </div>
+            </section>
+
+            <!-- Visualization Workspace split -->
+            <section class="l-split">
+                <!-- Visualizer Panel -->
+                <div class="c-panel-visualizer">
+                    <div class="panel-header">Interactive_Visualizer // SVG_GRAPH_RENDER</div>
+                    <div class="visualizer__viewport" id="js-visualizer-viewport">
+                        <!-- SVG Elements will be injected dynamically -->
+                    </div>
+                </div>
+
+                <!-- Source Code Panel -->
+                <div class="c-panel-code">
+                    <div class="panel-header">Source_Code // PYTHON_ALGORITHM.PY</div>
+                    <div class="code__viewport">
+                        <pre class="code__content" id="js-code-box"># Code will be injected here</pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Console Output Area -->
+            <section class="c-console" id="js-console-box">
+                <div class="console__title">
+                    <span>Python Console Output</span>
+                    <span id="js-console-status">READY</span>
+                </div>
+                <div id="js-console-content">
+                    <div class="console__line console__line--system">>>> Initializing engine... Ready.</div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer>
+        [ALGORITHM_VISUALIZER_LAB] // PRODUCED_BY_ANTIGRAVITY // COPYRIGHT_2026
+    </footer>
+
+    <!-- Algorithms & Visualizer Script -->
+    <script>
+        'use strict';
+
+        // 10 Algorithms Registry (with Metadata, Python Source Code, Visual configurations, and step simulation generators)
+        const ALGORITHMS = {
+            tree_inorder: {
+                title: "Inorder Traversal",
+                desc: "Traverses a binary tree recursively in (Left, Root, Right) order. In a binary search tree, this visits nodes in sorted ascending order.",
+                code: `class Node:
+    def __init__(self, val):
+        self.val = val
+        self.left = None
+        self.right = None
+
+def inorder_traversal(root):
+    result = []
+    def traverse(node):
+        if node:
+            traverse(node.left)
+            result.append(node.val)
+            traverse(node.right)
+    traverse(root)
+    return result
+
+# Execution output:
+# root = build_demo_tree()
+# print(inorder_traversal(root))`,
+                type: "tree",
+                data: {
+                    nodes: [
+                        { id: 4, label: "4 (Root)", x: 250, y: 60 },
+                        { id: 2, label: "2", x: 130, y: 160 },
+                        { id: 6, label: "6", x: 370, y: 160 },
+                        { id: 1, label: "1", x: 70, y: 260 },
+                        { id: 3, label: "3", x: 190, y: 260 },
+                        { id: 5, label: "5", x: 310, y: 260 },
+                        { id: 7, label: "7", x: 430, y: 260 }
+                    ],
+                    edges: [
+                        { from: 4, to: 2 }, { from: 4, to: 6 },
+                        { from: 2, to: 1 }, { from: 2, to: 3 },
+                        { from: 6, to: 5 }, { from: 6, to: 7 }
+                    ]
+                },
+                steps: [
+                    { action: "visit", node: 4, log: "traverse(4)" },
+                    { action: "visit", node: 2, log: "traverse(2)" },
+                    { action: "visit", node: 1, log: "traverse(1)" },
+                    { action: "process", node: 1, log: "traverse(1.left) is None -> Process 1. Result append: 1" },
+                    { action: "process", node: 2, log: "traverse(1.right) is None -> traverse(1) done. Process 2. Result append: 2" },
+                    { action: "visit", node: 3, log: "traverse(3)" },
+                    { action: "process", node: 3, log: "traverse(3.left) is None -> Process 3. Result append: 3" },
+                    { action: "process", node: 4, log: "traverse(2) done. Process 4 (Root). Result append: 4" },
+                    { action: "visit", node: 6, log: "traverse(6)" },
+                    { action: "visit", node: 5, log: "traverse(5)" },
+                    { action: "process", node: 5, log: "traverse(5.left) is None -> Process 5. Result append: 5" },
+                    { action: "process", node: 6, log: "traverse(5) done. Process 6. Result append: 6" },
+                    { action: "visit", node: 7, log: "traverse(7)" },
+                    { action: "process", node: 7, log: "traverse(7.left) is None -> Process 7. Result append: 7" }
+                ],
+                final_output: "[1, 2, 3, 4, 5, 6, 7]"
+            },
+            tree_preorder: {
+                title: "Preorder Traversal",
+                desc: "Traverses a binary tree recursively in (Root, Left, Right) order. Useful for copying the tree or generating prefix notations.",
+                code: `def preorder_traversal(root):
+    result = []
+    def traverse(node):
+        if node:
+            result.append(node.val)
+            traverse(node.left)
+            traverse(node.right)
+    traverse(root)
+    return result
+
+# Execution output:
+# root = build_demo_tree()
+# print(preorder_traversal(root))`,
+                type: "tree",
+                data: {
+                    nodes: [
+                        { id: 4, label: "4 (Root)", x: 250, y: 60 },
+                        { id: 2, label: "2", x: 130, y: 160 },
+                        { id: 6, label: "6", x: 370, y: 160 },
+                        { id: 1, label: "1", x: 70, y: 260 },
+                        { id: 3, label: "3", x: 190, y: 260 },
+                        { id: 5, label: "5", x: 310, y: 260 },
+                        { id: 7, label: "7", x: 430, y: 260 }
+                    ],
+                    edges: [
+                        { from: 4, to: 2 }, { from: 4, to: 6 },
+                        { from: 2, to: 1 }, { from: 2, to: 3 },
+                        { from: 6, to: 5 }, { from: 6, to: 7 }
+                    ]
+                },
+                steps: [
+                    { action: "process", node: 4, log: "traverse(4) -> Process 4 (Root). Result append: 4" },
+                    { action: "process", node: 2, log: "traverse(2) -> Process 2. Result append: 2" },
+                    { action: "process", node: 1, log: "traverse(1) -> Process 1. Result append: 1" },
+                    { action: "process", node: 3, log: "traverse(3) -> Process 3. Result append: 3" },
+                    { action: "process", node: 6, log: "traverse(6) -> Process 6. Result append: 6" },
+                    { action: "process", node: 5, log: "traverse(5) -> Process 5. Result append: 5" },
+                    { action: "process", node: 7, log: "traverse(7) -> Process 7. Result append: 7" }
+                ],
+                final_output: "[4, 2, 1, 3, 6, 5, 7]"
+            },
+            tree_postorder: {
+                title: "Postorder Traversal",
+                desc: "Traverses a binary tree recursively in (Left, Right, Root) order. Ideal for node deletion or computing size since subtrees are resolved before parent.",
+                code: `def postorder_traversal(root):
+    result = []
+    def traverse(node):
+        if node:
+            traverse(node.left)
+            traverse(node.right)
+            result.append(node.val)
+    traverse(root)
+    return result
+
+# Execution output:
+# root = build_demo_tree()
+# print(postorder_traversal(root))`,
+                type: "tree",
+                data: {
+                    nodes: [
+                        { id: 4, label: "4 (Root)", x: 250, y: 60 },
+                        { id: 2, label: "2", x: 130, y: 160 },
+                        { id: 6, label: "6", x: 370, y: 160 },
+                        { id: 1, label: "1", x: 70, y: 260 },
+                        { id: 3, label: "3", x: 190, y: 260 },
+                        { id: 5, label: "5", x: 310, y: 260 },
+                        { id: 7, label: "7", x: 430, y: 260 }
+                    ],
+                    edges: [
+                        { from: 4, to: 2 }, { from: 4, to: 6 },
+                        { from: 2, to: 1 }, { from: 2, to: 3 },
+                        { from: 6, to: 5 }, { from: 6, to: 7 }
+                    ]
+                },
+                steps: [
+                    { action: "visit", node: 4, log: "traverse(4)" },
+                    { action: "visit", node: 2, log: "traverse(2)" },
+                    { action: "visit", node: 1, log: "traverse(1)" },
+                    { action: "process", node: 1, log: "1.left & 1.right are None -> Process 1. Result append: 1" },
+                    { action: "visit", node: 3, log: "traverse(3)" },
+                    { action: "process", node: 3, log: "3.left & 3.right are None -> Process 3. Result append: 3" },
+                    { action: "process", node: 2, log: "2.left & 2.right completed -> Process 2. Result append: 2" },
+                    { action: "visit", node: 6, log: "traverse(6)" },
+                    { action: "visit", node: 5, log: "traverse(5)" },
+                    { action: "process", node: 5, log: "5.left & 5.right completed -> Process 5. Result append: 5" },
+                    { action: "visit", node: 7, log: "traverse(7)" },
+                    { action: "process", node: 7, log: "7.left & 7.right completed -> Process 7. Result append: 7" },
+                    { action: "process", node: 6, log: "6.left & 6.right completed -> Process 6. Result append: 6" },
+                    { action: "process", node: 4, log: "4.left & 4.right completed -> Process 4 (Root). Result append: 4" }
+                ],
+                final_output: "[1, 3, 2, 5, 7, 6, 4]"
+            },
+            tree_levelorder: {
+                title: "Level Order Traversal (BFS)",
+                desc: "Breadth-first search traversal of tree levels. Visits all nodes at level N before moving to level N+1, utilizing a queue data structure.",
+                code: `from collections import deque
+
+def level_order_traversal(root):
+    if not root:
+        return []
+    result = []
+    queue = deque([root])
+    while queue:
+        node = queue.popleft()
+        result.append(node.val)
+        if node.left:
+            queue.append(node.left)
+        if node.right:
+            queue.append(node.right)
+    return result
+
+# Execution output:
+# root = build_demo_tree()
+# print(level_order_traversal(root))`,
+                type: "tree",
+                data: {
+                    nodes: [
+                        { id: 4, label: "4 (Root)", x: 250, y: 60 },
+                        { id: 2, label: "2", x: 130, y: 160 },
+                        { id: 6, label: "6", x: 370, y: 160 },
+                        { id: 1, label: "1", x: 70, y: 260 },
+                        { id: 3, label: "3", x: 190, y: 260 },
+                        { id: 5, label: "5", x: 310, y: 260 },
+                        { id: 7, label: "7", x: 430, y: 260 }
+                    ],
+                    edges: [
+                        { from: 4, to: 2 }, { from: 4, to: 6 },
+                        { from: 2, to: 1 }, { from: 2, to: 3 },
+                        { from: 6, to: 5 }, { from: 6, to: 7 }
+                    ]
+                },
+                steps: [
+                    { action: "queue", node: 4, log: "queue initialized: [4]" },
+                    { action: "process", node: 4, log: "pop 4. Append result: 4" },
+                    { action: "queue", node: 2, log: "4 has left child -> push 2 to queue" },
+                    { action: "queue", node: 6, log: "4 has right child -> push 6 to queue. queue: [2, 6]" },
+                    { action: "process", node: 2, log: "pop 2. Append result: 2" },
+                    { action: "queue", node: 1, log: "2 has left child -> push 1 to queue" },
+                    { action: "queue", node: 3, log: "2 has right child -> push 3 to queue. queue: [6, 1, 3]" },
+                    { action: "process", node: 6, log: "pop 6. Append result: 6" },
+                    { action: "queue", node: 5, log: "6 has left child -> push 5 to queue" },
+                    { action: "queue", node: 7, log: "6 has right child -> push 7 to queue. queue: [1, 3, 5, 7]" },
+                    { action: "process", node: 1, log: "pop 1. Append result: 1. No children." },
+                    { action: "process", node: 3, log: "pop 3. Append result: 3. No children." },
+                    { action: "process", node: 5, log: "pop 5. Append result: 5. No children." },
+                    { action: "process", node: 7, log: "pop 7. Append result: 7. No children. queue is empty." }
+                ],
+                final_output: "[4, 2, 6, 1, 3, 5, 7]"
+            },
+            graph_dfs: {
+                title: "Depth-First Search (DFS)",
+                desc: "Traverses a graph structure using backtracking. Explores as far as possible along each branch before backtracking, utilizing a visited set.",
+                code: `# graph represented as adjacency list
+def dfs_graph(graph, start, visited=None):
+    if visited is None:
+        visited = set()
+    visited.add(start)
+    result = [start]
+    for neighbor in graph[start]:
+        if neighbor not in visited:
+            result.extend(dfs_graph(graph, neighbor, visited))
+    return result
+
+# graph = {
+#   'A': ['B', 'C'], 'B': ['A', 'D', 'E'],
+#   'C': ['A', 'F'], 'D': ['B'], 'E': ['B'], 'F': ['C']
+# }
+# print(dfs_graph(graph, 'A'))`,
+                type: "graph",
+                data: {
+                    nodes: [
+                        { id: "A", label: "A", x: 100, y: 160 },
+                        { id: "B", label: "B", x: 220, y: 80 },
+                        { id: "C", label: "C", x: 220, y: 240 },
+                        { id: "D", label: "D", x: 380, y: 80 },
+                        { id: "E", label: "E", x: 380, y: 160 },
+                        { id: "F", label: "F", x: 380, y: 240 }
+                    ],
+                    edges: [
+                        { from: "A", to: "B" }, { from: "A", to: "C" },
+                        { from: "B", to: "D" }, { from: "B", to: "E" },
+                        { from: "C", to: "F" }
+                    ]
+                },
+                steps: [
+                    { action: "process", node: "A", log: "dfs(A) -> visited = {A}" },
+                    { action: "process", node: "B", log: "A neighbor B not visited -> dfs(B) -> visited = {A, B}" },
+                    { action: "process", node: "D", log: "B neighbor D not visited -> dfs(D) -> visited = {A, B, D}" },
+                    { action: "process", node: "E", log: "D has no other neighbors. Backtrack to B. B neighbor E not visited -> dfs(E) -> visited = {A, B, D, E}" },
+                    { action: "process", node: "C", log: "E has no other neighbors. Backtrack to B -> Backtrack to A. A neighbor C not visited -> dfs(C) -> visited = {A, B, D, E, C}" },
+                    { action: "process", node: "F", log: "C neighbor F not visited -> dfs(F) -> visited = {A, B, D, E, C, F}" }
+                ],
+                final_output: "['A', 'B', 'D', 'E', 'C', 'F']"
+            },
+            graph_bfs: {
+                title: "Breadth-First Search (BFS)",
+                desc: "Traverses graph nodes level-by-level using a queue. Discovers all nodes at distance K before exploring nodes at distance K+1.",
+                code: `from collections import deque
+
+def bfs_graph(graph, start):
+    visited = {start}
+    queue = deque([start])
+    result = []
+    while queue:
+        vertex = queue.popleft()
+        result.append(vertex)
+        for neighbor in graph[vertex]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+    return result
+
+# graph = {
+#   'A': ['B', 'C'], 'B': ['A', 'D', 'E'],
+#   'C': ['A', 'F'], 'D': ['B'], 'E': ['B'], 'F': ['C']
+# }
+# print(bfs_graph(graph, 'A'))`,
+                type: "graph",
+                data: {
+                    nodes: [
+                        { id: "A", label: "A", x: 100, y: 160 },
+                        { id: "B", label: "B", x: 220, y: 80 },
+                        { id: "C", label: "C", x: 220, y: 240 },
+                        { id: "D", label: "D", x: 380, y: 80 },
+                        { id: "E", label: "E", x: 380, y: 160 },
+                        { id: "F", label: "F", x: 380, y: 240 }
+                    ],
+                    edges: [
+                        { from: "A", to: "B" }, { from: "A", to: "C" },
+                        { from: "B", to: "D" }, { from: "B", to: "E" },
+                        { from: "C", to: "F" }
+                    ]
+                },
+                steps: [
+                    { action: "queue", node: "A", log: "queue initialized: [A]" },
+                    { action: "process", node: "A", log: "pop A. Append result: A" },
+                    { action: "queue", node: "B", log: "Enqueue unvisited neighbor: B" },
+                    { action: "queue", node: "C", log: "Enqueue unvisited neighbor: C. queue: [B, C]" },
+                    { action: "process", node: "B", log: "pop B. Append result: B" },
+                    { action: "queue", node: "D", log: "Enqueue unvisited neighbor: D" },
+                    { action: "queue", node: "E", log: "Enqueue unvisited neighbor: E. queue: [C, D, E]" },
+                    { action: "process", node: "C", log: "pop C. Append result: C" },
+                    { action: "queue", node: "F", log: "Enqueue unvisited neighbor: F. queue: [D, E, F]" },
+                    { action: "process", node: "D", log: "pop D. Append result: D. No new neighbors." },
+                    { action: "process", node: "E", log: "pop E. Append result: E. No new neighbors." },
+                    { action: "process", node: "F", log: "pop F. Append result: F. queue is empty." }
+                ],
+                final_output: "['A', 'B', 'C', 'D', 'E', 'F']"
+            },
+            graph_dijkstra: {
+                title: "Dijkstra's Shortest Path",
+                desc: "Finds the shortest paths from a source node to all other nodes in a weighted graph. Evaluates the closest nodes dynamically via a min-priority queue.",
+                code: `import heapq
+
+def dijkstra(graph, start):
+    distances = {node: float('inf') for node in graph}
+    distances[start] = 0
+    pq = [(0, start)]  # (distance, node)
+    
+    while pq:
+        curr_dist, curr_node = heapq.heappop(pq)
+        
+        if curr_dist > distances[curr_node]:
+            continue
+            
+        for neighbor, weight in graph[curr_node].items():
+            distance = curr_dist + weight
+            if distance < distances[neighbor]:
+                distances[neighbor] = distance
+                heapq.heappush(pq, (distance, neighbor))
+                
+    return distances
+
+# graph = {
+#   'A': {'B': 4, 'C': 2}, 'B': {'D': 5, 'C': 1},
+#   'C': {'B': 1, 'D': 8, 'E': 10}, 'D': {'E': 2}, 'E': {}
+# }
+# print(dijkstra(graph, 'A'))`,
+                type: "graph",
+                data: {
+                    nodes: [
+                        { id: "A", label: "A", x: 80, y: 160 },
+                        { id: "B", label: "B", x: 220, y: 80 },
+                        { id: "C", label: "C", x: 220, y: 240 },
+                        { id: "D", label: "D", x: 380, y: 80 },
+                        { id: "E", label: "E", x: 380, y: 240 }
+                    ],
+                    edges: [
+                        { from: "A", to: "B", weight: 4 }, { from: "A", to: "C", weight: 2 },
+                        { from: "C", to: "B", weight: 1 }, { from: "B", to: "D", weight: 5 },
+                        { from: "C", to: "D", weight: 8 }, { from: "C", to: "E", weight: 10 },
+                        { from: "D", to: "E", weight: 2 }
+                    ]
+                },
+                steps: [
+                    { action: "process", node: "A", log: "Start A: dist = 0. Enqueue (0, A)" },
+                    { action: "process", node: "C", log: "Pop A. Check neighbor C: dist 0 + 2 = 2. Relax dist[C] = 2" },
+                    { action: "process", node: "B", log: "Check neighbor B: dist 0 + 4 = 4. Relax dist[B] = 4" },
+                    { action: "process", node: "C", log: "Pop C (min distance 2). Check B: dist 2 + 1 = 3 < 4. Relax dist[B] = 3" },
+                    { action: "process", node: "B", log: "Pop B (updated distance 3). Check D: dist 3 + 5 = 8. Relax dist[D] = 8" },
+                    { action: "process", node: "D", log: "Pop D (distance 8). Check E: dist 8 + 2 = 10. Relax dist[E] = 10" },
+                    { action: "process", node: "E", log: "Pop E (distance 10). Paths resolved." }
+                ],
+                final_output: "{'A': 0, 'B': 3, 'C': 2, 'D': 8, 'E': 10}"
+            },
+            graph_topo: {
+                title: "Topological Sort (Kahn's)",
+                desc: "Sorts a Directed Acyclic Graph (DAG) linearly. Resolves dependencies step-by-step by continually taking nodes with 0 in-degree.",
+                code: `from collections import deque
+
+def topological_sort(graph):
+    in_degree = {u: 0 for u in graph}
+    for u in graph:
+        for v in graph[u]:
+            in_degree[v] = in_degree.get(v, 0) + 1
+            
+    queue = deque([u for u in graph if in_degree[u] == 0])
+    order = []
+    
+    while queue:
+        u = queue.popleft()
+        order.append(u)
+        for v in graph[u]:
+            in_degree[v] -= 1
+            if in_degree[v] == 0:
+                queue.append(v)
+                
+    if len(order) != len(graph):
+        return [] # Cycle detected
+    return order`,
+                type: "graph",
+                data: {
+                    nodes: [
+                        { id: "A", label: "A (In:0)", x: 80, y: 80 },
+                        { id: "B", label: "B (In:0)", x: 80, y: 240 },
+                        { id: "C", label: "C (In:2)", x: 220, y: 160 },
+                        { id: "D", label: "D (In:1)", x: 380, y: 80 },
+                        { id: "E", label: "E (In:1)", x: 380, y: 240 },
+                        { id: "F", label: "F (In:2)", x: 450, y: 160 }
+                    ],
+                    edges: [
+                        { from: "A", to: "C", directed: true }, { from: "B", to: "C", directed: true },
+                        { from: "B", to: "D", directed: true }, { from: "C", to: "E", directed: true },
+                        { from: "D", to: "F", directed: true }, { from: "E", to: "F", directed: true }
+                    ]
+                },
+                steps: [
+                    { action: "queue", node: "A", log: "In-degrees: {A:0, B:0, C:2, D:1, E:1, F:2}. Queue nodes with In:0 -> [A, B]" },
+                    { action: "process", node: "A", log: "Pop A. Append result. Decrement neighbors: C in-degree = 1" },
+                    { action: "process", node: "B", log: "Pop B. Append result. Decrement neighbors: C in-degree = 0, D in-degree = 0. Enqueue C, D" },
+                    { action: "process", node: "C", log: "Pop C. Append result. Decrement neighbors: E in-degree = 0. Enqueue E" },
+                    { action: "process", node: "D", log: "Pop D. Append result. Decrement neighbors: F in-degree = 1" },
+                    { action: "process", node: "E", log: "Pop E. Append result. Decrement neighbors: F in-degree = 0. Enqueue F" },
+                    { action: "process", node: "F", log: "Pop F. Append result. Sort completed." }
+                ],
+                final_output: "['A', 'B', 'C', 'D', 'E', 'F']"
+            },
+            graph_kruskal: {
+                title: "Kruskal's Minimum Spanning Tree",
+                desc: "Finds the minimum spanning tree of an undirected, connected, weighted graph. Picks edges in increasing order of weight, avoiding cycles via Union-Find.",
+                code: `class UnionFind:
+    def __init__(self, vertices):
+        self.parent = {v: v for v in vertices}
+    def find(self, item):
+        if self.parent[item] == item:
+            return item
+        self.parent[item] = self.find(self.parent[item])
+        return self.parent[item]
+    def union(self, set1, set2):
+        root1 = self.find(set1)
+        root2 = self.find(set2)
+        if root1 != root2:
+            self.parent[root1] = root2
+            return True
+        return False
+
+def kruskal(vertices, edges):
+    uf = UnionFind(vertices)
+    mst = []
+    edges.sort() # Sorted by weight
+    for weight, u, v in edges:
+        if uf.union(u, v):
+            mst.append((u, v, weight))
+    return mst`,
+                type: "graph",
+                data: {
+                    nodes: [
+                        { id: "A", label: "A", x: 100, y: 100 },
+                        { id: "B", label: "B", x: 260, y: 80 },
+                        { id: "C", label: "C", x: 260, y: 220 },
+                        { id: "D", label: "D", x: 420, y: 100 },
+                        { id: "E", label: "E", x: 420, y: 220 }
+                    ],
+                    edges: [
+                        { from: "A", to: "B", weight: 1 }, { from: "A", to: "C", weight: 3 },
+                        { from: "B", to: "C", weight: 4 }, { from: "C", to: "D", weight: 5 },
+                        { from: "B", to: "D", weight: 6 }, { from: "C", to: "E", weight: 2 },
+                        { from: "D", to: "E", weight: 7 }
+                    ]
+                },
+                steps: [
+                    { action: "process", node: "A", log: "Sorted edges: (A-B:1, C-E:2, A-C:3, B-C:4, C-D:5, B-D:6, D-E:7)" },
+                    { action: "process", node: "B", log: "Consider A-B(1): vertices in different sets. Union(A,B). Pick A-B" },
+                    { action: "process", node: "E", log: "Consider C-E(2): vertices in different sets. Union(C,E). Pick C-E" },
+                    { action: "process", node: "C", log: "Consider A-C(3): vertices in different sets. Union(AB, CE). Pick A-C" },
+                    { action: "process", node: "B", log: "Consider B-C(4): A, B, C, E are already connected. Skip (cycle)" },
+                    { action: "process", node: "D", log: "Consider C-D(5): Union(ABCE, D). Pick C-D. MST complete!" }
+                ],
+                final_output: "[('A', 'B', 1), ('C', 'E', 2), ('A', 'C', 3), ('C', 'D', 5)]"
+            },
+            graph_prim: {
+                title: "Prim's Minimum Spanning Tree",
+                desc: "Finds the minimum spanning tree by growing the MST from a single starting vertex, repeatedly choosing the cheapest edge connected to visited nodes.",
+                code: `import heapq
+
+def prims_mst(graph, start):
+    mst = []
+    visited = {start}
+    edges = [(weight, start, to) for to, weight in graph[start].items()]
+    heapq.heapify(edges)
+    
+    while edges:
+        weight, frm, to = heapq.heappop(edges)
+        if to not in visited:
+            visited.add(to)
+            mst.append((frm, to, weight))
+            for next_to, w in graph[to].items():
+                if next_to not in visited:
+                    heapq.heappush(edges, (w, to, next_to))
+                    
+    return mst`,
+                type: "graph",
+                data: {
+                    nodes: [
+                        { id: "A", label: "A", x: 100, y: 100 },
+                        { id: "B", label: "B", x: 260, y: 80 },
+                        { id: "C", label: "C", x: 260, y: 220 },
+                        { id: "D", label: "D", x: 420, y: 100 },
+                        { id: "E", label: "E", x: 420, y: 220 }
+                    ],
+                    edges: [
+                        { from: "A", to: "B", weight: 1 }, { from: "A", to: "C", weight: 3 },
+                        { from: "B", to: "C", weight: 4 }, { from: "C", to: "D", weight: 5 },
+                        { from: "B", to: "D", weight: 6 }, { from: "C", to: "E", weight: 2 },
+                        { from: "D", to: "E", weight: 7 }
+                    ]
+                },
+                steps: [
+                    { action: "process", node: "A", log: "Visited: {A}. Add edges from A to heap: [ (1,A,B), (3,A,C) ]" },
+                    { action: "process", node: "B", log: "Min edge is A-B(1). B not visited. Visited: {A, B}. Add edges from B: [ (4,B,C), (6,B,D) ]" },
+                    { action: "process", node: "C", log: "Min edge is A-C(3). C not visited. Visited: {A, B, C}. Add edges from C: [ (5,C,D), (2,C,E) ]" },
+                    { action: "process", node: "E", log: "Min edge is C-E(2). E not visited. Visited: {A, B, C, E}. Add edges from E: [ (7,E,D) ]" },
+                    { action: "process", node: "D", log: "Min edge is C-D(5). D not visited. Visited: {A, B, C, E, D}. Spanning tree resolved." }
+                ],
+                final_output: "[('A', 'B', 1), ('A', 'C', 3), ('C', 'E', 2), ('C', 'D', 5)]"
+            }
+        };
+
+        let currentAlgoKey = "tree_inorder";
+        let simIndex = -1;
+        let isSimulating = false;
+        let simulationInterval = null;
+
+        // Cache DOM elements
+        const DOM = {
+            algoTitle: document.getElementById('js-algo-title'),
+            algoDesc: document.getElementById('js-algo-desc'),
+            codeBox: document.getElementById('js-code-box'),
+            viewport: document.getElementById('js-visualizer-viewport'),
+            consoleBox: document.getElementById('js-console-box'),
+            consoleContent: document.getElementById('js-console-content'),
+            consoleStatus: document.getElementById('js-console-status'),
+            btnRun: document.getElementById('js-btn-run'),
+            btnReset: document.getElementById('js-btn-reset')
+        };
+
+        // Selects an algorithm from list
+        function selectAlgo(key) {
+            if (isSimulating) {
+                stopSimulation();
+            }
+            currentAlgoKey = key;
+            
+            // Toggle active sidebar classes
+            document.querySelectorAll('.sidebar__btn').forEach(btn => {
+                btn.classList.remove('is-active');
+            });
+            event.currentTarget.classList.add('is-active');
+            
+            loadAlgorithm(key);
+        }
+
+        // Loads Algorithm UI
+        function loadAlgorithm(key) {
+            const algo = ALGORITHMS[key];
+            DOM.algoTitle.textContent = algo.title;
+            DOM.algoDesc.textContent = algo.desc;
+            
+            // Setup source code display - strict configuration check
+            DOM.codeBox.textContent = algo.code;
+            
+            // Draw initial Graph/Tree state
+            renderTopology(algo.data, algo.type);
+            
+            // Clear Console
+            clearConsole();
+            logConsole(`>>> Loaded ${algo.title} workspace. Code environment established.`, "system");
+        }
+
+        // Renders visual graph nodes and edges via SVG inside viewport
+        function renderTopology(data, type) {
+            DOM.viewport.innerHTML = '';
+            
+            // Create SVG element
+            const svgNamespace = "http://www.w3.org/2000/svg";
+            const svg = document.createElementNS(svgNamespace, "svg");
+            svg.setAttribute("viewBox", "0 0 500 350");
+            
+            // Draw Edges first (so they render behind nodes)
+            data.edges.forEach(edge => {
+                const fromNode = data.nodes.find(n => n.id === edge.from);
+                const toNode = data.nodes.find(n => n.id === edge.to);
+                if (fromNode && toNode) {
+                    const line = document.createElementNS(svgNamespace, "line");
+                    line.setAttribute("x1", fromNode.x);
+                    line.setAttribute("y1", fromNode.y);
+                    line.setAttribute("x2", toNode.x);
+                    line.setAttribute("y2", toNode.y);
+                    line.setAttribute("class", "svg-edge");
+                    line.setAttribute("id", `edge-${edge.from}-${edge.to}`);
+                    
+                    // Directed arrows if topologically sorted
+                    if (edge.directed) {
+                        // simple marker reference can be added, but simple color indicators work perfectly
+                    }
+                    
+                    svg.appendChild(line);
+                    
+                    // Draw edge weight labels if present
+                    if (edge.weight !== undefined) {
+                        const midX = (fromNode.x + toNode.x) / 2;
+                        const midY = (fromNode.y + toNode.y) / 2 - 8;
+                        const weightText = document.createElementNS(svgNamespace, "text");
+                        weightText.setAttribute("x", midX);
+                        weightText.setAttribute("y", midY);
+                        weightText.setAttribute("class", "svg-weight");
+                        weightText.textContent = edge.weight;
+                        svg.appendChild(weightText);
+                    }
+                }
+            });
+            
+            // Draw Nodes
+            data.nodes.forEach(node => {
+                const group = document.createElementNS(svgNamespace, "g");
+                
+                const circle = document.createElementNS(svgNamespace, "circle");
+                circle.setAttribute("cx", node.x);
+                circle.setAttribute("cy", node.y);
+                circle.setAttribute("r", 20);
+                circle.setAttribute("class", "svg-node");
+                circle.setAttribute("id", `node-${node.id}`);
+                
+                const text = document.createElementNS(svgNamespace, "text");
+                text.setAttribute("x", node.x);
+                text.setAttribute("y", node.y);
+                text.setAttribute("class", "svg-text");
+                text.textContent = node.label.split(" ")[0]; // Just show core identifier inside node
+                
+                group.appendChild(circle);
+                group.appendChild(text);
+                svg.appendChild(group);
+            });
+            
+            DOM.viewport.appendChild(svg);
+        }
+
+        // Start Visualizer traversal steps simulation
+        function startSimulation() {
+            if (isSimulating) return;
+            isSimulating = true;
+            DOM.btnRun.disabled = true;
+            DOM.consoleStatus.textContent = "EXECUTING";
+            DOM.consoleStatus.style.color = "var(--neon-secondary)";
+            
+            const algo = ALGORITHMS[currentAlgoKey];
+            simIndex = 0;
+            
+            logConsole(`>>> Executing Python engine call: ${currentAlgoKey}_traversal(demo_root)...`, "system");
+            
+            simulationInterval = setInterval(() => {
+                if (simIndex < algo.steps.length) {
+                    const step = algo.steps[simIndex];
+                    applySimulationStep(step);
+                    simIndex++;
+                } else {
+                    // Simulation finished
+                    stopSimulation();
+                    logConsole(`>>> Process finished with exit code 0.`, "system");
+                    logConsole(`>>> Return value: ${algo.final_output}`, "success");
+                    DOM.consoleStatus.textContent = "FINISHED";
+                    DOM.consoleStatus.style.color = "var(--neon-success)";
+                }
+            }, 1000);
+        }
+
+        // Applies highlight animations to DOM/SVG elements
+        function applySimulationStep(step) {
+            logConsole(step.log, "output");
+            
+            // Remove previous active node highlights
+            document.querySelectorAll('.svg-node').forEach(node => {
+                node.classList.remove('is-active');
+            });
+            
+            const nodeEl = document.getElementById(`node-${step.node}`);
+            if (nodeEl) {
+                nodeEl.classList.add('is-active');
+                if (step.action === "process") {
+                    nodeEl.classList.add('is-visited');
+                } else if (step.action === "queue") {
+                    nodeEl.classList.add('is-queued');
+                }
+            }
+        }
+
+        // Stops the simulation interval and resets state variables
+        function stopSimulation() {
+            clearInterval(simulationInterval);
+            isSimulating = false;
+            DOM.btnRun.disabled = false;
+            DOM.consoleStatus.textContent = "READY";
+            DOM.consoleStatus.style.color = "var(--neon-primary)";
+        }
+
+        // Reset workspace to clean slate
+        function resetWorkspace() {
+            stopSimulation();
+            loadAlgorithm(currentAlgoKey);
+        }
+
+        // Append line item to Console
+        function logConsole(message, type = "") {
+            const line = document.createElement("div");
+            line.className = "console__line";
+            if (type === "system") {
+                line.className += " console__line--system";
+            } else if (type === "success") {
+                line.className += " console__line--success";
+            } else if (type === "output") {
+                line.className += " console__line--output";
+            }
+            line.textContent = message;
+            DOM.consoleContent.appendChild(line);
+            
+            // Auto scroll console to bottom
+            DOM.consoleBox.scrollTop = DOM.consoleBox.scrollHeight;
+        }
+
+        // Clear Console lines
+        function clearConsole() {
+            DOM.consoleContent.innerHTML = '';
+        }
+
+        // Initialize Workspace with first algorithm
+        window.addEventListener("DOMContentLoaded", () => {
+            loadAlgorithm("tree_inorder");
+        });
+    </script>
+</body>
+</html>

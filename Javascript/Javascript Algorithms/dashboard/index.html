@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Neon Nexus: Interactive Dashboard Landing Page">
+    <title>Neon Nexus // Dashboard Overview</title>
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --bg-panel: rgba(20, 20, 25, 0.6);
+            --neon-primary: #00f3ff; /* Cyan */
+            --neon-secondary: #ff00ff; /* Magenta */
+            --neon-tertiary: #bd00ff; /* Purple */
+            --text-main: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --border-glow: rgba(0, 243, 255, 0.2);
+            --font-code: 'Fira Code', monospace;
+            --font-display: 'Rajdhani', sans-serif;
+            --radius-lg: 12px;
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* --- Global Reset (Directive 6) --- */
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: grid;
+            grid-template-rows: auto 1fr auto; /* Sticky footer */
+        }
+
+        /* --- Header (Directive 11, 30, 65) --- */
+        header {
+            padding: 1.5rem 2rem;
+            background: rgba(5, 5, 5, 0.8);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--border-glow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header__logo {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--neon-primary);
+            text-shadow: 0 0 10px var(--neon-primary);
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+            margin: 0;
+            padding: 0;
+        }
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: color 0.3s;
+        }
+        nav a:hover { color: var(--neon-secondary); }
+
+        /* --- Hero Section --- */
+        .hero {
+            padding: 4rem 2rem;
+            text-align: center;
+            background: radial-gradient(circle at center, rgba(0, 243, 255, 0.1) 0%, transparent 70%);
+        }
+        .hero__title {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 8vw, 5rem);
+            margin: 0;
+            text-transform: uppercase;
+            line-height: 1;
+        }
+        .hero__subtitle {
+            color: var(--text-muted);
+            font-size: 1.25rem;
+            margin-top: 1rem;
+            max-width: 600px;
+            margin-inline: auto;
+        }
+
+        /* --- Grid Layout (Directive 2, 3, 26) --- */
+        .dashboard-grid {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            width: 100%;
+        }
+
+        /* --- Component: Graphicon Card (Directive 102, 105, 106, 136) --- */
+        .card {
+            background: var(--bg_panel);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s var(--ease-out), border-color 0.3s;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: var(--neon-primary);
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.15);
+        }
+        .card__header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .card__title {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--neon-secondary);
+        }
+        .card__status {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            background: rgba(0, 243, 255, 0.1);
+            color: var(--neon-primary);
+            font-family: var(--font-code);
+        }
+
+        /* --- Canvas Styling --- */
+        .graphicon {
+            width: 100%;
+            height: 200px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 4px;
+        }
+
+        /* --- Footer --- */
+        footer {
+            padding: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-top: auto;
+        }
+
+        /* --- Scrollbar (Directive 131) --- */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--neon-primary); border-radius: 10px; }
+
+        @media (max-width: 768px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            header { padding: 1rem; }
+            nav { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header__logo">Neon Nexus // Dashboard</div>
+    <nav>
+        <ul>
+            <li><a href="#overview">Overview</a></li>
+            <li><a href="#analytics">Analytics</a></li>
+            <li><a href="#system">System</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <section class="hero">
+        <h1 class="hero__title">Neural Stream v4.0</h1>
+        <p class="hero__subtitle">Real-time cryptographic telemetry and neural link status monitoring.</p>
+    </section>
+
+    <div class="dashboard-grid">
+        <!-- 1. Activity Stream (Line) -->
+        <article class="card">
+            <div class="card__header">
+                <span class="card__title">Activity Stream</span>
+                <span class="card__status">LIVE</span>
+            </div>
+            <canvas id="canvas-activity" class="graphicon"></canvas>
+        </article>
+
+        <!-- 2. Resource Allocation (Bar) -->
+        <article class="card">
+            <div class="card__header">
+                <span class="card__title">Resource Clusters</span>
+                <span class="card__status">STABLE</span>
+            </div>
+            <canvas id="canvas-resources" class="graphicon"></canvas>
+        </article>
+
+        <!-- 3. Neural Link (Radar) -->
+        <article class="card">
+            <div class="card__header">
+                <span class="card__title">Neural Resonance</span>
+                <span class="card__status">98.4% SYNC</span>
+            </div>
+            <canvas id="canvas-neural" class="graphicon"></canvas>
+        </article>
+
+        <!-- 4. Entropy Flow (Area) -->
+        <article class="card">
+            <div class="card__header">
+                <span class="card__title">Entropy Flow</span>
+                <span class="card__status">DECRYPTING</span>
+            </div>
+            <canvas id="canvas-entropy" class="graphicon"></canvas>
+        </article>
+
+        <!-- 5. Node Distribution (Donut) -->
+        <article class="card">
+            <div class="card__header">
+                <span class="card__title">Node Distribution</span>
+                <span class="card__status">OPTIMIZED</span>
+            </div>
+            <canvas id="canvas-nodes" class="graphicon"></canvas>
+        </article>
+
+        <!-- 6. Packet Scatter (Scatter) -->
+        <article class="card">
+            <div class="card__header">
+                <span class="card__title">Packet Collision</span>
+                <span class="card__status">MONITORING</span>
+            </div>
+            <canvas id="canvas-packets" class="graphicon"></canvas>
+        </article>
+    </div>
+</main>
+
+<footer>
+    &copy; 2026 NEON-GRID ARCHITECT SYSTEMS. ADHERING TO THE MANIFESTO.
+</footer>
+
+<script>
+    /**
+     * NEON-NOIR GRAPHICON ENGINE
+     * Native Canvas implementation without libraries.
+     */
+
+    const COLORS = {
+        primary: '#00f3ff',
+        secondary: '#ff00ff',
+        tertiary: '#bd00ff',
+        bg: '#050505'
+    };
+
+    function initCanvas(id) {
+        const canvas = document.getElementById(id);
+        const ctx = canvas.getContext('2d');
+        const dpr = window.devicePixelRatio || 1;
+        const rect = canvas.getBoundingClientRect();
+        
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.scale(dpr, dpr);
+        
+        return { canvas, ctx, w: rect.width, h: rect.height };
+    }
+
+    // 1. Activity Stream (Moving Line)
+    function drawActivity() {
+        const { ctx, w, h } = initCanvas('canvas-activity');
+        let points = Array.from({ length: 20 }, (_, i) => Math.random() * h * 0.6 + h * 0.2);
+        
+        function animate() {
+            ctx.clearRect(0, 0, w, h);
+            
+            // Shift points
+            points.push(Math.random() * h * 0.6 + h * 0.2);
+            points.shift();
+            
+            // Draw Gradient Path
+            ctx.beginPath();
+            ctx.strokeStyle = COLORS.primary;
+            ctx.lineWidth = 3;
+            ctx.lineJoin = 'round';
+            
+            const step = w / (points.length - 1);
+            ctx.moveTo(0, points[0]);
+            
+            for(let i=1; i<points.length; i++) {
+                ctx.lineTo(i * step, points[i]);
+            }
+            
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = COLORS.primary;
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+            
+            // Fill area
+            ctx.lineTo(w, h);
+            ctx.lineTo(0, h);
+            const grad = ctx.createLinearGradient(0, 0, 0, h);
+            grad.addColorStop(0, 'rgba(0, 243, 255, 0.2)');
+            grad.addColorStop(1, 'transparent');
+            ctx.fillStyle = grad;
+            ctx.fill();
+
+            requestAnimationFrame(() => setTimeout(animate, 100));
+        }
+        animate();
+    }
+
+    // 2. Resource Allocation (Bars)
+    function drawResources() {
+        const { ctx, w, h } = initCanvas('canvas-resources');
+        const bars = 8;
+        const barW = 30;
+        const gap = (w - (bars * barW)) / (bars + 1);
+        
+        function animate() {
+            ctx.clearRect(0, 0, w, h);
+            
+            for(let i=0; i<bars; i++) {
+                const val = Math.random() * h * 0.7 + h * 0.1;
+                const x = gap + i * (barW + gap);
+                
+                // Outer glow
+                ctx.fillStyle = COLORS.secondary;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = COLORS.secondary;
+                ctx.fillRect(x, h - val, barW, val);
+                
+                // Inner highlight
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.fillRect(x + 5, h - val, 5, val);
+            }
+            setTimeout(() => requestAnimationFrame(animate), 500);
+        }
+        animate();
+    }
+
+    // 3. Neural Resonance (Radar)
+    function drawNeural() {
+        const { ctx, w, h } = initCanvas('canvas-neural');
+        const center = { x: w/2, y: h/2 };
+        const radius = Math.min(w, h) * 0.4;
+        const sides = 6;
+        
+        function animate() {
+            ctx.clearRect(0, 0, w, h);
+            
+            // Draw web
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+            for(let r=1; r<=3; r++) {
+                ctx.beginPath();
+                for(let i=0; i<sides; i++) {
+                    const angle = (i / sides) * Math.PI * 2;
+                    const x = center.x + Math.cos(angle) * (radius * r/3);
+                    const y = center.y + Math.sin(angle) * (radius * r/3);
+                    if(i===0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+                }
+                ctx.closePath();
+                ctx.stroke();
+            }
+
+            // Draw Data
+            ctx.beginPath();
+            ctx.fillStyle = 'rgba(189, 0, 255, 0.3)';
+            ctx.strokeStyle = COLORS.tertiary;
+            for(let i=0; i<sides; i++) {
+                const angle = (i / sides) * Math.PI * 2;
+                const r = radius * (Math.random() * 0.4 + 0.6);
+                const x = center.x + Math.cos(angle) * r;
+                const y = center.y + Math.sin(angle) * r;
+                if(i===0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            }
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            
+            setTimeout(() => requestAnimationFrame(animate), 800);
+        }
+        animate();
+    }
+
+    // 4. Entropy Flow (Sin Wave Area)
+    function drawEntropy() {
+        const { ctx, w, h } = initCanvas('canvas-entropy');
+        let offset = 0;
+        
+        function animate() {
+            ctx.clearRect(0, 0, w, h);
+            ctx.beginPath();
+            ctx.moveTo(0, h);
+            
+            for(let x=0; x<=w; x++) {
+                const y = h/2 + Math.sin(x * 0.02 + offset) * 30 + Math.cos(x * 0.01 + offset) * 20;
+                ctx.lineTo(x, y);
+            }
+            
+            ctx.lineTo(w, h);
+            ctx.closePath();
+            
+            const grad = ctx.createLinearGradient(0, 0, w, 0);
+            grad.addColorStop(0, COLORS.primary);
+            grad.addColorStop(1, COLORS.secondary);
+            ctx.fillStyle = grad;
+            ctx.globalAlpha = 0.4;
+            ctx.fill();
+            ctx.globalAlpha = 1.0;
+            
+            offset += 0.05;
+            requestAnimationFrame(animate);
+        }
+        animate();
+    }
+
+    // 5. Node Distribution (Donut)
+    function drawNodes() {
+        const { ctx, w, h } = initCanvas('canvas-nodes');
+        const center = { x: w/2, y: h/2 };
+        const radius = Math.min(w, h) * 0.35;
+        let rotation = 0;
+
+        function animate() {
+            ctx.clearRect(0, 0, w, h);
+            
+            const data = [0.4, 0.3, 0.2, 0.1];
+            const colors = [COLORS.primary, COLORS.secondary, COLORS.tertiary, '#fff'];
+            let startAngle = rotation;
+            
+            data.forEach((val, i) => {
+                const slice = val * Math.PI * 2;
+                ctx.beginPath();
+                ctx.arc(center.x, center.y, radius, startAngle, startAngle + slice);
+                ctx.strokeStyle = colors[i];
+                ctx.lineWidth = 20;
+                ctx.stroke();
+                startAngle += slice;
+            });
+            
+            // Center ring
+            ctx.beginPath();
+            ctx.arc(center.x, center.y, radius - 25, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            
+            rotation += 0.01;
+            requestAnimationFrame(animate);
+        }
+        animate();
+    }
+
+    // 6. Packet Scatter
+    function drawPackets() {
+        const { ctx, w, h } = initCanvas('canvas-packets');
+        const count = 30;
+        let particles = Array.from({ length: count }, () => ({
+            x: Math.random() * w,
+            y: Math.random() * h,
+            vx: (Math.random() - 0.5) * 2,
+            vy: (Math.random() - 0.5) * 2,
+            size: Math.random() * 3 + 1
+        }));
+
+        function animate() {
+            ctx.clearRect(0, 0, w, h);
+            
+            particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                
+                if(p.x < 0 || p.x > w) p.vx *= -1;
+                if(p.y < 0 || p.y > h) p.vy *= -1;
+                
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fillStyle = Math.random() > 0.5 ? COLORS.primary : COLORS.secondary;
+                ctx.shadowBlur = 5;
+                ctx.shadowColor = ctx.fillStyle;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            });
+            
+            requestAnimationFrame(animate);
+        }
+        animate();
+    }
+
+    // Launch all graphicons
+    window.onload = () => {
+        drawActivity();
+        drawResources();
+        drawNeural();
+        drawEntropy();
+        drawNodes();
+        drawPackets();
+    };
+
+</script>
+</body>
+</html>

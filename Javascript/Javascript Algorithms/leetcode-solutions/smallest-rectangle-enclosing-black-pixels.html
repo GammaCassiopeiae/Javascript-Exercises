@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smallest Rectangle Enclosing Black Pixels - LeetCode Solution</title>
+    <style>
+        :root { --lime-green: #00ff9d; --lime-dim: rgba(0, 255, 157, 0.3); --bg-black: #050505; --bg-surface: rgba(255, 255, 255, 0.05); --text-primary: #ffffff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg-black); color: var(--text-primary); min-height: 100vh; line-height: 1.6; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+        header { border-bottom: 1px solid var(--lime-dim); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+        h1 { font-size: clamp(1.5rem, 3vw, 2rem); color: var(--lime-green); text-shadow: 0 0 10px var(--lime-dim); margin-bottom: 0.5rem; }
+        .problem-desc, .code-section, .demo-section { background: var(--bg-surface); border: 1px solid var(--lime-dim); border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; }
+        h2 { color: var(--lime-green); font-size: 1.25rem; margin-bottom: 1rem; }
+        pre { background: #0a0a0a; border: 1px solid var(--lime-dim); border-radius: 6px; padding: 1.5rem; overflow-x: auto; font-family: 'Fira Code', monospace; font-size: 0.9rem; }
+        .keyword { color: #ff00ff; } .function { color: #00f3ff; } .string { color: #00ff9d; } .number { color: #bd00ff; } .comment { color: rgba(255, 255, 255, 0.4); }
+        input, button { padding: 0.75rem 1rem; border: 1px solid var(--lime-dim); border-radius: 6px; background: rgba(0, 0, 0, 0.3); color: var(--text-primary); font-family: 'Fira Code', monospace; margin-bottom: 0.5rem; }
+        input:focus { outline: none; box-shadow: 0 0 10px var(--lime-dim); }
+        button { background: var(--lime-dim); color: var(--bg-black); cursor: pointer; font-weight: 700; }
+        button:hover { background: var(--lime-green); box-shadow: 0 0 20px var(--lime-dim); }
+        .result { margin-top: 1rem; padding: 1rem; background: rgba(0, 255, 157, 0.1); border-radius: 6px; font-family: 'Fira Code', monospace; }
+        .result span { color: var(--lime-green); }
+        label { display: block; color: var(--lime-green); margin-bottom: 0.5rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Smallest Rectangle Enclosing Black Pixels</h1>
+            <p style="color: var(--text-muted);">LeetCode Problem - Binary Search on Image</p>
+        </header>
+        <section class="problem-desc">
+            <h2>Problem Description</h2>
+            <p>Given an image of black ('1') and white ('0') pixels and one black pixel position, find the area of the smallest rectangle enclosing all black pixels.</p>
+        </section>
+        <section class="code-section">
+            <h2>JavaScript Solution</h2>
+            <pre><code><span class="keyword">function</span> <span class="function">minArea</span>(image, x, y) {
+    <span class="keyword">const</span> m = image.length, n = image[<span class="number">0</span>].length;
+    
+    <span class="keyword">function</span> <span class="function">hasBlackInRow</span>(row) {
+        <span class="keyword">for</span> (<span class="keyword">let</span> j = <span class="number">0</span>; j < n; j++) {
+            <span class="keyword">if</span> (image[row][j] === <span class="string">'1'</span>) <span class="keyword">return</span> <span class="keyword">true</span>;
+        }
+        <span class="keyword">return</span> <span class="keyword">false</span>;
+    }
+    
+    <span class="keyword">function</span> <span class="function">hasBlackInCol</span>(col) {
+        <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < m; i++) {
+            <span class="keyword">if</span> (image[i][col] === <span class="string">'1'</span>) <span class="keyword">return</span> <span class="keyword">true</span>;
+        }
+        <span class="keyword">return</span> <span class="keyword">false</span>;
+    }
+    
+    <span class="comment">// Binary search for boundaries</span>
+    <span class="keyword">function</span> <span class="function">binarySearch</span>(low, high, check, findFirst) {
+        <span class="keyword">while</span> (low < high) {
+            <span class="keyword">const</span> mid = <span class="function">Math</span>.<span class="function">floor</span>((low + high) / <span class="number">2</span>);
+            <span class="keyword">if</span> (check(mid) !== findFirst) {
+                low = mid + <span class="number">1</span>;
+            } <span class="keyword">else</span> {
+                high = mid;
+            }
+        }
+        <span class="keyword">return</span> low;
+    }
+    
+    <span class="keyword">const</span> top = <span class="function">binarySearch</span>(<span class="number">0</span>, x, <span class="function">hasBlackInRow</span>, <span class="keyword">true</span>);
+    <span class="keyword">const</span> bottom = <span class="function">binarySearch</span>(x + <span class="number">1</span>, m, <span class="function">hasBlackInRow</span>, <span class="keyword">false</span>);
+    <span class="keyword">const</span> left = <span class="function">binarySearch</span>(<span class="number">0</span>, y, <span class="function">hasBlackInCol</span>, <span class="keyword">true</span>);
+    <span class="keyword">const</span> right = <span class="function">binarySearch</span>(y + <span class="number">1</span>, n, <span class="function">hasBlackInCol</span>, <span class="keyword">false</span>);
+    
+    <span class="keyword">return</span> (bottom - top) * (right - left);
+}
+
+<span class="comment">// Usage:</span>
+<span class="keyword">const</span> image = [[<span class="string">"0"</span>,<span class="string">"0"</span>,<span class="string">"1"</span>,<span class="string">"0"</span>],[<span class="string">"0"</span>,<span class="string">"1"</span>,<span class="string">"1"</span>,<span class="string">"0"</span>],[<span class="string">"0"</span>,<span class="string">"1"</span>,<span class="string">"0"</span>,<span class="string">"0"</span>]];
+console.<span class="function">log</span>(<span class="function">minArea</span>(image, <span class="number">0</span>, <span class="number">2</span>)); <span class="comment">// 6</span></code></pre>
+        </section>
+        <section class="demo-section">
+            <h2>Interactive Demo</h2>
+            <div class="input-group">
+                <label for="image-input">Image (rows separated by semicolon):</label>
+                <input type="text" id="image-input" value="0010;0110;0100" style="width: 100%;">
+            </div>
+            <div class="input-group">
+                <label for="x-input">X (row of black pixel):</label>
+                <input type="number" id="x-input" value="0" min="0">
+            </div>
+            <div class="input-group">
+                <label for="y-input">Y (col of black pixel):</label>
+                <input type="number" id="y-input" value="2" min="0">
+            </div>
+            <button onclick="runDemo()">Calculate Area</button>
+            <div class="result"><span id="output">-</span></div>
+        </section>
+    </div>
+    <script>
+        function minArea(image, x, y) {
+            const m = image.length, n = image[0].length;
+            function hasBlackInRow(row) {
+                for (let j = 0; j < n; j++) if (image[row][j] === '1') return true;
+                return false;
+            }
+            function hasBlackInCol(col) {
+                for (let i = 0; i < m; i++) if (image[i][col] === '1') return true;
+                return false;
+            }
+            function binarySearch(low, high, check, findFirst) {
+                while (low < high) {
+                    const mid = Math.floor((low + high) / 2);
+                    if (check(mid) !== findFirst) low = mid + 1;
+                    else high = mid;
+                }
+                return low;
+            }
+            const top = binarySearch(0, x, hasBlackInRow, true);
+            const bottom = binarySearch(x + 1, m, hasBlackInRow, false);
+            const left = binarySearch(0, y, hasBlackInCol, true);
+            const right = binarySearch(y + 1, n, hasBlackInCol, false);
+            return (bottom - top) * (right - left);
+        }
+        function runDemo() {
+            const imageInput = document.getElementById('image-input').value;
+            const image = imageInput.split(';').map(row => row.split(''));
+            const x = parseInt(document.getElementById('x-input').value);
+            const y = parseInt(document.getElementById('y-input').value);
+            document.getElementById('output').textContent = minArea(image, x, y);
+        }
+    </script>
+</body>
+</html>

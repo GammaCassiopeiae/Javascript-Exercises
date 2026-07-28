@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maximum Number of Non-Overlapping Substrings - LeetCode Solution</title>
+    <style>
+        :root {
+            --lime-green: #00ff9d;
+            --lime-dim: rgba(0, 255, 157, 0.3);
+            --bg-black: #050505;
+            --bg-surface: rgba(255, 255, 255, 0.05);
+            --text-primary: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.7);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg-black);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        .container { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+        header { border-bottom: 1px solid var(--lime-dim); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+        h1 { font-size: clamp(1.5rem, 3vw, 2rem); color: var(--lime-green); text-shadow: 0 0 10px var(--lime-dim); margin-bottom: 0.5rem; }
+        .problem-desc, .code-section, .demo-section {
+            background: var(--bg-surface);
+            border: 1px solid var(--lime-dim);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        h2 { color: var(--lime-green); font-size: 1.25rem; margin-bottom: 1rem; }
+        pre {
+            background: #0a0a0a;
+            border: 1px solid var(--lime-dim);
+            border-radius: 6px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+        .keyword { color: #ff00ff; }
+        .function { color: #00f3ff; }
+        .string { color: #00ff9d; }
+        .number { color: #bd00ff; }
+        .comment { color: rgba(255, 255, 255, 0.4); }
+        input, button {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--lime-dim);
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--text-primary);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        input:focus { outline: none; box-shadow: 0 0 10px var(--lime-dim); }
+        button { background: var(--lime-dim); color: var(--bg-black); cursor: pointer; font-weight: 700; transition: all 0.3s ease; }
+        button:hover { background: var(--lime-green); box-shadow: 0 0 20px var(--lime-dim); }
+        .result { margin-top: 1rem; padding: 1rem; background: rgba(0, 255, 157, 0.1); border-radius: 6px; font-family: 'Fira Code', monospace; }
+        .result span { color: var(--lime-green); }
+        label { display: block; color: var(--lime-green); margin-bottom: 0.5rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Maximum Number of Non-Overlapping Substrings</h1>
+            <p style="color: var(--text-muted);">LeetCode Problem - Greedy + Interval Processing</p>
+        </header>
+        <section class="problem-desc">
+            <h2>Problem Description</h2>
+            <p>Given a string of lowercase letters, find maximum number of non-overlapping substrings such that each substring contains all occurrences of every character it includes.</p>
+        </section>
+        <section class="code-section">
+            <h2>JavaScript Solution</h2>
+            <pre><code><span class="keyword">function</span> <span class="function">maxNumOfSubstrings</span>(s) {
+    <span class="keyword">const</span> first = <span class="keyword">new</span> <span class="function">Map</span>(), last = <span class="keyword">new</span> <span class="function">Map</span>();
+    
+    <span class="comment">// Find first and last occurrence of each char</span>
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < s.length; i++) {
+        <span class="keyword">if</span> (!first.<span class="function">has</span>(s[i])) first.<span class="function">set</span>(s[i], i);
+        last.<span class="function">set</span>(s[i], i);
+    }
+    
+    <span class="keyword">const</span> intervals = [];
+    
+    <span class="comment">// For each character, find valid substring starting at its first occurrence</span>
+    <span class="keyword">for</span> (<span class="keyword">const</span> [char, start] <span class="keyword">of</span> first) {
+        <span class="keyword">let</span> end = last.<span class="function">get</span>(char);
+        <span class="keyword">let</span> valid = <span class="keyword">true</span>;
+        
+        <span class="keyword">for</span> (<span class="keyword">let</span> i = start; i <= end && valid; i++) {
+            <span class="keyword">if</span> (first.<span class="function">get</span>(s[i]) < start) {
+                valid = <span class="keyword">false</span>;
+            }
+            end = Math.<span class="function">max</span>(end, last.<span class="function">get</span>(s[i]));
+        }
+        
+        <span class="keyword">if</span> (valid) intervals.<span class="function">push</span>([start, end]);
+    }
+    
+    <span class="comment">// Sort by end position and greedily select</span>
+    intervals.<span class="function">sort</span>((a, b) => a[<span class="number">1</span>] - b[<span class="number">1</span>]);
+    
+    <span class="keyword">const</span> result = [];
+    <span class="keyword">let</span> prevEnd = -<span class="number">1</span>;
+    
+    <span class="keyword">for</span> (<span class="keyword">const</span> [start, end] <span class="keyword">of</span> intervals) {
+        <span class="keyword">if</span> (start > prevEnd) {
+            result.<span class="function">push</span>(s.<span class="function">slice</span>(start, end + <span class="number">1</span>));
+            prevEnd = end;
+        }
+    }
+    
+    <span class="keyword">return</span> result;
+}
+
+<span class="comment">// Usage:</span>
+console.<span class="function">log</span>(<span class="function">maxNumOfSubstrings</span>(<span class="string">"adefaddaccc"</span>)); <span class="comment">// ["e","f","ccc"]</span></code></pre>
+        </section>
+        <section class="demo-section">
+            <h2>Interactive Demo</h2>
+            <div class="input-group">
+                <label for="s-input">String s:</label>
+                <input type="text" id="s-input" value="adefaddaccc" style="width: 100%;">
+            </div>
+            <button onclick="runDemo()">Find Substrings</button>
+            <div class="result"><span id="output">-</span></div>
+        </section>
+    </div>
+    <script>
+        function maxNumOfSubstrings(s) {
+            const first = new Map(), last = new Map();
+            for (let i = 0; i < s.length; i++) {
+                if (!first.has(s[i])) first.set(s[i], i);
+                last.set(s[i], i);
+            }
+            const intervals = [];
+            for (const [char, start] of first) {
+                let end = last.get(char);
+                let valid = true;
+                for (let i = start; i <= end && valid; i++) {
+                    if (first.get(s[i]) < start) valid = false;
+                    end = Math.max(end, last.get(s[i]));
+                }
+                if (valid) intervals.push([start, end]);
+            }
+            intervals.sort((a, b) => a[1] - b[1]);
+            const result = [];
+            let prevEnd = -1;
+            for (const [start, end] of intervals) {
+                if (start > prevEnd) {
+                    result.push(s.slice(start, end + 1));
+                    prevEnd = end;
+                }
+            }
+            return result;
+        }
+        function runDemo() {
+            const s = document.getElementById('s-input').value;
+            document.getElementById('output').textContent = JSON.stringify(maxNumOfSubstrings(s));
+        }
+    </script>
+</body>
+</html>

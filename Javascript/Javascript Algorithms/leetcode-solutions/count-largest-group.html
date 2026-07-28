@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Count Largest Group - LeetCode Solution</title>
+    <style>
+        :root { --lime-green: #00ff9d; --lime-dim: rgba(0, 255, 157, 0.3); --bg-black: #050505; --bg-surface: rgba(255, 255, 255, 0.05); --text-primary: #ffffff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg-black); color: var(--text-primary); min-height: 100vh; line-height: 1.6; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+        header { border-bottom: 1px solid var(--lime-dim); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+        h1 { font-size: clamp(1.5rem, 3vw, 2rem); color: var(--lime-green); text-shadow: 0 0 10px var(--lime-dim); margin-bottom: 0.5rem; }
+        .problem-desc, .code-section, .demo-section { background: var(--bg-surface); border: 1px solid var(--lime-dim); border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; }
+        h2 { color: var(--lime-green); font-size: 1.25rem; margin-bottom: 1rem; }
+        pre { background: #0a0a0a; border: 1px solid var(--lime-dim); border-radius: 6px; padding: 1.5rem; overflow-x: auto; font-family: 'Fira Code', monospace; font-size: 0.9rem; }
+        .keyword { color: #ff00ff; } .function { color: #00f3ff; } .string { color: #00ff9d; } .number { color: #bd00ff; } .comment { color: rgba(255, 255, 255, 0.4); }
+        input, button { padding: 0.75rem 1rem; border: 1px solid var(--lime-dim); border-radius: 6px; background: rgba(0, 0, 0, 0.3); color: var(--text-primary); font-family: 'Fira Code', monospace; margin-bottom: 0.5rem; }
+        input:focus { outline: none; box-shadow: 0 0 10px var(--lime-dim); }
+        button { background: var(--lime-dim); color: var(--bg-black); cursor: pointer; font-weight: 700; }
+        button:hover { background: var(--lime-green); box-shadow: 0 0 20px var(--lime-dim); }
+        .result { margin-top: 1rem; padding: 1rem; background: rgba(0, 255, 157, 0.1); border-radius: 6px; font-family: 'Fira Code', monospace; }
+        .result span { color: var(--lime-green); }
+        label { display: block; color: var(--lime-green); margin-bottom: 0.5rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Count Largest Group</h1>
+            <p style="color: var(--text-muted);">LeetCode Problem - Digit Sum + Hash Map</p>
+        </header>
+        <section class="problem-desc">
+            <h2>Problem Description</h2>
+            <p>Given an integer n, group numbers from 1 to n by sum of their digits. Return the count of groups that have the largest size.</p>
+        </section>
+        <section class="code-section">
+            <h2>JavaScript Solution</h2>
+            <pre><code><span class="keyword">function</span> <span class="function">countLargestGroup</span>(n) {
+    <span class="keyword">const</span> groups = <span class="keyword">new</span> <span class="function">Map</span>();
+    
+    <span class="keyword">function</span> <span class="function">digitSum</span>(num) {
+        <span class="keyword">let</span> sum = <span class="number">0</span>;
+        <span class="keyword">while</span> (num > <span class="number">0</span>) {
+            sum += num % <span class="number">10</span>;
+            num = <span class="function">Math</span>.<span class="function">floor</span>(num / <span class="number">10</span>);
+        }
+        <span class="keyword">return</span> sum;
+    }
+    
+    <span class="comment">// Group by digit sum</span>
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">1</span>; i <= n; i++) {
+        <span class="keyword">const</span> sum = <span class="function">digitSum</span>(i);
+        groups.<span class="function">set</span>(sum, (groups.<span class="function">get</span>(sum) || <span class="number">0</span>) + <span class="number">1</span>);
+    }
+    
+    <span class="comment">// Find max size</span>
+    <span class="keyword">let</span> maxSize = <span class="number">0</span>;
+    <span class="keyword">for</span> (<span class="keyword">const</span> size <span class="keyword">of</span> groups.<span class="function">values</span>()) {
+        maxSize = Math.<span class="function">max</span>(maxSize, size);
+    }
+    
+    <span class="comment">// Count groups with max size</span>
+    <span class="keyword">let</span> count = <span class="number">0</span>;
+    <span class="keyword">for</span> (<span class="keyword">const</span> size <span class="keyword">of</span> groups.<span class="function">values</span>()) {
+        <span class="keyword">if</span> (size === maxSize) count++;
+    }
+    
+    <span class="keyword">return</span> count;
+}
+
+<span class="comment">// Usage:</span>
+console.<span class="function">log</span>(<span class="function">countLargestGroup</span>(<span class="number">13</span>)); <span class="comment">// 4 (groups: [1,10], [2,11], [3,12], [4,13], [5], [6], [7], [8], [9])</span></code></pre>
+        </section>
+        <section class="demo-section">
+            <h2>Interactive Demo</h2>
+            <div class="input-group">
+                <label for="n-input">N:</label>
+                <input type="number" id="n-input" value="13" min="1">
+            </div>
+            <button onclick="runDemo()">Count Largest Groups</button>
+            <div class="result"><span id="output">-</span></div>
+        </section>
+    </div>
+    <script>
+        function countLargestGroup(n) {
+            const groups = new Map();
+            function digitSum(num) {
+                let sum = 0;
+                while (num > 0) {
+                    sum += num % 10;
+                    num = Math.floor(num / 10);
+                }
+                return sum;
+            }
+            for (let i = 1; i <= n; i++) {
+                const sum = digitSum(i);
+                groups.set(sum, (groups.get(sum) || 0) + 1);
+            }
+            let maxSize = 0;
+            for (const size of groups.values()) maxSize = Math.max(maxSize, size);
+            let count = 0;
+            for (const size of groups.values()) if (size === maxSize) count++;
+            return count;
+        }
+        function runDemo() {
+            const n = parseInt(document.getElementById('n-input').value);
+            document.getElementById('output').textContent = countLargestGroup(n);
+        }
+    </script>
+</body>
+</html>

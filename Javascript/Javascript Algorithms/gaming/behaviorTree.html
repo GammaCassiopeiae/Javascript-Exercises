@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Behavior Tree AI Demo</title>
+    <style>
+        body { background: #0f172a; color: white; font-family: monospace; display: flex; flex-direction: column; align-items: center; margin: 0; }
+        canvas { background: #1e293b; border: 2px solid #334155; margin-top: 20px; }
+        .tree-viz { margin-top: 20px; padding: 15px; background: #000; border-radius: 8px; border: 1px dashed #38bdf8; line-height: 1.6; }
+        .active { color: #4ade80; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Behavior Tree (Drevo obnašanja)</h1>
+    <div class="tree-viz" id="treeDebug">
+        ? Root (Selector)<br>
+        &nbsp;&nbsp;→ Attack Sequence<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Is Close?<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Perform Attack<br>
+        &nbsp;&nbsp;→ Move To Player<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Is Visible?<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Walk Toward<br>
+        &nbsp;&nbsp;- Idle Patrol
+    </div>
+    <canvas id="btCanvas" width="600" height="400"></canvas>
+
+    <script>
+        const canvas = document.getElementById('btCanvas');
+        const ctx = canvas.getContext('2d');
+        const mouse = { x: 300, y: 200 };
+        const ai = { x: 100, y: 100, speed: 2, status: "Idle" };
+
+        // --- ENOTNA VOZLIŠČA ---
+        const SUCCESS = 1, FAILURE = 0, RUNNING = 2;
+
+        const checkDistance = (dist) => Math.hypot(ai.x - mouse.x, ai.y - mouse.y) < dist ? SUCCESS : FAILURE;
+        
+        const moveToward = () => {
+            const dx = mouse.x - ai.x, dy = mouse.y - ai.y;
+            const dist = Math.hypot(dx, dy);
+            if (dist < 5) return SUCCESS;
+            ai.x += (dx / dist) * ai.speed;
+            ai.y += (dy / dist) * ai.speed;
+            return RUNNING;
+        };
+
+        const idle = () => {
+            ai.x += (Math.random() - 0.5) * 2;
+            ai.y += (Math.random() - 0.5) * 2;
+            return SUCCESS;
+        };
+
+        // --- TICK DREVESA ---
+        function tick() {
+            // Logika: Selector( Sequence(Close?, Attack), Sequence(Visible?, Move), Idle )
+            if (checkDistance(50) === SUCCESS) {
+                ai.status = "ATTACKING!";
+            } else if (checkDistance(200) === SUCCESS) {
+                ai.status = "CHASING PLAYER";
+                moveToward();
+            } else {
+                ai.status = "PATROLLING (IDLE)";
+                idle();
+            }
+            document.getElementById('treeDebug').innerHTML = `Aktivno dejanje: <span class="active">${ai.status}</span>`;
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Vizualni domet
+            ctx.strokeStyle = "rgba(56, 189, 248, 0.2)";
+            ctx.beginPath(); ctx.arc(ai.x, ai.y, 200, 0, Math.PI*2); ctx.stroke();
+
+            // Igralec
+            ctx.fillStyle = "#f43f5e";
+            ctx.beginPath(); ctx.arc(mouse.x, mouse.y, 10, 0, Math.PI*2); ctx.fill();
+
+            // AI
+            ctx.fillStyle = "#4ade80";
+            ctx.beginPath(); ctx.arc(ai.x, ai.y, 15, 0, Math.PI*2); ctx.fill();
+            
+            ctx.fillStyle = "white";
+            ctx.fillText(ai.status, ai.x - 20, ai.y - 25);
+
+            tick();
+            requestAnimationFrame(draw);
+        }
+
+        canvas.onmousemove = (e) => {
+            const rect = canvas.getBoundingClientRect();
+            mouse.x = e.clientX - rect.left;
+            mouse.y = e.clientY - rect.top;
+        };
+
+        draw();
+    </script>
+</body>
+</html>

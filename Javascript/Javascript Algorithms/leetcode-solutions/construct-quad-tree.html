@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Construct Quad Tree - LeetCode Solution</title>
+    <style>
+        :root { --lime-green: #00ff9d; --lime-dim: rgba(0, 255, 157, 0.3); --bg-black: #050505; --bg-surface: rgba(255, 255, 255, 0.05); --text-primary: #ffffff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg-black); color: var(--text-primary); min-height: 100vh; line-height: 1.6; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+        header { border-bottom: 1px solid var(--lime-dim); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+        h1 { font-size: clamp(1.5rem, 3vw, 2rem); color: var(--lime-green); text-shadow: 0 0 10px var(--lime-dim); margin-bottom: 0.5rem; }
+        .problem-desc, .code-section, .demo-section { background: var(--bg-surface); border: 1px solid var(--lime-dim); border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; }
+        h2 { color: var(--lime-green); font-size: 1.25rem; margin-bottom: 1rem; }
+        pre { background: #0a0a0a; border: 1px solid var(--lime-dim); border-radius: 6px; padding: 1.5rem; overflow-x: auto; font-family: 'Fira Code', monospace; font-size: 0.9rem; }
+        .keyword { color: #ff00ff; } .function { color: #00f3ff; } .string { color: #00ff9d; } .number { color: #bd00ff; } .comment { color: rgba(255, 255, 255, 0.4); }
+        input, button { padding: 0.75rem 1rem; border: 1px solid var(--lime-dim); border-radius: 6px; background: rgba(0, 0, 0, 0.3); color: var(--text-primary); font-family: 'Fira Code', monospace; margin-bottom: 0.5rem; }
+        input:focus { outline: none; box-shadow: 0 0 10px var(--lime-dim); }
+        button { background: var(--lime-dim); color: var(--bg-black); cursor: pointer; font-weight: 700; }
+        button:hover { background: var(--lime-green); box-shadow: 0 0 20px var(--lime-dim); }
+        .result { margin-top: 1rem; padding: 1rem; background: rgba(0, 255, 157, 0.1); border-radius: 6px; font-family: 'Fira Code', monospace; }
+        .result span { color: var(--lime-green); }
+        label { display: block; color: var(--lime-green); margin-bottom: 0.5rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Construct Quad Tree</h1>
+            <p style="color: var(--text-muted);">LeetCode Problem - Divide and Conquer</p>
+        </header>
+        <section class="problem-desc">
+            <h2>Problem Description</h2>
+            <p>Given an n x n matrix of 0s and 1s, construct a Quad-Tree where each node has isLeaf (true if all values same) and val (value if leaf).</p>
+        </section>
+        <section class="code-section">
+            <h2>JavaScript Solution</h2>
+            <pre><code><span class="keyword">class</span> <span class="function">Node</span> {
+    <span class="keyword">constructor</span>(val, isLeaf, topLeft = <span class="keyword">null</span>, topRight = <span class="keyword">null</span>, 
+                 bottomLeft = <span class="keyword">null</span>, bottomRight = <span class="keyword">null</span>) {
+        <span class="keyword">this</span>.val = val;
+        <span class="keyword">this</span>.isLeaf = isLeaf;
+        <span class="keyword">this</span>.topLeft = topLeft;
+        <span class="keyword">this</span>.topRight = topRight;
+        <span class="keyword">this</span>.bottomLeft = bottomLeft;
+        <span class="keyword">this</span>.bottomRight = bottomRight;
+    }
+}
+
+<span class="keyword">function</span> <span class="function">construct</span>(grid) {
+    <span class="keyword">function</span> <span class="function">build</span>(r, c, size) {
+        <span class="keyword">if</span> (size === <span class="number">1</span>) {
+            <span class="keyword">return</span> <span class="keyword">new</span> <span class="function">Node</span>(grid[r][c], <span class="keyword">true</span>);
+        }
+        
+        <span class="keyword">const</span> half = size / <span class="number">2</span>;
+        <span class="keyword">const</span> tl = <span class="function">build</span>(r, c, half);
+        <span class="keyword">const</span> tr = <span class="function">build</span>(r, c + half, half);
+        <span class="keyword">const</span> bl = <span class="function">build</span>(r + half, c, half);
+        <span class="keyword">const</span> br = <span class="function">build</span>(r + half, c + half, half);
+        
+        <span class="comment">// Check if all children are leaves with same value</span>
+        <span class="keyword">if</span> (tl.isLeaf && tr.isLeaf && bl.isLeaf && br.isLeaf &&
+            tl.val === tr.val && tr.val === bl.val && bl.val === br.val) {
+            <span class="keyword">return</span> <span class="keyword">new</span> <span class="function">Node</span>(tl.val, <span class="keyword">true</span>);
+        }
+        
+        <span class="keyword">return</span> <span class="keyword">new</span> <span class="function">Node</span>(<span class="keyword">true</span>, <span class="keyword">false</span>, tl, tr, bl, br);
+    }
+    
+    <span class="keyword">return</span> <span class="function">build</span>(<span class="number">0</span>, <span class="number">0</span>, grid.length);
+}
+
+<span class="comment">// Usage:</span>
+<span class="keyword">const</span> grid = [[<span class="number">1</span>,<span class="number">0</span>],[<span class="number">1</span>,<span class="number">0</span>]];
+console.<span class="function">log</span>(<span class="function">construct</span>(grid)); <span class="comment">// QuadTree root</span></code></pre>
+        </section>
+        <section class="demo-section">
+            <h2>Interactive Demo</h2>
+            <div class="input-group">
+                <label for="grid-input">Grid (rows separated by semicolon):</label>
+                <input type="text" id="grid-input" value="1,0;1,0" style="width: 100%;">
+            </div>
+            <button onclick="runDemo()">Construct QuadTree</button>
+            <div class="result"><span id="output">-</span></div>
+        </section>
+    </div>
+    <script>
+        class Node {
+            constructor(val, isLeaf, tl=null, tr=null, bl=null, br=null) {
+                this.val = val; this.isLeaf = isLeaf;
+                this.topLeft = tl; this.topRight = tr;
+                this.bottomLeft = bl; this.bottomRight = br;
+            }
+        }
+        function construct(grid) {
+            function build(r, c, size) {
+                if (size === 1) return new Node(grid[r][c], true);
+                const half = size / 2;
+                const tl = build(r, c, half);
+                const tr = build(r, c + half, half);
+                const bl = build(r + half, c, half);
+                const br = build(r + half, c + half, half);
+                if (tl.isLeaf && tr.isLeaf && bl.isLeaf && br.isLeaf &&
+                    tl.val === tr.val && tr.val === bl.val && bl.val === br.val) {
+                    return new Node(tl.val, true);
+                }
+                return new Node(true, false, tl, tr, bl, br);
+            }
+            return build(0, 0, grid.length);
+        }
+        function runDemo() {
+            const gridInput = document.getElementById('grid-input').value;
+            const grid = gridInput.split(';').map(row => row.split(',').map(Number));
+            const root = construct(grid);
+            document.getElementById('output').textContent = 
+                `isLeaf: ${root.isLeaf}, val: ${root.val}`;
+        }
+    </script>
+</body>
+</html>

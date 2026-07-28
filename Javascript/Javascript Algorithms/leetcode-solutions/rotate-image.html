@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rotate Image | Algorithm Visualizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Inter:wght@300;400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --neon-cyan: #00f3ff; --neon-magenta: #ff00ff; --neon-green: #00ff9d; --neon-purple: #bd00ff; --neon-orange: #ff6b00; --bg-deep: #050505; --bg-card: rgba(255, 255, 255, 0.08); --text-primary: #ffffff; --text-muted: rgba(255, 255, 255, 0.7); --font-display: 'Rajdhani', system-ui, sans-serif; --font-body: 'Inter', system-ui, sans-serif; --font-mono: 'Fira Code', monospace; --space-xs: 0.25rem; --space-sm: 0.5rem; --space-md: 1rem; --space-lg: 2rem; --space-xl: 4rem; --glow-cyan: 0 0 5px var(--neon-cyan), 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan); --transition-fast: 0.1s; --transition-base: 0.3s; --ease-out: cubic-bezier(0.4, 0, 0.2, 1); --z-sticky: 100; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background-color: var(--bg-deep); color: var(--text-primary); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; }
+    ::selection { background: var(--neon-cyan); color: #000; }
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: var(--bg-deep); }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--neon-cyan), var(--neon-purple)); border-radius: 5px; }
+    .l-body { display: flex; flex-direction: column; min-height: 100vh; }
+    .l-header { position: sticky; top: 0; z-index: var(--z-sticky); background: rgba(5, 5, 5, 0.95); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(0, 243, 255, 0.2); }
+    .l-main { flex: 1; padding: var(--space-xl) var(--space-md); max-width: 1400px; margin-inline: auto; width: 100%; }
+    .l-single-column { max-width: 900px; margin-inline: auto; }
+    .c-header { padding: var(--space-md) var(--space-lg); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-md); }
+    .c-header__brand { font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; letter-spacing: 0.1em; background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .c-header__nav { display: flex; gap: var(--space-md); }
+    .c-nav-link { color: var(--text-muted); text-decoration: none; font-weight: 500; padding: var(--space-sm) var(--space-md); border: 1px solid transparent; border-radius: 4px; transition: all var(--transition-base) var(--ease-out); position: relative; }
+    .c-nav-link::after { content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px; background: var(--neon-cyan); transform: translateX(-50%); transition: width var(--transition-base) var(--ease-out); }
+    .c-nav-link:hover { color: var(--neon-cyan); }
+    .c-nav-link:hover::after { width: 80%; }
+    .c-card { background: var(--bg-card); border: 1px solid rgba(0, 243, 255, 0.15); border-radius: 12px; padding: var(--space-lg); backdrop-filter: blur(10px); transition: all var(--transition-base) var(--ease-out); position: relative; overflow: hidden; }
+    .c-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta), var(--neon-purple)); opacity: 0; transition: opacity var(--transition-base) var(--ease-out); }
+    .c-card:hover { transform: translateY(-5px); border-color: rgba(0, 243, 255, 0.4); box-shadow: var(--glow-cyan); }
+    .c-card:hover::before { opacity: 1; }
+    .c-card__header { margin-bottom: var(--space-md); }
+    .c-card__title { font-family: var(--font-display); font-size: clamp(1.25rem, 2.5vw, 1.5rem); font-weight: 700; color: var(--neon-cyan); letter-spacing: 0.05em; display: flex; align-items: center; gap: var(--space-sm); }
+    .c-card__title::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(0, 243, 255, 0.5), transparent); }
+    .c-card__content { color: var(--text-muted); }
+    .c-code-block { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(189, 0, 255, 0.2); border-radius: 8px; padding: var(--space-md); overflow-x: auto; font-family: var(--font-mono); font-size: 0.875rem; line-height: 1.8; position: relative; }
+    .c-code-block__header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm); padding-bottom: var(--space-sm); border-bottom: 1px solid rgba(189, 0, 255, 0.1); }
+    .c-code-block__lang { color: var(--neon-purple); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
+    .c-code-block__copy { background: transparent; border: 1px solid rgba(0, 243, 255, 0.3); color: var(--neon-cyan); padding: var(--space-xs) var(--space-sm); border-radius: 4px; cursor: pointer; font-size: 0.75rem; transition: all var(--transition-fast) var(--ease-out); }
+    .c-code-block__copy:hover { background: rgba(0, 243, 255, 0.1); box-shadow: 0 0 10px rgba(0, 243, 255, 0.3); }
+    .c-code-block pre { margin: 0; white-space: pre-wrap; word-wrap: break-word; }
+    .c-code-block code { color: var(--text-primary); }
+    .token-keyword { color: var(--neon-magenta); }
+    .token-function { color: var(--neon-cyan); }
+    .token-string { color: var(--neon-green); }
+    .token-comment { color: var(--text-muted); font-style: italic; }
+    .token-number { color: var(--neon-orange); }
+    .token-operator { color: var(--neon-purple); }
+    .c-input-group { margin-bottom: var(--space-md); }
+    .c-input-label { display: block; color: var(--neon-cyan); font-size: 0.875rem; font-weight: 500; margin-bottom: var(--space-sm); }
+    .c-input-label__required { color: var(--neon-magenta); margin-left: var(--space-xs); }
+    .c-input { width: 100%; padding: 0.8rem 1.2rem; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(0, 243, 255, 0.2); border-radius: 8px; color: var(--text-primary); font-family: var(--font-mono); font-size: 0.875rem; transition: all var(--transition-base) var(--ease-out); caret-color: var(--neon-cyan); }
+    .c-input:focus { outline: none; border-color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 243, 255, 0.3); }
+    .c-input::placeholder { opacity: 0.4; }
+    .c-button { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-sm); padding: 0.8rem 1.5rem; background: linear-gradient(135deg, rgba(0, 243, 255, 0.1), rgba(189, 0, 255, 0.1)); border: 1px solid rgba(0, 243, 255, 0.3); border-radius: 8px; color: var(--neon-cyan); font-family: var(--font-display); font-size: 0.875rem; font-weight: 700; letter-spacing: 0.05em; cursor: pointer; transition: all var(--transition-base) var(--ease-out); text-transform: uppercase; min-height: 44px; }
+    .c-button:hover { background: linear-gradient(135deg, rgba(0, 243, 255, 0.2), rgba(189, 0, 255, 0.2)); transform: translateY(-2px); box-shadow: 0 0 20px rgba(0, 243, 255, 0.4); }
+    .c-button:active { transform: translateY(0); }
+    .c-button--primary { background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple)); color: #000; border: none; }
+    .c-button--primary:hover { box-shadow: var(--glow-cyan); }
+    .c-button-group { display: flex; gap: var(--space-md); flex-wrap: wrap; }
+    .c-visualization { background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(0, 243, 255, 0.1); border-radius: 8px; padding: var(--space-md); margin-top: var(--space-md); overflow-x: auto; }
+    .matrix-container { display: flex; gap: 2rem; flex-wrap: wrap; justify-content: center; margin: 1rem 0; }
+    .matrix-grid { display: grid; gap: 4px; }
+    .matrix-cell { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(0, 243, 255, 0.1); border: 1px solid var(--neon-cyan); border-radius: 4px; font-family: var(--font-mono); font-weight: 700; transition: all var(--transition-base) var(--ease-out); }
+    .matrix-label { color: var(--neon-magenta); font-family: var(--font-mono); font-weight: 700; margin-bottom: 0.5rem; text-align: center; }
+    .c-result { margin-top: var(--space-md); padding: var(--space-md); background: rgba(0, 255, 157, 0.05); border: 1px solid rgba(0, 255, 157, 0.3); border-radius: 8px; display: flex; align-items: center; gap: var(--space-md); opacity: 0; transform: translateY(10px); transition: all var(--transition-base) var(--ease-out); }
+    .c-result.is-visible { opacity: 1; transform: translateY(0); }
+    .c-result__icon { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(0, 255, 157, 0.1); border-radius: 50%; color: var(--neon-green); font-size: 1.5rem; }
+    .c-result__content { flex: 1; }
+    .c-result__title { font-family: var(--font-display); font-size: 1.125rem; font-weight: 700; color: var(--neon-green); margin-bottom: var(--space-xs); }
+    .c-result__value { font-family: var(--font-mono); font-size: 0.875rem; color: var(--text-primary); white-space: pre-wrap; }
+    .c-explanation { margin-top: var(--space-lg); }
+    .c-explanation__list { list-style: none; padding-left: 0; }
+    .c-explanation__item { position: relative; padding-left: var(--space-lg); margin-bottom: var(--space-md); color: var(--text-muted); }
+    .c-explanation__item::before { content: '▸'; position: absolute; left: 0; color: var(--neon-cyan); font-size: 1.125rem; }
+    .c-complexity-badge { display: inline-flex; align-items: center; gap: var(--space-sm); padding: var(--space-sm) var(--space-md); background: rgba(189, 0, 255, 0.1); border: 1px solid rgba(189, 0, 255, 0.3); border-radius: 20px; font-family: var(--font-mono); font-size: 0.75rem; color: var(--neon-purple); margin-right: var(--space-sm); }
+    .c-footer { margin-top: auto; padding: var(--space-lg); border-top: 1px solid rgba(0, 243, 255, 0.1); text-align: center; color: var(--text-muted); font-size: 0.875rem; }
+    .c-footer__links { display: flex; justify-content: center; gap: var(--space-lg); margin-bottom: var(--space-md); }
+    .c-footer__link { color: var(--neon-cyan); text-decoration: none; transition: color var(--transition-fast); }
+    .c-footer__link:hover { color: var(--neon-magenta); }
+    @media (max-width: 768px) { .c-header { flex-direction: column; text-align: center; } .c-header__nav { justify-content: center; } .c-button-group { flex-direction: column; } .c-button { width: 100%; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+  </style>
+</head>
+<body class="l-body">
+  <header class="l-header">
+    <div class="c-header">
+      <h1 class="c-header__brand">⚡ ALGO_VISUALIZER</h1>
+      <nav class="c-header__nav">
+        <a href="#" class="c-nav-link">Problems</a>
+        <a href="#" class="c-nav-link">Visualize</a>
+        <a href="#" class="c-nav-link">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="l-main">
+    <div class="l-single-column">
+      <article class="c-card">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>🔄</span>
+            Rotate Image
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <p>Given an n × n 2D matrix representing an image, rotate the image by 90 degrees clockwise. You must rotate the image in-place (modify the input matrix directly).</p>
+          <div style="margin-top: var(--space-md); display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+            <span class="c-complexity-badge">⏱️ Time: O(n²)</span>
+            <span class="c-complexity-badge">💾 Space: O(1)</span>
+            <span class="c-complexity-badge">📊 Difficulty: Medium</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>🎯</span>
+            Input Matrix
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <div class="c-input-group">
+            <label class="c-input-label" for="matrixInput">Matrix (rows separated by ;, elements by ,)</label>
+            <input type="text" id="matrixInput" class="c-input" placeholder="e.g., 1,2,3;4,5,6;7,8,9" value="1,2,3;4,5,6;7,8,9">
+          </div>
+          <div class="c-button-group">
+            <button id="btnRotate" class="c-button c-button--primary">
+              <span>🚀</span> Rotate 90°
+            </button>
+            <button id="btnVisualize" class="c-button">
+              <span>👁️</span> Visualize
+            </button>
+            <button id="btnClear" class="c-button">
+              <span>🗑️</span> Clear
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>📈</span>
+            Result
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <div id="resultContainer" class="c-result">
+            <div class="c-result__icon">✓</div>
+            <div class="c-result__content">
+              <div class="c-result__title">Rotated Matrix</div>
+              <div id="resultValue" class="c-result__value"></div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>🔬</span>
+            Visualization
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <div id="visualizationContainer" class="c-visualization">
+            <p style="color: var(--text-muted); text-align: center;">Click "Visualize" to see before and after</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>💻</span>
+            Solution Code
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <div class="c-code-block">
+            <div class="c-code-block__header">
+              <span class="c-code-block__lang">JavaScript</span>
+              <button class="c-code-block__copy js-copy-code">Copy</button>
+            </div>
+            <pre><code id="solutionCode"><span class="token-keyword">function</span> <span class="token-function">rotate</span>(matrix) {
+  <span class="token-keyword">const</span> n = matrix.length;
+  
+  <span class="token-comment">// Step 1: Transpose (swap across diagonal)</span>
+  <span class="token-keyword">for</span> (<span class="token-keyword">let</span> i = <span class="token-number">0</span>; i < n; i++) {
+    <span class="token-keyword">for</span> (<span class="token-keyword">let</span> j = i + <span class="token-number">1</span>; j < n; j++) {
+      [matrix[i][j], matrix[j][i]] = [matrix[j][i], matrix[i][j]];
+    }
+  }
+  
+  <span class="token-comment">// Step 2: Reverse each row</span>
+  <span class="token-keyword">for</span> (<span class="token-keyword">let</span> i = <span class="token-number">0</span>; i < n; i++) {
+    <span class="token-keyword">let</span> left = <span class="token-number">0</span>, right = n - <span class="token-number">1</span>;
+    <span class="token-keyword">while</span> (left < right) {
+      [matrix[i][left], matrix[i][right]] = [matrix[i][right], matrix[i][left]];
+      left++;
+      right--;
+    }
+  }
+  
+  <span class="token-keyword">return</span> matrix;
+}</code></pre>
+          </div>
+        </div>
+      </article>
+
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>📖</span>
+            Algorithm Explanation
+          </h2>
+        </header>
+        <div class="c-card__content c-explanation">
+          <ul class="c-explanation__list">
+            <li class="c-explanation__item">
+              90° clockwise rotation = Transpose + Reverse each row.
+            </li>
+            <li class="c-explanation__item">
+              Transpose: Swap matrix[i][j] with matrix[j][i] for all i < j.
+            </li>
+            <li class="c-explanation__item">
+              Reverse each row: Swap elements from left and right ends moving inward.
+            </li>
+            <li class="c-explanation__item">
+              Both operations are done in-place with O(1) extra space.
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>📝</span>
+            Example Walkthrough
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <div class="c-code-block">
+            <pre><code>Original Matrix:
+1 2 3
+4 5 6
+7 8 9
+
+Step 1 - Transpose:
+1 4 7
+2 5 8
+3 6 9
+
+Step 2 - Reverse each row:
+7 4 1
+8 5 2
+9 6 3
+
+Result (90° clockwise rotation):
+7 4 1
+8 5 2
+9 6 3</code></pre>
+          </div>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <footer class="c-footer">
+    <div class="c-footer__links">
+      <a href="#" class="c-footer__link">GitHub</a>
+      <a href="#" class="c-footer__link">Documentation</a>
+      <a href="#" class="c-footer__link">Contact</a>
+    </div>
+    <p>&copy; 2026 Algo Visualizer. Built with 💜 and neon dreams.</p>
+  </footer>
+
+  <script>
+    (function() {
+      'use strict';
+
+      const matrixInput = document.getElementById('matrixInput');
+      const btnRotate = document.getElementById('btnRotate');
+      const btnVisualize = document.getElementById('btnVisualize');
+      const btnClear = document.getElementById('btnClear');
+      const resultContainer = document.getElementById('resultContainer');
+      const resultValue = document.getElementById('resultValue');
+      const visualizationContainer = document.getElementById('visualizationContainer');
+      const copyButtons = document.querySelectorAll('.js-copy-code');
+
+      function parseMatrix(str) {
+        return str.split(';').map(row => 
+          row.split(',').map(s => parseInt(s.trim(), 10) || 0)
+        );
+      }
+
+      function matrixToString(matrix) {
+        return matrix.map(row => '[' + row.join(', ') + ']').join('\n');
+      }
+
+      function rotate(matrix) {
+        const n = matrix.length;
+        const result = matrix.map(row => [...row]);
+        
+        for (let i = 0; i < n; i++) {
+          for (let j = i + 1; j < n; j++) {
+            [result[i][j], result[j][i]] = [result[j][i], result[i][j]];
+          }
+        }
+        
+        for (let i = 0; i < n; i++) {
+          let left = 0, right = n - 1;
+          while (left < right) {
+            [result[i][left], result[i][right]] = [result[i][right], result[i][left]];
+            left++;
+            right--;
+          }
+        }
+        
+        return result;
+      }
+
+      function renderMatrix(matrix, label) {
+        const n = matrix.length;
+        let html = '<div>';
+        html += `<div class="matrix-label">${label} (${n}×${n})</div>`;
+        html += '<div class="matrix-grid" style="grid-template-columns: repeat(' + n + ', 40px);">';
+        for (let i = 0; i < n; i++) {
+          for (let j = 0; j < n; j++) {
+            html += `<div class="matrix-cell">${matrix[i][j]}</div>`;
+          }
+        }
+        html += '</div></div>';
+        return html;
+      }
+
+      function handleRotate() {
+        const matrix = parseMatrix(matrixInput.value);
+        if (matrix.length === 0 || matrix[0].length !== matrix.length) {
+          alert('Please enter a valid square matrix');
+          return;
+        }
+        const rotated = rotate(matrix);
+        resultValue.textContent = matrixToString(rotated);
+        resultContainer.classList.add('is-visible');
+        resultContainer.style.animation = 'neon-pulse 1s ease-in-out';
+        setTimeout(() => { resultContainer.style.animation = ''; }, 1000);
+      }
+
+      function handleVisualize() {
+        const matrix = parseMatrix(matrixInput.value);
+        if (matrix.length === 0 || matrix[0].length !== matrix.length) {
+          alert('Please enter a valid square matrix');
+          return;
+        }
+        const rotated = rotate(matrix);
+        visualizationContainer.innerHTML = '<div class="matrix-container">' + 
+          renderMatrix(matrix, 'Original') + 
+          renderMatrix(rotated, 'Rotated 90°') + 
+          '</div>';
+      }
+
+      function handleClear() {
+        matrixInput.value = '';
+        resultContainer.classList.remove('is-visible');
+        visualizationContainer.innerHTML = '<p style="color: var(--text-muted); text-align: center;">Click "Visualize" to see before and after</p>';
+      }
+
+      function handleCopyCode(event) {
+        const codeBlock = event.target.closest('.c-code-block');
+        const code = codeBlock.querySelector('code');
+        navigator.clipboard.writeText(code.textContent).then(() => {
+          const originalText = event.target.textContent;
+          event.target.textContent = 'Copied!';
+          event.target.style.background = 'rgba(0, 255, 157, 0.2)';
+          event.target.style.borderColor = 'var(--neon-green)';
+          setTimeout(() => {
+            event.target.textContent = originalText;
+            event.target.style.background = '';
+            event.target.style.borderColor = '';
+          }, 2000);
+        });
+      }
+
+      btnRotate.addEventListener('click', handleRotate);
+      btnVisualize.addEventListener('click', handleVisualize);
+      btnClear.addEventListener('click', handleClear);
+      copyButtons.forEach(button => { button.addEventListener('click', handleCopyCode); });
+      matrixInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleRotate(); });
+      window.addEventListener('load', handleRotate);
+    })();
+  </script>
+</body>
+</html>

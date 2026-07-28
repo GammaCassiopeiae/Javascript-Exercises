@@ -1,0 +1,1416 @@
+Contents
+online-majority-element-in-subarray.py . . . . . . . . . . . . . . . . . .
+increasing-order-search-tree.py . . . . . . . . . . . . . . . . . . . . . .
+add-bold-tag-in-string.py . . . . . . . . . . . . . . . . . . . . . . . . . .
+reachable-nodes-in-subdivided-graph.py . . . . . . . . . . . . . . . . .
+positions-of-large-groups.py . . . . . . . . . . . . . . . . . . . . . . . .
+linked-list-in-binary-tree.py . . . . . . . . . . . . . . . . . . . . . . . .
+minimum-difficulty-of-a-job-schedule.py . . . . . . . . . . . . . . . . .
+minimum-number-of-flips-to-convert-binary-matrix-to-zero-matrix.py .
+diet-plan-performance.py . . . . . . . . . . . . . . . . . . . . . . . . .
+uncommon-words-from-two-sentences.py . . . . . . . . . . . . . . . . .
+longest-arithmetic-sequence.py . . . . . . . . . . . . . . . . . . . . . .
+maximum-points-you-can-obtain-from-cards.py . . . . . . . . . . . . .
+top-k-frequent-elements.py . . . . . . . . . . . . . . . . . . . . . . . . .
+reconstruct-original-digits-from-english.py . . . . . . . . . . . . . . . .
+hexspeak.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+pyramid-transition-matrix.py . . . . . . . . . . . . . . . . . . . . . . .
+compare-version-numbers.py . . . . . . . . . . . . . . . . . . . . . . . .
+combination-sum-iv.py . . . . . . . . . . . . . . . . . . . . . . . . . . .
+koko-eating-bananas.py . . . . . . . . . . . . . . . . . . . . . . . . . .
+check-if-it-is-a-straight-line.py . . . . . . . . . . . . . . . . . . . . . . .
+maximum-number-of-non-overlapping-substrings.py . . . . . . . . . . .
+find-all-the-lonely-nodes.py . . . . . . . . . . . . . . . . . . . . . . . .
+random-pick-with-weight.py . . . . . . . . . . . . . . . . . . . . . . . .
+find-k-closest-elements.py . . . . . . . . . . . . . . . . . . . . . . . . .
+maximum-number-of-events-that-can-be-attended.py . . . . . . . . . .
+falling-squares.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+jump-game-iii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+expression-add-operators.py . . . . . . . . . . . . . . . . . . . . . . . .
+longest-chunked-palindrome-decomposition.py . . . . . . . . . . . . . .
+convert-sorted-array-to-binary-search-tree.py . . . . . . . . . . . . . .
+single-number-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+n-th-tribonacci-number.py . . . . . . . . . . . . . . . . . . . . . . . . .
+array-of-doubled-pairs.py . . . . . . . . . . . . . . . . . . . . . . . . .
+the-kth-factor-of-n.py . . . . . . . . . . . . . . . . . . . . . . . . . . .
+sliding-window-maximum.py . . . . . . . . . . . . . . . . . . . . . . . .
+remove-9.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+binary-tree-vertical-order-traversal.py . . . . . . . . . . . . . . . . . .
+similar-string-groups.py . . . . . . . . . . . . . . . . . . . . . . . . . .
+jump-game.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+brace-expansion-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+reverse-only-letters.py . . . . . . . . . . . . . . . . . . . . . . . . . . .
+max-consecutive-ones-ii.py . . . . . . . . . . . . . . . . . . . . . . . . .
+maximum-average-subtree.py . . . . . . . . . . . . . . . . . . . . . . .
+remove-k-digits.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+last-stone-weight.py . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+construct-quad-tree.py . . . . . . . . . . . . . . . . . . . . . . . . . . .
+missing-element-in-sorted-array.py . . . . . . . . . . . . . . . . . . . .
+flood-fill.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+median-of-two-sorted-arrays.py . . . . . . . . . . . . . . . . . . . . . .
+smallest-rectangle-enclosing-black-pixels.py . . . . . . . . . . . . . . .
+design-excel-sum-formula.py . . . . . . . . . . . . . . . . . . . . . . . .
+count-largest-group.py . . . . . . . . . . . . . . . . . . . . . . . . . . .
+search-in-rotated-sorted-array-ii.py . . . . . . . . . . . . . . . . . . . .
+delete-operation-for-two-strings.py . . . . . . . . . . . . . . . . . . . .
+max-points-on-a-line.py . . . . . . . . . . . . . . . . . . . . . . . . . .
+find-minimum-in-rotated-sorted-array-ii.py . . . . . . . . . . . . . . . .
+length-of-longest-fibonacci-subsequence.py . . . . . . . . . . . . . . . .
+find-a-corresponding-node-of-a-binary-tree-in-a-clone-of-that-tree.py .
+
+total-hamming-distance.py . . . . . . . . . . . . . . . . . . . . . . . . . 123
+sparse-matrix-multiplication.py . . . . . . . . . . . . . . . . . . . . . . 124
+serialize-and-deserialize-binary-tree.py . . . . . . . . . . . . . . . . . . 125
+reverse-string.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 128
+serialize-and-deserialize-bst.py . . . . . . . . . . . . . . . . . . . . . . . 129
+queries-on-a-permutation-with-key.py . . . . . . . . . . . . . . . . . . . 131
+display-table-of-food-orders-in-a-restaurant.py . . . . . . . . . . . . . . 132
+minimum-moves-to-equal-array-elements.py . . . . . . . . . . . . . . . 133
+product-of-array-except-self.py . . . . . . . . . . . . . . . . . . . . . . 134
+walking-robot-simulation.py . . . . . . . . . . . . . . . . . . . . . . . . 135
+push-dominoes.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 137
+index-pairs-of-a-string.py . . . . . . . . . . . . . . . . . . . . . . . . . 139
+symmetric-tree.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 141
+prime-palindrome.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 143
+fibonacci-number.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 144
+string-compression-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . 146
+queue-reconstruction-by-height.py . . . . . . . . . . . . . . . . . . . . 148
+decode-ways-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 150
+number-of-subsequences-that-satisfy-the-given-sum-condition.py . . . . 152
+valid-boomerang.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 153
+k-inverse-pairs-array.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 154
+convert-integer-to-the-sum-of-two-no-zero-integers.py . . . . . . . . . . 155
+open-the-lock.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 156
+high-five.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 158
+building-h2o.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 159
+maximum-depth-of-binary-tree.py . . . . . . . . . . . . . . . . . . . . . 161
+smallest-subtree-with-all-the-deepest-nodes.py . . . . . . . . . . . . . . 162
+coin-path.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 163
+jump-game-iv.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 164
+random-flip-matrix.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 165
+lexicographically-smallest-equivalent-string.py . . . . . . . . . . . . . . 167
+next-greater-element-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . 168
+rotate-image.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 169
+minimum-time-visiting-all-points.py . . . . . . . . . . . . . . . . . . . 171
+divisor-game.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 172
+pascals-triangle-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 174
+k-similar-strings.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 175
+surrounded-regions.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 177
+leaf-similar-trees.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 179
+remove-sub-folders-from-the-filesystem.py . . . . . . . . . . . . . . . . 180
+range-sum-of-bst.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 181
+power-of-three.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 182
+binary-tree-pruning.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 183
+magical-string.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 184
+split-array-into-consecutive-subsequences.py . . . . . . . . . . . . . . . 185
+beautiful-array.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 187
+path-sum-iii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 188
+find-the-index-of-the-large-integer.py . . . . . . . . . . . . . . . . . . . 190
+synonymous-sentences.py . . . . . . . . . . . . . . . . . . . . . . . . . 191
+maximum-profit-in-job-scheduling.py . . . . . . . . . . . . . . . . . . . 192
+count-negative-numbers-in-a-sorted-matrix.py . . . . . . . . . . . . . . 193
+design-underground-system.py . . . . . . . . . . . . . . . . . . . . . . . 194
+number-complement.py . . . . . . . . . . . . . . . . . . . . . . . . . . 197
+add-digits.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 198
+delete-columns-to-make-sorted.py . . . . . . . . . . . . . . . . . . . . . 199
+find-all-duplicates-in-an-array.py . . . . . . . . . . . . . . . . . . . . . 201
+two-sum-bsts.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 202
+number-of-islands-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 203
+count-number-of-nice-subarrays.py . . . . . . . . . . . . . . . . . . . . 204
+zigzag-conversion.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 205
+2longest-substring-with-at-most-two-distinct-characters.py . . . . . . . 206
+number-of-dice-rolls-with-target-sum.py . . . . . . . . . . . . . . . . . 207
+knight-dialer.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 208
+pseudo-palindromic-paths-in-a-binary-tree.py . . . . . . . . . . . . . . 210
+shortest-unsorted-continuous-subarray.py . . . . . . . . . . . . . . . . 211
+dungeon-game.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 212
+knight-probability-in-chessboard.py . . . . . . . . . . . . . . . . . . . . 214
+bulb-switcher-iii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 215
+find-numbers-with-even-number-of-digits.py . . . . . . . . . . . . . . . 216
+find-words-that-can-be-formed-by-characters.py . . . . . . . . . . . . . 217
+maximum-difference-between-node-and-ancestor.py . . . . . . . . . . . 218
+tweet-counts-per-frequency.py . . . . . . . . . . . . . . . . . . . . . . . 220
+maximum-product-of-word-lengths.py . . . . . . . . . . . . . . . . . . 224
+remove-duplicates-from-sorted-list-ii.py . . . . . . . . . . . . . . . . . . 226
+lucky-numbers-in-a-matrix.py . . . . . . . . . . . . . . . . . . . . . . . 227
+numbers-with-repeated-digits.py . . . . . . . . . . . . . . . . . . . . . 228
+longest-arithmetic-subsequence-of-given-difference.py . . . . . . . . . . 230
+maximum-number-of-vowels-in-a-substring-of-given-length.py . . . . . 231
+sum-of-two-integers.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 232
+xor-operation-in-an-array.py . . . . . . . . . . . . . . . . . . . . . . . . 234
+partition-equal-subset-sum.py . . . . . . . . . . . . . . . . . . . . . . . 235
+moving-stones-until-consecutive-ii.py . . . . . . . . . . . . . . . . . . . 236
+corporate-flight-bookings.py . . . . . . . . . . . . . . . . . . . . . . . . 238
+text-justification.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 239
+pairs-of-songs-with-total-durations-divisible-by-60.py . . . . . . . . . . 241
+jewels-and-stones.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 242
+output-contest-matches.py . . . . . . . . . . . . . . . . . . . . . . . . . 243
+k-empty-slots.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 244
+image-overlap.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 245
+decompress-run-length-encoded-list.py . . . . . . . . . . . . . . . . . . 246
+print-binary-tree.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 247
+projection-area-of-3d-shapes.py . . . . . . . . . . . . . . . . . . . . . . 249
+subtree-of-another-tree.py . . . . . . . . . . . . . . . . . . . . . . . . . 250
+find-leaves-of-binary-tree.py . . . . . . . . . . . . . . . . . . . . . . . . 252
+verifying-an-alien-dictionary.py . . . . . . . . . . . . . . . . . . . . . . 253
+count-number-of-teams.py . . . . . . . . . . . . . . . . . . . . . . . . . 254
+paint-house.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 255
+divide-array-into-increasing-sequences.py . . . . . . . . . . . . . . . . . 256
+count-different-palindromic-subsequences.py . . . . . . . . . . . . . . . 257
+making-a-large-island.py . . . . . . . . . . . . . . . . . . . . . . . . . . 259
+least-operators-to-express-number.py . . . . . . . . . . . . . . . . . . . 261
+linked-list-random-node.py . . . . . . . . . . . . . . . . . . . . . . . . . 263
+swap-for-longest-repeated-character-substring.py . . . . . . . . . . . . 264
+diameter-of-n-ary-tree.py . . . . . . . . . . . . . . . . . . . . . . . . . 265
+minimum-number-of-days-to-make-m-bouquets.py . . . . . . . . . . . . 266
+super-palindromes.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 267
+print-words-vertically.py . . . . . . . . . . . . . . . . . . . . . . . . . . 269
+
+
+minimum-difference-between-largest-and-smallest-value-in-three-
+moves.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 270
+maximum-sum-of-two-non-overlapping-subarrays.py . . . . . . . . . . 271
+rotate-array.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 272
+binary-tree-level-order-traversal.py . . . . . . . . . . . . . . . . . . . . 274
+construct-binary-search-tree-from-preorder-traversal.py . . . . . . . . . 275
+number-of-sub-arrays-of-size-k-and-average-greater-than-or-equal-to-
+threshold.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 276
+group-the-people-given-the-group-size-they-belong-to.py . . . . . . . . 277
+sum-of-left-leaves.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 278
+design-file-system.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 279
+add-strings.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 280
+remove-duplicates-from-sorted-array-ii.py . . . . . . . . . . . . . . . . 282
+3reverse-bits.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 284
+maximum-number-of-ones.py . . . . . . . . . . . . . . . . . . . . . . . 285
+split-concatenated-strings.py . . . . . . . . . . . . . . . . . . . . . . . 286
+average-of-levels-in-binary-tree.py . . . . . . . . . . . . . . . . . . . . . 287
+generalized-abbreviation.py . . . . . . . . . . . . . . . . . . . . . . . . 288
+poor-pigs.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 289
+minimum-number-of-arrows-to-burst-balloons.py . . . . . . . . . . . . 290
+palindrome-pairs.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 291
+minimum-cost-to-connect-sticks.py . . . . . . . . . . . . . . . . . . . . 294
+search-a-2d-matrix-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . 295
+count-complete-tree-nodes.py . . . . . . . . . . . . . . . . . . . . . . . 296
+mini-parser.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 298
+rearrange-string-k-distance-apart.py . . . . . . . . . . . . . . . . . . . 300
+angle-between-hands-of-a-clock.py . . . . . . . . . . . . . . . . . . . . 302
+shortest-word-distance.py . . . . . . . . . . . . . . . . . . . . . . . . . 303
+sum-of-distances-in-tree.py . . . . . . . . . . . . . . . . . . . . . . . . . 304
+number-of-operations-to-make-network-connected.py . . . . . . . . . . 306
+out-of-boundary-paths.py . . . . . . . . . . . . . . . . . . . . . . . . . 308
+maximum-size-subarray-sum-equals-k.py . . . . . . . . . . . . . . . . . 309
+minimum-cost-for-tickets.py . . . . . . . . . . . . . . . . . . . . . . . . 310
+battleships-in-a-board.py . . . . . . . . . . . . . . . . . . . . . . . . . . 312
+merge-sorted-array.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 313
+subarray-sum-equals-k.py . . . . . . . . . . . . . . . . . . . . . . . . . 314
+design-browser-history.py . . . . . . . . . . . . . . . . . . . . . . . . . 315
+group-shifted-strings.py . . . . . . . . . . . . . . . . . . . . . . . . . . 316
+frog-jump.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 317
+kth-smallest-element-in-a-bst.py . . . . . . . . . . . . . . . . . . . . . . 318
+best-time-to-buy-and-sell-stock-ii.py . . . . . . . . . . . . . . . . . . . 320
+airplane-seat-assignment-probability.py . . . . . . . . . . . . . . . . . . 321
+squirrel-simulation.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 322
+sequence-reconstruction.py . . . . . . . . . . . . . . . . . . . . . . . . . 323
+design-hit-counter.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 325
+set-matrix-zeroes.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 326
+best-sightseeing-pair.py . . . . . . . . . . . . . . . . . . . . . . . . . . 328
+largest-unique-number.py . . . . . . . . . . . . . . . . . . . . . . . . . 329
+find-k-pairs-with-smallest-sums.py . . . . . . . . . . . . . . . . . . . . 330
+escape-a-large-maze.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 332
+distribute-coins-in-binary-tree.py . . . . . . . . . . . . . . . . . . . . . 334
+sort-characters-by-frequency.py . . . . . . . . . . . . . . . . . . . . . . 335
+minimum-area-rectangle.py . . . . . . . . . . . . . . . . . . . . . . . . 336
+sequential-digits.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 338
+html-entity-parser.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 339
+perfect-squares.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 342
+construct-binary-tree-from-string.py . . . . . . . . . . . . . . . . . . . 343
+rectangle-area-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 344
+reverse-linked-list.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 346
+all-nodes-distance-k-in-binary-tree.py . . . . . . . . . . . . . . . . . . . 347
+destination-city.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 349
+longest-turbulent-subarray.py . . . . . . . . . . . . . . . . . . . . . . . 350
+add-and-search-word-data-structure-design.py . . . . . . . . . . . . . . 351
+odd-even-jump.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 352
+find-the-distance-value-between-two-arrays.py . . . . . . . . . . . . . . 353
+palindrome-number.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 354
+strong-password-checker.py . . . . . . . . . . . . . . . . . . . . . . . . 355
+check-if-n-and-its-double-exist.py . . . . . . . . . . . . . . . . . . . . . 357
+next-greater-node-in-linked-list.py . . . . . . . . . . . . . . . . . . . . 358
+encode-and-decode-strings.py . . . . . . . . . . . . . . . . . . . . . . . 359
+patching-array.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 360
+happy-number.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 361
+product-of-the-last-k-numbers.py . . . . . . . . . . . . . . . . . . . . . 362
+4implement-trie-prefix-tree.py . . . . . . . . . . . . . . . . . . . . . . . 363
+friend-circles.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 364
+score-of-parentheses.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 366
+beautiful-arrangement-ii.py . . . . . . . . . . . . . . . . . . . . . . . . 368
+matrix-block-sum.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 369
+bomb-enemy.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 370
+excel-sheet-column-title.py . . . . . . . . . . . . . . . . . . . . . . . . . 371
+maximum-of-absolute-value-expression.py . . . . . . . . . . . . . . . . 372
+design-hashmap.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 374
+course-schedule.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 376
+single-element-in-a-sorted-array.py . . . . . . . . . . . . . . . . . . . . 378
+queens-that-can-attack-the-king.py . . . . . . . . . . . . . . . . . . . . 379
+minimum-cost-to-hire-k-workers.py . . . . . . . . . . . . . . . . . . . . 380
+group-anagrams.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 381
+uncrossed-lines.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 382
+letter-case-permutation.py . . . . . . . . . . . . . . . . . . . . . . . . . 383
+partition-array-into-three-parts-with-equal-sum.py . . . . . . . . . . . 384
+find-the-winner-of-an-array-game.py . . . . . . . . . . . . . . . . . . . 385
+web-crawler-multithreaded.py . . . . . . . . . . . . . . . . . . . . . . . 386
+longest-valid-parentheses.py . . . . . . . . . . . . . . . . . . . . . . . . 389
+smallest-range-i.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 391
+partition-list.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 392
+asteroid-collision.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 393
+number-of-good-ways-to-split-a-string.py . . . . . . . . . . . . . . . . . 395
+student-attendance-record-i.py . . . . . . . . . . . . . . . . . . . . . . 396
+lonely-pixel-i.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 397
+valid-parentheses.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 398
+valid-mountain-array.py . . . . . . . . . . . . . . . . . . . . . . . . . . 399
+filling-bookcase-shelves.py . . . . . . . . . . . . . . . . . . . . . . . . . 400
+masking-personal-information.py . . . . . . . . . . . . . . . . . . . . . 401
+element-appearing-more-than-25-in-sorted-array.py . . . . . . . . . . . 403
+burst-balloons.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 404
+basic-calculator.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 405
+sum-of-mutated-array-closest-to-target.py . . . . . . . . . . . . . . . . 406
+2-keys-keyboard.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 408
+base-7.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 409
+final-prices-with-a-special-discount-in-a-shop.py . . . . . . . . . . . . . 410
+count-vowels-permutation.py . . . . . . . . . . . . . . . . . . . . . . . 411
+line-reflection.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 412
+24-game.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 413
+binary-search-tree-iterator.py . . . . . . . . . . . . . . . . . . . . . . . 415
+contains-duplicate.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 417
+minimum-depth-of-binary-tree.py . . . . . . . . . . . . . . . . . . . . . 418
+find-the-duplicate-number.py . . . . . . . . . . . . . . . . . . . . . . . 419
+merge-intervals.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 421
+recover-binary-search-tree.py . . . . . . . . . . . . . . . . . . . . . . . 422
+largest-values-from-labels.py . . . . . . . . . . . . . . . . . . . . . . . . 425
+3sum-closest.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 427
+paint-fence.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 428
+word-break-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 429
+play-with-chips.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 431
+split-linked-list-in-parts.py . . . . . . . . . . . . . . . . . . . . . . . . . 432
+solve-the-equation.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 434
+number-of-distinct-islands.py . . . . . . . . . . . . . . . . . . . . . . . 435
+flip-game.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 436
+minimum-height-trees.py . . . . . . . . . . . . . . . . . . . . . . . . . . 437
+number-of-days-between-two-dates.py . . . . . . . . . . . . . . . . . . 439
+sort-integers-by-the-power-value.py . . . . . . . . . . . . . . . . . . . . 440
+constrained-subset-sum.py . . . . . . . . . . . . . . . . . . . . . . . . . 442
+custom-sort-string.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 443
+5binary-search.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 444
+continuous-subarray-sum.py . . . . . . . . . . . . . . . . . . . . . . . . 445
+running-sum-of-1d-array.py . . . . . . . . . . . . . . . . . . . . . . . . 446
+sort-integers-by-the-number-of-1-bits.py . . . . . . . . . . . . . . . . . 447
+brick-wall.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 448
+gray-code.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 449
+unique-word-abbreviation.py . . . . . . . . . . . . . . . . . . . . . . . 451
+sort-transformed-array.py . . . . . . . . . . . . . . . . . . . . . . . . . 452
+odd-even-linked-list.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 453
+basic-calculator-iii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 454
+simplified-fractions.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 455
+kth-missing-positive-number.py . . . . . . . . . . . . . . . . . . . . . . 456
+boundary-of-binary-tree.py . . . . . . . . . . . . . . . . . . . . . . . . 457
+find-the-derangement-of-an-array.py . . . . . . . . . . . . . . . . . . . 458
+domino-and-tromino-tiling.py . . . . . . . . . . . . . . . . . . . . . . . 459
+longest-uncommon-subsequence-ii.py . . . . . . . . . . . . . . . . . . . 461
+freedom-trail.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 462
+champagne-tower.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 464
+number-of-squareful-arrays.py . . . . . . . . . . . . . . . . . . . . . . . 465
+reverse-vowels-of-a-string.py . . . . . . . . . . . . . . . . . . . . . . . . 466
+path-with-maximum-minimum-value.py . . . . . . . . . . . . . . . . . 467
+third-maximum-number.py . . . . . . . . . . . . . . . . . . . . . . . . 469
+making-file-names-unique.py . . . . . . . . . . . . . . . . . . . . . . . . 470
+zuma-game.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 471
+number-of-digit-one.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 474
+parallel-courses.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 476
+hamming-distance.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 477
+1-bit-and-2-bit-characters.py . . . . . . . . . . . . . . . . . . . . . . . . 478
+reorganize-string.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 479
+vertical-order-traversal-of-a-binary-tree.py . . . . . . . . . . . . . . . . 480
+count-substrings-with-only-one-distinct-letter.py . . . . . . . . . . . . 482
+basic-calculator-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 483
+number-of-islands.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 485
+find-the-town-judge.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 487
+minimum-number-of-steps-to-make-two-strings-anagram.py . . . . . . 488
+word-pattern.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 489
+strobogrammatic-number.py . . . . . . . . . . . . . . . . . . . . . . . . 491
+bitwise-and-of-numbers-range.py . . . . . . . . . . . . . . . . . . . . . 492
+connecting-cities-with-minimum-cost.py . . . . . . . . . . . . . . . . . 493
+count-odd-numbers-in-an-interval-range.py . . . . . . . . . . . . . . . . 494
+populating-next-right-pointers-in-each-node-ii.py . . . . . . . . . . . . 495
+reconstruct-a-2-row-binary-matrix.py . . . . . . . . . . . . . . . . . . . 497
+maximum-area-of-a-piece-of-cake-after-horizontal-and-vertical-cuts.py . 498
+subarrays-with-k-different-integers.py . . . . . . . . . . . . . . . . . . . 499
+sum-of-subarray-minimums.py . . . . . . . . . . . . . . . . . . . . . . . 501
+k-th-smallest-in-lexicographical-order.py . . . . . . . . . . . . . . . . . 502
+all-elements-in-two-binary-search-trees.py . . . . . . . . . . . . . . . . 504
+n-queens-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 506
+number-of-students-doing-homework-at-a-given-time.py . . . . . . . . 508
+prime-arrangements.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 509
+find-median-from-data-stream.py . . . . . . . . . . . . . . . . . . . . . 510
+minimum-unique-word-abbreviation.py . . . . . . . . . . . . . . . . . . 512
+remove-duplicate-letters.py . . . . . . . . . . . . . . . . . . . . . . . . 513
+heaters.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 514
+search-a-2d-matrix.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 515
+transform-to-chessboard.py . . . . . . . . . . . . . . . . . . . . . . . . 516
+integer-to-english-words.py . . . . . . . . . . . . . . . . . . . . . . . . 518
+delete-node-in-a-linked-list.py . . . . . . . . . . . . . . . . . . . . . . . 520
+circle-and-rectangle-overlapping.py . . . . . . . . . . . . . . . . . . . . 521
+count-the-repetitions.py . . . . . . . . . . . . . . . . . . . . . . . . . . 522
+6x-of-a-kind-in-a-deck-of-cards.py . . . . . . . . . . . . . . . . . . . . . 523
+find-all-anagrams-in-a-string.py . . . . . . . . . . . . . . . . . . . . . . 524
+monotone-increasing-digits.py . . . . . . . . . . . . . . . . . . . . . . . 526
+soup-servings.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 527
+fizz-buzz-multithreaded.py . . . . . . . . . . . . . . . . . . . . . . . . . 529
+minimum-genetic-mutation.py . . . . . . . . . . . . . . . . . . . . . . . 531
+split-a-string-in-balanced-strings.py . . . . . . . . . . . . . . . . . . . . 533
+alphabet-board-path.py . . . . . . . . . . . . . . . . . . . . . . . . . . 534
+longest-repeating-substring.py . . . . . . . . . . . . . . . . . . . . . . . 535
+replace-elements-with-greatest-element-on-right-side.py . . . . . . . . . 536
+stickers-to-spell-word.py . . . . . . . . . . . . . . . . . . . . . . . . . . 537
+candy-crush.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 539
+number-of-sub-arrays-with-odd-sum.py . . . . . . . . . . . . . . . . . . 540
+n-ary-tree-level-order-traversal.py . . . . . . . . . . . . . . . . . . . . . 541
+maximum-candies-you-can-get-from-boxes.py . . . . . . . . . . . . . . 542
+keys-and-rooms.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 543
+all-oone-data-structure.py . . . . . . . . . . . . . . . . . . . . . . . . . 544
+pancake-sorting.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 546
+maximum-length-of-a-concatenated-string-with-unique-characters.py . 547
+01-matrix.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 549
+analyze-user-website-visit-pattern.py . . . . . . . . . . . . . . . . . . . 551
+shortest-way-to-form-string.py . . . . . . . . . . . . . . . . . . . . . . . 552
+smallest-common-region.py . . . . . . . . . . . . . . . . . . . . . . . . 553
+rotated-digits.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 554
+maximum-product-subarray.py . . . . . . . . . . . . . . . . . . . . . . 556
+trapping-rain-water.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 557
+number-of-valid-subarrays.py . . . . . . . . . . . . . . . . . . . . . . . 559
+distant-barcodes.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 560
+binary-subarrays-with-sum.py . . . . . . . . . . . . . . . . . . . . . . . 561
+delete-node-in-a-bst.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 562
+random-pick-index.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 564
+word-break.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 565
+longest-continuous-subarray-with-absolute-diff-less-than-or-equal-to-
+limit.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 566
+number-of-segments-in-a-string.py . . . . . . . . . . . . . . . . . . . . 568
+video-stitching.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 569
+single-row-keyboard.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 571
+remove-duplicates-from-sorted-array.py . . . . . . . . . . . . . . . . . . 572
+valid-word-abbreviation.py . . . . . . . . . . . . . . . . . . . . . . . . . 573
+shortest-path-with-alternating-colors.py . . . . . . . . . . . . . . . . . 574
+maximum-width-ramp.py . . . . . . . . . . . . . . . . . . . . . . . . . 576
+verbal-arithmetic-puzzle.py . . . . . . . . . . . . . . . . . . . . . . . . 577
+maximum-sum-bst-in-binary-tree.py . . . . . . . . . . . . . . . . . . . 578
+valid-permutations-for-di-sequence.py . . . . . . . . . . . . . . . . . . . 580
+maximum-number-of-darts-inside-of-a-circular-dartboard.py . . . . . . 581
+sentence-similarity.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 582
+binary-search-tree-to-greater-sum-tree.py . . . . . . . . . . . . . . . . . 583
+smallest-rotation-with-highest-score.py . . . . . . . . . . . . . . . . . . 584
+goat-latin.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 585
+android-unlock-patterns.py . . . . . . . . . . . . . . . . . . . . . . . . 586
+binary-tree-maximum-path-sum.py . . . . . . . . . . . . . . . . . . . . 590
+nth-digit.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 591
+elimination-game.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 592
+find-a-value-of-a-mysterious-function-closest-to-target.py . . . . . . . . 593
+move-zeroes.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 595
+consecutive-characters.py . . . . . . . . . . . . . . . . . . . . . . . . . 596
+valid-palindrome-iii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 597
+serialize-and-deserialize-n-ary-tree.py . . . . . . . . . . . . . . . . . . . 598
+build-an-array-with-stack-operations.py . . . . . . . . . . . . . . . . . 600
+missing-ranges.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 601
+7get-the-maximum-score.py . . . . . . . . . . . . . . . . . . . . . . . . . 602
+design-log-storage-system.py . . . . . . . . . . . . . . . . . . . . . . . . 603
+can-make-palindrome-from-substring.py . . . . . . . . . . . . . . . . . 604
+min-cost-climbing-stairs.py . . . . . . . . . . . . . . . . . . . . . . . . 605
+reverse-subarray-to-maximize-array-value.py . . . . . . . . . . . . . . . 606
+campus-bikes-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 607
+max-increase-to-keep-city-skyline.py . . . . . . . . . . . . . . . . . . . 609
+number-of-good-leaf-nodes-pairs.py . . . . . . . . . . . . . . . . . . . . 611
+design-twitter.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 613
+maximum-product-of-three-numbers.py . . . . . . . . . . . . . . . . . . 616
+maximum-average-subarray-ii.py . . . . . . . . . . . . . . . . . . . . . 617
+edit-distance.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 618
+contains-duplicate-iii.py . . . . . . . . . . . . . . . . . . . . . . . . . . 620
+palindrome-partitioning.py . . . . . . . . . . . . . . . . . . . . . . . . 621
+k-th-smallest-prime-fraction.py . . . . . . . . . . . . . . . . . . . . . . 623
+avoid-flood-in-the-city.py . . . . . . . . . . . . . . . . . . . . . . . . . . 625
+majority-element.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 626
+minimum-swaps-to-arrange-a-binary-grid.py . . . . . . . . . . . . . . . 627
+rectangle-area.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 628
+cells-with-odd-values-in-a-matrix.py . . . . . . . . . . . . . . . . . . . 629
+course-schedule-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 630
+degree-of-an-array.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 632
+binary-tree-right-side-view.py . . . . . . . . . . . . . . . . . . . . . . . 633
+car-pooling.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 635
+erect-the-fence.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 636
+find-pivot-index.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 638
+shortest-subarray-with-sum-at-least-k.py . . . . . . . . . . . . . . . . . 639
+create-maximum-number.py . . . . . . . . . . . . . . . . . . . . . . . . 640
+design-bounded-blocking-queue.py . . . . . . . . . . . . . . . . . . . . 642
+array-partition-i.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 643
+traffic-light-controlled-intersection.py . . . . . . . . . . . . . . . . . . . 645
+find-the-city-with-the-smallest-number-of-neighbors-at-a-threshold-
+distance.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 646
+reverse-pairs.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 647
+shortest-word-distance-iii.py . . . . . . . . . . . . . . . . . . . . . . . . 648
+smallest-range.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 649
+maximum-nesting-depth-of-two-valid-parentheses-strings.py . . . . . . 650
+zigzag-iterator.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 652
+maximum-level-sum-of-a-binary-tree.py . . . . . . . . . . . . . . . . . 653
+combination-sum.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 655
+kth-largest-element-in-an-array.py . . . . . . . . . . . . . . . . . . . . . 656
+the-maze-iii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 657
+super-washing-machines.py . . . . . . . . . . . . . . . . . . . . . . . . 658
+prefix-and-suffix-search.py . . . . . . . . . . . . . . . . . . . . . . . . . 660
+flip-string-to-monotone-increasing.py . . . . . . . . . . . . . . . . . . . 663
+max-consecutive-ones.py . . . . . . . . . . . . . . . . . . . . . . . . . . 664
+count-triplets-that-can-form-two-arrays-of-equal-xor.py . . . . . . . . . 665
+grumpy-bookstore-owner.py . . . . . . . . . . . . . . . . . . . . . . . . 666
+two-sum.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 667
+lowest-common-ancestor-of-a-binary-tree.py . . . . . . . . . . . . . . . 668
+spiral-matrix-iii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 669
+monotonic-array.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 670
+length-of-last-word.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 671
+summary-ranges.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 672
+guess-the-majority-in-a-hidden-array.py . . . . . . . . . . . . . . . . . 673
+middle-of-the-linked-list.py . . . . . . . . . . . . . . . . . . . . . . . . 674
+robot-bounded-in-circle.py . . . . . . . . . . . . . . . . . . . . . . . . . 675
+valid-number.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 676
+daily-temperatures.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 678
+minimum-insertions-to-balance-a-parentheses-string.py . . . . . . . . . 679
+8longest-duplicate-substring.py . . . . . . . . . . . . . . . . . . . . . . . 680
+escape-the-ghosts.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 682
+repeated-substring-pattern.py . . . . . . . . . . . . . . . . . . . . . . . 683
+integer-replacement.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 684
+super-pow.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 686
+minimize-max-distance-to-gas-station.py . . . . . . . . . . . . . . . . . 687
+how-many-numbers-are-smaller-than-the-current-number.py . . . . . . 688
+insert-delete-getrandom-o1.py . . . . . . . . . . . . . . . . . . . . . . . 689
+lowest-common-ancestor-of-a-binary-search-tree.py . . . . . . . . . . . 690
+stepping-numbers.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 691
+first-unique-number.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 692
+the-skyline-problem.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 693
+minimum-window-subsequence.py . . . . . . . . . . . . . . . . . . . . . 696
+find-duplicate-subtrees.py . . . . . . . . . . . . . . . . . . . . . . . . . 698
+number-of-ways-to-paint-n-3-grid.py . . . . . . . . . . . . . . . . . . . 700
+insertion-sort-list.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 701
+mirror-reflection.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 703
+design-snake-game.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 704
+quad-tree-intersection.py . . . . . . . . . . . . . . . . . . . . . . . . . . 706
+allocate-mailboxes.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 707
+minimum-cost-to-merge-stones.py . . . . . . . . . . . . . . . . . . . . . 708
+circular-permutation-in-binary-representation.py . . . . . . . . . . . . 710
+best-time-to-buy-and-sell-stock-with-transaction-fee.py . . . . . . . . . 711
+loud-and-rich.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 712
+reformat-date.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 714
+flower-planting-with-no-adjacent.py . . . . . . . . . . . . . . . . . . . . 715
+bulb-switcher-iv.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 716
+similar-rgb-color.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 717
+can-convert-string-in-k-moves.py . . . . . . . . . . . . . . . . . . . . . 718
+remove-all-adjacent-duplicates-in-string.py . . . . . . . . . . . . . . . . 719
+before-and-after-puzzle.py . . . . . . . . . . . . . . . . . . . . . . . . . 720
+reverse-linked-list-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 721
+unique-morse-code-words.py . . . . . . . . . . . . . . . . . . . . . . . . 722
+sum-of-subsequence-widths.py . . . . . . . . . . . . . . . . . . . . . . . 723
+validate-binary-tree-nodes.py . . . . . . . . . . . . . . . . . . . . . . . 724
+unique-paths-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 725
+reverse-words-in-a-string-iii.py . . . . . . . . . . . . . . . . . . . . . . . 726
+subrectangle-queries.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 727
+longest-absolute-file-path.py . . . . . . . . . . . . . . . . . . . . . . . . 729
+vowel-spellchecker.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 731
+reverse-integer.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 733
+remove-comments.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 735
+shuffle-an-array.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 737
+sliding-puzzle.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 738
+cat-and-mouse.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 741
+palindrome-permutation-ii.py . . . . . . . . . . . . . . . . . . . . . . . 743
+isomorphic-strings.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 744
+binary-trees-with-factors.py . . . . . . . . . . . . . . . . . . . . . . . . 746
+palindrome-linked-list.py . . . . . . . . . . . . . . . . . . . . . . . . . . 747
+contains-duplicate-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 748
+minimum-falling-path-sum.py . . . . . . . . . . . . . . . . . . . . . . . 749
+boats-to-save-people.py . . . . . . . . . . . . . . . . . . . . . . . . . . 750
+house-robber.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 751
+time-needed-to-inform-all-employees.py . . . . . . . . . . . . . . . . . . 752
+sort-items-by-groups-respecting-dependencies.py . . . . . . . . . . . . 753
+sum-root-to-leaf-numbers.py . . . . . . . . . . . . . . . . . . . . . . . . 755
+delete-and-earn.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 757
+first-missing-positive.py . . . . . . . . . . . . . . . . . . . . . . . . . . 758
+different-ways-to-add-parentheses.py . . . . . . . . . . . . . . . . . . . 759
+split-array-with-equal-sum.py . . . . . . . . . . . . . . . . . . . . . . . 761
+9as-far-from-land-as-possible.py . . . . . . . . . . . . . . . . . . . . . . 762
+cut-off-trees-for-golf-event.py . . . . . . . . . . . . . . . . . . . . . . . 764
+perfect-number.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 767
+broken-calculator.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 768
+paint-house-iii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 769
+find-the-closest-palindrome.py . . . . . . . . . . . . . . . . . . . . . . . 770
+k-th-symbol-in-grammar.py . . . . . . . . . . . . . . . . . . . . . . . . 771
+number-of-days-in-a-month.py . . . . . . . . . . . . . . . . . . . . . . . 772
+construct-binary-tree-from-preorder-and-inorder-traversal.py . . . . . . 773
+find-anagram-mappings.py . . . . . . . . . . . . . . . . . . . . . . . . . 775
+longest-palindromic-substring.py . . . . . . . . . . . . . . . . . . . . . 776
+subtract-the-product-and-sum-of-digits-of-an-integer.py . . . . . . . . 777
+keyboard-row.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 778
+replace-words.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 779
+k-concatenation-maximum-sum.py . . . . . . . . . . . . . . . . . . . . 780
+trim-a-binary-search-tree.py . . . . . . . . . . . . . . . . . . . . . . . . 781
+replace-the-substring-for-balanced-string.py . . . . . . . . . . . . . . . 783
+implement-stack-using-queues.py . . . . . . . . . . . . . . . . . . . . . 784
+ones-and-zeroes.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 786
+find-two-non-overlapping-sub-arrays-each-with-target-sum.py . . . . . 787
+backspace-string-compare.py . . . . . . . . . . . . . . . . . . . . . . . 788
+kids-with-the-greatest-number-of-candies.py . . . . . . . . . . . . . . . 789
+stone-game-iv.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 790
+find-smallest-common-element-in-all-rows.py . . . . . . . . . . . . . . . 791
+diagonal-traverse-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 792
+validate-binary-search-tree.py . . . . . . . . . . . . . . . . . . . . . . . 793
+convert-to-base-2.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 795
+snakes-and-ladders.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 796
+minimum-value-to-get-positive-step-by-step-sum.py . . . . . . . . . . . 798
+decoded-string-at-index.py . . . . . . . . . . . . . . . . . . . . . . . . . 799
+rotate-list.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 801
+most-common-word.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 803
+minimum-path-sum.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 805
+minimum-insertion-steps-to-make-a-string-palindrome.py . . . . . . . . 806
+decrypt-string-from-alphabet-to-integer-mapping.py . . . . . . . . . . 807
+number-of-subarrays-with-bounded-maximum.py . . . . . . . . . . . . 809
+spiral-matrix-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 810
+same-tree.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 811
+parse-lisp-expression.py . . . . . . . . . . . . . . . . . . . . . . . . . . 812
+palindromic-substrings.py . . . . . . . . . . . . . . . . . . . . . . . . . 815
+numbers-with-same-consecutive-differences.py . . . . . . . . . . . . . . 816
+employee-free-time.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 817
+special-binary-string.py . . . . . . . . . . . . . . . . . . . . . . . . . . 818
+minimum-possible-integer-after-at-most-k-adjacent-swaps-on-digits.py 819
+generate-random-point-in-a-circle.py . . . . . . . . . . . . . . . . . . . 820
+longest-well-performing-interval.py . . . . . . . . . . . . . . . . . . . . 822
+add-two-numbers-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 823
+minimum-area-rectangle-ii.py . . . . . . . . . . . . . . . . . . . . . . . 825
+binary-tree-tilt.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 827
+meeting-rooms-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 828
+random-pick-with-blacklist.py . . . . . . . . . . . . . . . . . . . . . . . 830
+clumsy-factorial.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 832
+occurrences-after-bigram.py . . . . . . . . . . . . . . . . . . . . . . . . 834
+max-sum-of-sub-matrix-no-larger-than-k.py . . . . . . . . . . . . . . . 836
+minimum-window-substring.py . . . . . . . . . . . . . . . . . . . . . . 838
+nested-list-weight-sum-ii.py . . . . . . . . . . . . . . . . . . . . . . . . 839
+baseball-game.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 840
+design-hashset.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 842
+count-all-valid-pickup-and-delivery-options.py . . . . . . . . . . . . . . 844
+next-greater-element-iii.py . . . . . . . . . . . . . . . . . . . . . . . . . 845
+10permutations.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 846
+rearrange-words-in-a-sentence.py . . . . . . . . . . . . . . . . . . . . . 848
+number-of-longest-increasing-subsequence.py . . . . . . . . . . . . . . . 849
+build-array-where-you-can-find-the-maximum-exactly-k-comparisons.py 850
+redundant-connection.py . . . . . . . . . . . . . . . . . . . . . . . . . . 851
+divide-chocolate.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 853
+top-k-frequent-words.py . . . . . . . . . . . . . . . . . . . . . . . . . . 854
+matrix-cells-in-distance-order.py . . . . . . . . . . . . . . . . . . . . . 857
+best-position-for-a-service-centre.py . . . . . . . . . . . . . . . . . . . . 859
+minimum-ascii-delete-sum-for-two-strings.py . . . . . . . . . . . . . . . 861
+shortest-bridge.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 863
+largest-perimeter-triangle.py . . . . . . . . . . . . . . . . . . . . . . . . 865
+all-possible-full-binary-trees.py . . . . . . . . . . . . . . . . . . . . . . 866
+find-elements-in-a-contaminated-binary-tree.py . . . . . . . . . . . . . 867
+remove-outermost-parentheses.py . . . . . . . . . . . . . . . . . . . . . 868
+complex-number-multiplication.py . . . . . . . . . . . . . . . . . . . . 870
+copy-list-with-random-pointer.py . . . . . . . . . . . . . . . . . . . . . 871
+nth-magical-number.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 873
+container-with-most-water.py . . . . . . . . . . . . . . . . . . . . . . . 874
+fizz-buzz.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 875
+find-duplicate-file-in-system.py . . . . . . . . . . . . . . . . . . . . . . 877
+implement-rand10-using-rand7.py . . . . . . . . . . . . . . . . . . . . . 879
+fraction-to-recurring-decimal.py . . . . . . . . . . . . . . . . . . . . . . 880
+find-the-shortest-superstring.py . . . . . . . . . . . . . . . . . . . . . . 881
+path-with-maximum-probability.py . . . . . . . . . . . . . . . . . . . . 883
+longest-continuous-increasing-subsequence.py . . . . . . . . . . . . . . 884
+house-robber-iii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 885
+letter-tile-possibilities.py . . . . . . . . . . . . . . . . . . . . . . . . . . 886
+n-repeated-element-in-size-2n-array.py . . . . . . . . . . . . . . . . . . 888
+grid-illumination.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 889
+number-of-distinct-subarrays-with-at-most-k-odd-integers.py . . . . . . 891
+longest-mountain-in-array.py . . . . . . . . . . . . . . . . . . . . . . . 892
+sort-an-array.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 893
+divide-array-in-sets-of-k-consecutive-numbers.py . . . . . . . . . . . . . 895
+chalkboard-xor-game.py . . . . . . . . . . . . . . . . . . . . . . . . . . 896
+two-sum-iv-input-is-a-bst.py . . . . . . . . . . . . . . . . . . . . . . . . 897
+parallel-courses-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 898
+one-edit-distance.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 900
+search-suggestions-system.py . . . . . . . . . . . . . . . . . . . . . . . 901
+the-dining-philosophers.py . . . . . . . . . . . . . . . . . . . . . . . . . 904
+minimum-absolute-difference-in-bst.py . . . . . . . . . . . . . . . . . . 905
+find-k-th-smallest-pair-distance.py . . . . . . . . . . . . . . . . . . . . 906
+word-abbreviation.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 907
+excel-sheet-column-number.py . . . . . . . . . . . . . . . . . . . . . . . 908
+the-maze-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 909
+majority-element-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 910
+delete-leaves-with-a-given-value.py . . . . . . . . . . . . . . . . . . . . 912
+student-attendance-record-ii.py . . . . . . . . . . . . . . . . . . . . . . 913
+shortest-distance-to-a-character.py . . . . . . . . . . . . . . . . . . . . 914
+minimum-index-sum-of-two-lists.py . . . . . . . . . . . . . . . . . . . . 915
+reordered-power-of-2.py . . . . . . . . . . . . . . . . . . . . . . . . . . 916
+self-dividing-numbers.py . . . . . . . . . . . . . . . . . . . . . . . . . . 917
+max-area-of-island.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 918
+smallest-string-starting-from-leaf.py . . . . . . . . . . . . . . . . . . . 919
+number-of-distinct-islands-ii.py . . . . . . . . . . . . . . . . . . . . . . 920
+profitable-schemes.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 921
+delete-nodes-and-return-forest.py . . . . . . . . . . . . . . . . . . . . . 923
+fixed-point.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 924
+flip-columns-for-maximum-number-of-equal-rows.py . . . . . . . . . . . 925
+distinct-echo-substrings.py . . . . . . . . . . . . . . . . . . . . . . . . . 926
+11binary-watch.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 929
+split-array-into-fibonacci-sequence.py . . . . . . . . . . . . . . . . . . . 930
+minimum-factorization.py . . . . . . . . . . . . . . . . . . . . . . . . . 932
+advantage-shuffle.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 933
+intersection-of-two-linked-lists.py . . . . . . . . . . . . . . . . . . . . . 934
+string-without-aaa-or-bbb.py . . . . . . . . . . . . . . . . . . . . . . . 936
+minimum-falling-path-sum-ii.py . . . . . . . . . . . . . . . . . . . . . . 937
+minimum-number-of-k-consecutive-bit-flips.py . . . . . . . . . . . . . . 938
+find-mode-in-binary-search-tree.py . . . . . . . . . . . . . . . . . . . . 939
+ransom-note.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 940
+shortest-path-to-get-all-keys.py . . . . . . . . . . . . . . . . . . . . . . 942
+shortest-path-visiting-all-nodes.py . . . . . . . . . . . . . . . . . . . . 944
+couples-holding-hands.py . . . . . . . . . . . . . . . . . . . . . . . . . 945
+xor-queries-of-a-subarray.py . . . . . . . . . . . . . . . . . . . . . . . . 946
+meeting-rooms.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 947
+split-array-with-same-average.py . . . . . . . . . . . . . . . . . . . . . 948
+strobogrammatic-number-iii.py . . . . . . . . . . . . . . . . . . . . . . 949
+number-of-substrings-with-only-1s.py . . . . . . . . . . . . . . . . . . . 951
+populating-next-right-pointers-in-each-node.py . . . . . . . . . . . . . 952
+smallest-sufficient-team.py . . . . . . . . . . . . . . . . . . . . . . . . . 954
+sum-of-nodes-with-even-valued-grandparent.py . . . . . . . . . . . . . 955
+print-zero-even-odd.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 956
+number-of-ways-to-stay-in-the-same-place-after-some-steps.py . . . . . 958
+range-sum-query-immutable.py . . . . . . . . . . . . . . . . . . . . . . 959
+count-primes.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 960
+sort-array-by-parity-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . 962
+word-ladder-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 963
+find-all-numbers-disappeared-in-an-array.py . . . . . . . . . . . . . . . 965
+matchsticks-to-square.py . . . . . . . . . . . . . . . . . . . . . . . . . . 966
+powx-n.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 968
+online-election.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 969
+remove-zero-sum-consecutive-nodes-from-linked-list.py . . . . . . . . . 971
+range-addition.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 972
+sort-list.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 973
+kill-process.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 975
+strobogrammatic-number-ii.py . . . . . . . . . . . . . . . . . . . . . . 976
+guess-number-higher-or-lower-ii.py . . . . . . . . . . . . . . . . . . . . 977
+height-checker.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 978
+flatten-nested-list-iterator.py . . . . . . . . . . . . . . . . . . . . . . . 979
+flatten-binary-tree-to-linked-list.py . . . . . . . . . . . . . . . . . . . . 981
+h-index-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 983
+longest-increasing-path-in-a-matrix.py . . . . . . . . . . . . . . . . . . 984
+maximum-depth-of-n-ary-tree.py . . . . . . . . . . . . . . . . . . . . . 986
+path-crossing.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 987
+insert-into-a-binary-search-tree.py . . . . . . . . . . . . . . . . . . . . . 988
+average-salary-excluding-the-minimum-and-maximum-salary.py . . . . 990
+check-if-all-1s-are-at-least-length-k-places-away.py . . . . . . . . . . . . 991
+longest-happy-prefix.py . . . . . . . . . . . . . . . . . . . . . . . . . . 992
+number-of-lines-to-write-string.py . . . . . . . . . . . . . . . . . . . . . 993
+find-kth-bit-in-nth-binary-string.py . . . . . . . . . . . . . . . . . . . . 995
+prime-number-of-set-bits-in-binary-representation.py . . . . . . . . . . 996
+path-sum-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 997
+ternary-expression-parser.py . . . . . . . . . . . . . . . . . . . . . . . . 998
+find-in-mountain-array.py . . . . . . . . . . . . . . . . . . . . . . . . . 999
+beautiful-arrangement.py . . . . . . . . . . . . . . . . . . . . . . . . . 1000
+path-sum-iv.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1001
+rotate-function.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1002
+partition-array-for-maximum-sum.py . . . . . . . . . . . . . . . . . . . 1003
+shopping-offers.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1004
+get-watched-videos-by-your-friends.py . . . . . . . . . . . . . . . . . . 1006
+12best-time-to-buy-and-sell-stock.py . . . . . . . . . . . . . . . . . . . . 1008
+unique-number-of-occurrences.py . . . . . . . . . . . . . . . . . . . . . 1009
+perfect-rectangle.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1010
+find-and-replace-in-string.py . . . . . . . . . . . . . . . . . . . . . . . . 1012
+nim-game.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1014
+number-of-valid-words-for-each-puzzle.py . . . . . . . . . . . . . . . . . 1015
+water-bottles.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1017
+stream-of-characters2.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1018
+construct-binary-tree-from-inorder-and-postorder-traversal.py . . . . . 1020
+strange-printer.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1021
+confusing-number.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1022
+number-of-paths-with-max-score.py . . . . . . . . . . . . . . . . . . . . 1023
+race-car.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1024
+implement-strstr.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1026
+teemo-attacking.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1027
+set-mismatch.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1028
+minimum-cost-to-cut-a-stick.py . . . . . . . . . . . . . . . . . . . . . . 1030
+number-of-connected-components-in-an-undirected-graph.py . . . . . . 1031
+closest-leaf-in-a-binary-tree.py . . . . . . . . . . . . . . . . . . . . . . . 1032
+largest-divisible-subset.py . . . . . . . . . . . . . . . . . . . . . . . . . 1033
+find-the-longest-substring-containing-vowels-in-even-counts.py . . . . . 1034
+word-subsets.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1035
+satisfiability-of-equality-equations.py . . . . . . . . . . . . . . . . . . . 1037
+valid-palindrome-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1040
+transpose-matrix.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1041
+the-k-strongest-values-in-an-array.py . . . . . . . . . . . . . . . . . . . 1042
+campus-bikes.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1044
+
+
+range-sum-query-mutable.py . . . . . . . . . . . . . . . . . . . . . . . . 1045
+house-robber-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1048
+reverse-words-in-a-string-ii.py . . . . . . . . . . . . . . . . . . . . . . . 1049
+maximum-score-words-formed-by-letters.py . . . . . . . . . . . . . . . 1050
+delete-n-nodes-after-m-nodes-of-a-linked-list.py . . . . . . . . . . . . . 1051
+design-phone-directory.py . . . . . . . . . . . . . . . . . . . . . . . . . 1052
+minimum-distance-to-type-a-word-using-two-fingers.py . . . . . . . . . 1053
+remove-duplicates-from-sorted-list.py . . . . . . . . . . . . . . . . . . . 1054
+unique-substrings-in-wraparound-string.py . . . . . . . . . . . . . . . . 1055
+search-for-a-range.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1056
+find-root-of-n-ary-tree.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1057
+shuffle-string.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1058
+scramble-string.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1059
+palindrome-partitioning-iii.py . . . . . . . . . . . . . . . . . . . . . . . 1061
+next-greater-element-i.py . . . . . . . . . . . . . . . . . . . . . . . . . 1062
+kth-smallest-number-in-multiplication-table.py . . . . . . . . . . . . . 1063
+exclusive-time-of-functions.py . . . . . . . . . . . . . . . . . . . . . . . 1064
+minimize-rounding-error-to-meet-target.py . . . . . . . . . . . . . . . . 1066
+repeated-dna-sequences.py . . . . . . . . . . . . . . . . . . . . . . . . . 1067
+preimage-size-of-factorial-zeroes-function.py . . . . . . . . . . . . . . . 1068
+flip-equivalent-binary-trees.py . . . . . . . . . . . . . . . . . . . . . . . 1069
+first-bad-version.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1070
+maximum-frequency-stack.py . . . . . . . . . . . . . . . . . . . . . . . 1071
+moving-average-from-data-stream.py . . . . . . . . . . . . . . . . . . . 1073
+3sum-smaller.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1074
+plus-one.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1075
+bus-routes.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1077
+number-of-burgers-with-no-waste-of-ingredients.py . . . . . . . . . . . 1079
+tag-validator.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1080
+reshape-the-matrix.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1083
+pour-water.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1085
+minimum-add-to-make-parentheses-valid.py . . . . . . . . . . . . . . . 1086
+missing-number.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1087
+13linked-list-cycle-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1088
+max-chunks-to-make-sorted.py . . . . . . . . . . . . . . . . . . . . . . 1090
+maximum-subarray-sum-with-one-deletion.py . . . . . . . . . . . . . . 1091
+pizza-with-3n-slices.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1092
+largest-time-for-given-digits.py . . . . . . . . . . . . . . . . . . . . . . 1093
+orderly-queue.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1094
+optimal-account-balancing.py . . . . . . . . . . . . . . . . . . . . . . . 1095
+reorder-routes-to-make-all-paths-lead-to-the-city-zero.py . . . . . . . . 1096
+convex-polygon.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1097
+sort-colors.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1098
+peeking-iterator.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1099
+number-of-matching-subsequences.py . . . . . . . . . . . . . . . . . . . 1101
+make-the-string-great.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1102
+find-largest-value-in-each-tree-row.py . . . . . . . . . . . . . . . . . . . 1103
+check-if-there-is-a-valid-path-in-a-grid.py . . . . . . . . . . . . . . . . . 1104
+longest-uncommon-subsequence-i.py . . . . . . . . . . . . . . . . . . . 1105
+number-of-corner-rectangles.py . . . . . . . . . . . . . . . . . . . . . . 1106
+contiguous-array.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1107
+max-value-of-equation.py . . . . . . . . . . . . . . . . . . . . . . . . . 1108
+pacific-atlantic-water-flow.py . . . . . . . . . . . . . . . . . . . . . . . 1109
+largest-multiple-of-three.py . . . . . . . . . . . . . . . . . . . . . . . . 1111
+remove-linked-list-elements.py . . . . . . . . . . . . . . . . . . . . . . . 1112
+course-schedule-iii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1113
+4-keys-keyboard.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1114
+minimum-distance-between-bst-nodes.py . . . . . . . . . . . . . . . . . 1115
+card-flipping-game.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1116
+trapping-rain-water-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1117
+stone-game-iii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1119
+maximal-square.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1120
+minesweeper.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1123
+graph-valid-tree.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1126
+maximum-number-of-occurrences-of-a-substring.py . . . . . . . . . . . 1128
+jump-game-v.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1129
+linked-list-cycle.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1133
+count-numbers-with-unique-digits.py . . . . . . . . . . . . . . . . . . . 1134
+parsing-a-boolean-expression.py . . . . . . . . . . . . . . . . . . . . . . 1135
+intersection-of-two-arrays-ii.py . . . . . . . . . . . . . . . . . . . . . . 1137
+remove-element.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1140
+my-calendar-iii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1142
+most-stones-removed-with-same-row-or-column.py . . . . . . . . . . . 1144
+invert-binary-tree.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1145
+minimum-subsequence-in-non-increasing-order.py . . . . . . . . . . . . 1147
+previous-permutation-with-one-swap.py . . . . . . . . . . . . . . . . . 1148
+count-square-submatrices-with-all-ones.py . . . . . . . . . . . . . . . . 1149
+plus-one-linked-list.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1150
+palindrome-removal.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1152
+read-n-characters-given-read4.py . . . . . . . . . . . . . . . . . . . . . 1153
+convert-bst-to-greater-tree.py . . . . . . . . . . . . . . . . . . . . . . . 1154
+balanced-binary-tree.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1155
+spiral-matrix.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1156
+long-pressed-name.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1157
+longest-univalue-path.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1158
+invalid-transactions.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1159
+encode-string-with-shortest-length.py . . . . . . . . . . . . . . . . . . . 1160
+string-compression.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1161
+alien-dictionary.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1163
+counting-bits.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1165
+stone-game-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1166
+merge-two-sorted-lists.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1167
+minimize-malware-spread.py . . . . . . . . . . . . . . . . . . . . . . . . 1168
+14lru-cache.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1170
+maximum-product-of-splitted-binary-tree.py . . . . . . . . . . . . . . . 1172
+largest-triangle-area.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1173
+valid-tic-tac-toe-state.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1174
+friends-of-appropriate-ages.py . . . . . . . . . . . . . . . . . . . . . . . 1176
+decrease-elements-to-make-array-zigzag.py . . . . . . . . . . . . . . . . 1177
+word-squares.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1178
+is-graph-bipartite.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1179
+maximum-xor-of-two-numbers-in-an-array.py . . . . . . . . . . . . . . 1180
+shift-2d-grid.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1181
+largest-bst-subtree.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1182
+accounts-merge.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1183
+implement-queue-using-stacks.py . . . . . . . . . . . . . . . . . . . . . 1185
+arithmetic-slices-ii-subsequence.py . . . . . . . . . . . . . . . . . . . . 1186
+longest-common-subsequence.py . . . . . . . . . . . . . . . . . . . . . . 1187
+binary-tree-inorder-traversal.py . . . . . . . . . . . . . . . . . . . . . . 1188
+sort-the-matrix-diagonally.py . . . . . . . . . . . . . . . . . . . . . . . 1190
+binary-tree-paths.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1191
+delete-tree-nodes.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1192
+closest-binary-search-tree-value.py . . . . . . . . . . . . . . . . . . . . 1193
+find-the-smallest-divisor-given-a-threshold.py . . . . . . . . . . . . . . 1194
+smallest-good-base.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1195
+count-servers-that-communicate.py . . . . . . . . . . . . . . . . . . . . 1196
+count-of-range-sum.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1197
+largest-number-at-least-twice-of-others.py . . . . . . . . . . . . . . . . 1199
+buddy-strings.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1200
+insert-delete-getrandom-o1-duplicates-allowed.py . . . . . . . . . . . . 1201
+the-k-th-lexicographical-string-of-all-happy-strings-of-length-n.py . . . 1202
+dice-roll-simulation.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1203
+flip-binary-tree-to-match-preorder-traversal.py . . . . . . . . . . . . . . 1204
+complement-of-base-10-integer.py . . . . . . . . . . . . . . . . . . . . . 1206
+duplicate-zeros.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1207
+kth-largest-element-in-a-stream.py . . . . . . . . . . . . . . . . . . . . 1208
+design-tic-tac-toe.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1210
+bulb-switcher-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1211
+employee-importance.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1212
+reorder-log-files.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1214
+digit-count-in-range.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1215
+design-a-stack-with-increment-operation.py . . . . . . . . . . . . . . . 1216
+arithmetic-slices.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1217
+unique-paths.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1218
+ugly-number.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1219
+search-insert-position.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1220
+bag-of-tokens.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1221
+delete-columns-to-make-sorted-iii.py . . . . . . . . . . . . . . . . . . . 1222
+decode-ways.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1223
+maximum-number-of-non-overlapping-subarrays-with-sum-equals-
+target.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1224
+armstrong-number.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1225
+tiling-a-rectangle-with-the-fewest-squares.py . . . . . . . . . . . . . . . 1226
+statistics-from-a-large-sample.py . . . . . . . . . . . . . . . . . . . . . 1227
+count-good-nodes-in-binary-tree.py . . . . . . . . . . . . . . . . . . . . 1229
+minimum-swaps-to-group-all-1s-together.py . . . . . . . . . . . . . . . 1230
+remove-vowels-from-a-string.py . . . . . . . . . . . . . . . . . . . . . . 1231
+stream-of-characters.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1232
+array-nesting.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1235
+divide-two-integers.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1236
+factorial-trailing-zeroes.py . . . . . . . . . . . . . . . . . . . . . . . . . 1238
+rotate-string.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1239
+coin-change.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1242
+15regions-cut-by-slashes.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1243
+moving-stones-until-consecutive.py . . . . . . . . . . . . . . . . . . . . 1245
+maximum-gap.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1247
+letter-combinations-of-a-phone-number.py . . . . . . . . . . . . . . . . 1249
+longest-repeating-character-replacement.py . . . . . . . . . . . . . . . 1251
+search-in-rotated-sorted-array.py . . . . . . . . . . . . . . . . . . . . . 1253
+number-of-steps-to-reduce-a-number-to-zero.py . . . . . . . . . . . . . 1254
+increasing-triplet-subsequence.py . . . . . . . . . . . . . . . . . . . . . 1255
+filter-restaurants-by-vegan-friendly-price-and-distance.py . . . . . . . . 1256
+remove-interval.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1257
+longest-palindrome.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1258
+univalued-binary-tree.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1259
+defanging-an-ip-address.py . . . . . . . . . . . . . . . . . . . . . . . . . 1260
+distribute-candies.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1261
+permutations-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1262
+maximum-performance-of-a-team.py . . . . . . . . . . . . . . . . . . . 1264
+detect-capital.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1265
+minimum-size-subarray-sum.py . . . . . . . . . . . . . . . . . . . . . . 1266
+shortest-word-distance-ii.py . . . . . . . . . . . . . . . . . . . . . . . . 1268
+three-equal-parts.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1269
+find-and-replace-pattern.py . . . . . . . . . . . . . . . . . . . . . . . . 1270
+island-perimeter.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1271
+candy.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1272
+time-based-key-value-store.py . . . . . . . . . . . . . . . . . . . . . . . 1273
+recover-a-tree-from-preorder-traversal.py . . . . . . . . . . . . . . . . . 1275
+number-of-music-playlists.py . . . . . . . . . . . . . . . . . . . . . . . . 1277
+number-of-substrings-containing-all-three-characters.py . . . . . . . . . 1278
+convert-binary-search-tree-to-sorted-doubly-linked-list.py . . . . . . . . 1279
+critical-connections-in-a-network.py . . . . . . . . . . . . . . . . . . . . 1280
+cinema-seat-allocation.py . . . . . . . . . . . . . . . . . . . . . . . . . 1281
+ugly-number-iii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1283
+utf-8-validation.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1285
+largest-sum-of-averages.py . . . . . . . . . . . . . . . . . . . . . . . . . 1287
+max-difference-you-can-get-from-changing-an-integer.py . . . . . . . . 1288
+search-in-a-binary-search-tree.py . . . . . . . . . . . . . . . . . . . . . 1289
+longest-increasing-subsequence.py . . . . . . . . . . . . . . . . . . . . . 1290
+people-whose-list-of-favorite-companies-is-not-a-subset-of-another-
+list.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1292
+print-in-order.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1294
+last-stone-weight-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1296
+partition-to-k-equal-sum-subsets.py . . . . . . . . . . . . . . . . . . . . 1297
+exam-room.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1299
+largest-number.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1301
+bold-words-in-string.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1302
+design-in-memory-file-system.py . . . . . . . . . . . . . . . . . . . . . . 1304
+distinct-subsequences-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . 1306
+longest-zigzag-path-in-a-binary-tree.py . . . . . . . . . . . . . . . . . . 1307
+max-stack.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1308
+partition-array-into-disjoint-intervals.py . . . . . . . . . . . . . . . . . 1310
+two-sum-less-than-k.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1311
+range-addition-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1312
+longest-harmonious-subsequence.py . . . . . . . . . . . . . . . . . . . . 1313
+coloring-a-border.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1314
+possible-bipartition.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1316
+validate-stack-sequences.py . . . . . . . . . . . . . . . . . . . . . . . . 1318
+find-winner-on-a-tic-tac-toe-game.py . . . . . . . . . . . . . . . . . . . 1319
+4sum.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1320
+maximum-distance-in-arrays.py . . . . . . . . . . . . . . . . . . . . . . 1322
+132-pattern.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1323
+course-schedule-iv.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1324
+16bulb-switcher.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1325
+range-sum-query-2d-mutable.py . . . . . . . . . . . . . . . . . . . . . . 1326
+path-in-zigzag-labelled-binary-tree.py . . . . . . . . . . . . . . . . . . . 1328
+break-a-palindrome.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1329
+available-captures-for-rook.py . . . . . . . . . . . . . . . . . . . . . . . 1330
+maximal-rectangle.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1332
+balance-a-binary-search-tree.py . . . . . . . . . . . . . . . . . . . . . . 1334
+make-array-strictly-increasing.py . . . . . . . . . . . . . . . . . . . . . 1336
+flatten-a-multilevel-doubly-linked-list.py . . . . . . . . . . . . . . . . . 1337
+verify-preorder-serialization-of-a-binary-tree.py . . . . . . . . . . . . . 1339
+valid-triangle-number.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1341
+binary-tree-upside-down.py . . . . . . . . . . . . . . . . . . . . . . . . 1342
+create-target-array-in-the-given-order.py . . . . . . . . . . . . . . . . . 1343
+second-minimum-node-in-a-binary-tree.py . . . . . . . . . . . . . . . . 1344
+binary-gap.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1346
+coin-change-2.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1347
+rle-iterator.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1348
+redundant-connection-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . 1350
+subsets.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1352
+shortest-path-in-a-grid-with-obstacles-elimination.py . . . . . . . . . . 1354
+guess-the-word.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1355
+array-transformation.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1357
+kth-smallest-element-in-a-sorted-matrix.py . . . . . . . . . . . . . . . . 1358
+squares-of-a-sorted-array.py . . . . . . . . . . . . . . . . . . . . . . . . 1359
+word-ladder.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1360
+check-if-array-pairs-are-divisible-by-k.py . . . . . . . . . . . . . . . . . 1362
+maximum-product-of-two-elements-in-an-array.py . . . . . . . . . . . . 1363
+camelcase-matching.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1364
+bulls-and-cows.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1366
+encode-and-decode-tinyurl.py . . . . . . . . . . . . . . . . . . . . . . . 1368
+triangle.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1370
+pascals-triangle.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1371
+find-k-length-substrings-with-no-repeated-characters.py . . . . . . . . 1372
+get-equal-substrings-within-budget.py . . . . . . . . . . . . . . . . . . 1373
+check-if-a-string-can-break-another-string.py . . . . . . . . . . . . . . . 1374
+score-after-flipping-matrix.py . . . . . . . . . . . . . . . . . . . . . . . 1375
+path-sum.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1376
+sentence-screen-fitting.py . . . . . . . . . . . . . . . . . . . . . . . . . 1377
+magic-squares-in-grid.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1378
+subarray-sums-divisible-by-k.py . . . . . . . . . . . . . . . . . . . . . . 1380
+assign-cookies.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1381
+wildcard-matching.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1383
+lowest-common-ancestor-of-deepest-leaves.py . . . . . . . . . . . . . . 1386
+3sum-with-multiplicity.py . . . . . . . . . . . . . . . . . . . . . . . . . 1388
+minimize-malware-spread-ii.py . . . . . . . . . . . . . . . . . . . . . . 1389
+max-consecutive-ones-iii.py . . . . . . . . . . . . . . . . . . . . . . . . 1391
+adding-two-negabinary-numbers.py . . . . . . . . . . . . . . . . . . . . 1392
+number-of-1-bits.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1393
+minimum-knight-moves.py . . . . . . . . . . . . . . . . . . . . . . . . . 1395
+di-string-match.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1397
+minimum-number-of-increments-on-subarrays-to-form-a-target-array.py 1398
+map-sum-pairs.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1399
+binary-tree-coloring-game.py . . . . . . . . . . . . . . . . . . . . . . . 1401
+convert-binary-number-in-a-linked-list-to-integer.py . . . . . . . . . . . 1403
+lemonade-change.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1404
+longest-consecutive-sequence.py . . . . . . . . . . . . . . . . . . . . . . 1406
+find-n-unique-integers-sum-up-to-zero.py . . . . . . . . . . . . . . . . . 1407
+non-overlapping-intervals.py . . . . . . . . . . . . . . . . . . . . . . . . 1408
+two-sum-ii-input-array-is-sorted.py . . . . . . . . . . . . . . . . . . . . 1409
+find-all-good-strings.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1410
+17single-number.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1411
+max-dot-product-of-two-subsequences.py . . . . . . . . . . . . . . . . . 1412
+reverse-substrings-between-each-pair-of-parentheses.py . . . . . . . . . 1413
+restore-ip-addresses.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1414
+contain-virus.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1416
+find-positive-integer-solution-for-a-given-equation.py . . . . . . . . . . 1419
+random-point-in-non-overlapping-rectangles.py . . . . . . . . . . . . . 1421
+intersection-of-three-sorted-arrays.py . . . . . . . . . . . . . . . . . . . 1423
+convert-a-number-to-hexadecimal.py . . . . . . . . . . . . . . . . . . . 1424
+partition-labels.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1425
+super-ugly-number.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1426
+stamping-the-sequence.py . . . . . . . . . . . . . . . . . . . . . . . . . 1429
+minimum-increment-to-make-array-unique.py . . . . . . . . . . . . . . 1431
+first-unique-character-in-a-string.py . . . . . . . . . . . . . . . . . . . . 1432
+find-right-interval.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1433
+maximum-average-subarray-i.py . . . . . . . . . . . . . . . . . . . . . . 1435
+longest-happy-string.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1436
+range-module.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1438
+shortest-common-supersequence.py . . . . . . . . . . . . . . . . . . . . 1440
+maximum-length-of-repeated-subarray.py . . . . . . . . . . . . . . . . 1442
+best-meeting-point.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1444
+generate-parentheses.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1445
+target-sum.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1446
+roman-to-integer.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1447
+k-diff-pairs-in-an-array.py . . . . . . . . . . . . . . . . . . . . . . . . . 1449
+tallest-billboard.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1450
+valid-word-square.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1451
+number-of-submatrices-that-sum-to-target.py . . . . . . . . . . . . . . 1452
+to-lower-case.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1454
+permutation-in-string.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1455
+regular-expression-matching.py . . . . . . . . . . . . . . . . . . . . . . 1456
+maximum-swap.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1459
+binary-tree-longest-consecutive-sequence-ii.py . . . . . . . . . . . . . . 1460
+unique-paths-iii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1461
+all-paths-from-source-lead-to-destination.py . . . . . . . . . . . . . . . 1463
+minimum-flips-to-make-a-or-b-equal-to-c.py . . . . . . . . . . . . . . . 1464
+verify-preorder-sequence-in-binary-search-tree.py . . . . . . . . . . . . 1465
+best-time-to-buy-and-sell-stock-with-cooldown.py . . . . . . . . . . . . 1466
+design-compressed-string-iterator.py . . . . . . . . . . . . . . . . . . . 1467
+largest-plus-sign.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1468
+find-critical-and-pseudo-critical-edges-in-minimum-spanning-tree.py . . 1470
+reaching-points.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1471
+maximum-side-length-of-a-square-with-sum-less-than-or-equal-to-
+threshold.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1472
+move-sub-tree-of-n-ary-tree.py . . . . . . . . . . . . . . . . . . . . . . . 1473
+basic-calculator-iv.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1477
+simplify-path.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1481
+maximum-binary-tree.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1482
+check-if-a-string-is-a-valid-sequence-from-root-to-leaves-path-in-a-
+binary-tree.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1483
+decode-string.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1485
+cherry-pickup.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1486
+smallest-string-with-swaps.py . . . . . . . . . . . . . . . . . . . . . . . 1487
+maximum-sum-circular-subarray.py . . . . . . . . . . . . . . . . . . . . 1489
+combination-sum-iii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1490
+optimal-division.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1491
+merge-two-binary-trees.py . . . . . . . . . . . . . . . . . . . . . . . . . 1492
+remove-invalid-parentheses.py . . . . . . . . . . . . . . . . . . . . . . . 1493
+construct-k-palindrome-strings.py . . . . . . . . . . . . . . . . . . . . . 1495
+remove-all-adjacent-duplicates-in-string-ii.py . . . . . . . . . . . . . . . 1496
+18min-stack.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1497
+add-one-row-to-tree.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1500
+two-sum-iii-data-structure-design.py . . . . . . . . . . . . . . . . . . . 1502
+greatest-common-divisor-of-strings.py . . . . . . . . . . . . . . . . . . 1503
+my-calendar-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1504
+ipo.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1506
+longest-word-in-dictionary.py . . . . . . . . . . . . . . . . . . . . . . . 1508
+longest-substring-with-at-most-k-distinct-characters.py . . . . . . . . . 1509
+clone-graph.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1510
+numbers-at-most-n-given-digit-set.py . . . . . . . . . . . . . . . . . . . 1512
+how-many-apples-can-you-put-into-the-basket.py . . . . . . . . . . . . 1513
+tree-diameter.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1514
+wiggle-sort-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1515
+toss-strange-coins.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1517
+unique-binary-search-trees-ii.py . . . . . . . . . . . . . . . . . . . . . . 1518
+robot-room-cleaner.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1520
+remove-nth-node-from-end-of-list.py . . . . . . . . . . . . . . . . . . . 1521
+shortest-palindrome.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1522
+valid-square.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1524
+paint-house-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1525
+water-and-jug-problem.py . . . . . . . . . . . . . . . . . . . . . . . . . 1526
+set-intersection-size-at-least-two.py . . . . . . . . . . . . . . . . . . . . 1527
+largest-palindrome-product.py . . . . . . . . . . . . . . . . . . . . . . . 1528
+rabbits-in-forest.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1529
+swim-in-rising-water.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1530
+equal-rational-numbers.py . . . . . . . . . . . . . . . . . . . . . . . . . 1532
+delete-columns-to-make-sorted-ii.py . . . . . . . . . . . . . . . . . . . . 1534
+inorder-successor-in-bst.py . . . . . . . . . . . . . . . . . . . . . . . . . 1536
+kth-ancestor-of-a-tree-node.py . . . . . . . . . . . . . . . . . . . . . . . 1537
+evaluate-reverse-polish-notation.py . . . . . . . . . . . . . . . . . . . . 1538
+maximize-distance-to-closest-person.py . . . . . . . . . . . . . . . . . . 1539
+wiggle-sort.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1540
+increasing-decreasing-string.py . . . . . . . . . . . . . . . . . . . . . . 1541
+validate-ip-address.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1542
+valid-palindrome.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1544
+maximum-students-taking-exam.py . . . . . . . . . . . . . . . . . . . . 1545
+merge-k-sorted-lists.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1549
+restore-the-array.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1552
+sort-array-by-parity.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1553
+single-number-iii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1554
+cracking-the-safe.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1556
+binary-tree-cameras.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1558
+shuffle-the-array.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1559
+diameter-of-binary-tree.py . . . . . . . . . . . . . . . . . . . . . . . . . 1560
+read-n-characters-given-read4-ii-call-multiple-times.py . . . . . . . . . 1561
+add-binary.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1562
+four-divisors.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1563
+maximum-sum-of-3-non-overlapping-subarrays.py . . . . . . . . . . . . 1565
+next-permutation.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1567
+self-crossing.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1569
+rank-transform-of-an-array.py . . . . . . . . . . . . . . . . . . . . . . . 1571
+minimum-moves-to-move-a-box-to-their-target-location.py . . . . . . . 1572
+longest-string-chain.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1574
+reduce-array-size-to-the-half.py . . . . . . . . . . . . . . . . . . . . . . 1575
+all-paths-from-source-to-target.py . . . . . . . . . . . . . . . . . . . . . 1577
+two-city-scheduling.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1578
+construct-target-array-with-multiple-sums.py . . . . . . . . . . . . . . 1580
+ugly-number-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1582
+design-circular-deque.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1584
+frog-position-after-t-seconds.py . . . . . . . . . . . . . . . . . . . . . . 1587
+19smallest-integer-divisible-by-k.py . . . . . . . . . . . . . . . . . . . . . 1590
+range-sum-query-2d-immutable.py . . . . . . . . . . . . . . . . . . . . 1591
+greatest-sum-divisible-by-three.py . . . . . . . . . . . . . . . . . . . . . 1592
+minimum-moves-to-reach-target-with-rotations.py . . . . . . . . . . . . 1593
+count-good-triplets.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1594
+dota2-senate.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1595
+wiggle-subsequence.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1597
+gas-station.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1598
+deepest-leaves-sum.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1600
+counting-elements.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1601
+largest-component-size-by-common-factor.py . . . . . . . . . . . . . . . 1602
+construct-string-from-binary-tree.py . . . . . . . . . . . . . . . . . . . 1604
+clone-n-ary-tree.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1606
+binary-tree-longest-consecutive-sequence.py . . . . . . . . . . . . . . . 1607
+super-egg-drop.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1608
+check-if-word-is-valid-after-substitutions.py . . . . . . . . . . . . . . . 1609
+minimum-number-of-taps-to-open-to-water-a-garden.py . . . . . . . . . 1611
+the-earliest-moment-when-everyone-become-friends.py . . . . . . . . . 1612
+find-the-kth-smallest-sum-of-a-matrix-with-sorted-rows.py . . . . . . . 1613
+minimum-time-to-build-blocks.py . . . . . . . . . . . . . . . . . . . . . 1615
+insert-into-a-cyclic-sorted-list.py . . . . . . . . . . . . . . . . . . . . . 1616
+substring-with-concatenation-of-all-words.py . . . . . . . . . . . . . . . 1617
+sentence-similarity-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1619
+is-subsequence.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1620
+reverse-nodes-in-k-group.py . . . . . . . . . . . . . . . . . . . . . . . . 1621
+subsets-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1622
+insufficient-nodes-in-root-to-leaf-paths.py . . . . . . . . . . . . . . . . 1624
+maximum-binary-tree-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . 1625
+handshakes-that-dont-cross.py . . . . . . . . . . . . . . . . . . . . . . . 1627
+binary-tree-postorder-traversal.py . . . . . . . . . . . . . . . . . . . . . 1628
+walls-and-gates.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1630
+lfu-cache.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1631
+number-of-equivalent-domino-pairs.py . . . . . . . . . . . . . . . . . . 1634
+shifting-letters.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1635
+count-and-say.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1636
+longest-substring-with-at-least-k-repeating-characters.py . . . . . . . . 1637
+surface-area-of-3d-shapes.py . . . . . . . . . . . . . . . . . . . . . . . . 1638
+probability-of-a-two-boxes-having-the-same-number-of-distinct-balls.py 1639
+best-time-to-buy-and-sell-stock-iv.py . . . . . . . . . . . . . . . . . . . 1640
+diagonal-traverse.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1641
+sudoku-solver.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1643
+evaluate-division.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1644
+insert-interval.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1646
+non-decreasing-array.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1647
+distance-between-bus-stops.py . . . . . . . . . . . . . . . . . . . . . . . 1648
+split-bst.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1649
+rank-teams-by-votes.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1650
+network-delay-time.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1651
+number-of-nodes-in-the-sub-tree-with-the-same-label.py . . . . . . . . 1652
+perform-string-shifts.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1654
+minimum-time-difference.py . . . . . . . . . . . . . . . . . . . . . . . . 1655
+interleaving-string.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1656
+binary-tree-zigzag-level-order-traversal.py . . . . . . . . . . . . . . . . 1658
+minimum-score-triangulation-of-polygon.py . . . . . . . . . . . . . . . 1659
+multiply-strings.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1660
+minimum-number-of-frogs-croaking.py . . . . . . . . . . . . . . . . . . 1661
+circular-array-loop.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1662
+largest-1-bordered-square.py . . . . . . . . . . . . . . . . . . . . . . . . 1663
+image-smoother.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1664
+check-if-a-string-contains-all-binary-codes-of-size-k.py . . . . . . . . . . 1665
+20valid-sudoku.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1667
+my-calendar-i.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1669
+can-i-win.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1671
+additive-number.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1673
+remove-boxes.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1675
+data-stream-as-disjoint-intervals.py . . . . . . . . . . . . . . . . . . . . 1676
+best-time-to-buy-and-sell-stock-iii.py . . . . . . . . . . . . . . . . . . . 1678
+design-a-file-sharing-system.py . . . . . . . . . . . . . . . . . . . . . . 1680
+least-number-of-unique-integers-after-k-removals.py . . . . . . . . . . . 1683
+distribute-candies-to-people.py . . . . . . . . . . . . . . . . . . . . . . 1684
+3sum.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1686
+longest-subarray-of-1s-after-deleting-one-element.py . . . . . . . . . . . 1687
+minimum-cost-tree-from-leaf-values.py . . . . . . . . . . . . . . . . . . 1688
+longest-palindromic-subsequence.py . . . . . . . . . . . . . . . . . . . . 1689
+ip-to-cidr.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1690
+split-array-largest-sum.py . . . . . . . . . . . . . . . . . . . . . . . . . 1691
+dinner-plate-stacks.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1694
+largest-rectangle-in-histogram.py . . . . . . . . . . . . . . . . . . . . . 1695
+relative-sort-array.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1696
+expressive-words.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1697
+intersection-of-two-arrays.py . . . . . . . . . . . . . . . . . . . . . . . . 1699
+closest-divisors.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1701
+last-moment-before-all-ants-fall-out-of-a-plank.py . . . . . . . . . . . . 1702
+powerful-integers.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1703
+minimum-moves-to-equal-array-elements-ii.py . . . . . . . . . . . . . . 1705
+4sum-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1707
+flatten-2d-vector.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1708
+minimum-swaps-to-make-sequences-increasing.py . . . . . . . . . . . . 1709
+robot-return-to-origin.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1710
+distinct-subsequences.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1712
+smallest-subsequence-of-distinct-characters.py . . . . . . . . . . . . . . 1714
+string-to-integer-atoi.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1715
+short-encoding-of-words.py . . . . . . . . . . . . . . . . . . . . . . . . 1716
+car-fleet.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1717
+find-bottom-left-tree-value.py . . . . . . . . . . . . . . . . . . . . . . . 1718
+combinations.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1720
+inorder-successor-in-bst-ii.py . . . . . . . . . . . . . . . . . . . . . . . . 1722
+meeting-scheduler.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1723
+capacity-to-ship-packages-within-d-days.py . . . . . . . . . . . . . . . . 1724
+cheapest-flights-within-k-stops.py . . . . . . . . . . . . . . . . . . . . . 1726
+game-of-life.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1728
+minimum-cost-to-make-at-least-one-valid-path-in-a-grid.py . . . . . . . 1730
+online-stock-span.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1732
+find-common-characters.py . . . . . . . . . . . . . . . . . . . . . . . . 1734
+interval-list-intersections.py . . . . . . . . . . . . . . . . . . . . . . . . 1735
+lexicographical-numbers.py . . . . . . . . . . . . . . . . . . . . . . . . 1736
+consecutive-numbers-sum.py . . . . . . . . . . . . . . . . . . . . . . . . 1737
+russian-doll-envelopes.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1738
+reach-a-number.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1739
+number-of-ships-in-a-rectangle.py . . . . . . . . . . . . . . . . . . . . . 1741
+most-frequent-subtree-sum.py . . . . . . . . . . . . . . . . . . . . . . . 1742
+k-closest-points-to-origin.py . . . . . . . . . . . . . . . . . . . . . . . . 1743
+generate-a-string-with-characters-that-have-odd-counts.py . . . . . . . 1745
+design-linked-list.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1746
+concatenated-words.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1749
+design-circular-queue.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1750
+smallest-range-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1752
+implement-magic-dictionary.py . . . . . . . . . . . . . . . . . . . . . . 1753
+peak-index-in-a-mountain-array.py . . . . . . . . . . . . . . . . . . . . 1754
+h-index.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1755
+21construct-binary-tree-from-preorder-and-postorder-traversal.py . . . . 1757
+integer-break.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1759
+binary-number-with-alternating-bits.py . . . . . . . . . . . . . . . . . . 1761
+predict-the-winner.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1762
+toeplitz-matrix.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1763
+equal-tree-partition.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1765
+brace-expansion.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1766
+reformat-the-string.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1768
+remove-covered-intervals.py . . . . . . . . . . . . . . . . . . . . . . . . 1769
+guess-number-higher-or-lower.py . . . . . . . . . . . . . . . . . . . . . 1770
+search-in-a-sorted-array-of-unknown-size.py . . . . . . . . . . . . . . . 1771
+range-sum-of-sorted-subarray-sums.py . . . . . . . . . . . . . . . . . . 1772
+valid-perfect-square.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1774
+the-k-weakest-rows-in-a-matrix.py . . . . . . . . . . . . . . . . . . . . 1775
+missing-number-in-arithmetic-progression.py . . . . . . . . . . . . . . . 1778
+most-profit-assigning-work.py . . . . . . . . . . . . . . . . . . . . . . . 1779
+number-of-ways-of-cutting-a-pizza.py . . . . . . . . . . . . . . . . . . . 1780
+make-two-arrays-equal-by-reversing-sub-arrays.py . . . . . . . . . . . . 1781
+number-of-recent-calls.py . . . . . . . . . . . . . . . . . . . . . . . . . 1782
+count-of-smaller-numbers-after-self.py . . . . . . . . . . . . . . . . . . 1783
+find-peak-element.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1786
+find-lucky-integer-in-an-array.py . . . . . . . . . . . . . . . . . . . . . . 1787
+reorder-list.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1788
+find-permutation.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1789
+reducing-dishes.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1790
+number-of-steps-to-reduce-a-number-in-binary-representation-to-one.py 1791
+day-of-the-year.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1792
+maximum-length-of-pair-chain.py . . . . . . . . . . . . . . . . . . . . . 1793
+string-matching-in-an-array.py . . . . . . . . . . . . . . . . . . . . . . 1794
+n-queens.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1797
+integer-to-roman.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1799
+non-negative-integers-without-consecutive-ones.py . . . . . . . . . . . . 1801
+maximum-number-of-balloons.py . . . . . . . . . . . . . . . . . . . . . 1802
+cherry-pickup-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1803
+check-if-a-number-is-majority-element-in-a-sorted-array.py . . . . . . . 1804
+rotting-oranges.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1805
+sum-of-root-to-leaf-binary-numbers.py . . . . . . . . . . . . . . . . . . 1807
+apply-discount-every-n-orders.py . . . . . . . . . . . . . . . . . . . . . 1808
+check-if-it-is-a-good-array.py . . . . . . . . . . . . . . . . . . . . . . . . 1809
+snapshot-array.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1810
+longest-word-in-dictionary-through-deleting.py . . . . . . . . . . . . . 1811
+reverse-string-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1812
+maximum-subarray.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1813
+power-of-two.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1814
+number-of-closed-islands.py . . . . . . . . . . . . . . . . . . . . . . . . 1815
+jump-game-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1816
+reconstruct-itinerary.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1817
+power-of-four.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1818
+the-maze.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1819
+longest-line-of-consecutive-one-in-matrix.py . . . . . . . . . . . . . . . 1820
+sqrtx.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1821
+find-longest-awesome-substring.py . . . . . . . . . . . . . . . . . . . . 1822
+add-two-numbers.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1823
+sum-of-square-numbers.py . . . . . . . . . . . . . . . . . . . . . . . . . 1824
+remove-palindromic-subsequences.py . . . . . . . . . . . . . . . . . . . 1825
+find-the-celebrity.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1826
+find-the-difference.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1827
+leftmost-column-with-at-least-a-one.py . . . . . . . . . . . . . . . . . . 1829
+prison-cells-after-n-days.py . . . . . . . . . . . . . . . . . . . . . . . . . 1830
+design-a-leaderboard.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1832
+22nested-list-weight-sum.py . . . . . . . . . . . . . . . . . . . . . . . . . 1834
+subdomain-visit-count.py . . . . . . . . . . . . . . . . . . . . . . . . . 1835
+sum-of-digits-in-the-minimum-number.py . . . . . . . . . . . . . . . . 1837
+license-key-formatting.py . . . . . . . . . . . . . . . . . . . . . . . . . 1838
+compare-strings-by-frequency-of-the-smallest-character.py . . . . . . . 1839
+path-with-maximum-gold.py . . . . . . . . . . . . . . . . . . . . . . . . 1840
+number-of-atoms.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1841
+minimum-time-to-collect-all-apples-in-a-tree.py . . . . . . . . . . . . . 1843
+unique-binary-search-trees.py . . . . . . . . . . . . . . . . . . . . . . . 1846
+minimum-number-of-refueling-stops.py . . . . . . . . . . . . . . . . . . 1847
+web-crawler.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1849
+maximum-69-number.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1850
+find-eventual-safe-states.py . . . . . . . . . . . . . . . . . . . . . . . . 1851
+shortest-distance-from-all-buildings.py . . . . . . . . . . . . . . . . . . 1852
+flip-game-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1853
+minimum-domino-rotations-for-equal-row.py . . . . . . . . . . . . . . . 1855
+unique-email-addresses.py . . . . . . . . . . . . . . . . . . . . . . . . . 1856
+reveal-cards-in-increasing-order.py . . . . . . . . . . . . . . . . . . . . 1857
+subarray-product-less-than-k.py . . . . . . . . . . . . . . . . . . . . . . 1859
+lonely-pixel-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1860
+construct-the-rectangle.py . . . . . . . . . . . . . . . . . . . . . . . . . 1861
+fruit-into-baskets.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1862
+closest-binary-search-tree-value-ii.py . . . . . . . . . . . . . . . . . . . 1864
+max-chunks-to-make-sorted-ii.py . . . . . . . . . . . . . . . . . . . . . 1866
+optimize-water-distribution-in-a-village.py . . . . . . . . . . . . . . . . 1867
+valid-anagram.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1868
+binary-tree-preorder-traversal.py . . . . . . . . . . . . . . . . . . . . . 1870
+climbing-stairs.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1872
+encode-number.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1874
+print-immutable-linked-list-in-reverse.py . . . . . . . . . . . . . . . . . 1875
+reverse-words-in-a-string.py . . . . . . . . . . . . . . . . . . . . . . . . 1877
+maximum-score-after-splitting-a-string.py . . . . . . . . . . . . . . . . 1878
+swap-nodes-in-pairs.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1879
+last-substring-in-lexicographical-order.py . . . . . . . . . . . . . . . . . 1880
+convert-sorted-list-to-binary-search-tree.py . . . . . . . . . . . . . . . . 1881
+shortest-path-in-binary-matrix.py . . . . . . . . . . . . . . . . . . . . . 1883
+palindrome-permutation.py . . . . . . . . . . . . . . . . . . . . . . . . 1885
+sum-of-even-numbers-after-queries.py . . . . . . . . . . . . . . . . . . . 1886
+cousins-in-binary-tree.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1887
+palindrome-partitioning-ii.py . . . . . . . . . . . . . . . . . . . . . . . 1889
+find-smallest-letter-greater-than-target.py . . . . . . . . . . . . . . . . 1890
+number-of-enclaves.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1892
+word-search.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1893
+form-largest-integer-with-digits-that-add-up-to-target.py . . . . . . . . 1895
+count-submatrices-with-all-ones.py . . . . . . . . . . . . . . . . . . . . 1897
+string-transforms-into-another-string.py . . . . . . . . . . . . . . . . . 1898
+bricks-falling-when-hit.py . . . . . . . . . . . . . . . . . . . . . . . . . 1899
+iterator-for-combination.py . . . . . . . . . . . . . . . . . . . . . . . . 1901
+unique-letter-string.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1904
+complete-binary-tree-inserter.py . . . . . . . . . . . . . . . . . . . . . . 1905
+count-univalue-subtrees.py . . . . . . . . . . . . . . . . . . . . . . . . . 1907
+count-binary-substrings.py . . . . . . . . . . . . . . . . . . . . . . . . . 1908
+print-foobar-alternately.py . . . . . . . . . . . . . . . . . . . . . . . . . 1909
+triples-with-bitwise-and-equal-to-zero.py . . . . . . . . . . . . . . . . . 1910
+minimum-remove-to-make-valid-parentheses.py . . . . . . . . . . . . . 1912
+n-ary-tree-postorder-traversal.py . . . . . . . . . . . . . . . . . . . . . 1914
+stone-game.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1916
+can-place-flowers.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1917
+factor-combinations.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1918
+longest-substring-without-repeating-characters.py . . . . . . . . . . . . 1919
+23find-the-minimum-number-of-fibonacci-numbers-whose-sum-is-k.py . . 1920
+encode-n-ary-tree-to-binary-tree.py . . . . . . . . . . . . . . . . . . . . 1921
+design-search-autocomplete-system.py . . . . . . . . . . . . . . . . . . 1923
+number-of-good-pairs.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1925
+longest-common-prefix.py . . . . . . . . . . . . . . . . . . . . . . . . . 1926
+combination-sum-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1927
+permutation-sequence.py . . . . . . . . . . . . . . . . . . . . . . . . . . 1928
+relative-ranks.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1929
+minimum-absolute-difference.py . . . . . . . . . . . . . . . . . . . . . . 1930
+hand-of-straights.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1931
+task-scheduler.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1932
+number-of-ways-to-wear-different-hats-to-each-other.py . . . . . . . . . 1934
+maximize-sum-of-array-after-k-negations.py . . . . . . . . . . . . . . . 1935
+check-if-a-word-occurs-as-a-prefix-of-any-word-in-a-sentence.py . . . . 1937
+binary-prefix-divisible-by-5.py . . . . . . . . . . . . . . . . . . . . . . . 1938
+confusing-number-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . 1939
+fair-candy-swap.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1941
+find-minimum-in-rotated-sorted-array.py . . . . . . . . . . . . . . . . . 1942
+next-closest-time.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1943
+arranging-coins.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1944
+maximum-width-of-binary-tree.py . . . . . . . . . . . . . . . . . . . . . 1946
+maximum-vacation-days.py . . . . . . . . . . . . . . . . . . . . . . . . 1948
+design-skiplist.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1949
+number-of-boomerangs.py . . . . . . . . . . . . . . . . . . . . . . . . . 1951
+shortest-completing-word.py . . . . . . . . . . . . . . . . . . . . . . . . 1953
+linked-list-components.py . . . . . . . . . . . . . . . . . . . . . . . . . 1955
+word-search-ii.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1956
+rectangle-overlap.py . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1958
+fraction-addition-and-subtraction.py . . . . . . . . . . . . . . . . . . . 1959
+minimum-swaps-to-make-strings-equal.py . . . . . . . . . . . . . . . . 1961
+online-majority-element-in-subarray.py
+

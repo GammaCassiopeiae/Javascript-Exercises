@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expression Add Operators - LeetCode Solution</title>
+    <style>
+        :root { --lime-green: #00ff9d; --lime-dim: rgba(0, 255, 157, 0.3); --bg-black: #050505; --bg-surface: rgba(255, 255, 255, 0.05); --text-primary: #ffffff; --text-muted: rgba(255, 255, 255, 0.7); }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg-black); color: var(--text-primary); min-height: 100vh; line-height: 1.6; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+        header { border-bottom: 1px solid var(--lime-dim); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+        h1 { font-size: clamp(1.5rem, 3vw, 2rem); color: var(--lime-green); text-shadow: 0 0 10px var(--lime-dim); margin-bottom: 0.5rem; }
+        .problem-desc, .code-section, .demo-section { background: var(--bg-surface); border: 1px solid var(--lime-dim); border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; }
+        h2 { color: var(--lime-green); font-size: 1.25rem; margin-bottom: 1rem; }
+        pre { background: #0a0a0a; border: 1px solid var(--lime-dim); border-radius: 6px; padding: 1.5rem; overflow-x: auto; font-family: 'Fira Code', monospace; font-size: 0.9rem; color: var(--text-primary); }
+        .keyword { color: #ff00ff; } .function { color: #00f3ff; } .string { color: #00ff9d; } .number { color: #bd00ff; } .comment { color: rgba(255, 255, 255, 0.4); }
+        input, button { padding: 0.75rem 1rem; border: 1px solid var(--lime-dim); border-radius: 6px; background: rgba(0, 0, 0, 0.3); color: var(--text-primary); font-family: 'Fira Code', monospace; font-size: 0.9rem; margin-bottom: 0.5rem; }
+        input:focus { outline: none; box-shadow: 0 0 10px var(--lime-dim); }
+        button { background: var(--lime-dim); color: var(--bg-black); cursor: pointer; font-weight: 700; transition: all 0.3s ease; }
+        button:hover { background: var(--lime-green); box-shadow: 0 0 20px var(--lime-dim); }
+        .result { margin-top: 1rem; padding: 1rem; background: rgba(0, 255, 157, 0.1); border-radius: 6px; font-family: 'Fira Code', monospace; }
+        .result span { color: var(--lime-green); }
+        label { display: block; color: var(--lime-green); margin-bottom: 0.5rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Expression Add Operators</h1>
+            <p style="color: var(--text-muted);">LeetCode Problem - Backtracking with Expression Evaluation</p>
+        </header>
+        <section class="problem-desc">
+            <h2>Problem Description</h2>
+            <p>Given a string num containing digits and a target, return all possibilities to add binary operators (+, -, *) so that the expression evaluates to target.</p>
+        </section>
+        <section class="code-section">
+            <h2>JavaScript Solution</h2>
+            <pre><code><span class="keyword">function</span> <span class="function">addOperators</span>(num, target) {
+    <span class="keyword">const</span> result = [];
+    
+    <span class="keyword">function</span> <span class="function">backtrack</span>(idx, path, value, last) {
+        <span class="keyword">if</span> (idx === num.length) {
+            <span class="keyword">if</span> (value === target) result.<span class="function">push</span>(path);
+            <span class="keyword">return</span>;
+        }
+        
+        <span class="keyword">for</span> (<span class="keyword">let</span> i = idx; i < num.length; i++) {
+            <span class="comment">// Skip numbers with leading zero</span>
+            <span class="keyword">if</span> (i > idx && num[idx] === <span class="string">'0'</span>) <span class="keyword">break</span>;
+            
+            <span class="keyword">const</span> curr = <span class="function">parseInt</span>(num.<span class="function">slice</span>(idx, i + <span class="number">1</span>));
+            
+            <span class="keyword">if</span> (idx === <span class="number">0</span>) {
+                <span class="function">backtrack</span>(i + <span class="number">1</span>, path + curr, curr, curr);
+            } <span class="keyword">else</span> {
+                <span class="function">backtrack</span>(i + <span class="number">1</span>, path + <span class="string">'+'</span> + curr, value + curr, curr);
+                <span class="function">backtrack</span>(i + <span class="number">1</span>, path + <span class="string">'-'</span> + curr, value - curr, -curr);
+                <span class="function">backtrack</span>(i + <span class="number">1</span>, path + <span class="string">'*'</span> + curr, value - last + last * curr, last * curr);
+            }
+        }
+    }
+    
+    <span class="function">backtrack</span>(<span class="number">0</span>, <span class="string">''</span>, <span class="number">0</span>, <span class="number">0</span>);
+    <span class="keyword">return</span> result;
+}
+
+<span class="comment">// Usage:</span>
+console.<span class="function">log</span>(<span class="function">addOperators</span>(<span class="string">"123"</span>, <span class="number">6</span>)); <span class="comment">// ["1+2+3","1*2*3"]</span></code></pre>
+        </section>
+        <section class="demo-section">
+            <h2>Interactive Demo</h2>
+            <div class="input-group">
+                <label for="num-input">Number String:</label>
+                <input type="text" id="num-input" value="123" style="width: 100%;">
+            </div>
+            <div class="input-group">
+                <label for="target-input">Target:</label>
+                <input type="number" id="target-input" value="6" style="width: 100%;">
+            </div>
+            <button onclick="runDemo()">Find Expressions</button>
+            <div class="result"><span id="output">-</span></div>
+        </section>
+    </div>
+    <script>
+        function addOperators(num, target) {
+            const result = [];
+            function backtrack(idx, path, value, last) {
+                if (idx === num.length) {
+                    if (value === target) result.push(path);
+                    return;
+                }
+                for (let i = idx; i < num.length; i++) {
+                    if (i > idx && num[idx] === '0') break;
+                    const curr = parseInt(num.slice(idx, i + 1));
+                    if (idx === 0) {
+                        backtrack(i + 1, path + curr, curr, curr);
+                    } else {
+                        backtrack(i + 1, path + '+' + curr, value + curr, curr);
+                        backtrack(i + 1, path + '-' + curr, value - curr, -curr);
+                        backtrack(i + 1, path + '*' + curr, value - last + last * curr, last * curr);
+                    }
+                }
+            }
+            backtrack(0, '', 0, 0);
+            return result;
+        }
+        function runDemo() {
+            const num = document.getElementById('num-input').value;
+            const target = parseInt(document.getElementById('target-input').value);
+            document.getElementById('output').textContent = JSON.stringify(addOperators(num, target));
+        }
+    </script>
+</body>
+</html>

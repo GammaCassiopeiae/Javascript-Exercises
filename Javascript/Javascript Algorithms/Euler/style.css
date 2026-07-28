@@ -1,0 +1,320 @@
+:root {
+    /* 
+     * THE NEON-GRID ARCHITECT MANIFESTO 
+     * Core Variables & System Brain (Directive 151-180)
+     */
+
+    /* Palette */
+    --bg-dark: #050505;
+    --bg-panel: rgba(20, 20, 25, 0.6);
+    --bg-glass: rgba(255, 255, 255, 0.05);
+    
+    --neon-primary: #00f3ff;   /* Cyan */
+    --neon-secondary: #ff00ff; /* Magenta */
+    --neon-tertiary: #bd00ff;  /* Purple */
+    
+    --text-main: #ffffff;
+    --text-muted: rgba(255, 255, 255, 0.6);
+    
+    --border-glow: rgba(0, 243, 255, 0.3);
+    --shadow-glow: 0 0 15px var(--neon-primary);
+    
+    --success: #00ff9d;
+    --error: #ff2a6d;
+
+    /* Spacing & Layout */
+    --gap-main: clamp(1rem, 2vw, 2rem);
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    
+    /* Typography */
+    --font-display: 'Rajdhani', sans-serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+    --font-code: 'Fira Code', monospace;
+
+    /* Animation */
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --transition-fast: 0.2s;
+    --transition-norm: 0.3s;
+}
+
+/* 
+ * I. Core Architectural Philosophy & Reset 
+ */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    overflow-x: hidden;
+    line-height: 1.6;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 0;
+}
+
+h1 {
+    font-size: clamp(2rem, 5vw, 4rem);
+    text-shadow: 0 0 10px var(--neon-primary);
+    color: var(--neon-primary);
+}
+
+a {
+    color: var(--neon-primary);
+    text-decoration: none;
+    transition: var(--transition-fast);
+}
+
+/* 
+ * II. Layout Components (L-prefix) 
+ */
+.l-grid-main {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    min-height: 100vh;
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(0, 243, 255, 0.03) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(255, 0, 255, 0.03) 0%, transparent 20%);
+}
+
+.l-container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--gap-main);
+}
+
+.l-section {
+    padding: clamp(2rem, 5vw, 4rem) 0;
+}
+
+/* Grid for Problem Cards (Index) */
+.l-grid-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--gap-main);
+    margin-top: 2rem;
+}
+
+/* 
+ * III. UI Components (C-prefix) 
+ */
+
+/* Header */
+.c-header {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border-glow);
+    background: rgba(5, 5, 5, 0.8);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.c-header__content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.c-brand {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--neon-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Cards */
+.c-card {
+    background: var(--bg-panel);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    transition: all var(--transition-norm) var(--ease-out);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.c-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--neon-primary);
+    box-shadow: 0 5px 20px rgba(0, 243, 255, 0.15);
+}
+
+.c-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--neon-primary), transparent);
+    opacity: 0.5;
+}
+
+.c-card__number {
+    font-family: var(--font-code);
+    color: var(--neon-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.c-card__title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: var(--text-main);
+}
+
+.c-card__actions {
+    margin-top: auto;
+}
+
+/* Buttons */
+.c-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    background: transparent;
+    border: 1px solid var(--neon-primary);
+    color: var(--neon-primary);
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    font-size: 0.9rem;
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+}
+
+.c-btn:hover {
+    background: var(--neon-primary);
+    color: #000;
+    box-shadow: 0 0 15px var(--neon-primary);
+    transform: scale(1.02);
+}
+
+.c-btn--secondary {
+    border-color: var(--neon-secondary);
+    color: var(--neon-secondary);
+}
+
+.c-btn--secondary:hover {
+    background: var(--neon-secondary);
+    box-shadow: 0 0 15px var(--neon-secondary);
+}
+
+.c-btn--back {
+    border-color: var(--text-muted);
+    color: var(--text-muted);
+}
+.c-btn--back:hover {
+    border-color: var(--text-main);
+    color: var(--text-main);
+    background: rgba(255,255,255,0.1);
+    box-shadow: none;
+}
+
+/* Problem Detail View */
+.c-problem-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+@media (min-width: 900px) {
+    .c-problem-layout {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.c-panel {
+    background: var(--bg-panel);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+}
+
+.c-panel--console {
+    background: #000;
+    border: 1px solid var(--neon-tertiary);
+    font-family: var(--font-code);
+}
+
+.c-code-block {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    font-family: var(--font-code);
+    font-size: 0.9rem;
+    color: #d4d4d4;
+    overflow-x: auto;
+    border-left: 2px solid var(--neon-secondary);
+    margin: 1rem 0;
+}
+
+.c-result-display {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border: 1px dashed var(--text-muted);
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: var(--success);
+    text-shadow: 0 0 5px var(--success);
+}
+
+.c-result-display.is-error {
+    color: var(--error);
+    text-shadow: 0 0 5px var(--error);
+    border-color: var(--error);
+}
+
+.c-footer {
+    text-align: center;
+    padding: 2rem 0;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+/* Utilities */
+.u-text-glow { text-shadow: 0 0 10px var(--neon-primary); }
+.u-text-center { text-align: center; }
+.u-mb-1 { margin-bottom: 1rem; }
+.u-mb-2 { margin-bottom: 2rem; }
+.u-mt-auto { margin-top: auto; }
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg-dark);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--neon-primary);
+    border-radius: 4px;
+}

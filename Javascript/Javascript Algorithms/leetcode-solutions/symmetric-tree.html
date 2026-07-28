@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Symmetric Tree | Algorithm Visualizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Inter:wght@300;400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --neon-cyan: #00f3ff; --neon-magenta: #ff00ff; --neon-green: #00ff9d; --neon-purple: #bd00ff; --neon-orange: #ff6b00; --bg-deep: #050505; --bg-card: rgba(255, 255, 255, 0.08); --text-primary: #ffffff; --text-muted: rgba(255, 255, 255, 0.7); --font-display: 'Rajdhani', system-ui, sans-serif; --font-body: 'Inter', system-ui, sans-serif; --font-mono: 'Fira Code', monospace; --space-xs: 0.25rem; --space-sm: 0.5rem; --space-md: 1rem; --space-lg: 2rem; --space-xl: 4rem; --glow-cyan: 0 0 5px var(--neon-cyan), 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan); --transition-fast: 0.1s; --transition-base: 0.3s; --ease-out: cubic-bezier(0.4, 0, 0.2, 1); --z-sticky: 100; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background-color: var(--bg-deep); color: var(--text-primary); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; }
+    ::selection { background: var(--neon-cyan); color: #000; }
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: var(--bg-deep); }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--neon-cyan), var(--neon-purple)); border-radius: 5px; }
+    .l-body { display: flex; flex-direction: column; min-height: 100vh; }
+    .l-header { position: sticky; top: 0; z-index: var(--z-sticky); background: rgba(5, 5, 5, 0.95); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(0, 243, 255, 0.2); }
+    .l-main { flex: 1; padding: var(--space-xl) var(--space-md); max-width: 1400px; margin-inline: auto; width: 100%; }
+    .l-single-column { max-width: 900px; margin-inline: auto; }
+    .c-header { padding: var(--space-md) var(--space-lg); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-md); }
+    .c-header__brand { font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; letter-spacing: 0.1em; background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .c-header__nav { display: flex; gap: var(--space-md); }
+    .c-nav-link { color: var(--text-muted); text-decoration: none; font-weight: 500; padding: var(--space-sm) var(--space-md); border: 1px solid transparent; border-radius: 4px; transition: all var(--transition-base) var(--ease-out); position: relative; }
+    .c-nav-link::after { content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px; background: var(--neon-cyan); transform: translateX(-50%); transition: width var(--transition-base) var(--ease-out); }
+    .c-nav-link:hover { color: var(--neon-cyan); }
+    .c-nav-link:hover::after { width: 80%; }
+    .c-card { background: var(--bg-card); border: 1px solid rgba(0, 243, 255, 0.15); border-radius: 12px; padding: var(--space-lg); backdrop-filter: blur(10px); transition: all var(--transition-base) var(--ease-out); position: relative; overflow: hidden; }
+    .c-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta), var(--neon-purple)); opacity: 0; transition: opacity var(--transition-base) var(--ease-out); }
+    .c-card:hover { transform: translateY(-5px); border-color: rgba(0, 243, 255, 0.4); box-shadow: var(--glow-cyan); }
+    .c-card:hover::before { opacity: 1; }
+    .c-card__header { margin-bottom: var(--space-md); }
+    .c-card__title { font-family: var(--font-display); font-size: clamp(1.25rem, 2.5vw, 1.5rem); font-weight: 700; color: var(--neon-cyan); letter-spacing: 0.05em; display: flex; align-items: center; gap: var(--space-sm); }
+    .c-card__title::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(0, 243, 255, 0.5), transparent); }
+    .c-card__content { color: var(--text-muted); }
+    .c-code-block { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(189, 0, 255, 0.2); border-radius: 8px; padding: var(--space-md); overflow-x: auto; font-family: var(--font-mono); font-size: 0.875rem; line-height: 1.8; position: relative; }
+    .c-code-block__header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm); padding-bottom: var(--space-sm); border-bottom: 1px solid rgba(189, 0, 255, 0.1); }
+    .c-code-block__lang { color: var(--neon-purple); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
+    .c-code-block__copy { background: transparent; border: 1px solid rgba(0, 243, 255, 0.3); color: var(--neon-cyan); padding: var(--space-xs) var(--space-sm); border-radius: 4px; cursor: pointer; font-size: 0.75rem; transition: all var(--transition-fast) var(--ease-out); }
+    .c-code-block__copy:hover { background: rgba(0, 243, 255, 0.1); box-shadow: 0 0 10px rgba(0, 243, 255, 0.3); }
+    .c-code-block pre { margin: 0; white-space: pre-wrap; word-wrap: break-word; }
+    .c-code-block code { color: var(--text-primary); }
+    .token-keyword { color: var(--neon-magenta); }
+    .token-function { color: var(--neon-cyan); }
+    .token-string { color: var(--neon-green); }
+    .token-comment { color: var(--text-muted); font-style: italic; }
+    .token-number { color: var(--neon-orange); }
+    .token-operator { color: var(--neon-purple); }
+    .c-input-group { margin-bottom: var(--space-md); }
+    .c-input-label { display: block; color: var(--neon-cyan); font-size: 0.875rem; font-weight: 500; margin-bottom: var(--space-sm); }
+    .c-input-label__required { color: var(--neon-magenta); margin-left: var(--space-xs); }
+    .c-input { width: 100%; padding: 0.8rem 1.2rem; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(0, 243, 255, 0.2); border-radius: 8px; color: var(--text-primary); font-family: var(--font-mono); font-size: 0.875rem; transition: all var(--transition-base) var(--ease-out); caret-color: var(--neon-cyan); }
+    .c-input:focus { outline: none; border-color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 243, 255, 0.3); }
+    .c-input::placeholder { opacity: 0.4; }
+    .c-button { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-sm); padding: 0.8rem 1.5rem; background: linear-gradient(135deg, rgba(0, 243, 255, 0.1), rgba(189, 0, 255, 0.1)); border: 1px solid rgba(0, 243, 255, 0.3); border-radius: 8px; color: var(--neon-cyan); font-family: var(--font-display); font-size: 0.875rem; font-weight: 700; letter-spacing: 0.05em; cursor: pointer; transition: all var(--transition-base) var(--ease-out); text-transform: uppercase; min-height: 44px; }
+    .c-button:hover { background: linear-gradient(135deg, rgba(0, 243, 255, 0.2), rgba(189, 0, 255, 0.2)); transform: translateY(-2px); box-shadow: 0 0 20px rgba(0, 243, 255, 0.4); }
+    .c-button:active { transform: translateY(0); }
+    .c-button--primary { background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple)); color: #000; border: none; }
+    .c-button--primary:hover { box-shadow: var(--glow-cyan); }
+    .c-button--success { background: linear-gradient(135deg, var(--neon-green), var(--neon-cyan)); color: #000; border: none; }
+    .c-button--danger { background: linear-gradient(135deg, var(--neon-magenta), var(--neon-orange)); color: #000; border: none; }
+    .c-button-group { display: flex; gap: var(--space-md); flex-wrap: wrap; }
+    .c-visualization { background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(0, 243, 255, 0.1); border-radius: 8px; padding: var(--space-md); margin-top: var(--space-md); overflow-x: auto; }
+    .tree-container { display: flex; flex-direction: column; align-items: center; gap: 1rem; padding: 1rem; }
+    .tree-level { display: flex; gap: 1rem; align-items: center; justify-content: center; flex-wrap: wrap; }
+    .tree-node { display: flex; flex-direction: column; align-items: center; background: rgba(0, 243, 255, 0.15); border: 2px solid var(--neon-cyan); border-radius: 8px; padding: 0.5rem 1rem; min-width: 50px; }
+    .tree-node.symmetric { border-color: var(--neon-green); background: rgba(0, 255, 157, 0.15); }
+    .tree-node-value { font-family: var(--font-mono); font-weight: 700; font-size: 1.125rem; }
+    .tree-node-label { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem; }
+    .c-result { margin-top: var(--space-md); padding: var(--space-md); background: rgba(0, 255, 157, 0.05); border: 1px solid rgba(0, 255, 157, 0.3); border-radius: 8px; display: flex; align-items: center; gap: var(--space-md); opacity: 0; transform: translateY(10px); transition: all var(--transition-base) var(--ease-out); }
+    .c-result.is-visible { opacity: 1; transform: translateY(0); }
+    .c-result__icon { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(0, 255, 157, 0.1); border-radius: 50%; color: var(--neon-green); font-size: 1.5rem; }
+    .c-result__content { flex: 1; }
+    .c-result__title { font-family: var(--font-display); font-size: 1.125rem; font-weight: 700; color: var(--neon-green); margin-bottom: var(--space-xs); }
+    .c-result__value { font-family: var(--font-mono); font-size: 1.25rem; color: var(--text-primary); }
+    .c-explanation { margin-top: var(--space-lg); }
+    .c-explanation__list { list-style: none; padding-left: 0; }
+    .c-explanation__item { position: relative; padding-left: var(--space-lg); margin-bottom: var(--space-md); color: var(--text-muted); }
+    .c-explanation__item::before { content: '▸'; position: absolute; left: 0; color: var(--neon-cyan); font-size: 1.125rem; }
+    .c-complexity-badge { display: inline-flex; align-items: center; gap: var(--space-sm); padding: var(--space-sm) var(--space-md); background: rgba(189, 0, 255, 0.1); border: 1px solid rgba(189, 0, 255, 0.3); border-radius: 20px; font-family: var(--font-mono); font-size: 0.75rem; color: var(--neon-purple); margin-right: var(--space-sm); }
+    .c-footer { margin-top: auto; padding: var(--space-lg); border-top: 1px solid rgba(0, 243, 255, 0.1); text-align: center; color: var(--text-muted); font-size: 0.875rem; }
+    .c-footer__links { display: flex; justify-content: center; gap: var(--space-lg); margin-bottom: var(--space-md); }
+    .c-footer__link { color: var(--neon-cyan); text-decoration: none; transition: color var(--transition-fast); }
+    .c-footer__link:hover { color: var(--neon-magenta); }
+    @media (max-width: 768px) { .c-header { flex-direction: column; text-align: center; } .c-header__nav { justify-content: center; } .c-button-group { flex-direction: column; } .c-button { width: 100%; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+  </style>
+</head>
+<body class="l-body">
+  <header class="l-header">
+    <div class="c-header">
+      <h1 class="c-header__brand">⚡ ALGO_VISUALIZER</h1>
+      <nav class="c-header__nav">
+        <a href="#" class="c-nav-link">Problems</a>
+        <a href="#" class="c-nav-link">Visualize</a>
+        <a href="#" class="c-nav-link">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="l-main">
+    <div class="l-single-column">
+      <article class="c-card">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>🪞</span>
+            Symmetric Tree
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <p>Given the root of a binary tree, check whether it is a mirror of itself (symmetric around its center). A tree is symmetric if the left subtree is a mirror reflection of the right subtree.</p>
+          <div style="margin-top: var(--space-md); display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+            <span class="c-complexity-badge">⏱️ Time: O(n)</span>
+            <span class="c-complexity-badge">💾 Space: O(h)</span>
+            <span class="c-complexity-badge">📊 Difficulty: Easy</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>🎯</span>
+            Input Tree
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <div class="c-input-group">
+            <label class="c-input-label" for="treeInput">Binary Tree (level-order, use 'null' for empty nodes)</label>
+            <input type="text" id="treeInput" class="c-input" placeholder="e.g., 1,2,2,3,4,4,3" value="1,2,2,3,4,4,3">
+          </div>
+          <div class="c-button-group">
+            <button id="btnCheck" class="c-button c-button--primary">
+              <span>🚀</span> Check Symmetry
+            </button>
+            <button id="btnVisualize" class="c-button">
+              <span>👁️</span> Visualize Tree
+            </button>
+            <button id="btnClear" class="c-button">
+              <span>🗑️</span> Clear
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>📈</span>
+            Result
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <div id="resultContainer" class="c-result">
+            <div class="c-result__icon" id="resultIcon">✓</div>
+            <div class="c-result__content">
+              <div class="c-result__title" id="resultTitle">Symmetric</div>
+              <div id="resultValue" class="c-result__value"></div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>🔬</span>
+            Tree Visualization
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <div id="visualizationContainer" class="c-visualization">
+            <p style="color: var(--text-muted); text-align: center;">Click "Visualize Tree" to see the tree structure</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>💻</span>
+            Solution Code
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <div class="c-code-block">
+            <div class="c-code-block__header">
+              <span class="c-code-block__lang">JavaScript</span>
+              <button class="c-code-block__copy js-copy-code">Copy</button>
+            </div>
+            <pre><code id="solutionCode"><span class="token-keyword">class</span> <span class="token-function">TreeNode</span> {
+  <span class="token-function">constructor</span>(val, left = <span class="token-keyword">null</span>, right = <span class="token-keyword">null</span>) {
+    <span class="token-keyword">this</span>.val = val;
+    <span class="token-keyword">this</span>.left = left;
+    <span class="token-keyword">this</span>.right = right;
+  }
+}
+
+<span class="token-keyword">function</span> <span class="token-function">isSymmetric</span>(root) {
+  <span class="token-keyword">if</span> (!root) <span class="token-keyword">return</span> <span class="token-keyword">true</span>;
+  
+  <span class="token-keyword">function</span> <span class="token-function">isMirror</span>(t1, t2) {
+    <span class="token-comment">// Both null - symmetric</span>
+    <span class="token-keyword">if</span> (!t1 && !t2) <span class="token-keyword">return</span> <span class="token-keyword">true</span>;
+    
+    <span class="token-comment">// One null - not symmetric</span>
+    <span class="token-keyword">if</span> (!t1 || !t2) <span class="token-keyword">return</span> <span class="token-keyword">false</span>;
+    
+    <span class="token-comment">// Check values and subtrees</span>
+    <span class="token-keyword">return</span> (t1.val === t2.val) &&
+           <span class="token-function">isMirror</span>(t1.left, t2.right) &&
+           <span class="token-function">isMirror</span>(t1.right, t2.left);
+  }
+  
+  <span class="token-keyword">return</span> <span class="token-function">isMirror</span>(root.left, root.right);
+}</code></pre>
+          </div>
+        </div>
+      </article>
+
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>📖</span>
+            Algorithm Explanation
+          </h2>
+        </header>
+        <div class="c-card__content c-explanation">
+          <ul class="c-explanation__list">
+            <li class="c-explanation__item">
+              A tree is symmetric if its left subtree is a mirror of its right subtree.
+            </li>
+            <li class="c-explanation__item">
+              Two trees are mirrors if their roots have the same value AND their subtrees are mirrors (left of one = right of other).
+            </li>
+            <li class="c-explanation__item">
+              Use recursive comparison: check outer pairs (left.left vs right.right) and inner pairs (left.right vs right.left).
+            </li>
+            <li class="c-explanation__item">
+              Base cases: both null = true, one null = false.
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>📝</span>
+            Example Walkthrough
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <div class="c-code-block">
+            <pre><code>Symmetric Tree:
+       1
+      / \
+     2   2
+    / \ / \
+   3  4 4  3
+
+Check: isMirror(left, right)
+- Root values: 2 === 2 ✓
+- Outer: isMirror(3, 3) → true ✓
+- Inner: isMirror(4, 4) → true ✓
+
+Result: <span class="token-string">true</span> (Symmetric!)
+
+Non-Symmetric Tree:
+       1
+      / \
+     2   2
+      \   \
+      3    3
+
+Check: isMirror(left, right)
+- Root values: 2 === 2 ✓
+- Outer: isMirror(null, 3) → false ✗
+
+Result: <span class="token-string">false</span> (Not symmetric)</code></pre>
+          </div>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <footer class="c-footer">
+    <div class="c-footer__links">
+      <a href="#" class="c-footer__link">GitHub</a>
+      <a href="#" class="c-footer__link">Documentation</a>
+      <a href="#" class="c-footer__link">Contact</a>
+    </div>
+    <p>&copy; 2026 Algo Visualizer. Built with 💜 and neon dreams.</p>
+  </footer>
+
+  <script>
+    (function() {
+      'use strict';
+
+      class TreeNode {
+        constructor(val, left = null, right = null) {
+          this.val = val;
+          this.left = left;
+          this.right = right;
+        }
+      }
+
+      const treeInput = document.getElementById('treeInput');
+      const btnCheck = document.getElementById('btnCheck');
+      const btnVisualize = document.getElementById('btnVisualize');
+      const btnClear = document.getElementById('btnClear');
+      const resultContainer = document.getElementById('resultContainer');
+      const resultValue = document.getElementById('resultValue');
+      const resultTitle = document.getElementById('resultTitle');
+      const resultIcon = document.getElementById('resultIcon');
+      const visualizationContainer = document.getElementById('visualizationContainer');
+      const copyButtons = document.querySelectorAll('.js-copy-code');
+
+      function deserialize(str) {
+        if (!str) return null;
+        const values = str.split(',');
+        if (values[0] === 'null') return null;
+        
+        const root = new TreeNode(parseInt(values[0]));
+        const queue = [root];
+        let i = 1;
+        
+        while (queue.length > 0 && i < values.length) {
+          const node = queue.shift();
+          
+          if (values[i] !== 'null') {
+            node.left = new TreeNode(parseInt(values[i]));
+            queue.push(node.left);
+          }
+          i++;
+          
+          if (i < values.length && values[i] !== 'null') {
+            node.right = new TreeNode(parseInt(values[i]));
+            queue.push(node.right);
+          }
+          i++;
+        }
+        
+        return root;
+      }
+
+      function isSymmetric(root) {
+        if (!root) return true;
+        
+        function isMirror(t1, t2) {
+          if (!t1 && !t2) return true;
+          if (!t1 || !t2) return false;
+          return (t1.val === t2.val) &&
+                 isMirror(t1.left, t2.right) &&
+                 isMirror(t1.right, t2.left);
+        }
+        
+        return isMirror(root.left, root.right);
+      }
+
+      function visualizeTree(root, symmetric) {
+        if (!root) return '<p style="color: var(--text-muted);">Empty tree</p>';
+        let html = '<div class="tree-container">';
+        const levels = [];
+        const queue = [[root, 0]];
+        let maxLevel = 0;
+
+        while (queue.length > 0) {
+          const [node, level] = queue.shift();
+          maxLevel = Math.max(maxLevel, level);
+          if (!levels[level]) levels[level] = [];
+          levels[level].push(node);
+          if (node && (node.left || node.right)) {
+            queue.push([node.left || null, level + 1]);
+            queue.push([node.right || null, level + 1]);
+          }
+        }
+
+        for (let level = 0; level <= maxLevel; level++) {
+          html += '<div class="tree-level">';
+          html += '<span style="color: var(--neon-magenta); font-size: 0.75rem;">Level ' + level + ':</span>';
+          for (const node of levels[level]) {
+            if (node) {
+              const isSym = symmetric ? 'symmetric' : '';
+              html += `<div class="tree-node ${isSym}"><span class="tree-node-value">${node.val}</span><span class="tree-node-label">Node</span></div>`;
+            } else {
+              html += '<div class="tree-node" style="opacity: 0.3;"><span class="tree-node-value">null</span></div>';
+            }
+          }
+          html += '</div>';
+        }
+        html += '</div>';
+        return html;
+      }
+
+      function handleCheck() {
+        const root = deserialize(treeInput.value);
+        const symmetric = isSymmetric(root);
+        
+        resultValue.textContent = symmetric ? 'true' : 'false';
+        resultTitle.textContent = symmetric ? 'Symmetric ✓' : 'Not Symmetric ✗';
+        resultIcon.textContent = symmetric ? '✓' : '✗';
+        resultIcon.style.background = symmetric ? 'rgba(0, 255, 157, 0.1)' : 'rgba(255, 0, 255, 0.1)';
+        resultIcon.style.color = symmetric ? 'var(--neon-green)' : 'var(--neon-magenta)';
+        resultContainer.classList.add('is-visible');
+        resultContainer.style.animation = 'neon-pulse 1s ease-in-out';
+        setTimeout(() => { resultContainer.style.animation = ''; }, 1000);
+      }
+
+      function handleVisualize() {
+        const root = deserialize(treeInput.value);
+        const symmetric = isSymmetric(root);
+        visualizationContainer.innerHTML = visualizeTree(root, symmetric);
+      }
+
+      function handleClear() {
+        treeInput.value = '';
+        resultContainer.classList.remove('is-visible');
+        visualizationContainer.innerHTML = '<p style="color: var(--text-muted); text-align: center;">Click "Visualize Tree" to see the tree structure</p>';
+      }
+
+      function handleCopyCode(event) {
+        const codeBlock = event.target.closest('.c-code-block');
+        const code = codeBlock.querySelector('code');
+        navigator.clipboard.writeText(code.textContent).then(() => {
+          const originalText = event.target.textContent;
+          event.target.textContent = 'Copied!';
+          event.target.style.background = 'rgba(0, 255, 157, 0.2)';
+          event.target.style.borderColor = 'var(--neon-green)';
+          setTimeout(() => {
+            event.target.textContent = originalText;
+            event.target.style.background = '';
+            event.target.style.borderColor = '';
+          }, 2000);
+        });
+      }
+
+      btnCheck.addEventListener('click', handleCheck);
+      btnVisualize.addEventListener('click', handleVisualize);
+      btnClear.addEventListener('click', handleClear);
+      copyButtons.forEach(button => { button.addEventListener('click', handleCopyCode); });
+      treeInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleCheck(); });
+      window.addEventListener('load', handleCheck);
+    })();
+  </script>
+</body>
+</html>

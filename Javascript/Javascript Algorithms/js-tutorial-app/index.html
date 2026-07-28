@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive JavaScript Tutorial with Neon Aesthetics">
+    <title>JavaScript Tutorial | Neon Edition</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;600;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="l-body">
+    <header class="c-header">
+        <div class="l-container">
+            <div class="c-header__content">
+                <h1 class="c-header__title">
+                    <span class="c-header__icon">⚡</span>
+                    JavaScript Tutorial
+                </h1>
+                <p class="c-header__subtitle">Interactive DOM API Learning Experience</p>
+            </div>
+            <nav class="c-nav" aria-label="Main navigation">
+                <button class="c-nav__toggle js-nav-toggle" aria-label="Toggle navigation">
+                    <span class="c-nav__toggle-bar"></span>
+                    <span class="c-nav__toggle-bar"></span>
+                    <span class="c-nav__toggle-bar"></span>
+                </button>
+                <ul class="c-nav__list">
+                    <li><a href="#basics" class="c-nav__link">Basics</a></li>
+                    <li><a href="#variables" class="c-nav__link">Variables</a></li>
+                    <li><a href="#operators" class="c-nav__link">Operators</a></li>
+                    <li><a href="#functions" class="c-nav__link">Functions</a></li>
+                    <li><a href="#dom" class="c-nav__link">DOM</a></li>
+                    <li><a href="#objects" class="c-nav__link">Objects</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="l-main-wrapper">
+        <aside class="c-aside js-aside">
+            <div class="c-aside__content">
+                <h2 class="c-aside__title">Table of Contents</h2>
+                <nav class="c-toc" aria-label="Tutorial sections">
+                    <ul class="c-toc__list" id="toc-list">
+                        <!-- Populated by JavaScript -->
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        <main class="c-main" id="main-content">
+            <section class="c-section" id="welcome">
+                <div class="l-container">
+                    <h2 class="c-section__title">Welcome to JavaScript Tutorial</h2>
+                    <p class="c-section__intro">
+                        JavaScript is a lightweight, interpreted programming language designed for 
+                        creating network-centric applications. It is complimentary to and integrated 
+                        with Java, and very easy to implement because it is integrated with HTML.
+                    </p>
+                    <div class="c-card c-card--welcome">
+                        <div class="c-card__content">
+                            <h3 class="c-card__title">📚 What You'll Learn</h3>
+                            <ul class="c-list c-list--neon">
+                                <li>JavaScript Basics & Syntax</li>
+                                <li>Variables, Operators & Control Structures</li>
+                                <li>Functions & Events</li>
+                                <li>DOM Manipulation</li>
+                                <li>Objects, Arrays & More</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="c-section" id="basics">
+                <div class="l-container">
+                    <h2 class="c-section__title">JavaScript Basics</h2>
+                    <div class="c-section__content">
+                        <p class="c-text">JavaScript code can be embedded directly into HTML pages or stored in external files.</p>
+                        
+                        <div class="c-code-grid" id="basics-codes">
+                            <!-- Code examples populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="c-section" id="variables">
+                <div class="l-container">
+                    <h2 class="c-section__title">Variables & Datatypes</h2>
+                    <div class="c-section__content">
+                        <p class="c-text">Variables are declared with the <code class="c-inline-code">var</code> keyword. JavaScript supports various datatypes including numbers, strings, booleans, and more.</p>
+                        
+                        <div class="c-code-grid" id="variables-codes">
+                            <!-- Code examples populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="c-section" id="operators">
+                <div class="l-container">
+                    <h2 class="c-section__title">Operators</h2>
+                    <div class="c-section__content">
+                        <p class="c-text">JavaScript supports arithmetic, comparison, logical, and bitwise operators for manipulating values.</p>
+                        
+                        <div class="c-code-grid" id="operators-codes">
+                            <!-- Code examples populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="c-section" id="control">
+                <div class="l-container">
+                    <h2 class="c-section__title">Control Structures</h2>
+                    <div class="c-section__content">
+                        <p class="c-text">Control the flow of your program using if-else statements, switch-case, and loops.</p>
+                        
+                        <div class="c-code-grid" id="control-codes">
+                            <!-- Code examples populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="c-section" id="functions">
+                <div class="l-container">
+                    <h2 class="c-section__title">Functions</h2>
+                    <div class="c-section__content">
+                        <p class="c-text">Functions are reusable blocks of code that perform specific tasks. They can accept parameters and return values.</p>
+                        
+                        <div class="c-code-grid" id="functions-codes">
+                            <!-- Code examples populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="c-section" id="events">
+                <div class="l-container">
+                    <h2 class="c-section__title">Events</h2>
+                    <div class="c-section__content">
+                        <p class="c-text">Events are actions that happen in the browser, like clicks, mouse movements, or form submissions.</p>
+                        
+                        <div class="c-code-grid" id="events-codes">
+                            <!-- Code examples populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="c-section" id="dom">
+                <div class="l-container">
+                    <h2 class="c-section__title">DOM Manipulation</h2>
+                    <div class="c-section__content">
+                        <p class="c-text">The Document Object Model (DOM) allows JavaScript to interact with and modify HTML elements dynamically.</p>
+                        
+                        <div class="c-code-grid" id="dom-codes">
+                            <!-- Code examples populated by JavaScript -->
+                        </div>
+                        
+                        <div class="c-interactive" id="dom-interactive">
+                            <h3 class="c-interactive__title">Try It Yourself</h3>
+                            <div class="c-interactive__content">
+                                <button class="c-button c-button--primary js-dom-demo" id="changeTextBtn">Change Text</button>
+                                <button class="c-button c-button--secondary js-dom-demo" id="addElementBtn">Add Element</button>
+                                <button class="c-button c-button--tertiary js-dom-demo" id="toggleClassBtn">Toggle Class</button>
+                                <div class="c-interactive__output" id="dom-output">
+                                    <p id="demo-text">Click buttons to see DOM manipulation in action!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="c-section" id="objects">
+                <div class="l-container">
+                    <h2 class="c-section__title">Objects & Arrays</h2>
+                    <div class="c-section__content">
+                        <p class="c-text">Objects are collections of key-value pairs. Arrays are ordered lists of values.</p>
+                        
+                        <div class="c-code-grid" id="objects-codes">
+                            <!-- Code examples populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="c-section" id="advanced">
+                <div class="l-container">
+                    <h2 class="c-section__title">Advanced Topics</h2>
+                    <div class="c-section__content">
+                        <p class="c-text">Explore advanced JavaScript concepts including error handling, regular expressions, and more.</p>
+                        
+                        <div class="c-code-grid" id="advanced-codes">
+                            <!-- Code examples populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="c-footer">
+        <div class="l-container">
+            <div class="c-footer__content">
+                <p class="c-footer__text">JavaScript Tutorial | Neon Edition</p>
+                <p class="c-footer__text">Built with HTML5, CSS3 & Vanilla JavaScript</p>
+                <p class="c-footer__copyright">© 2024 - Following Neon-Noir Architect Manifesto</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

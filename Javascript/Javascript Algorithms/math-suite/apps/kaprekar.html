@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kaprekar Number | MathSuite</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Fira+Code&display=swap" rel="stylesheet">
+</head>
+<body class="l-layout u-bg-gradient">
+    <header class="header">
+        <div class="l-container header__nav">
+            <a href="../index.html" class="header__logo">MathSuite</a>
+            <a href="../index.html" class="header__link">← Back to Dashboard</a>
+        </div>
+    </header>
+    <main class="l-container">
+        <section class="hero">
+            <h1 class="hero__title">Kaprekar Number</h1>
+            <p class="hero__subtitle">A Kaprekar number is a number whose square can be split into two parts that add up to the original number.</p>
+        </section>
+        <form id="app-form" class="c-form">
+            <div class="c-form__group">
+                <label for="number-input" class="c-form__label">Enter Number</label>
+                <input type="number" id="number-input" class="c-form__input" required>
+            </div>
+            <button type="submit" class="c-form__button">Analyze</button>
+        </form>
+        <div id="result-box" class="c-result">
+            <h3 class="c-result__title">Analysis Result</h3>
+            <div id="result-content" class="c-result__content"></div>
+        </div>
+    </main>
+    <script src="../scripts/math-logic.js"></script>
+    <script>
+        UI.handleForm('app-form', (n) => {
+            const result = MathSuite.isKaprekar(n);
+            UI.showResult(result ? "It is a Kaprekar number!" : "It is NOT a Kaprekar number.");
+        });
+    </script>
+</body>
+</html>

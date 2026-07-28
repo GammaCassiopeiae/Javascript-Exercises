@@ -1,0 +1,129 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Euler</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400&family=Inter:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="l-grid-main">
+        <header class="c-header">
+            <div class="l-container c-header__content">
+                <a href="index.html" class="c-brand">
+                    <span>//</span> NEON_EULER
+                </a>
+            </div>
+        </header>
+
+        <main class="l-container l-section">
+            <div class="u-mb-2">
+                <a href="index.html" class="c-btn c-btn--back">← Back to Grid</a>
+            </div>
+            
+            <div class="c-problem-layout">
+                <section class="c-panel">
+                    <h2 class="u-text-glow">#18 Maximum Path Sum I</h2>
+                    <p class="u-mb-2">Find the maximum total from top to bottom of the triangle.</p>
+                    
+                    <button id="runBtn" class="c-btn">Execute Algorithm</button>
+                    <div id="result" class="c-result-display">Waiting for input...</div>
+                </section>
+                
+                <section class="c-panel c-panel--console">
+                    <div class="u-mb-1" style="color: var(--neon-secondary)">// SOURCE CODE</div>
+                    <pre class="c-code-block"><code>const solve = () => {
+    const triangleStr = `75
+95 64
+17 47 82
+18 35 87 10
+20 04 82 47 65
+19 01 23 75 03 34
+88 02 77 73 07 63 67
+99 65 04 28 06 16 70 92
+41 41 26 56 83 40 80 70 33
+41 48 72 33 47 32 37 16 94 29
+53 71 44 65 25 43 91 52 97 51 14
+70 11 33 28 77 73 17 78 39 68 17 57
+91 71 52 38 17 14 91 43 58 50 27 29 48
+63 66 04 68 89 53 67 30 73 16 69 87 40 31
+04 62 98 27 23 09 70 98 73 93 38 53 60 04 23`;
+    
+    const triangle = triangleStr.split('\n').map(row => row.split(' ').map(Number));
+    
+    // Bottom-up DP
+    for (let r = triangle.length - 2; r >= 0; r--) {
+        for (let c = 0; c <= r; c++) {
+            triangle[r][c] += Math.max(triangle[r + 1][c], triangle[r + 1][c + 1]);
+        }
+    }
+    return triangle[0][0];
+};</code></pre>
+                </section>
+            </div>
+        </main>
+        
+        <script>
+            // Algorithm Logic
+            
+const solve = () => {
+    const triangleStr = `75
+95 64
+17 47 82
+18 35 87 10
+20 04 82 47 65
+19 01 23 75 03 34
+88 02 77 73 07 63 67
+99 65 04 28 06 16 70 92
+41 41 26 56 83 40 80 70 33
+41 48 72 33 47 32 37 16 94 29
+53 71 44 65 25 43 91 52 97 51 14
+70 11 33 28 77 73 17 78 39 68 17 57
+91 71 52 38 17 14 91 43 58 50 27 29 48
+63 66 04 68 89 53 67 30 73 16 69 87 40 31
+04 62 98 27 23 09 70 98 73 93 38 53 60 04 23`;
+    
+    const triangle = triangleStr.split('\n').map(row => row.split(' ').map(Number));
+    
+    // Bottom-up DP
+    for (let r = triangle.length - 2; r >= 0; r--) {
+        for (let c = 0; c <= r; c++) {
+            triangle[r][c] += Math.max(triangle[r + 1][c], triangle[r + 1][c + 1]);
+        }
+    }
+    return triangle[0][0];
+};
+        
+
+            // DOM Interaction
+            document.getElementById('runBtn').addEventListener('click', () => {
+                const display = document.getElementById('result');
+                display.innerHTML = '<span style="color:var(--neon-primary)">Computing...</span>';
+                
+                // Small delay to allow UI to update before blocking
+                setTimeout(() => {
+                    const startTime = performance.now();
+                    try {
+                        const result = solve();
+                        const endTime = performance.now();
+                        const time = (endTime - startTime).toFixed(2);
+                        display.innerHTML = `${result} <span style="font-size:0.8em; color:var(--text-muted); margin-left:1rem">(${time}ms)</span>`;
+                        display.classList.remove('is-error');
+                    } catch (e) {
+                        display.innerText = "Error: " + e.message;
+                        display.classList.add('is-error');
+                    }
+                }, 10);
+            });
+        </script>
+        
+        <footer class="c-footer">
+            <div class="l-container">
+                <p>NEON GRID ARCHITECT // v2.0</p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check If It Is a Straight Line - LeetCode Solution</title>
+    <style>
+        :root {
+            --lime-green: #00ff9d;
+            --lime-dim: rgba(0, 255, 157, 0.3);
+            --bg-black: #050505;
+            --bg-surface: rgba(255, 255, 255, 0.05);
+            --text-primary: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.7);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg-black);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            border-bottom: 1px solid var(--lime-dim);
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            color: var(--lime-green);
+            text-shadow: 0 0 10px var(--lime-dim);
+            margin-bottom: 0.5rem;
+        }
+
+        .problem-desc {
+            background: var(--bg-surface);
+            border: 1px solid var(--lime-dim);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .problem-desc h2 {
+            color: var(--lime-green);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .code-section {
+            background: var(--bg-surface);
+            border: 1px solid var(--lime-dim);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .code-section h2 {
+            color: var(--lime-green);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        pre {
+            background: #0a0a0a;
+            border: 1px solid var(--lime-dim);
+            border-radius: 6px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .keyword { color: #ff00ff; }
+        .function { color: #00f3ff; }
+        .string { color: #00ff9d; }
+        .number { color: #bd00ff; }
+        .comment { color: rgba(255, 255, 255, 0.4); }
+
+        .demo-section {
+            background: var(--bg-surface);
+            border: 1px solid var(--lime-dim);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .demo-section h2 {
+            color: var(--lime-green);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            color: var(--lime-green);
+            margin-bottom: 0.5rem;
+        }
+
+        input, button {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--lime-dim);
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--text-primary);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+        }
+
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 10px var(--lime-dim);
+        }
+
+        button {
+            background: var(--lime-dim);
+            color: var(--bg-black);
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: var(--lime-green);
+            box-shadow: 0 0 20px var(--lime-dim);
+        }
+
+        .result {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(0, 255, 157, 0.1);
+            border-radius: 6px;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .result span {
+            color: var(--lime-green);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Check If It Is a Straight Line</h1>
+            <p style="color: var(--text-muted);">LeetCode Problem - Geometry & Slope Calculation</p>
+        </header>
+
+        <section class="problem-desc">
+            <h2>Problem Description</h2>
+            <p>Given an array of coordinates where coordinates[i] = [x, y], check if all points form a straight line in the XY plane.</p>
+        </section>
+
+        <section class="code-section">
+            <h2>JavaScript Solution</h2>
+            <pre><code><span class="keyword">function</span> <span class="function">checkStraightLine</span>(coordinates) {
+    <span class="keyword">if</span> (coordinates.length <= <span class="number">2</span>) <span class="keyword">return</span> <span class="keyword">true</span>;
+    
+    <span class="keyword">const</span> [x0, y0] = coordinates[<span class="number">0</span>];
+    <span class="keyword">const</span> [x1, y1] = coordinates[<span class="number">1</span>];
+    
+    <span class="comment">// Calculate delta (avoid division for precision)</span>
+    <span class="keyword">const</span> dx = x1 - x0;
+    <span class="keyword">const</span> dy = y1 - y0;
+    
+    <span class="comment">// Check if all other points have same slope</span>
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">2</span>; i < coordinates.length; i++) {
+        <span class="keyword">const</span> [x, y] = coordinates[i];
+        
+        <span class="comment">// Cross multiplication to avoid division</span>
+        <span class="comment">// (y - y0) / (x - x0) === dy / dx</span>
+        <span class="keyword">if</span> (dy * (x - x0) !== dx * (y - y0)) {
+            <span class="keyword">return</span> <span class="keyword">false</span>;
+        }
+    }
+    
+    <span class="keyword">return</span> <span class="keyword">true</span>;
+}
+
+<span class="comment">// Usage Example:</span>
+<span class="keyword">const</span> coords = [[<span class="number">1</span>,<span class="number">2</span>],[<span class="number">2</span>,<span class="number">3</span>],[<span class="number">3</span>,<span class="number">4</span>],[<span class="number">4</span>,<span class="number">5</span>]];
+console.<span class="function">log</span>(<span class="function">checkStraightLine</span>(coords)); <span class="comment">// true</span></code></pre>
+        </section>
+
+        <section class="demo-section">
+            <h2>Interactive Demo</h2>
+            <div class="input-group">
+                <label for="coords-input">Coordinates [[x,y],...]:</label>
+                <input type="text" id="coords-input" value="[[1,2],[2,3],[3,4],[4,5]]" style="width: 100%;">
+            </div>
+            <button onclick="runDemo()">Check Straight Line</button>
+            <div class="result" id="result">
+                Result: <span id="output">-</span>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        function checkStraightLine(coordinates) {
+            if (coordinates.length <= 2) return true;
+            
+            const [x0, y0] = coordinates[0];
+            const [x1, y1] = coordinates[1];
+            
+            const dx = x1 - x0;
+            const dy = y1 - y0;
+            
+            for (let i = 2; i < coordinates.length; i++) {
+                const [x, y] = coordinates[i];
+                
+                if (dy * (x - x0) !== dx * (y - y0)) {
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+
+        function runDemo() {
+            const coordsInput = document.getElementById('coords-input').value;
+            const coordinates = JSON.parse(coordsInput);
+            
+            const result = checkStraightLine(coordinates);
+            document.getElementById('output').textContent = result;
+        }
+    </script>
+</body>
+</html>

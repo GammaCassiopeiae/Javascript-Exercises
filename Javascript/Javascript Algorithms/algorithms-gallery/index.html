@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Neon Algorithms Gallery - 60 Interactive Canvas Visualizations">
+  <meta name="theme-color" content="#050505">
+  <title>Neon Algorithms | Interactive Canvas Visualizations</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Inter:wght@300;400;700&family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="l-body" data-theme="dark">
+  <a href="#main-content" class="u-visually-hidden js-skip-link">Skip to main content</a>
+
+  <header class="c-header" role="banner">
+    <div class="c-header__content">
+      <div class="c-header__brand">
+        <h1 class="c-header__title">
+          <span class="c-header__neon">NEON</span>
+          <span class="c-header__subtitle">ALGORITHMS</span>
+        </h1>
+      </div>
+      <nav class="c-nav" role="navigation" aria-label="Main navigation">
+        <ul class="c-nav__list">
+          <li class="c-nav__item">
+            <a href="#gallery" class="c-nav__link is-active">Gallery</a>
+          </li>
+          <li class="c-nav__item">
+            <a href="#categories" class="c-nav__link">Categories</a>
+          </li>
+          <li class="c-nav__item">
+            <a href="#about" class="c-nav__link">About</a>
+          </li>
+        </ul>
+      </nav>
+      <button class="c-theme-toggle js-theme-toggle" aria-label="Toggle theme" type="button">
+        <span class="c-theme-toggle__icon" aria-hidden="true">🌙</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="main-content" class="l-main" role="main">
+    <section class="c-hero" aria-labelledby="hero-title">
+      <div class="c-hero__content">
+        <h2 id="hero-title" class="c-hero__title">
+          <span class="c-hero__glitch" data-text="Algorithm">Algorithm</span>
+          <span class="c-hero__glitch" data-text="Visualizations">Visualizations</span>
+        </h2>
+        <p class="c-hero__subtitle">Explore <span class="c-hero__highlight js-algo-count">60</span> interactive canvas-based algorithm demonstrations</p>
+        <div class="c-hero__actions">
+          <a href="#gallery" class="c-button c-button--primary">Explore Algorithms</a>
+          <a href="#about" class="c-button c-button--secondary">Learn More</a>
+        </div>
+      </div>
+      <div class="c-hero__scanlines" aria-hidden="true"></div>
+    </section>
+
+    <section id="categories" class="c-categories-section" aria-labelledby="categories-title">
+      <div class="l-container">
+        <header class="c-section-header">
+          <h2 id="categories-title" class="c-section-title">Algorithm Categories</h2>
+          <p class="c-section-description">Browse algorithms by category</p>
+        </header>
+        <div class="c-categories-grid js-categories-grid">
+          <article class="c-category-card" data-category="sorting">
+            <div class="c-category-card__icon">📊</div>
+            <h3 class="c-category-card__title">Sorting</h3>
+            <p class="c-category-card__count js-sorting-count">0 algorithms</p>
+          </article>
+          <article class="c-category-card" data-category="searching">
+            <div class="c-category-card__icon">🔍</div>
+            <h3 class="c-category-card__title">Searching</h3>
+            <p class="c-category-card__count js-searching-count">0 algorithms</p>
+          </article>
+          <article class="c-category-card" data-category="graph">
+            <div class="c-category-card__icon">🕸️</div>
+            <h3 class="c-category-card__title">Graph</h3>
+            <p class="c-category-card__count js-graph-count">0 algorithms</p>
+          </article>
+          <article class="c-category-card" data-category="tree">
+            <div class="c-category-card__icon">🌳</div>
+            <h3 class="c-category-card__title">Tree</h3>
+            <p class="c-category-card__count js-tree-count">0 algorithms</p>
+          </article>
+          <article class="c-category-card" data-category="geometry">
+            <div class="c-category-card__icon">📐</div>
+            <h3 class="c-category-card__title">Geometry</h3>
+            <p class="c-category-card__count js-geometry-count">0 algorithms</p>
+          </article>
+          <article class="c-category-card" data-category="pathfinding">
+            <div class="c-category-card__icon">🧭</div>
+            <h3 class="c-category-card__title">Pathfinding</h3>
+            <p class="c-category-card__count js-pathfinding-count">0 algorithms</p>
+          </article>
+          <article class="c-category-card" data-category="dynamic">
+            <div class="c-category-card__icon">🔄</div>
+            <h3 class="c-category-card__title">Dynamic Programming</h3>
+            <p class="c-category-card__count js-dynamic-count">0 algorithms</p>
+          </article>
+          <article class="c-category-card" data-category="math">
+            <div class="c-category-card__icon">🔢</div>
+            <h3 class="c-category-card__title">Mathematical</h3>
+            <p class="c-category-card__count js-math-count">0 algorithms</p>
+          </article>
+          <article class="c-category-card" data-category="string">
+            <div class="c-category-card__icon">📝</div>
+            <h3 class="c-category-card__title">String</h3>
+            <p class="c-category-card__count js-string-count">0 algorithms</p>
+          </article>
+          <article class="c-category-card" data-category="encryption">
+            <div class="c-category-card__icon">🔐</div>
+            <h3 class="c-category-card__title">Encryption</h3>
+            <p class="c-category-card__count js-encryption-count">0 algorithms</p>
+          </article>
+          <article class="c-category-card" data-category="compression">
+            <div class="c-category-card__icon">📦</div>
+            <h3 class="c-category-card__title">Compression</h3>
+            <p class="c-category-card__count js-compression-count">0 algorithms</p>
+          </article>
+          <article class="c-category-card" data-category="ai">
+            <div class="c-category-card__icon">🤖</div>
+            <h3 class="c-category-card__title">AI & ML</h3>
+            <p class="c-category-card__count js-ai-count">0 algorithms</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="gallery" class="c-gallery-section" aria-labelledby="gallery-title">
+      <div class="l-container">
+        <header class="c-section-header">
+          <h2 id="gallery-title" class="c-section-title">Algorithm Gallery</h2>
+          <p class="c-section-description">Click on any algorithm to view its interactive visualization</p>
+        </header>
+
+        <div class="c-filter-bar" role="search" aria-label="Filter algorithms">
+          <div class="c-search-wrapper">
+            <input
+              type="search"
+              id="algo-search"
+              class="c-search-input js-search-input"
+              placeholder="Search algorithms..."
+              aria-label="Search algorithms"
+            >
+            <span class="c-search-icon" aria-hidden="true">🔍</span>
+          </div>
+          <div class="c-filter-group js-filter-group" role="group" aria-label="Filter by category">
+            <button class="c-filter-btn is-active" data-filter="all" type="button">All</button>
+            <button class="c-filter-btn" data-filter="sorting" type="button">Sorting</button>
+            <button class="c-filter-btn" data-filter="searching" type="button">Searching</button>
+            <button class="c-filter-btn" data-filter="graph" type="button">Graph</button>
+            <button class="c-filter-btn" data-filter="tree" type="button">Tree</button>
+            <button class="c-filter-btn" data-filter="geometry" type="button">Geometry</button>
+            <button class="c-filter-btn" data-filter="pathfinding" type="button">Pathfinding</button>
+            <button class="c-filter-btn" data-filter="dynamic" type="button">Dynamic</button>
+            <button class="c-filter-btn" data-filter="math" type="button">Math</button>
+            <button class="c-filter-btn" data-filter="string" type="button">String</button>
+            <button class="c-filter-btn" data-filter="encryption" type="button">Encryption</button>
+            <button class="c-filter-btn" data-filter="compression" type="button">Compression</button>
+            <button class="c-filter-btn" data-filter="ai" type="button">AI & ML</button>
+          </div>
+        </div>
+
+        <div id="gallery-grid" class="c-gallery-grid js-gallery-grid" role="list" aria-live="polite">
+          <!-- Gallery items dynamically inserted by JavaScript -->
+        </div>
+
+        <div class="c-gallery-empty js-gallery-empty is-hidden" aria-live="polite">
+          <p>No algorithms found matching your criteria.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="c-about-section" aria-labelledby="about-title">
+      <div class="l-container">
+        <div class="c-about-grid">
+          <article class="c-about-card c-about-card--featured">
+            <div class="c-about-card__content">
+              <h3 id="about-title" class="c-about-card__title">About Neon Algorithms</h3>
+              <p class="c-about-card__text">
+                This collection showcases 60 fundamental algorithms from computer science, 
+                each implemented with pure vanilla JavaScript and rendered on HTML5 Canvas 
+                for interactive visualization.
+              </p>
+              <p class="c-about-card__text">
+                Every algorithm is presented in its own dedicated HTML file with a 
+                cyberpunk-inspired neon aesthetic, making learning algorithms engaging 
+                and visually stunning.
+              </p>
+            </div>
+          </article>
+
+          <article class="c-about-card c-stats-card">
+            <h3 class="c-stats-card__title">Collection Stats</h3>
+            <dl class="c-stats-list">
+              <div class="c-stat-item">
+                <dt class="c-stat-item__label">Total Algorithms</dt>
+                <dd class="c-stat-item__value">60</dd>
+              </div>
+              <div class="c-stat-item">
+                <dt class="c-stat-item__label">Categories</dt>
+                <dd class="c-stat-item__value">12</dd>
+              </div>
+              <div class="c-stat-item">
+                <dt class="c-stat-item__label">Technologies</dt>
+                <dd class="c-stat-item__value">3</dd>
+              </div>
+            </dl>
+          </article>
+
+          <article class="c-about-card c-tech-card">
+            <h3 class="c-tech-card__title">Technologies</h3>
+            <ul class="c-tech-list">
+              <li class="c-tech-item">HTML5 Canvas</li>
+              <li class="c-tech-item">Vanilla JavaScript (ES6+)</li>
+              <li class="c-tech-item">CSS3 Custom Properties</li>
+              <li class="c-tech-item">DOM API</li>
+              <li class="c-tech-item">requestAnimationFrame</li>
+              <li class="c-tech-item">LocalStorage API</li>
+            </ul>
+          </article>
+
+          <article class="c-about-card c-features-card">
+            <h3 class="c-features-card__title">Key Features</h3>
+            <ul class="c-features-list">
+              <li class="c-features-item">
+                <span class="c-features-icon" aria-hidden="true">⚡</span>
+                <span>Interactive Visualizations</span>
+              </li>
+              <li class="c-features-item">
+                <span class="c-features-icon" aria-hidden="true">🎨</span>
+                <span>Neon Cyberpunk Design</span>
+              </li>
+              <li class="c-features-item">
+                <span class="c-features-icon" aria-hidden="true">🌓</span>
+                <span>Dark/Light Mode</span>
+              </li>
+              <li class="c-features-item">
+                <span class="c-features-icon" aria-hidden="true">📱</span>
+                <span>Fully Responsive</span>
+              </li>
+              <li class="c-features-item">
+                <span class="c-features-icon" aria-hidden="true">♿</span>
+                <span>WCAG Accessible</span>
+              </li>
+              <li class="c-features-item">
+                <span class="c-features-icon" aria-hidden="true">🚀</span>
+                <span>No Dependencies</span>
+              </li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <aside class="c-scroll-top js-scroll-top is-hidden" role="button" aria-label="Scroll to top" tabindex="0">
+    <span aria-hidden="true">↑</span>
+  </aside>
+
+  <footer class="c-footer" role="contentinfo">
+    <div class="l-container">
+      <div class="c-footer__content">
+        <div class="c-footer__brand">
+          <p class="c-footer__tagline">Built with pure JavaScript & Canvas API</p>
+        </div>
+        <nav class="c-footer__nav" aria-label="Footer navigation">
+          <ul class="c-footer__links">
+            <li><a href="#gallery">Gallery</a></li>
+            <li><a href="#categories">Categories</a></li>
+            <li><a href="#about">About</a></li>
+          </ul>
+        </nav>
+        <p class="c-footer__copyright">
+          &copy; <span class="js-current-year"></span> Neon Algorithms. All rights reserved.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/app.js" defer></script>
+</body>
+</html>

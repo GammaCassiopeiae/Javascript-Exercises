@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ray Intersections - Geometry Visualizations</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="math3d.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Ray Intersections</h1>
+        <p>Visualizing intersections between rays and basic 3D primitives.</p>
+    </header>
+
+    <div class="description">
+        <h2>Ray-Sphere Intersection</h2>
+        <p>A ray is defined as <code>R(t) = O + tD</code>. For a sphere with center <code>C</code> and radius <code>r</code>, we solve <code>|R(t) - C|² = r²</code>. This leads to a quadratic equation <code>at² + bt + c = 0</code>.</p>
+        
+        <h2>Ray-Triangle Intersection (Möller–Trumbore)</h2>
+        <p>This algorithm calculates the intersection of a ray with a triangle in 3D without needing the plane equation of the triangle. it uses barycentric coordinates <code>(u, v)</code>.</p>
+    </div>
+
+    <div class="controls">
+        <button onclick="animateRay()">Animate Ray</button>
+        <span>Drag to rotate the view</span>
+    </div>
+
+    <canvas id="canvas" width="800" height="600"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let angleX = 0.3;
+        let angleY = 0.5;
+        let isDragging = false;
+        let lastX, lastY;
+        let rayOffset = 0;
+
+        canvas.onmousedown = (e) => { isDragging = true; lastX = e.clientX; lastY = e.clientY; };
+        window.onmouseup = () => { isDragging = false; };
+        window.onmousemove = (e) => {
+            if (isDragging) {
+                angleY += (e.clientX - lastX) * 0.01;
+                angleX += (e.clientY - lastY) * 0.01;
+                lastX = e.clientX;
+                lastY = e.clientY;
+                draw();
+            }
+        };
+
+        function animateRay() {
+            rayOffset += 0.05;
+            draw();
+            requestAnimationFrame(animateRay);
+        }
+
+        function getTransform() {
+            const aspect = canvas.width / canvas.height;
+            const proj = Mat4.perspective(Math.PI / 4, aspect, 0.1, 100);
+            const rotX = Mat4.rotationX(angleX);
+            const rotY = Mat4.rotationY(angleY);
+            const view = rotY.multiply(rotX);
+            view.m[14] = -15; 
+            return proj.multiply(view);
+        }
+
+        function drawLine(p1, p2, color, width = 2) {
+            const t = getTransform();
+            const pt1 = project(t.transform(p1), canvas.width, canvas.height);
+            const pt2 = project(t.transform(p2), canvas.width, canvas.height);
+            ctx.beginPath();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = width;
+            ctx.moveTo(pt1.x, pt1.y);
+            ctx.lineTo(pt2.x, pt2.y);
+            ctx.stroke();
+        }
+
+        function drawPoint(p, color, label) {
+            const t = getTransform();
+            const pt = project(t.transform(p), canvas.width, canvas.height);
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(pt.x, pt.y, 5, 0, Math.PI * 2);
+            ctx.fill();
+            if (label) {
+                ctx.fillText(label, pt.x + 8, pt.y - 8);
+            }
+        }
+
+        function raySphereIntersection(origin, dir, center, radius) {
+            const oc = origin.sub(center);
+            const a = dir.dot(dir);
+            const b = 2.0 * oc.dot(dir);
+            const c = oc.dot(oc) - radius * radius;
+            const discriminant = b * b - 4 * a * c;
+            if (discriminant < 0) return null;
+            const t = (-b - Math.sqrt(discriminant)) / (2.0 * a);
+            if (t < 0) return null;
+            return origin.add(dir.mul(t));
+        }
+
+        function rayTriangleIntersection(origin, dir, v0, v1, v2) {
+            const edge1 = v1.sub(v0);
+            const edge2 = v2.sub(v0);
+            const h = dir.cross(edge2);
+            const a = edge1.dot(h);
+            if (a > -0.00001 && a < 0.00001) return null;
+            const f = 1.0 / a;
+            const s = origin.sub(v0);
+            const u = f * s.dot(h);
+            if (u < 0.0 || u > 1.0) return null;
+            const q = s.cross(edge1);
+            const v = f * dir.dot(q);
+            if (v < 0.0 || u + v > 1.0) return null;
+            const t = f * edge2.dot(q);
+            if (t > 0.00001) return origin.add(dir.mul(t));
+            return null;
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Sphere
+            const sphereCenter = new Vec3(-3, 0, 0);
+            const sphereRadius = 2;
+            // Draw sphere "wireframe" (circles)
+            for(let i=0; i<Math.PI*2; i+=Math.PI/4) {
+               // Roughly visualize a sphere with circles
+            }
+            // Simple sphere proxy: 3 perpendicular circles
+            for(let j=0; j<3; j++) {
+                ctx.beginPath();
+                ctx.strokeStyle = 'rgba(100, 100, 255, 0.3)';
+                for(let i=0; i<=Math.PI*2.1; i+=0.2) {
+                    let p;
+                    if(j==0) p = new Vec3(sphereCenter.x, sphereCenter.y + Math.sin(i)*sphereRadius, sphereCenter.z + Math.cos(i)*sphereRadius);
+                    if(j==1) p = new Vec3(sphereCenter.x + Math.sin(i)*sphereRadius, sphereCenter.y, sphereCenter.z + Math.cos(i)*sphereRadius);
+                    if(j==2) p = new Vec3(sphereCenter.x + Math.sin(i)*sphereRadius, sphereCenter.y + Math.cos(i)*sphereRadius, sphereCenter.z);
+                    const pt = project(getTransform().transform(p), canvas.width, canvas.height);
+                    if(i==0) ctx.moveTo(pt.x, pt.y); else ctx.lineTo(pt.x, pt.y);
+                }
+                ctx.stroke();
+            }
+
+            // Triangle
+            const v0 = new Vec3(2, -2, 0);
+            const v1 = new Vec3(5, -1, 2);
+            const v2 = new Vec3(3, 2, -1);
+            drawLine(v0, v1, '#ffaa00', 2);
+            drawLine(v1, v2, '#ffaa00', 2);
+            drawLine(v2, v0, '#ffaa00', 2);
+
+            // Rays
+            const rayOrigin = new Vec3(Math.sin(rayOffset)*2, 4, 5);
+            
+            // Ray to Sphere
+            const rayDirSphere = sphereCenter.sub(rayOrigin).normalize();
+            drawLine(rayOrigin, rayOrigin.add(rayDirSphere.mul(15)), 'rgba(255, 255, 255, 0.2)', 1);
+            const hitSphere = raySphereIntersection(rayOrigin, rayDirSphere, sphereCenter, sphereRadius);
+            if(hitSphere) {
+                drawLine(rayOrigin, hitSphere, '#00ff00', 2);
+                drawPoint(hitSphere, '#ff0000', 'Hit Sphere');
+            }
+
+            // Ray to Triangle
+            const triCenter = v0.add(v1).add(v2).mul(1/3);
+            const rayDirTri = triCenter.sub(rayOrigin).normalize();
+            drawLine(rayOrigin, rayOrigin.add(rayDirTri.mul(15)), 'rgba(255, 255, 255, 0.2)', 1);
+            const hitTri = rayTriangleIntersection(rayOrigin, rayDirTri, v0, v1, v2);
+            if(hitTri) {
+                drawLine(rayOrigin, hitTri, '#00ff00', 2);
+                drawPoint(hitTri, '#ff0000', 'Hit Triangle');
+            }
+
+            drawPoint(rayOrigin, '#ffffff', 'Ray Origin');
+        }
+
+        draw();
+    </script>
+</body>
+</html>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Bold Tag in String - LeetCode Solution</title>
+    <style>
+        :root {
+            --lime-green: #00ff9d;
+            --lime-dim: rgba(0, 255, 157, 0.3);
+            --bg-black: #050505;
+            --bg-surface: rgba(255, 255, 255, 0.05);
+            --text-primary: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.7);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg-black);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            border-bottom: 1px solid var(--lime-dim);
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            color: var(--lime-green);
+            text-shadow: 0 0 10px var(--lime-dim);
+            margin-bottom: 0.5rem;
+        }
+
+        .problem-desc {
+            background: var(--bg-surface);
+            border: 1px solid var(--lime-dim);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .problem-desc h2 {
+            color: var(--lime-green);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .code-section {
+            background: var(--bg-surface);
+            border: 1px solid var(--lime-dim);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .code-section h2 {
+            color: var(--lime-green);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        pre {
+            background: #0a0a0a;
+            border: 1px solid var(--lime-dim);
+            border-radius: 6px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .keyword { color: #ff00ff; }
+        .function { color: #00f3ff; }
+        .string { color: #00ff9d; }
+        .number { color: #bd00ff; }
+        .comment { color: rgba(255, 255, 255, 0.4); }
+
+        .demo-section {
+            background: var(--bg-surface);
+            border: 1px solid var(--lime-dim);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .demo-section h2 {
+            color: var(--lime-green);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            color: var(--lime-green);
+            margin-bottom: 0.5rem;
+        }
+
+        input, button {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--lime-dim);
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--text-primary);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+        }
+
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 10px var(--lime-dim);
+        }
+
+        button {
+            background: var(--lime-dim);
+            color: var(--bg-black);
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: var(--lime-green);
+            box-shadow: 0 0 20px var(--lime-dim);
+        }
+
+        .result {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(0, 255, 157, 0.1);
+            border-radius: 6px;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .result span {
+            color: var(--lime-green);
+        }
+
+        .output-html {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(0, 255, 157, 0.05);
+            border-radius: 6px;
+            font-family: 'Fira Code', monospace;
+            color: var(--lime-green);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Add Bold Tag in String</h1>
+            <p style="color: var(--text-muted);">LeetCode Problem - String Manipulation & Interval Merging</p>
+        </header>
+
+        <section class="problem-desc">
+            <h2>Problem Description</h2>
+            <p>Given a string s and an array of strings words, add bold tags around substrings that exist in words. Overlapping or consecutive substrings should be merged into a single bold section.</p>
+        </section>
+
+        <section class="code-section">
+            <h2>JavaScript Solution</h2>
+            <pre><code><span class="keyword">function</span> <span class="function">addBoldTag</span>(s, words) {
+    <span class="keyword">const</span> n = s.length;
+    <span class="keyword">const</span> bold = <span class="keyword">new</span> <span class="function">Array</span>(n).<span class="function">fill</span>(<span class="keyword">false</span>);
+    
+    <span class="comment">// Mark characters that should be bold</span>
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < n; i++) {
+        <span class="keyword">for</span> (<span class="keyword">const</span> word <span class="keyword">of</span> words) {
+            <span class="keyword">if</span> (s.<span class="function">startsWith</span>(word, i)) {
+                <span class="keyword">for</span> (<span class="keyword">let</span> j = i; j < i + word.length; j++) {
+                    bold[j] = <span class="keyword">true</span>;
+                }
+            }
+        }
+    }
+    
+    <span class="comment">// Build result with bold tags</span>
+    <span class="keyword">const</span> result = [];
+    <span class="keyword">let</span> inBold = <span class="keyword">false</span>;
+    
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < n; i++) {
+        <span class="keyword">if</span> (bold[i] && !inBold) {
+            result.<span class="function">push</span>(<span class="string">'&lt;b&gt;'</span>);
+            inBold = <span class="keyword">true</span>;
+        } <span class="keyword">else</span> <span class="keyword">if</span> (!bold[i] && inBold) {
+            result.<span class="function">push</span>(<span class="string">'&lt;/b&gt;'</span>);
+            inBold = <span class="keyword">false</span>;
+        }
+        result.<span class="function">push</span>(s[i]);
+    }
+    
+    <span class="keyword">if</span> (inBold) {
+        result.<span class="function">push</span>(<span class="string">'&lt;/b&gt;'</span>);
+    }
+    
+    <span class="keyword">return</span> result.<span class="function">join</span>(<span class="string">''</span>);
+}
+
+<span class="comment">// Usage Example:</span>
+<span class="keyword">const</span> s = <span class="string">"abcxyz123"</span>;
+<span class="keyword">const</span> words = [<span class="string">"abc"</span>, <span class="string">"xyz"</span>];
+console.<span class="function">log</span>(<span class="function">addBoldTag</span>(s, words)); <span class="comment">// "&lt;b&gt;abc&lt;/b&gt;&lt;b&gt;xyz&lt;/b&gt;123"</span></code></pre>
+        </section>
+
+        <section class="demo-section">
+            <h2>Interactive Demo</h2>
+            <div class="input-group">
+                <label for="string-input">String s:</label>
+                <input type="text" id="string-input" value="abcxyz123" style="width: 100%;">
+            </div>
+            <div class="input-group">
+                <label for="words-input">Words (comma-separated):</label>
+                <input type="text" id="words-input" value="abc,xyz,123" style="width: 100%;">
+            </div>
+            <button onclick="runDemo()">Add Bold Tags</button>
+            <div class="result" id="result">
+                Result: <span id="output">-</span>
+            </div>
+            <div class="output-html" id="output-html"></div>
+        </section>
+    </div>
+
+    <script>
+        function addBoldTag(s, words) {
+            const n = s.length;
+            const bold = new Array(n).fill(false);
+            
+            for (let i = 0; i < n; i++) {
+                for (const word of words) {
+                    if (s.startsWith(word, i)) {
+                        for (let j = i; j < i + word.length; j++) {
+                            bold[j] = true;
+                        }
+                    }
+                }
+            }
+            
+            const result = [];
+            let inBold = false;
+            
+            for (let i = 0; i < n; i++) {
+                if (bold[i] && !inBold) {
+                    result.push('<b>');
+                    inBold = true;
+                } else if (!bold[i] && inBold) {
+                    result.push('</b>');
+                    inBold = false;
+                }
+                result.push(s[i]);
+            }
+            
+            if (inBold) {
+                result.push('</b>');
+            }
+            
+            return result.join('');
+        }
+
+        function runDemo() {
+            const stringInput = document.getElementById('string-input').value;
+            const wordsInput = document.getElementById('words-input').value;
+            const words = wordsInput.split(',').map(w => w.trim());
+            
+            const result = addBoldTag(stringInput, words);
+            
+            document.getElementById('output').textContent = result;
+            document.getElementById('output-html').innerHTML = result;
+        }
+    </script>
+</body>
+</html>

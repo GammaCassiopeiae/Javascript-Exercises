@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Display Table of Food Orders in a Restaurant | Algorithm Visualizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Inter:wght@300;400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --neon-cyan: #00f3ff; --neon-magenta: #ff00ff; --neon-green: #00ff9d; --neon-purple: #bd00ff; --neon-orange: #ff6b00; --bg-deep: #050505; --bg-card: rgba(255, 255, 255, 0.08); --text-primary: #ffffff; --text-muted: rgba(255, 255, 255, 0.7); --font-display: 'Rajdhani', system-ui, sans-serif; --font-body: 'Inter', system-ui, sans-serif; --font-mono: 'Fira Code', monospace; --space-xs: 0.25rem; --space-sm: 0.5rem; --space-md: 1rem; --space-lg: 2rem; --space-xl: 4rem; --glow-cyan: 0 0 5px var(--neon-cyan), 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan); --transition-fast: 0.1s; --transition-base: 0.3s; --ease-out: cubic-bezier(0.4, 0, 0.2, 1); --z-sticky: 100; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background-color: var(--bg-deep); color: var(--text-primary); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; }
+    ::selection { background: var(--neon-cyan); color: #000; }
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: var(--bg-deep); }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--neon-cyan), var(--neon-purple)); border-radius: 5px; }
+    .l-body { display: flex; flex-direction: column; min-height: 100vh; }
+    .l-header { position: sticky; top: 0; z-index: var(--z-sticky); background: rgba(5, 5, 5, 0.95); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(0, 243, 255, 0.2); }
+    .l-main { flex: 1; padding: var(--space-xl) var(--space-md); max-width: 1400px; margin-inline: auto; width: 100%; }
+    .l-single-column { max-width: 900px; margin-inline: auto; }
+    .c-header { padding: var(--space-md) var(--space-lg); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-md); }
+    .c-header__brand { font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; letter-spacing: 0.1em; background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .c-header__nav { display: flex; gap: var(--space-md); }
+    .c-nav-link { color: var(--text-muted); text-decoration: none; font-weight: 500; padding: var(--space-sm) var(--space-md); border: 1px solid transparent; border-radius: 4px; transition: all var(--transition-base) var(--ease-out); position: relative; }
+    .c-nav-link::after { content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px; background: var(--neon-cyan); transform: translateX(-50%); transition: width var(--transition-base) var(--ease-out); }
+    .c-nav-link:hover { color: var(--neon-cyan); }
+    .c-nav-link:hover::after { width: 80%; }
+    .c-card { background: var(--bg-card); border: 1px solid rgba(0, 243, 255, 0.15); border-radius: 12px; padding: var(--space-lg); backdrop-filter: blur(10px); transition: all var(--transition-base) var(--ease-out); position: relative; overflow: hidden; }
+    .c-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta), var(--neon-purple)); opacity: 0; transition: opacity var(--transition-base) var(--ease-out); }
+    .c-card:hover { transform: translateY(-5px); border-color: rgba(0, 243, 255, 0.4); box-shadow: var(--glow-cyan); }
+    .c-card:hover::before { opacity: 1; }
+    .c-card__header { margin-bottom: var(--space-md); }
+    .c-card__title { font-family: var(--font-display); font-size: clamp(1.25rem, 2.5vw, 1.5rem); font-weight: 700; color: var(--neon-cyan); letter-spacing: 0.05em; display: flex; align-items: center; gap: var(--space-sm); }
+    .c-card__title::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(0, 243, 255, 0.5), transparent); }
+    .c-card__content { color: var(--text-muted); }
+    .c-code-block { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(189, 0, 255, 0.2); border-radius: 8px; padding: var(--space-md); overflow-x: auto; font-family: var(--font-mono); font-size: 0.875rem; line-height: 1.8; position: relative; }
+    .c-code-block__header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm); padding-bottom: var(--space-sm); border-bottom: 1px solid rgba(189, 0, 255, 0.1); }
+    .c-code-block__lang { color: var(--neon-purple); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
+    .c-code-block__copy { background: transparent; border: 1px solid rgba(0, 243, 255, 0.3); color: var(--neon-cyan); padding: var(--space-xs) var(--space-sm); border-radius: 4px; cursor: pointer; font-size: 0.75rem; transition: all var(--transition-fast) var(--ease-out); }
+    .c-code-block__copy:hover { background: rgba(0, 243, 255, 0.1); box-shadow: 0 0 10px rgba(0, 243, 255, 0.3); }
+    .c-code-block pre { margin: 0; white-space: pre-wrap; word-wrap: break-word; }
+    .c-code-block code { color: var(--text-primary); }
+    .token-keyword { color: var(--neon-magenta); }
+    .token-function { color: var(--neon-cyan); }
+    .token-string { color: var(--neon-green); }
+    .token-comment { color: var(--text-muted); font-style: italic; }
+    .token-number { color: var(--neon-orange); }
+    .token-operator { color: var(--neon-purple); }
+    .c-input-group { margin-bottom: var(--space-md); }
+    .c-input-label { display: block; color: var(--neon-cyan); font-size: 0.875rem; font-weight: 500; margin-bottom: var(--space-sm); }
+    .c-input-label__required { color: var(--neon-magenta); margin-left: var(--space-xs); }
+    .c-input { width: 100%; padding: 0.8rem 1.2rem; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(0, 243, 255, 0.2); border-radius: 8px; color: var(--text-primary); font-family: var(--font-mono); font-size: 0.875rem; transition: all var(--transition-base) var(--ease-out); caret-color: var(--neon-cyan); }
+    .c-input:focus { outline: none; border-color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 243, 255, 0.3); }
+    .c-input::placeholder { opacity: 0.4; }
+    .c-button { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-sm); padding: 0.8rem 1.5rem; background: linear-gradient(135deg, rgba(0, 243, 255, 0.1), rgba(189, 0, 255, 0.1)); border: 1px solid rgba(0, 243, 255, 0.3); border-radius: 8px; color: var(--neon-cyan); font-family: var(--font-display); font-size: 0.875rem; font-weight: 700; letter-spacing: 0.05em; cursor: pointer; transition: all var(--transition-base) var(--ease-out); text-transform: uppercase; min-height: 44px; }
+    .c-button:hover { background: linear-gradient(135deg, rgba(0, 243, 255, 0.2), rgba(189, 0, 255, 0.2)); transform: translateY(-2px); box-shadow: 0 0 20px rgba(0, 243, 255, 0.4); }
+    .c-button:active { transform: translateY(0); }
+    .c-button--primary { background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple)); color: #000; border: none; }
+    .c-button--primary:hover { box-shadow: var(--glow-cyan); }
+    .c-button-group { display: flex; gap: var(--space-md); flex-wrap: wrap; }
+    .c-visualization { background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(0, 243, 255, 0.1); border-radius: 8px; padding: var(--space-md); margin-top: var(--space-md); overflow-x: auto; }
+    .order-table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+    .order-table th, .order-table td { border: 1px solid rgba(0, 243, 255, 0.2); padding: 0.5rem; text-align: center; font-family: var(--font-mono); }
+    .order-table th { background: rgba(0, 243, 255, 0.1); color: var(--neon-cyan); font-weight: 700; }
+    .order-table td { background: rgba(255, 255, 255, 0.02); }
+    .order-table tr:hover td { background: rgba(0, 243, 255, 0.05); }
+    .c-result { margin-top: var(--space-md); padding: var(--space-md); background: rgba(0, 255, 157, 0.05); border: 1px solid rgba(0, 255, 157, 0.3); border-radius: 8px; display: flex; align-items: center; gap: var(--space-md); opacity: 0; transform: translateY(10px); transition: all var(--transition-base) var(--ease-out); }
+    .c-result.is-visible { opacity: 1; transform: translateY(0); }
+    .c-result__icon { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(0, 255, 157, 0.1); border-radius: 50%; color: var(--neon-green); font-size: 1.5rem; }
+    .c-result__content { flex: 1; }
+    .c-result__title { font-family: var(--font-display); font-size: 1.125rem; font-weight: 700; color: var(--neon-green); margin-bottom: var(--space-xs); }
+    .c-result__value { font-family: var(--font-mono); font-size: 0.875rem; color: var(--text-primary); white-space: pre-wrap; }
+    .c-explanation { margin-top: var(--space-lg); }
+    .c-explanation__list { list-style: none; padding-left: 0; }
+    .c-explanation__item { position: relative; padding-left: var(--space-lg); margin-bottom: var(--space-md); color: var(--text-muted); }
+    .c-explanation__item::before { content: '▸'; position: absolute; left: 0; color: var(--neon-cyan); font-size: 1.125rem; }
+    .c-complexity-badge { display: inline-flex; align-items: center; gap: var(--space-sm); padding: var(--space-sm) var(--space-md); background: rgba(189, 0, 255, 0.1); border: 1px solid rgba(189, 0, 255, 0.3); border-radius: 20px; font-family: var(--font-mono); font-size: 0.75rem; color: var(--neon-purple); margin-right: var(--space-sm); }
+    .c-footer { margin-top: auto; padding: var(--space-lg); border-top: 1px solid rgba(0, 243, 255, 0.1); text-align: center; color: var(--text-muted); font-size: 0.875rem; }
+    .c-footer__links { display: flex; justify-content: center; gap: var(--space-lg); margin-bottom: var(--space-md); }
+    .c-footer__link { color: var(--neon-cyan); text-decoration: none; transition: color var(--transition-fast); }
+    .c-footer__link:hover { color: var(--neon-magenta); }
+    @media (max-width: 768px) { .c-header { flex-direction: column; text-align: center; } .c-header__nav { justify-content: center; } .c-button-group { flex-direction: column; } .c-button { width: 100%; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+  </style>
+</head>
+<body class="l-body">
+  <header class="l-header">
+    <div class="c-header">
+      <h1 class="c-header__brand">⚡ ALGO_VISUALIZER</h1>
+      <nav class="c-header__nav">
+        <a href="#" class="c-nav-link">Problems</a>
+        <a href="#" class="c-nav-link">Visualize</a>
+        <a href="#" class="c-nav-link">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="l-main">
+    <div class="l-single-column">
+      <article class="c-card">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>🍽️</span>
+            Display Table of Food Orders
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <p>Given orders from restaurant customers, generate a display table. The table shows how many of each food item each table ordered. First column is table number, then food items in alphabetical order.</p>
+          <div style="margin-top: var(--space-md); display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+            <span class="c-complexity-badge">⏱️ Time: O(n log n + m log m)</span>
+            <span class="c-complexity-badge">💾 Space: O(n * m)</span>
+            <span class="c-complexity-badge">📊 Difficulty: Medium</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>🎯</span>
+            Input Orders
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <div class="c-input-group">
+            <label class="c-input-label" for="ordersInput">Orders (format: table,food;table,food;...)</label>
+            <input type="text" id="ordersInput" class="c-input" placeholder="e.g., 5,Beef;3,Beef;5,Curry" value="5,Beef;3,Beef;5,Curry;2,Fried Rice;3,Curry">
+          </div>
+          <div class="c-button-group">
+            <button id="btnGenerate" class="c-button c-button--primary">
+              <span>🚀</span> Generate Table
+            </button>
+            <button id="btnVisualize" class="c-button">
+              <span>👁️</span> Visualize Table
+            </button>
+            <button id="btnClear" class="c-button">
+              <span>🗑️</span> Clear
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>📈</span>
+            Result
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <div id="resultContainer" class="c-result">
+            <div class="c-result__icon">✓</div>
+            <div class="c-result__content">
+              <div class="c-result__title">Display Table</div>
+              <div id="resultValue" class="c-result__value"></div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>🔬</span>
+            Table Visualization
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <div id="visualizationContainer" class="c-visualization">
+            <p style="color: var(--text-muted); text-align: center;">Click "Visualize Table" to see the formatted display table</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>💻</span>
+            Solution Code
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <div class="c-code-block">
+            <div class="c-code-block__header">
+              <span class="c-code-block__lang">JavaScript</span>
+              <button class="c-code-block__copy js-copy-code">Copy</button>
+            </div>
+            <pre><code id="solutionCode"><span class="token-keyword">function</span> <span class="token-function">displayTable</span>(orders) {
+  <span class="token-keyword">const</span> tableMap = <span class="token-keyword">new</span> <span class="token-function">Map</span>();  <span class="token-comment">// table -> {food -> count}</span>
+  <span class="token-keyword">const</span> foodSet = <span class="token-keyword">new</span> <span class="token-function">Set</span>();
+
+  <span class="token-comment">// Process all orders</span>
+  <span class="token-keyword">for</span> (<span class="token-keyword">const</span> [customer, table, food] of orders) {
+    <span class="token-keyword">if</span> (!tableMap.has(table)) {
+      tableMap.set(table, {});
+    }
+    <span class="token-keyword">const</span> tableOrders = tableMap.get(table);
+    tableOrders[food] = (tableOrders[food] || <span class="token-number">0</span>) + <span class="token-number">1</span>;
+    foodSet.add(food);
+  }
+
+  <span class="token-comment">// Sort tables numerically and foods alphabetically</span>
+  <span class="token-keyword">const</span> tables = <span class="token-function">Array</span>.from(tableMap.keys()).sort((a, b) => <span class="token-function">parseInt</span>(a) - <span class="token-function">parseInt</span>(b));
+  <span class="token-keyword">const</span> foods = <span class="token-function">Array</span>.from(foodSet).sort();
+
+  <span class="token-comment">// Build result table</span>
+  <span class="token-keyword">const</span> result = [];
+  
+  <span class="token-comment">// Header row</span>
+  result.push([<span class="token-string">"Table"</span>, ...foods]);
+
+  <span class="token-comment">// Data rows</span>
+  <span class="token-keyword">for</span> (<span class="token-keyword">const</span> table of tables) {
+    <span class="token-keyword">const</span> row = [table];
+    <span class="token-keyword">const</span> tableOrders = tableMap.get(table);
+    <span class="token-keyword">for</span> (<span class="token-keyword">const</span> food of foods) {
+      row.push((tableOrders[food] || <span class="token-number">0</span>).toString());
+    }
+    result.push(row);
+  }
+
+  <span class="token-keyword">return</span> result;
+}</code></pre>
+          </div>
+        </div>
+      </article>
+
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>📖</span>
+            Algorithm Explanation
+          </h2>
+        </header>
+        <div class="c-card__content c-explanation">
+          <ul class="c-explanation__list">
+            <li class="c-explanation__item">
+              Use a Map to track each table's orders (table number -> food counts).
+            </li>
+            <li class="c-explanation__item">
+              Use a Set to collect all unique food items.
+            </li>
+            <li class="c-explanation__item">
+              Sort tables numerically and food items alphabetically.
+            </li>
+            <li class="c-explanation__item">
+              Build the result table with header row and data rows for each table.
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="c-card" style="margin-top: var(--space-lg);">
+        <header class="c-card__header">
+          <h2 class="c-card__title">
+            <span>📝</span>
+            Example Walkthrough
+          </h2>
+        </header>
+        <div class="c-card__content">
+          <div class="c-code-block">
+            <pre><code>Input Orders:
+[["David","5","Beef"], ["Laura","3","Beef"], 
+ ["James","5","Curry"], ["John","2","Fried Rice"],
+ ["Sarah","3","Curry"]]
+
+Step 1: Collect data
+Table 5: {Beef: 1, Curry: 1}
+Table 3: {Beef: 1, Curry: 1}
+Table 2: {Fried Rice: 1}
+Foods: [Beef, Curry, Fried Rice]
+
+Step 2: Sort tables: [2, 3, 5]
+
+Step 3: Build table
+Table | Beef | Curry | Fried Rice
+------|------|-------|------------
+2     | 0    | 0     | 1
+3     | 1    | 1     | 0
+5     | 1    | 1     | 0
+
+Result: [["Table","Beef","Curry","Fried Rice"],
+         ["2","0","0","1"],
+         ["3","1","1","0"],
+         ["5","1","1","0"]]</code></pre>
+          </div>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <footer class="c-footer">
+    <div class="c-footer__links">
+      <a href="#" class="c-footer__link">GitHub</a>
+      <a href="#" class="c-footer__link">Documentation</a>
+      <a href="#" class="c-footer__link">Contact</a>
+    </div>
+    <p>&copy; 2026 Algo Visualizer. Built with 💜 and neon dreams.</p>
+  </footer>
+
+  <script>
+    (function() {
+      'use strict';
+
+      const ordersInput = document.getElementById('ordersInput');
+      const btnGenerate = document.getElementById('btnGenerate');
+      const btnVisualize = document.getElementById('btnVisualize');
+      const btnClear = document.getElementById('btnClear');
+      const resultContainer = document.getElementById('resultContainer');
+      const resultValue = document.getElementById('resultValue');
+      const visualizationContainer = document.getElementById('visualizationContainer');
+      const copyButtons = document.querySelectorAll('.js-copy-code');
+
+      function parseOrders(input) {
+        return input.split(';').map(order => {
+          const parts = order.split(',');
+          return [parts[0].trim(), parts[1].trim(), parts[2].trim()];
+        }).filter(o => o[1] && o[2]);
+      }
+
+      function displayTable(orders) {
+        const tableMap = new Map();
+        const foodSet = new Set();
+
+        for (const [, table, food] of orders) {
+          if (!tableMap.has(table)) {
+            tableMap.set(table, {});
+          }
+          const tableOrders = tableMap.get(table);
+          tableOrders[food] = (tableOrders[food] || 0) + 1;
+          foodSet.add(food);
+        }
+
+        const tables = Array.from(tableMap.keys()).sort((a, b) => parseInt(a) - parseInt(b));
+        const foods = Array.from(foodSet).sort();
+
+        const result = [];
+        result.push(["Table", ...foods]);
+
+        for (const table of tables) {
+          const row = [table];
+          const tableOrders = tableMap.get(table);
+          for (const food of foods) {
+            row.push((tableOrders[food] || 0).toString());
+          }
+          result.push(row);
+        }
+
+        return result;
+      }
+
+      function tableToText(table) {
+        return table.map(row => '[' + row.join(', ') + ']').join('\n');
+      }
+
+      function renderTable(table) {
+        let html = '<table class="order-table"><thead><tr>';
+        for (const cell of table[0]) {
+          html += `<th>${cell}</th>`;
+        }
+        html += '</tr></thead><tbody>';
+        for (let i = 1; i < table.length; i++) {
+          html += '<tr>';
+          for (const cell of table[i]) {
+            html += `<td>${cell}</td>`;
+          }
+          html += '</tr>';
+        }
+        html += '</tbody></table>';
+        return html;
+      }
+
+      function handleGenerate() {
+        const orders = parseOrders(ordersInput.value);
+        if (orders.length === 0) {
+          alert('Please enter valid orders');
+          return;
+        }
+        const table = displayTable(orders);
+        resultValue.textContent = tableToText(table);
+        resultContainer.classList.add('is-visible');
+        resultContainer.style.animation = 'neon-pulse 1s ease-in-out';
+        setTimeout(() => { resultContainer.style.animation = ''; }, 1000);
+      }
+
+      function handleVisualize() {
+        const orders = parseOrders(ordersInput.value);
+        if (orders.length === 0) {
+          alert('Please enter valid orders');
+          return;
+        }
+        const table = displayTable(orders);
+        visualizationContainer.innerHTML = renderTable(table);
+      }
+
+      function handleClear() {
+        ordersInput.value = '';
+        resultContainer.classList.remove('is-visible');
+        visualizationContainer.innerHTML = '<p style="color: var(--text-muted); text-align: center;">Click "Visualize Table" to see the formatted display table</p>';
+      }
+
+      function handleCopyCode(event) {
+        const codeBlock = event.target.closest('.c-code-block');
+        const code = codeBlock.querySelector('code');
+        navigator.clipboard.writeText(code.textContent).then(() => {
+          const originalText = event.target.textContent;
+          event.target.textContent = 'Copied!';
+          event.target.style.background = 'rgba(0, 255, 157, 0.2)';
+          event.target.style.borderColor = 'var(--neon-green)';
+          setTimeout(() => {
+            event.target.textContent = originalText;
+            event.target.style.background = '';
+            event.target.style.borderColor = '';
+          }, 2000);
+        });
+      }
+
+      btnGenerate.addEventListener('click', handleGenerate);
+      btnVisualize.addEventListener('click', handleVisualize);
+      btnClear.addEventListener('click', handleClear);
+      copyButtons.forEach(button => { button.addEventListener('click', handleCopyCode); });
+      ordersInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleGenerate(); });
+      window.addEventListener('load', handleGenerate);
+    })();
+  </script>
+</body>
+</html>

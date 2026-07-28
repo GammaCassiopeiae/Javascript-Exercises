@@ -1,0 +1,103 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Euler</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400&family=Inter:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="l-grid-main">
+        <header class="c-header">
+            <div class="l-container c-header__content">
+                <a href="index.html" class="c-brand">
+                    <span>//</span> NEON_EULER
+                </a>
+            </div>
+        </header>
+
+        <main class="l-container l-section">
+            <div class="u-mb-2">
+                <a href="index.html" class="c-btn c-btn--back">← Back to Grid</a>
+            </div>
+            
+            <div class="c-problem-layout">
+                <section class="c-panel">
+                    <h2 class="u-text-glow">#8 Largest Product in Series</h2>
+                    <p class="u-mb-2">Find the thirteen adjacent digits in the 1000-digit number that have the greatest product. (Data embedded in code)</p>
+                    
+                    <button id="runBtn" class="c-btn">Execute Algorithm</button>
+                    <div id="result" class="c-result-display">Waiting for input...</div>
+                </section>
+                
+                <section class="c-panel c-panel--console">
+                    <div class="u-mb-1" style="color: var(--neon-secondary)">// SOURCE CODE</div>
+                    <pre class="c-code-block"><code>const solve = () => {
+    const num = "7316717653133062491922511967442657474235534919493496983520312774506326239578318016984801869478851843858615607891129494954595017379583319528532088055111254069874715852386305071569329096329522744304355766896648950445244523161731856403098711121722383113622298934233803081353362766142828064444866452387493035890729629049156044077239071381051585930796086670172427121883998797908792274921901699720888093776657273330010533678812202354218097512545405947522435258490771167055601360483958644670632441572215539753697817977846174064955149290862569321978468622482839722413756570560574902614079729686524145351004748216637048440319989000889524345065854122758866688116427171479924442928230863465674813919123162824586178664583591245665294765456828489128831426076900422421902267105562632111110937054421750694165896040807198403850962455444362981230987879927244284909188845801561660979191338754992005240636899125607176060588611646710940507754100225698315520005593572972571636269561882670428252483600823257530420752963450";
+    let maxProduct = 0;
+    for (let i = 0; i <= num.length - 13; i++) {
+        let product = 1;
+        for (let j = 0; j < 13; j++) {
+            product *= parseInt(num[i + j]);
+        }
+        if (product > maxProduct) {
+            maxProduct = product;
+        }
+    }
+    return maxProduct;
+};</code></pre>
+                </section>
+            </div>
+        </main>
+        
+        <script>
+            // Algorithm Logic
+            
+const solve = () => {
+    const num = "7316717653133062491922511967442657474235534919493496983520312774506326239578318016984801869478851843858615607891129494954595017379583319528532088055111254069874715852386305071569329096329522744304355766896648950445244523161731856403098711121722383113622298934233803081353362766142828064444866452387493035890729629049156044077239071381051585930796086670172427121883998797908792274921901699720888093776657273330010533678812202354218097512545405947522435258490771167055601360483958644670632441572215539753697817977846174064955149290862569321978468622482839722413756570560574902614079729686524145351004748216637048440319989000889524345065854122758866688116427171479924442928230863465674813919123162824586178664583591245665294765456828489128831426076900422421902267105562632111110937054421750694165896040807198403850962455444362981230987879927244284909188845801561660979191338754992005240636899125607176060588611646710940507754100225698315520005593572972571636269561882670428252483600823257530420752963450";
+    let maxProduct = 0;
+    for (let i = 0; i <= num.length - 13; i++) {
+        let product = 1;
+        for (let j = 0; j < 13; j++) {
+            product *= parseInt(num[i + j]);
+        }
+        if (product > maxProduct) {
+            maxProduct = product;
+        }
+    }
+    return maxProduct;
+};
+        
+
+            // DOM Interaction
+            document.getElementById('runBtn').addEventListener('click', () => {
+                const display = document.getElementById('result');
+                display.innerHTML = '<span style="color:var(--neon-primary)">Computing...</span>';
+                
+                // Small delay to allow UI to update before blocking
+                setTimeout(() => {
+                    const startTime = performance.now();
+                    try {
+                        const result = solve();
+                        const endTime = performance.now();
+                        const time = (endTime - startTime).toFixed(2);
+                        display.innerHTML = `${result} <span style="font-size:0.8em; color:var(--text-muted); margin-left:1rem">(${time}ms)</span>`;
+                        display.classList.remove('is-error');
+                    } catch (e) {
+                        display.innerText = "Error: " + e.message;
+                        display.classList.add('is-error');
+                    }
+                }, 10);
+            });
+        </script>
+        
+        <footer class="c-footer">
+            <div class="l-container">
+                <p>NEON GRID ARCHITECT // v2.0</p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

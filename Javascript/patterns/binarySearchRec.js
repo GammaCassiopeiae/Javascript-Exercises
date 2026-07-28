@@ -15,3 +15,4 @@ const binarySearchRecursive = (arr, target, left = 0, right = arr.length - 1) =>
 
 const data = [2, 4, 6, 8, 10, 12];
 console.log("Indeks elementa:", binarySearchRecursive(data, 10));
+//Program end.

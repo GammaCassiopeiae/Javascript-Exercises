@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Quick Sort Algorithm - LeetCode Tutorial">
+    <title>Quick Sort - LeetCode Algorithms</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Back to Home</a>
+            <h1 class="c-title">⚡ Quick Sort</h1>
+            <p class="c-subtitle">In-place Sorting with O(n log n) Average Time</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <div class="c-algo-content">
+                <aside class="c-algo-aside">
+                    <h3>Quick Facts</h3>
+                    <ul>
+                        <li><strong>Category:</strong> Searching & Sorting</li>
+                        <li><strong>Time:</strong> O(n log n) avg, O(n²) worst</li>
+                        <li><strong>Space:</strong> O(log n)</li>
+                        <li><strong>Stable:</strong> No</li>
+                        <li><strong>In-place:</strong> Yes</li>
+                    </ul>
+                    <h3>Key Properties</h3>
+                    <ul>
+                        <li>Partition-based</li>
+                        <li>Divide and Conquer</li>
+                        <li>Cache-friendly</li>
+                        <li>Practical sorting</li>
+                        <li>Used in std::sort</li>
+                    </ul>
+                </aside>
+
+                <div class="c-algo-details">
+                    <div class="c-algo-description">
+                        <h2>Overview</h2>
+                        <p>Quick sort selects a pivot element and partitions the array into smaller and larger elements. Recursively sorts partitions. Average O(n log n) but worst case O(n²) with bad pivot selection.</p>
+                        <p><strong>Key:</strong> Partition strategy and pivot selection determine performance.</p>
+                    </div>
+
+                    <div class="c-code-block">
+                        <pre><code>// Quick Sort - In-place Sorting
+function quickSort(arr, left = 0, right = arr.length - 1) {
+    if (left < right) {
+        const pi = partition(arr, left, right);
+        quickSort(arr, left, pi - 1);
+        quickSort(arr, pi + 1, right);
+    }
+    return arr;
+}
+
+function partition(arr, left, right) {
+    const pivot = arr[right];
+    let i = left - 1;
+    
+    for (let j = left; j < right; j++) {
+        if (arr[j] < pivot) {
+            i++;
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+    }
+    
+    [arr[i + 1], arr[right]] = [arr[right], arr[i + 1]];
+    return i + 1;
+}
+
+// Example
+const arr = [38, 27, 43, 3, 9, 82, 10];
+console.log(quickSort([...arr]));
+// [3, 9, 10, 27, 38, 43, 82]</code></pre>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Pivot Selection Strategies</h2>
+                        <p>Pivot choice significantly impacts performance:</p>
+                    </div>
+
+                    <div class="c-code-block">
+                        <pre><code>// Quick Sort with Random Pivot (Better Average Case)
+function quickSortRandom(arr, left = 0, right = arr.length - 1) {
+    if (left < right) {
+        const pi = partitionRandom(arr, left, right);
+        quickSortRandom(arr, left, pi - 1);
+        quickSortRandom(arr, pi + 1, right);
+    }
+    return arr;
+}
+
+function partitionRandom(arr, left, right) {
+    // Pick random pivot
+    const randomIdx = left + Math.floor(Math.random() * (right - left + 1));
+    [arr[randomIdx], arr[right]] = [arr[right], arr[randomIdx]];
+    
+    const pivot = arr[right];
+    let i = left - 1;
+    
+    for (let j = left; j < right; j++) {
+        if (arr[j] < pivot) {
+            i++;
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+    }
+    
+    [arr[i + 1], arr[right]] = [arr[right], arr[i + 1]];
+    return i + 1;
+}
+
+// Median-of-Three Pivot
+function getMedianOfThree(arr, left, right) {
+    const mid = Math.floor((left + right) / 2);
+    
+    if (arr[left] > arr[mid]) [arr[left], arr[mid]] = [arr[mid], arr[left]];
+    if (arr[left] > arr[right]) [arr[left], arr[right]] = [arr[right], arr[left]];
+    if (arr[mid] > arr[right]) [arr[mid], arr[right]] = [arr[right], arr[mid]];
+    
+    return mid;
+}</code></pre>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Worst Case Scenario</h2>
+                        <p>Quick sort degrades to O(n²) when pivot is always the smallest or largest element (already sorted arrays with last element pivot).</p>
+                    </div>
+
+                    <div class="c-code-block">
+                        <pre><code>// Quick Sort vs Merge Sort - When to Use
+console.log("Quick Sort Pros:");
+// - In-place sorting (space efficient)
+// - Cache-friendly
+// - Fast practical performance
+// - Used in standard libraries
+
+console.log("Quick Sort Cons:");
+// - O(n²) worst case
+// - Not stable
+// - Pivot selection matters
+
+console.log("Use Quick Sort when:");
+// - Space is limited
+// - Average case performance matters more
+// - Don't need stability
+// - Data is typically random
+
+console.log("Use Merge Sort when:");
+// - Guaranteed O(n log n) needed
+// - Stability required
+// - Data has specific patterns
+// - Worst case matters more</code></pre>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Key Insights</h2>
+                        <ul style="color: var(--text-secondary);">
+                            <li><strong>Pivot Critical:</strong> Random or median-of-three improves average case</li>
+                            <li><strong>In-place:</strong> Only needs O(log n) stack space</li>
+                            <li><strong>Not Stable:</strong> Order of equal elements not preserved</li>
+                            <li><strong>Practical Choice:</strong> Most libraries use hybrid approaches</li>
+                        </ul>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Time & Space Complexity</h2>
+                        <ul style="color: var(--text-secondary);">
+                            <li><strong>Best:</strong> O(n log n) balanced partitions</li>
+                            <li><strong>Average:</strong> O(n log n) with random pivot</li>
+                            <li><strong>Worst:</strong> O(n²) with bad pivot selection</li>
+                            <li><strong>Space:</strong> O(log n) recursion stack</li>
+                        </ul>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Practice Problems</h2>
+                        <ul style="color: var(--text-secondary);">
+                            <li><strong>Core:</strong> Understand partitioning</li>
+                            <li><strong>Medium:</strong> Quickselect (K-th element)</li>
+                            <li><strong>Hard:</strong> 3-way partition (Dutch National Flag)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <nav class="c-nav">
+                <ul class="c-nav__list">
+                    <li class="c-nav__item"><a href="algorithms.html" class="c-link c-link--small">← Back to All Algorithms</a></li>
+                    <li class="c-nav__item"><a href="bfs.html" class="c-link c-link--small">BFS →</a></li>
+                </ul>
+            </nav>
+            <p class="u-text-center">🌌 Neon-Noir Design System</p>
+        </div>
+    </footer>
+</body>
+</html>

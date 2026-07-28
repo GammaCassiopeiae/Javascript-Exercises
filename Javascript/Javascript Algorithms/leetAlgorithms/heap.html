@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heap - Priority Queue</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Home</a>
+            <h1 class="c-title">⬆️ Heap</h1>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <div class="c-code-block">
+                <pre><code>// Min Heap Implementation
+class MinHeap {
+    constructor() {
+        this.heap = [];
+    }
+    
+    parent(i) { return Math.floor((i - 1) / 2); }
+    left(i) { return 2 * i + 1; }
+    right(i) { return 2 * i + 2; }
+    
+    swap(i, j) {
+        [this.heap[i], this.heap[j]] = [this.heap[j], this.heap[i]];
+    }
+    
+    push(val) {
+        this.heap.push(val);
+        this.bubbleUp(this.heap.length - 1);
+    }
+    
+    pop() {
+        const root = this.heap[0];
+        const last = this.heap.pop();
+        if (this.heap.length > 0) {
+            this.heap[0] = last;
+            this.bubbleDown(0);
+        }
+        return root;
+    }
+    
+    bubbleUp(i) {
+        while (i > 0 && this.heap[this.parent(i)] > this.heap[i]) {
+            this.swap(i, this.parent(i));
+            i = this.parent(i);
+        }
+    }
+    
+    bubbleDown(i) {
+        while (true) {
+            let smallest = i;
+            if (this.left(i) < this.heap.length && this.heap[this.left(i)] < this.heap[smallest]) {
+                smallest = this.left(i);
+            }
+            if (this.right(i) < this.heap.length && this.heap[this.right(i)] < this.heap[smallest]) {
+                smallest = this.right(i);
+            }
+            if (smallest === i) break;
+            this.swap(i, smallest);
+            i = smallest;
+        }
+    }
+}
+
+// Time: O(log n) for push/pop
+// Space: O(n)</code></pre>
+            </div>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">🌌 Neon-Noir Design System</p>
+        </div>
+    </footer>
+</body>
+</html>

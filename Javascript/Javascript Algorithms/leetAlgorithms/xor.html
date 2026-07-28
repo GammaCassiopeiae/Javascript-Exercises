@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XOR Operations - Bit Manipulation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Home</a>
+            <h1 class="c-title">⊕ XOR Operations</h1>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <div class="c-code-block">
+                <pre><code>// Find Single Number (all others appear twice)
+function singleNumber(nums) {
+    let result = 0;
+    for (let num of nums) {
+        result ^= num;
+    }
+    return result;
+}
+
+// Find Two Single Numbers
+function singleNumber2(nums) {
+    let xor = 0;
+    for (let num of nums) xor ^= num;
+    
+    const bit = xor & (-xor);
+    
+    let num1 = 0, num2 = 0;
+    for (let num of nums) {
+        if (num & bit) {
+            num1 ^= num;
+        } else {
+            num2 ^= num;
+        }
+    }
+    
+    return [num1, num2];
+}
+
+// XOR Properties:
+// a ^ a = 0
+// a ^ 0 = a
+// a ^ b = b ^ a (commutative)
+// (a ^ b) ^ c = a ^ (b ^ c) (associative)
+
+// Time: O(n), Space: O(1)</code></pre>
+            </div>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">🌌 Neon-Noir Design System</p>
+        </div>
+    </footer>
+</body>
+</html>

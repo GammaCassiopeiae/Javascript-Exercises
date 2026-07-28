@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backtracking - LeetCode Algorithms</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Back to Home</a>
+            <h1 class="c-title">🔄 Backtracking</h1>
+            <p class="c-subtitle">Explore All Possibilities Systematically</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <div class="c-algo-content">
+                <aside class="c-algo-aside">
+                    <h3>Quick Facts</h3>
+                    <ul>
+                        <li><strong>Time:</strong> O(n!), O(2^n)</li>
+                        <li><strong>Best For:</strong> Permutations, combinations</li>
+                        <li><strong>Pattern:</strong> DFS with state restoration</li>
+                        <li><strong>Pruning:</strong> Cut branches early</li>
+                    </ul>
+                </aside>
+
+                <div class="c-algo-details">
+                    <div class="c-algo-description">
+                        <h2>Overview</h2>
+                        <p>Backtracking explores solution space by trying each possibility, then undoing (backtracking) when needed. Essential for constraint satisfaction and exhaustive search.</p>
+                    </div>
+
+                    <div class="c-code-block">
+                        <pre><code>// Permutations using Backtracking
+function permute(nums) {
+    const result = [];
+    
+    function backtrack(current) {
+        if (current.length === nums.length) {
+            result.push([...current]);
+            return;
+        }
+        
+        for (let num of nums) {
+            if (!current.includes(num)) {
+                current.push(num);
+                backtrack(current);
+                current.pop();  // Backtrack
+            }
+        }
+    }
+    
+    backtrack([]);
+    return result;
+}
+
+// Combinations
+function combine(n, k) {
+    const result = [];
+    
+    function backtrack(start, current) {
+        if (current.length === k) {
+            result.push([...current]);
+            return;
+        }
+        
+        for (let i = start; i <= n; i++) {
+            current.push(i);
+            backtrack(i + 1, current);
+            current.pop();
+        }
+    }
+    
+    backtrack(1, []);
+    return result;
+}</code></pre>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Time Complexity</h2>
+                        <ul style="color: var(--text-secondary);">
+                            <li><strong>Permutations:</strong> O(n!)</li>
+                            <li><strong>Combinations:</strong> O(2^n)</li>
+                            <li><strong>Subsets:</strong> O(2^n)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">🌌 Neon-Noir Design System</p>
+        </div>
+    </footer>
+</body>
+</html>

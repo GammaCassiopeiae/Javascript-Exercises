@@ -1,163 +1,393 @@
 <!DOCTYPE html>
-<html lang="sl">
-
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Binary Search: 3 Ways</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Neon-Noir Binary Search Visualizer">
+    <title>BINARYSEARCH // ALGORITHM_VISUALIZER</title>
+    
+    <!-- Preconnect & Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
     <style>
+        :root {
+            /* Neon-Noir Palette */
+            --bg-dark: #050505;
+            --bg-secondary: #0a0b10;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --neon-primary: #00f3ff;
+            --neon-secondary: #ff00ff;
+            --neon-accent: #a855f7;
+            --neon-success: #1cc88a;
+            --neon-danger: #e74a3b;
+            --glow-primary: 0 0 5px rgba(0, 243, 255, 0.3), 0 0 15px rgba(0, 243, 255, 0.1);
+            --glow-secondary: 0 0 5px rgba(255, 0, 255, 0.3), 0 0 15px rgba(255, 0, 255, 0.1);
+            --glow-success: 0 0 5px rgba(28, 200, 138, 0.3), 0 0 15px rgba(28, 200, 138, 0.2);
+            --font-heading: 'Rajdhani', sans-serif;
+            --font-mono: 'Fira Code', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            background: #0f172a;
-            color: #f8fafc;
-            font-family: 'Fira Code', monospace;
+            background-color: var(--bg-dark);
+            color: #fff;
+            font-family: var(--font-heading);
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            padding: 2rem;
+            overflow-x: hidden;
         }
 
-        .card {
-            background: #1e293b;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        /* Scanlines Overlay */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 600px;
+            height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 2px;
+            pointer-events: none;
+            z-index: 2000;
+            opacity: 0.3;
         }
 
-        .array-view {
-            background: #0f172a;
-            padding: 10px;
-            border-radius: 6px;
-            color: #38bdf8;
-            word-break: break-all;
-            margin: 15px 0;
-            border: 1px solid #334155;
+        header {
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+            background: var(--bg-secondary);
         }
 
-        input {
-            background: #0f172a;
-            border: 1px solid #334155;
-            color: #fbbf24;
-            padding: 10px;
-            border-radius: 4px;
-            width: 80px;
-            font-size: 1.1rem;
+        h1 {
+            font-size: 2.5rem;
+            letter-spacing: 0.3em;
+            color: var(--neon-primary);
+            text-shadow: var(--glow-primary);
+            text-transform: uppercase;
         }
 
-        .result {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 6px;
-            background: #064e3b;
-            color: #34d399;
-            display: none;
+        .l-container {
+            flex: 1;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
         }
 
-        button {
-            background: #38bdf8;
-            color: #0f172a;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
+        /* Visualization Area */
+        .c-visualizer {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 243, 255, 0.1);
+            height: 400px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 4px;
+            padding: 20px;
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        .bar {
+            background: linear-gradient(to top, var(--neon-primary), transparent);
+            width: 100%;
+            transition: height 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+            box-shadow: var(--glow-primary);
+        }
+
+        .bar.is-out-of-bounds {
+            opacity: 0.15;
+            background: linear-gradient(to top, #444, transparent);
+            box-shadow: none;
+        }
+
+        .bar.is-mid {
+            background: #fff;
+            box-shadow: 0 0 15px #fff;
+            transform: scale(1.05);
+            z-index: 10;
+        }
+
+        .bar.is-found {
+            background: linear-gradient(to top, var(--neon-success), transparent);
+            box-shadow: var(--glow-success);
+            transform: scale(1.1);
+            z-index: 10;
+        }
+
+        .bar.is-not-found {
+            background: linear-gradient(to top, var(--neon-danger), transparent);
+            box-shadow: 0 0 10px var(--neon-danger);
+            opacity: 0.5;
+        }
+
+        /* Controls */
+        .c-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .c-target-display {
+            width: 100%;
+            text-align: center;
+            font-size: 1.8rem;
+            color: var(--neon-secondary);
+            text-shadow: var(--glow-secondary);
+            letter-spacing: 0.2em;
+            margin-bottom: 1rem;
+            font-family: var(--font-mono);
+        }
+
+        .c-btn {
+            background: transparent;
+            border: 1px solid var(--neon-primary);
+            color: var(--neon-primary);
+            padding: 0.8rem 1.5rem;
+            font-family: var(--font-heading);
+            font-weight: 700;
+            letter-spacing: 0.1em;
             cursor: pointer;
-            font-weight: bold;
-            margin: 5px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
         }
 
-        button:hover {
-            background: #7dd3fc;
+        .c-btn:hover:not(:disabled) {
+            background: rgba(0, 243, 255, 0.1);
+            box-shadow: var(--glow-primary);
+            transform: scale(1.05);
         }
 
-        .code-label {
+        .c-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            border-color: #555;
+            color: #555;
+        }
+
+        /* Code Display */
+        .c-code-window {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 0, 255, 0.2);
+            padding: 1.5rem;
+            border-radius: 4px;
+        }
+
+        .c-code-window__header {
             font-size: 0.8rem;
-            color: #94a3b8;
-            margin-top: 10px;
+            color: var(--neon-secondary);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            font-family: var(--font-mono);
+            border-bottom: 1px solid rgba(255, 0, 255, 0.1);
+            padding-bottom: 0.5rem;
+        }
+
+        pre {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #ccc;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        .token--keyword { color: var(--neon-secondary); }
+        .token--func { color: var(--neon-primary); }
+        .token--comment { color: #666; font-style: italic; }
+
+        footer {
+            padding: 2rem;
+            text-align: center;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            opacity: 0.5;
         }
     </style>
 </head>
-
 <body>
+    <header>
+        <h1>BINARYSEARCH_ENGINE</h1>
+    </header>
 
-    <div class="card">
-        <h2>Binarno Iskanje</h2>
-        <div class="code-label">Sortiran seznam (0-99):</div>
-        <div class="array-view" id="arrayDisplay"></div>
-
-        <label>Išči številko:</label>
-        <input type="number" id="targetInput" value="42">
-
-        <div style="margin-top: 15px;">
-            <button onclick="runSearch('iterative')">Iterativno</button>
-            <button onclick="runSearch('recursive')">Rekurzivno</button>
-            <button onclick="runSearch('functional')">Funkcijsko</button>
+    <div class="l-container">
+        <div class="c-visualizer" id="js-visualizer">
+            <!-- Bars generated by JS -->
         </div>
 
-        <div id="resultBox" class="result"></div>
+        <div class="c-controls">
+            <div class="c-target-display" id="js-target-display">TARGET: --</div>
+            <button class="c-btn" id="js-shuffle-btn">GENERATE_ARRAY</button>
+            <button class="c-btn" id="js-search-btn">INITIALIZE_SEARCH</button>
+        </div>
+
+        <div class="c-code-window">
+            <div class="c-code-window__header">SOURCE_CODE // BINARYSEARCH.JS</div>
+            <pre><code><span class="token--keyword">async function</span> <span class="token--func">binarySearch</span>(arr, target) {
+    <span class="token--keyword">let</span> left = 0;
+    <span class="token--keyword">let</span> right = arr.length - 1;
+
+    <span class="token--keyword">while</span> (left <= right) {
+        <span class="token--keyword">let</span> mid = Math.floor((left + right) / 2);
+
+        <span class="token--keyword">if</span> (arr[mid] === target) {
+            <span class="token--keyword">return</span> mid; <span class="token--comment">// Target found</span>
+        } <span class="token--keyword">else if</span> (arr[mid] < target) {
+            left = mid + 1; <span class="token--comment">// Search right half</span>
+        } <span class="token--keyword">else</span> {
+            right = mid - 1; <span class="token--comment">// Search left half</span>
+        }
+    }
+    
+    <span class="token--keyword">return</span> -1; <span class="token--comment">// Target not found</span>
+}</code></pre>
+        </div>
     </div>
 
+    <footer>
+        [STATUS: SYSTEM_READY] // BY_NEON_ARCHITECT
+    </footer>
+
     <script>
-        // Priprava podatkov
-        const data = Array.from({
-            length: 100
-        }, (_, i) => i).sort((a, b) => a - b);
-        document.getElementById('arrayDisplay').innerText = `[${data.join(', ')}]`;
+        (function() {
+            'use strict';
 
-        // 1. ITERATIVNI PRISTOP (Zanka while)
-        // Najbolj pomnilniško učinkovit (O(1) space)
-        function binarySearchIterative(arr, target) {
-            let left = 0;
-            let right = arr.length - 1;
-            while (left <= right) {
-                let mid = Math.floor((left + right) / 2);
-                if (arr[mid] === target) return mid;
-                if (arr[mid] < target) left = mid + 1;
-                else right = mid - 1;
+            const ARRAY_SIZE = 40;
+            const ANIMATION_SPEED = 500;
+            let data = [];
+            let targetValue = -1;
+            let isSearching = false;
+
+            const DOM = {
+                visualizer: document.getElementById('js-visualizer'),
+                shuffleBtn: document.getElementById('js-shuffle-btn'),
+                searchBtn: document.getElementById('js-search-btn'),
+                targetDisplay: document.getElementById('js-target-display')
+            };
+
+            function init() {
+                generateArray();
+                bindEvents();
             }
-            return -1;
-        }
 
-        // 2. REKURZIVNI PRISTOP
-        // Pregledna koda, a uporablja sklad (stack)
-        function binarySearchRecursive(arr, target, left = 0, right = arr.length - 1) {
-            if (left > right) return -1;
-            let mid = Math.floor((left + right) / 2);
-            if (arr[mid] === target) return mid;
-            return arr[mid] < target ?
-                binarySearchRecursive(arr, target, mid + 1, right) :
-                binarySearchRecursive(arr, target, left, mid - 1);
-        }
+            function generateArray() {
+                data = [];
+                // Binary search requires a sorted array
+                for (let i = 0; i < ARRAY_SIZE; i++) {
+                    data.push(Math.floor(Math.random() * 90) + 10);
+                }
+                data.sort((a, b) => a - b);
+                
+                // Pick a target
+                if (Math.random() > 0.1) {
+                    // 90% chance to pick an existing element
+                    targetValue = data[Math.floor(Math.random() * data.length)];
+                } else {
+                    // 10% chance to search for a value that might not exist
+                    targetValue = Math.floor(Math.random() * 90) + 10;
+                }
+                
+                DOM.targetDisplay.textContent = `TARGET: ${targetValue}`;
+                DOM.targetDisplay.style.color = 'var(--neon-secondary)';
+                renderBars(0, data.length - 1, -1, -1);
+            }
 
-        // 3. FUNKCIJSKI PRISTOP (ES6+)
-        // Uporaba slice-anja in rekurzije brez stranskih učinkov
-        // Opomba: Slice v JS ustvari kopijo polja, kar poveča porabo spomina na O(n),
-        // zato v produkciji raje uporabljamo indekse kot zgoraj.
-        const binarySearchFunctional = (arr, target, offset = 0) => {
-            if (arr.length === 0) return -1;
-            const mid = Math.floor(arr.length / 2);
-            if (arr[mid] === target) return mid + offset;
-            return arr[mid] < target ?
-                binarySearchFunctional(arr.slice(mid + 1), target, offset + mid + 1) :
-                binarySearchFunctional(arr.slice(0, mid), target, offset);
-        };
+            function renderBars(left = 0, right = data.length - 1, mid = -1, foundIdx = -1, isNotFound = false) {
+                DOM.visualizer.innerHTML = '';
+                data.forEach((val, idx) => {
+                    const bar = document.createElement('div');
+                    bar.className = 'bar';
+                    bar.style.height = `${val}%`;
+                    
+                    if (isNotFound) {
+                        bar.classList.add('is-not-found');
+                    } else if (idx === foundIdx) {
+                        bar.classList.add('is-found');
+                    } else if (idx === mid) {
+                        bar.classList.add('is-mid');
+                    } else if (idx < left || idx > right) {
+                        bar.classList.add('is-out-of-bounds');
+                    }
+                    
+                    DOM.visualizer.appendChild(bar);
+                });
+            }
 
-        function runSearch(type) {
-            const target = parseInt(document.getElementById('targetInput').value);
-            let index = -1;
-            const start = performance.now();
+            function bindEvents() {
+                DOM.shuffleBtn.addEventListener('click', () => {
+                    if (isSearching) return;
+                    generateArray();
+                });
 
-            if (type === 'iterative') index = binarySearchIterative(data, target);
-            if (type === 'recursive') index = binarySearchRecursive(data, target);
-            if (type === 'functional') index = binarySearchFunctional(data, target);
+                DOM.searchBtn.addEventListener('click', async () => {
+                    if (isSearching) return;
+                    isSearching = true;
+                    toggleControls(true);
+                    
+                    DOM.targetDisplay.textContent = `SEARCHING_FOR: ${targetValue}`;
+                    
+                    await binarySearch(targetValue);
+                    
+                    isSearching = false;
+                    toggleControls(false);
+                });
+            }
 
-            const end = performance.now();
-            const resBox = document.getElementById('resultBox');
-            resBox.style.display = 'block';
-            resBox.innerHTML = `Način: <b>${type.toUpperCase()}</b><br>` +
-                `Indeks: <b>${index}</b><br>` +
-                `<small>Čas izvajanja: ${(end - start).toFixed(4)} ms</small>`;
-        }
+            function toggleControls(disabled) {
+                DOM.shuffleBtn.disabled = disabled;
+                DOM.searchBtn.disabled = disabled;
+            }
+
+            async function binarySearch(target) {
+                let left = 0;
+                let right = data.length - 1;
+
+                while (left <= right) {
+                    let mid = Math.floor((left + right) / 2);
+                    
+                    // Show current boundaries and mid point
+                    renderBars(left, right, mid, -1);
+                    await sleep(ANIMATION_SPEED);
+
+                    if (data[mid] === target) {
+                        // Found!
+                        renderBars(left, right, mid, mid);
+                        DOM.targetDisplay.textContent = `TARGET_ACQUIRED: ${target}`;
+                        DOM.targetDisplay.style.color = 'var(--neon-success)';
+                        return mid;
+                    } else if (data[mid] < target) {
+                        left = mid + 1;
+                    } else {
+                        right = mid - 1;
+                    }
+                }
+                
+                // Not found
+                renderBars(-1, -1, -1, -1, true);
+                DOM.targetDisplay.textContent = `ERROR: TARGET_NOT_FOUND`;
+                DOM.targetDisplay.style.color = 'var(--neon-danger)';
+                return -1;
+            }
+
+            function sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            init();
+        })();
     </script>
-
 </body>
-
 </html>

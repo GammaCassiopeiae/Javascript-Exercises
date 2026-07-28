@@ -1,0 +1,232 @@
+/* ==========================================================================
+   NEON-NOIR LIMEGREEN STYLES - LeetCode Neon Edition
+   Following RAG.md v4.0 Directives
+   ========================================================================== */
+
+:root {
+  /* Backgrounds */
+  --bg-deep: #050505;
+  --bg-surface: #0a0b10;
+  --bg-glass: rgba(255, 255, 255, 0.05);
+
+  /* Neon Accents (LIMEGREEN FOCUS) */
+  --neon-cyan: #32CD32;         /* LimeGreen */
+  --neon-magenta: #ff00ff;      /* Synth */
+  --neon-green: #32CD32;        /* Direct Lime */
+  
+  /* Text */
+  --text-primary: #ffffff;
+  --text-muted: rgba(255, 255, 255, 0.7);
+  
+  /* Glows */
+  --glow-cyan: 0 0 5px var(--neon-cyan), 0 0 15px rgba(50, 205, 50, 0.3);
+  --glow-magenta: 0 0 5px var(--neon-magenta), 0 0 15px rgba(255, 0, 255, 0.3);
+
+  /* Fonts */
+  --font-display: 'Rajdhani', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'Fira Code', monospace;
+
+  /* Spacing */
+  --gap-md: clamp(1rem, 4vw, 2rem);
+  --gap-lg: clamp(2rem, 6vw, 4rem);
+
+  --transition-base: 0.3s;
+  --ease-out: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.js-theme-light {
+  --bg-deep: #f5f7fa;
+  --bg-surface: rgba(0, 0, 0, 0.05);
+  --text-primary: #1a1a1a;
+  --text-muted: #4a4a4a;
+  --glow-cyan: none;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  background-color: var(--bg-deep);
+  line-height: 1.6;
+  overflow-x: hidden;
+  transition: background-color var(--transition-base), color var(--transition-base);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.l-main { flex: 1; }
+.l-container {
+  width: 100%;
+  max-width: 1000px; /* Narrower for better reading of code lists */
+  margin-inline: auto;
+  padding-inline: var(--gap-md);
+}
+
+.c-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(5, 5, 5, 0.8);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--bg-glass);
+}
+
+.c-header__content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 80px;
+}
+
+.c-logo {
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+.c-logo__text { color: var(--text-primary); }
+.c-logo__neon { color: var(--neon-cyan); text-shadow: var(--glow-cyan); }
+
+.c-nav__list { display: flex; list-style: none; gap: var(--gap-md); }
+.c-nav__link {
+  text-decoration: none;
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-weight: 600;
+  transition: color var(--transition-base);
+}
+.c-nav__link:hover, .c-nav__link.is-active {
+  color: var(--neon-cyan);
+  text-shadow: var(--glow-cyan);
+}
+
+.c-theme-toggle {
+  background: var(--bg-glass);
+  border: 1px solid var(--neon-cyan);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.c-theme-toggle__icon {
+  width: 12px;
+  height: 12px;
+  background: var(--neon-cyan);
+  border-radius: 50%;
+  box-shadow: var(--glow-cyan);
+}
+
+.c-section { padding: var(--gap-lg) 0; }
+
+.c-hero {
+  text-align: center;
+  padding: var(--gap-lg) 0;
+  background: radial-gradient(circle at 50% 50%, rgba(50, 205, 50, 0.1), transparent 70%);
+}
+.c-hero__title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 8vw, 4rem);
+  text-transform: uppercase;
+  color: var(--neon-cyan);
+  text-shadow: var(--glow-cyan);
+  margin-bottom: 1rem;
+}
+
+/* List Layout (One after the other) */
+.c-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.c-card {
+  background: var(--bg-surface);
+  border: 1px solid rgba(50, 205, 50, 0.1);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all var(--transition-base);
+}
+.c-card:hover {
+  border-color: var(--neon-cyan);
+  box-shadow: var(--glow-cyan);
+  transform: scale(1.01);
+}
+
+.c-card__header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.c-card__title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--neon-cyan);
+}
+.c-card__difficulty {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: rgba(50, 205, 50, 0.1);
+  border: 1px solid rgba(50, 205, 50, 0.3);
+  color: var(--neon-cyan);
+}
+
+.c-code-block {
+  background: #000;
+  padding: 1.2rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  border: 1px solid rgba(50, 205, 50, 0.2);
+}
+.c-code-block code {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  color: #32CD32;
+  white-space: pre;
+}
+
+.c-footer {
+  margin-top: auto;
+  border-top: 1px solid var(--bg-glass);
+  padding: 2rem 0;
+  background: var(--bg-surface);
+}
+.c-footer__wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.c-footer__status {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--neon-cyan);
+}
+
+.u-text-center { text-align: center; }
+.u-pulse { animation: glow-pulse 2s infinite ease-in-out; }
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #39FF14; }

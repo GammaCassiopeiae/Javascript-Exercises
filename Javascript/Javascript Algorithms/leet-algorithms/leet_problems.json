@@ -1,0 +1,756 @@
+[
+  {
+    "id": 201,
+    "title": "Bitwise AND of Numbers Range",
+    "difficulty": "Medium",
+    "tags": [
+      "Bit Manipulation"
+    ],
+    "description": "The problem presents us with a task to calculate the bitwise AND for all numbers in the range from 'left' to 'right' inclusive. The 'bitwise AND' operation takes two bit operands and performs the logical AND operation on each pair of corresponding bits. The result is 1 if both bits are 1, and 0 othe",
+    "code": "/**\n * Applies a bitwise AND operation to all numbers within a given range.\n *\n * @param {number} left - The starting point of the range (inclusive).\n * @param {number} right - The end point of the range (inclusive).\n * @return {number} - The result of the bitwise AND operation applied sequentially from left to right.\n */\nfunction rangeBitwiseAnd(left: number, right: number): number {\n    // Loop until the 'left' value is greater than or equal to 'right'\n    while (left < right) {\n        // Apply bitwise AND between 'right' and 'right-1' then store it back in 'right'\n        // This operation removes the least significant bit of 'right'\n        right &= right - 1;\n    }\n    // Return the value of 'right' which at this point equals the bitwise AND of the range\n    return right;\n}"
+  },
+  {
+    "id": 202,
+    "title": "Happy Number",
+    "difficulty": "Easy",
+    "tags": [
+      "Hash Table",
+      "Math",
+      "Two Pointers"
+    ],
+    "description": "The problem requires us to determine if a given positive integer n is a happy number. A happy number is one that follows a specific process: Take the original number and replace it with the sum of the squares of its digits. Continue this process repeatedly. If eventually, the number transforms into ",
+    "code": "// Determines if a number is a \"happy number\"\n// A happy number is a number in which the sum of the square of digits eventually reaches 1\n// If it enters a cycle without reaching 1, it is not a happy number\nfunction isHappy(n: number): boolean {\n    // This function calculates the sum of the squares of the digits of a given number\n    const getNextNumber = (currentNumber: number): number => {\n        let sumOfSquares = 0;\n        while (currentNumber !== 0) {\n            let digit = currentNumber % 10;\n            sumOfSquares += digit ** 2;\n            currentNumber = Math.floor(currentNumber / 10);\n        }\n        return sumOfSquares;\n    };\n    // Initializes two pointers for detecting cycles\n    let slowPointer = n;\n    let fastPointer = getNextNumber(n);\n    // Uses Floyd's cycle detection algorithm to determine if a cycle exists\n    while (slowPointer !== fastPointer) {\n        // Moves slow pointer by one step\n        slowPointer = getNextNumber(slowPointer);\n        // Moves fast pointer by two steps\n        fastPointer = getNextNumber(getNextNumber(fastPointer));\n    }\n    // If fastPointer equals 1, it means we've reached the happy number condition\n    return fastPointer === 1;\n}"
+  },
+  {
+    "id": 203,
+    "title": "Remove Linked List Elements",
+    "difficulty": "Easy",
+    "tags": [
+      "Recursion",
+      "Linked List"
+    ],
+    "description": "The problem requires us to modify a linked list by removing all nodes that contain a specified value. Given the head of a linked list and an integer val, we must iterate through the linked list and delete any node where the Node.val is equal to val. The function should then return the head of the mo",
+    "code": "# Definition for singly-linked list.\nclass ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n      \nclass Solution:\n    def removeElements(self, head: ListNode, val: int) -> ListNode:\n        # Create a dummy node that acts as the new head of the list with a sentinel value\n        dummy_node = ListNode(-1)\n        dummy_node.next = head\n      \n        # Initialize a pointer to track the current node we're examining\n        current_node = dummy_node\n      \n        # Iterate over the list\n        while current_node.next is not None:\n            # If the value of the next node is the one we want to remove\n            if current_node.next.val == val:\n                # Remove it by skipping the node\n                current_node.next = current_node.next.next\n            else:\n                # Move to the next node otherwise\n                current_node = current_node.next\n      \n        # Return the modified list, starting from the node after the dummy node\n        return dummy_node.next"
+  },
+  {
+    "id": 204,
+    "title": "Count Primes",
+    "difficulty": "Medium",
+    "tags": [
+      "Array",
+      "Math",
+      "Enumeration",
+      "Number Theory"
+    ],
+    "description": "The problem requires us to find the count of prime numbers less than a given integer n. Remember, a prime number is a natural number greater than 1 that has no positive divisors other than 1 and itself. Intuition The solution is based on an ancient algorithm known as the \"Sieve of Eratosthenes\". The",
+    "code": "/**\n * Counts the number of prime numbers less than a non-negative number, n.\n * Implements the Sieve of Eratosthenes algorithm for finding all prime numbers in a given range.\n * @param {number} n - The upper limit (exclusive) up to which to count prime numbers.\n * @return {number} The count of prime numbers less than n.\n */\nconst countPrimes = (n: number): number => {\n    // Initialize an array of boolean values representing the primality of each number.\n    // Initially, all numbers are assumed to be prime (true), except for indices 0 and 1.\n    let isPrime: boolean[] = new Array(n).fill(true);\n    let primeCount: number = 0;\n    // Loop through the array starting from the first prime number, 2.\n    for (let i: number = 2; i < n; ++i) {\n        if (isPrime[i]) {\n            // Increment the prime counter when a prime number is encountered.\n            ++primeCount;\n            // Mark all multiples of i as non-prime (false).\n            for (let multiple: number = i + i; multiple < n; multiple += i) {\n                isPrime[multiple] = false;\n            }\n        }\n    }\n    // Return the count of prime numbers found.\n    return primeCount;\n};"
+  },
+  {
+    "id": 205,
+    "title": "Isomorphic Strings",
+    "difficulty": "Easy",
+    "tags": [
+      "Hash Table",
+      "String"
+    ],
+    "description": "In this problem, we are given two strings s and t. Our task is to determine if the two strings are isomorphic. Isomorphic strings are strings where each character in one string can be consistently replaced with another character to result in the second string. It is crucial to note that in isomorphi",
+    "code": "// Function to check whether two strings 's' and 't' are isomorphic.\n// Two strings are isomorphic if the characters in 's' can be replaced to get 't'.\nfunction isIsomorphic(source: string, target: string): boolean {\n    // Create two arrays to store the last seen positions of characters in 'source' and 'target'.\n    const sourceLastSeen: number[] = new Array(256).fill(0);\n    const targetLastSeen: number[] = new Array(256).fill(0);\n  \n    // Iterate over each character in the strings.\n    for (let i = 0; i < source.length; ++i) {\n        // Get the character code for current characters in 'source' and 'target'.\n        const sourceCharCode = source.charCodeAt(i);\n        const targetCharCode = target.charCodeAt(i);\n        // Check if the last seen position for both characters is the same.\n        // If they differ, the strings are not isomorphic.\n        if (sourceLastSeen[sourceCharCode] !== targetLastSeen[targetCharCode]) {\n            return false;\n        }\n        // Update the last seen position for both characters to the current position + 1\n        // The +1 ensures that the default value of 0 is not considered a position.\n        sourceLastSeen[sourceCharCode] = i + 1;\n        targetLastSeen[targetCharCode] = i + 1;\n    }\n    // If we complete the iteration without returning false, the strings are isomorphic.\n    return true;\n}"
+  },
+  {
+    "id": 206,
+    "title": "Reverse Linked List",
+    "difficulty": "Easy",
+    "tags": [
+      "Recursion",
+      "Linked List"
+    ],
+    "description": "The task is to reverse a singly linked list. A linked list is a data structure where each element (often called a 'node') contains a value and a pointer/reference to the next node in the sequence. A singly linked list means that each node points to the next node and there is no reference to previous",
+    "code": "// Definition for a node in a singly-linked list\ninterface ListNode {\n    val: number;\n    next: ListNode | null;\n}\n/**\n * Reverses a singly linked list.\n * @param {ListNode | null} head - The head node of the linked list to be reversed\n * @return {ListNode | null} The new head of the reversed linked list\n */\nfunction reverseList(head: ListNode | null): ListNode | null {\n    // Return immediately if the list is empty\n    if (head === null) {\n        return head;\n    }\n    // Initialize pointers\n    let previousNode: ListNode | null = null; // Previous node in the list\n    let currentNode: ListNode | null = head;  // Current node in the list\n    // Iterate through the list\n    while (currentNode !== null) {\n        const nextNode: ListNode | null = currentNode.next; // Next node in the list\n        // Reverse the current node's pointer\n        currentNode.next = previousNode;\n        // Move the previous and current pointers one step forward\n        previousNode = currentNode;\n        currentNode = nextNode;\n    }\n    // By the end, previousNode is the new head of the reversed linked list\n    return previousNode;\n}"
+  },
+  {
+    "id": 207,
+    "title": "Course Schedule",
+    "difficulty": "Medium",
+    "tags": [
+      "Depth-First Search",
+      "Breadth-First Search",
+      "Graph",
+      "Topological Sort"
+    ],
+    "description": "The problem gives us numCourses total number of courses, each labeled uniquely from 0 to numCourses - 1. We are also given an array of course pairs for prerequisites, where each pair [a, b] signifies that course a requires course b as a prerequisite. The goal is to determine if it is possible to com",
+    "code": "function canFinish(numCourses: number, prerequisites: number[][]): boolean {\n    // Create an adjacency list to represent the graph of courses\n    const adjacencyList: number[][] = new Array(numCourses).fill(0).map(() => []);\n  \n    // Array to store the in-degree (number of dependencies) of each course\n    const inDegrees: number[] = new Array(numCourses).fill(0);\n  \n    // Fill the adjacency list and in-degree array based on prerequisites\n    for (const [course, prerequisite] of prerequisites) {\n        adjacencyList[prerequisite].push(course);\n        inDegrees[course]++;\n    }\n    // Queue for courses with no prerequisites (in-degree of 0)\n    const queue: number[] = [];\n  \n    // Initialize the queue with courses that have no prerequisites\n    for (let i = 0; i < numCourses; ++i) {\n        if (inDegrees[i] === 0) {\n            queue.push(i);\n        }\n    }\n    // Counter for the number of courses with satisfied prerequisites\n    let count = 0;\n    // Process the queue until it's empty\n    while (queue.length) {\n        // Remove the first course from the queue\n        const currentCourse = queue.shift()!;\n      \n        // Increment the count of courses that can be taken\n        count++;\n        // Decrease the in-degree of the adjacent courses and\n        // add them to the queue if they have no other prerequisites\n        for (const adjacentCourse of adjacencyList[currentCourse]) {\n            if (--inDegrees[adjacentCourse] === 0) {\n                queue.push(adjacentCourse);\n            }\n        }\n    }\n    // Compare the count of courses taken to the total number of courses\n    return count === numCourses;\n}"
+  },
+  {
+    "id": 209,
+    "title": "Minimum Size Subarray Sum",
+    "difficulty": "Medium",
+    "tags": [
+      "Array",
+      "Binary Search",
+      "Prefix Sum",
+      "Sliding Window"
+    ],
+    "description": "The problem is essentially about finding the shortest continuous sequence of elements within an array of positive integers such that the sum of that sequence is at least as large as a given target value. To clarify, a subarray is defined as a contiguous part of an array. The task is to find the leng",
+    "code": "function minSubArrayLen(target: number, nums: number[]): number {\n    // Length of the input array\n    const length = nums.length;\n    // Initialize the sum of the current subarray\n    let currentSum = 0;\n    // Set an initial minimum length for the subarray to an impossible maximum (length+1)\n    let minLength = length + 1;\n  \n    // Set the starting points for the sliding window\n    for (let start = 0, end = 0; start < length; ++start) {\n        // Add the current number to the current sum\n        currentSum += nums[start];\n      \n        // While the current sum is equal or above the target,\n        // adjust the window to find the minimum length\n        while (currentSum >= target) {\n            // Calculate the length of the current subarray\n            // and update the minLength if it's smaller than the existing minLength\n            minLength = Math.min(minLength, start - end + 1);\n          \n            // Subtract the first number of the current subarray\n            // and move the window forward\n            currentSum -= nums[end++];\n        }\n    }\n  \n    // If minLength was not updated, it means no valid subarray was found, so return 0\n    // Otherwise, return the minLength found\n    return minLength === length + 1 ? 0 : minLength;\n}"
+  },
+  {
+    "id": 211,
+    "title": "Design Add and Search Words Data Structure",
+    "difficulty": "Medium",
+    "tags": [
+      "Depth-First Search",
+      "Design",
+      "Trie",
+      "String"
+    ],
+    "description": "The problem is to design a data structure named WordDictionary that allows for the addition of new words and the checking if a specific string matches any word that was previously added to the structure. This data structure should support two main operations:",
+    "code": "class TrieNode:\n    \"\"\" A node in the trie structure \"\"\"\n    def __init__(self):\n        self.children = [None] * 26  # Array to hold 26 lowercase alphabet characters\n        self.is_end_of_word = False   # Flag to check the end of a word\nclass WordDictionary:\n    \"\"\" Class to implement a word dictionary using a trie \"\"\"\n    def __init__(self):\n        \"\"\" Initializes the word dictionary with a root trie node \"\"\"\n        self.root = TrieNode()\n    def addWord(self, word: str) -> None:\n        \"\"\" Adds a word into the dictionary \"\"\"\n        node = self.root\n        for char in word:\n            index = ord(char) - ord('a')  # Calculate the index for the relevant character\n            # If the current character path does not exist, create a new node\n            if node.children[index] is None:\n                node.children[index] = TrieNode()\n            node = node.children[index]\n        node.is_end_of_word = True  # Mark the end of a word\n    def search(self, word: str) -> bool:\n        \"\"\" Searches the dictionary for a word, can contain \".\" as a wildcard character \"\"\"\n        def dfs(index, node):\n            \"\"\"\n            Depth-First Search helper function to recursively search\n            for the word in the trie\n            \"\"\"\n            for i in range(index, len(word)):\n                char = word[i]\n                char_index = ord(char) - ord('a')\n                # If the current character is a wildcard\n                if char == '.':\n                    # Check all possible child paths\n                    return any(child is not None and dfs(i + 1, child) for child in node.children)\n                elif node.children[char_index] is None:\n                    # Character path doesn't exist\n                    return False\n                # Move on to the next trie node\n                node = node.children[char_index]\n            return node.is_end_of_word  # Check if it's the end of a word\n        return dfs(0, self.root)  # Start the depth-first search from the root\n# Usage:\n# obj = WordDictionary()\n# obj.addWord(\"word\")\n# param_2 = obj.search(\"word\")\n# param_3 = obj.search(\"wor.\")\n# param_4 = obj.search(\"wor..\")"
+  },
+  {
+    "id": 212,
+    "title": "Word Search II",
+    "difficulty": "Hard",
+    "tags": [
+      "Trie",
+      "Array",
+      "String",
+      "Backtracking",
+      "Matrix"
+    ],
+    "description": "In this LeetCode problem, we are given a 2D board of characters (i.e., a grid of letters) and a list of strings called words. Our objective is to find out which words from the list can be formed using the characters on the board. A word can be constructed by linking letters that are adjacent to each",
+    "code": "from typing import List\nclass Trie:\n    def __init__(self):\n        # Initializing the children with an array of 26 Trie nodes representing each character of the alphabet.\n        self.children: List[Trie | None] = [None] * 26\n        # Reference to the index of the word in the words list, -1 if it's not a complete word.\n        self.ref: int = -1\n    def insert(self, word: str, ref: int):\n        node = self\n        # Insert each character of the word in the Trie.\n        for char in word:\n            index = ord(char) - ord('a')\n            # If the child node for this character does not exist, create it.\n            if node.children[index] is None:\n                node.children[index] = Trie()\n            node = node.children[index]\n        # Set the reference index for the last character node to the word's index in the input list.\n        node.ref = ref\nclass Solution:\n    def findWords(self, board: List[List[str]], words: List[str]) -> List[str]:\n        def dfs(node: Trie, i: int, j: int):\n            # Conducts a depth-first search starting from board[i][j].\n            index = ord(board[i][j]) - ord('a')\n            # If there's no child node for this character, return.\n            if node.children[index] is None:\n                return\n            node = node.children[index]\n            # If this node is a complete word, add to the answer list and mark it as visited.\n            if node.ref >= 0:\n                ans.append(words[node.ref])\n                node.ref = -1\n            # Temporarily mark the board position as visited by replacing the character with '#'.\n            temp_char = board[i][j]\n            board[i][j] = '#'\n            # Visit all neighbors (up, right, down, left).\n            for x_offset, y_offset in zip(*[iter([-1, 0, 1, 0, -1])] * 2):\n                x, y = i + x_offset, j + y_offset\n                # If the new position is within bounds and not visited, continue DFS.\n                if 0 <= x < m and 0 <= y < n and board[x][y] != '#':\n                    dfs(node, x, y)\n            # Restore the original character after visiting neighbors.\n            board[i][j] = temp_char\n        # Initialize the Trie and fill it with the words.\n        trie_root = Trie()\n        for index, word in enumerate(words):\n            trie_root.insert(word, index)\n        # Get the dimensions of the board.\n        m, n = len(board), len(board[0])\n        # List to store the answer words.\n        ans = []\n        # Loop through each cell in the board and start DFS if possible.\n        for i in range(m):\n            for j in range(n):\n                dfs(trie_root, i, j)\n        return ans\n# The `List[Trie | None]` syntax requires at least Python 3.10, where the union pipe operator was introduced.\n# For earlier versions of Python, it would be List[Optional[Trie]] with from typing import Optional."
+  },
+  {
+    "id": 213,
+    "title": "House Robber II",
+    "difficulty": "Medium",
+    "tags": [
+      "Array",
+      "Dynamic Programming"
+    ],
+    "description": "In this problem, we imagine a situation where a professional thief is planning to rob houses. The houses are laid out in a circle, and each house contains a certain amount of money that can be stolen. However, if the robber tries to rob two adjacent houses, an alarm will be triggered and the police ",
+    "code": "function rob(nums: number[]): number {\n    // Determine the length of the array.\n    const numLength = nums.length;\n  \n    // Edge case: If there's only one house, return its value.\n    if (numLength === 1) {\n        return nums[0];\n    }\n  \n    // Helper function to rob a range of houses from index l to r, inclusive.\n    const robRange = (start: number, end: number): number => {\n        let robPrevious = 0; // Initialize to store the maximum amount that can be robbed up to the previous house\n        let robCurrent = 0;  // Initialize to store the maximum amount that can be robbed up to the current house\n        // Iterate from the start index to the end index, inclusive.\n        for (; start <= end; ++start) {\n            let robNext = Math.max(robPrevious, robCurrent); // The next 'previous' is the max of current and previous robbed amounts.\n            robCurrent = robPrevious + nums[start];          // Update the current to the sum of previous robbed amount and current house value.\n            robPrevious = robNext;                           // Move the 'next' value to 'previous' for the next iteration.\n        }\n      \n        // Return the maximum amount robbed between the last two houses.\n        return Math.max(robPrevious, robCurrent);\n    };\n  \n    // The maximum amount robbed will be the maximum of either robbing from the first house to the second-to-last house,\n    // or from the second house to the last one since we cannot rob adjacent houses.\n    return Math.max(robRange(0, numLength - 2), robRange(1, numLength - 1));\n}"
+  },
+  {
+    "id": 214,
+    "title": "Shortest Palindrome",
+    "difficulty": "Hard",
+    "tags": [
+      "String",
+      "String Matching",
+      "Hash Function",
+      "Rolling Hash"
+    ],
+    "description": "In this problem, we are given a string s. Our task is to make the smallest palindrome by adding characters at the front of s. A palindrome is a string that reads the same forward and backward. The key here is that we can only add characters to the beginning of s to form the palindrome; we cannot mod",
+    "code": "type ULL = bigint;\n// Converts a lowercase character to an integer (1-based)\nconst charToInt = (char: string): number => char.charCodeAt(0) - 'a'.charCodeAt(0) + 1;\n// Reverses a string in place\nconst reverseString = (s: string): string => s.split('').reverse().join('');\n// Computes the shortest palindrome that can be formed by adding characters in front of the given string\nconst shortestPalindrome = (s: string): string => {\n    // Constants and initial values\n    const base: ULL = BigInt(131); // Base for polynomial hashing\n    let prefixHash: ULL = BigInt(0); // Hash value for the prefix\n    let suffixHash: ULL = BigInt(0); // Hash value for the suffix\n    let currentMultiplier: ULL = BigInt(1); // Used to compute hash values\n    let palindromeEndIndex = 0; // Index marking the end of the longest palindrome at start\n    const n = s.length; // Size of the input string\n    // Loop through the string character by character\n    for (let i = 0; i < n; ++i) {\n        const charValue = charToInt(s[i]); // Convert char to int\n        // Update prefix hash polynomially and suffix hash\n        prefixHash = prefixHash * base + BigInt(charValue);\n        suffixHash = suffixHash + currentMultiplier * BigInt(charValue);\n        // Update the base multiplier for hash computation\n        currentMultiplier *= base;\n        // If the current prefix is a palindrome (checked by comparing hashes)\n        if (prefixHash === suffixHash) {\n            palindromeEndIndex = i + 1; // Update the end index of the longest palindrome found\n        }\n    }\n    // If the whole string is a palindrome, return it\n    if (palindromeEndIndex === n) return s;\n    // Construct the shortest palindrome by appending the reversed suffix to the original string\n    const remainingSubstring = s.substring(palindromeEndIndex);\n    return reverseString(remainingSubstring) + s;\n};\n// Example usage\n// const result = shortestPalindrome(\"example\");\n// console.log(result);"
+  },
+  {
+    "id": 215,
+    "title": "Kth Largest Element in an Array",
+    "difficulty": "Medium",
+    "tags": [
+      "Array",
+      "Divide and Conquer",
+      "Quickselect",
+      "Sorting",
+      "Heap (Priority Queue)"
+    ],
+    "description": "The given problem presents us with a scenario where we need to find the k(^{th}) largest element in a provided integer array nums. Unlike finding the maximum or minimum element, this task requires us to identify the value that would be placed at the k(^{th}) largest position if the array were sorted",
+    "code": "function findKthLargest(nums: number[], k: number): number {\n    // Helper function to swap elements at indices i and j within nums array\n    const swapElements = (i: number, j: number) => {\n        [nums[i], nums[j]] = [nums[j], nums[i]];\n    };\n    // Helper function to implement Quick Select algorithm\n    const quickSelect = (left: number, right: number) => {\n        // Return early if the partition size is smaller than the kth element we are looking for\n        if (left >= right || left + 1 > k) {\n            return;\n        }\n        // Randomly select a pivot and move it to the start\n        swapElements(left, left + Math.floor(Math.random() * (right - left)));\n        const pivot = nums[left];\n        let pivotIndex = left;\n        // Partition the array around the pivot\n        for (let i = left + 1; i < right; i++) {\n            // If the current element is greater than the pivot, swap it with the element\n            // at the pivotIndex and increment pivotIndex\n            if (nums[i] > pivot) {\n                pivotIndex++;\n                swapElements(i, pivotIndex);\n            }\n        }\n        // Put the pivot element at its correct position\n        swapElements(left, pivotIndex);\n        // Recursively apply the same logic to the left and right partitions\n        quickSelect(left, pivotIndex);\n        quickSelect(pivotIndex + 1, right);\n    };\n    // Start the quick select process on the entire array\n    quickSelect(0, nums.length);\n    // Return the kth largest element\n    return nums[k - 1];\n}"
+  },
+  {
+    "id": 218,
+    "title": "The Skyline Problem",
+    "difficulty": "Hard",
+    "tags": [
+      "Binary Indexed Tree",
+      "Segment Tree",
+      "Array",
+      "Divide and Conquer",
+      "Ordered Set",
+      "Line Sweep",
+      "Heap (Priority Queue)"
+    ],
+    "description": "In this problem, we are given a set of buildings in a city and are asked to compute the city's skyline. A skyline is essentially the outer contour created by all the buildings when viewed from a distance. Each building is represented by three integers, the x-coordinate of its left edge (left), the x",
+    "code": "from queue import PriorityQueue\nclass Solution:\n    def getSkyline(self, buildings: List[List[int]]) -> List[List[int]]:\n        # Initialize the skyline results array, a list to store building edges,\n        # and a priority queue to manage the current highest buildings\n        skyline = []\n        edges = []\n        max_heights = PriorityQueue()\n      \n        # Create a sorted list of all critical points (building start and end)\n        for building in buildings:\n            edges.extend([building[0], building[1]])\n        edges.sort()\n      \n        # Initialize pointers and get the total number of buildings\n        building_index, total_buildings = 0, len(buildings)\n        # Process each edge in the sorted list to determine skyline changes\n        for edge in edges:\n            # Add buildings to the priority queue which start before or at the current edge\n            while building_index < total_buildings and buildings[building_index][0] <= edge:\n                # Insert into the priority queue the negative height (to reverse the default order),\n                # the start, and the end of the current building\n                max_heights.put([-buildings[building_index][2], buildings[building_index][1]])\n                building_index += 1\n          \n            # Remove buildings from priority queue which end before the current edge\n            while not max_heights.empty() and max_heights.queue[0][1] <= edge:\n                max_heights.get()\n            # The height is 0 if there are no buildings in sight, or the highest if there are\n            height = -max_heights.queue[0][0] if not max_heights.empty() else 0\n          \n            # Only add a point to the skyline if the height changes from the last point\n            if not skyline or skyline[-1][1] != height:\n                skyline.append([edge, height])\n      \n        return skyline"
+  },
+  {
+    "id": 219,
+    "title": "Contains Duplicate II",
+    "difficulty": "Easy",
+    "tags": [
+      "Array",
+      "Hash Table",
+      "Sliding Window"
+    ],
+    "description": "The goal is to find out whether there is a pair of indices i and j in the given integer array nums such that nums[i] is equal to nums[j] and the absolute difference between i and j is less than or equal to k. This problem is checking for duplicates within a specified range of indices in an array. Th",
+    "code": "// This function checks if there are any duplicates within 'k' indices apart in the array 'nums'\nfunction containsNearbyDuplicate(nums: number[], k: number): boolean {\n    // Create a map to keep track of the numbers and their indices\n    const indexMap: Map<number, number> = new Map();\n  \n    // Iterate through the 'nums' array\n    for (let index = 0; index < nums.length; ++index) {\n        // Check if the current number is in the map and if the difference between\n        // the indices is less than or equal to 'k'\n        if (indexMap.has(nums[index]) && index - indexMap.get(nums[index])! <= k) {\n            return true; // Duplicate found within 'k' distance\n        }\n      \n        // Update the index of the current number in the map\n        indexMap.set(nums[index], index);\n    }\n  \n    // No duplicate found within 'k' distance\n    return false;\n}"
+  },
+  {
+    "id": 220,
+    "title": "Contains Duplicate III",
+    "difficulty": "Hard",
+    "tags": [
+      "Array",
+      "Bucket Sort",
+      "Ordered Set",
+      "Sorting",
+      "Sliding Window"
+    ],
+    "description": "This problem requires us to determine if there exist two indices i and j in an integer array nums such that: •\tThe indices i and j are different (i != j). •\tThe absolute difference between the indices i and j does not exceed indexDiff (abs(i - j) <= indexDiff). •\tThe absolute difference between the ",
+    "code": "from sortedcontainers import SortedSet\nfrom typing import List\nclass Solution:\n    def containsNearbyAlmostDuplicate(self, nums: List[int], index_diff: int, value_diff: int) -> bool:\n        # Create a SortedSet to maintain a sorted list of numbers\n        # we have seen so far.\n        sorted_set = SortedSet()\n        # Loop through each number in the given list along with its index\n        for i, num in enumerate(nums):\n            # Find the left boundary where number becomes greater than or equal to num-value_diff.\n            left_boundary_index = sorted_set.bisect_left(num - value_diff)\n            # Check if there exists a value within the range [num-value_diff, num+value_diff]\n            # inside our SortedSet.\n            if left_boundary_index < len(sorted_set) and sorted_set[left_boundary_index] <= num + value_diff:\n                return True  # If found, return True as the condition is satisfied.\n            # If not found, add the current number to the SortedSet.\n            sorted_set.add(num)\n            # If the SortedSet's size exceeds the allowed indexDiff,\n            # we remove the oldest element from the SortedSet to maintain the sliding window constraint.\n            if i >= index_diff:\n                sorted_set.remove(nums[i - index_diff])\n        # If we never return True within the loop, there is no such pair which satisfies the condition,\n        # hence we return False.\n        return False"
+  },
+  {
+    "id": 221,
+    "title": "Maximal Square",
+    "difficulty": "Medium",
+    "tags": [
+      "Array",
+      "Dynamic Programming",
+      "Matrix"
+    ],
+    "description": "The problem presents a scenario where you are given a matrix composed of only 0s and 1s, which corresponds to a binary grid. Your objective is to discover the largest square formed entirely of 1s within this matrix and then return the area of that square. This is fundamentally a problem of pattern r",
+    "code": "from typing import List\nclass Solution:\n    def maximalSquare(self, matrix: List[List[str]]) -> int:\n        rows, cols = len(matrix), len(matrix[0]) # Get the dimensions of the matrix\n        dp = [[0] * (cols + 1) for _ in range(rows + 1)] # Initialize DP table with extra row and column\n        max_side_length = 0 # Maximum side length of a square of '1's\n        for row in range(rows):\n            for col in range(cols):\n                # Check if the current element is a '1'\n                if matrix[row][col] == '1':\n                    # Update the DP table by considering the top, left, and top-left neighbors\n                    dp[row + 1][col + 1] = min(\n                        dp[row][col + 1],     # Top\n                        dp[row + 1][col],     # Left\n                        dp[row][col]          # Top-Left\n                    ) + 1\n                    # Update the max side length found so far\n                    max_side_length = max(max_side_length, dp[row + 1][col + 1])\n      \n        # Return the area of the largest square\n        return max_side_length * max_side_length"
+  },
+  {
+    "id": 222,
+    "title": "Count Complete Tree Nodes",
+    "difficulty": "Easy",
+    "tags": [
+      "Bit Manipulation",
+      "Tree",
+      "Binary Search",
+      "Binary Tree"
+    ],
+    "description": "The problem provides a complete binary tree and requires us to determine the total number of nodes in the tree. A complete binary tree is a tree where all levels are fully filled except possibly the last level, which is filled from left to right. Such a tree has a special property where the number o",
+    "code": "class TreeNode:\n    # Initializing the TreeNode structure as described\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\nclass Solution:\n    def countNodes(self, root: Optional[TreeNode]) -> int:\n        # Helper function to calculate the depth of the tree\n        def calculate_depth(node):\n            depth = 0\n            while node:\n                depth += 1\n                # Move to the next left node to calculate full depth\n                node = node.left\n            return depth\n        # Main function starts here\n        # If the root is None, the tree is empty and has no nodes\n        if root is None:\n            return 0\n        # Calculate the depth of the left and right subtrees\n        left_depth = calculate_depth(root.left)\n        right_depth = calculate_depth(root.right)\n        # If the left and right subtrees have the same depth, it means the left subtree is complete\n        # We can directly calculate the nodes in the left subtree using the formula (2^depth) - 1\n        # and then recursively count the nodes in the right subtree.\n        if left_depth == right_depth:\n            # Left shift operation (1 << left_depth) calculates 2^left_depth\n            # Add the count of nodes in the right subtree.\n            return (1 << left_depth) + self.countNodes(root.right)\n      \n        # If the left and right subtree depths differ, the right subtree is complete\n        # We calculate the nodes for the right subtree using the formula (2^depth) - 1\n        # and recursively count the nodes in the left subtree.\n        else:\n            # Add the count of nodes in the left subtree.\n            return (1 << right_depth) + self.countNodes(root.left)\n# The TreeNode and Solution classes usage example (the actual nodes should be instantiated with their respective values)\n# root = TreeNode(1)\n# root.left = TreeNode(2)\n# root.right = TreeNode(3)\n# root.left.left = TreeNode(4)\n# root.left.right = TreeNode(5)\n# root.right.left = TreeNode(6)\n# solution = Solution()\n# number_of_nodes = solution.countNodes(root)"
+  },
+  {
+    "id": 223,
+    "title": "Rectangle Area",
+    "difficulty": "Medium",
+    "tags": [
+      "Geometry",
+      "Math"
+    ],
+    "description": "The problem is to calculate the total area covered by two rectilinear rectangles in a 2D plane. We are given the coordinates of the bottom-left and top-right corners for both rectangles. The coordinates for the first rectangle are (ax1, ay1) for the bottom-left corner and (ax2, ay2) for the top-righ",
+    "code": "class Solution:\n    def computeArea(self, A_x1: int, A_y1: int, A_x2: int, A_y2: int,\n                    B_x1: int, B_y1: int, B_x2: int, B_y2: int) -> int:\n        # Area of the first rectangle (A)\n        area_A = (A_x2 - A_x1) * (A_y2 - A_y1)\n      \n        # Area of the second rectangle (B)\n        area_B = (B_x2 - B_x1) * (B_y2 - B_y1)\n      \n        # Computing the width of the overlapping area\n        # The overlap width is the smaller of the rightmost x minus the larger of the leftmost x\n        overlap_width = min(A_x2, B_x2) - max(A_x1, B_x1)\n      \n        # Computing the height of the overlapping area\n        # The overlap height is the smaller of the topmost y minus the larger of the bottommost y\n        overlap_height = min(A_y2, B_y2) - max(A_y1, B_y1)\n      \n        # Computing the area of overlapping if both width and height are positive (there is an overlap)\n        overlap_area = max(overlap_width, 0) * max(overlap_height, 0)\n      \n        # Total combined area is the sum of both rectangle areas minus the overlapping area\n        return area_A + area_B - overlap_area"
+  },
+  {
+    "id": 225,
+    "title": "Implement Stack using Queues",
+    "difficulty": "Easy",
+    "tags": [
+      "Stack",
+      "Design",
+      "Queue"
+    ],
+    "description": "The goal of this problem is to design a stack data structure with a Last-In-First-Out (LIFO) behavior using only two queues to store the data. This means that we need to implement the usual stack operations (push, top, pop, and empty) but with a constraint that only the standard queue operations (en",
+    "code": "// Initialization of two queues to simulate a stack\nlet primaryQueue: number[] = [];\nlet secondaryQueue: number[] = [];\n/**\n * Simulates pushing an element onto stack using queues.\n * @param {number} x - The element to push onto the stack.\n */\nfunction push(x: number): void {\n    // Push the element into the secondary queue\n    secondaryQueue.push(x);\n  \n    // Move all elements from the primary queue to the secondary queue\n    while (primaryQueue.length) {\n        secondaryQueue.push(primaryQueue.shift()!);\n    }\n  \n    // Swap the names of the queues, making the secondary queue the new primary queue\n    [primaryQueue, secondaryQueue] = [secondaryQueue, primaryQueue];\n}\n/**\n * Simulates popping an element from the stack.\n * @return {number} - The element popped from the stack.\n */\nfunction pop(): number {\n    // Remove the element from the front of the primary queue\n    return primaryQueue.shift()!;\n}\n/**\n * Retrieves the element at the top of the stack without removing it.\n * @return {number} - The element at the top of the stack.\n */\nfunction top(): number {\n    // Return the front element of the primary queue\n    return primaryQueue[0];\n}\n/**\n * Checks if the stack is empty.\n * @return {boolean} - True if the stack is empty, false otherwise.\n */\nfunction empty(): boolean {\n    // Check if the primary queue is empty\n    return primaryQueue.length === 0;\n}\n// Example usage:\n// push(1);\n// const elementPopped = pop();\n// const elementAtTop = top();\n// const isStackEmpty = empty();"
+  },
+  {
+    "id": 226,
+    "title": "Invert Binary Tree",
+    "difficulty": "Easy",
+    "tags": [
+      "Tree",
+      "Depth-First Search",
+      "Breadth-First Search",
+      "Binary Tree"
+    ],
+    "description": "The given problem is a classic tree manipulation problem which involves inverting a binary tree. In other words, for every node in the tree, you need to swap its left and right children. This operation should be applied recursively to all nodes of the tree, thus flipping the structure of the entire ",
+    "code": "// TreeNode class definition\nclass TreeNode {\n    val: number;\n    left: TreeNode | null;\n    right: TreeNode | null;\n  \n    constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n        this.val = (val === undefined ? 0 : val); // Assign the node's value or default it to 0\n        this.left = (left === undefined ? null : left); // Assign the left child or default it to null\n        this.right = (right === undefined ? null : right); // Assign the right child or default it to null\n    }\n}\n/**\n * Inverts a binary tree by swapping all left and right children.\n * \n * @param {TreeNode | null} treeRoot - The root of the binary tree to invert.\n * @return {TreeNode | null} - The new root of the inverted binary tree.\n */\nfunction invertTree(treeRoot: TreeNode | null): TreeNode | null {\n    // Recursive function to traverse the tree and swap children\n    function invertNode(node: TreeNode | null): void {\n        if (node === null) {\n            return; // If the node is null, do nothing\n        }\n        [node.left, node.right] = [node.right, node.left]; // Swap the left and right children\n        invertNode(node.left); // Recursively invert the left subtree\n        invertNode(node.right); // Recursively invert the right subtree\n    }\n  \n    invertNode(treeRoot); // Start inverting from the root node\n    return treeRoot; // Return the new root after inversion\n}"
+  },
+  {
+    "id": 227,
+    "title": "Basic Calculator II",
+    "difficulty": "Medium",
+    "tags": [
+      "Stack",
+      "Math",
+      "String"
+    ],
+    "description": "The problem requires us to evaluate a mathematical expression given as a string. The expression includes integers and the operators '+', '-', '*', and '/'. We need to process the expression and return the result as an integer. The division operation should truncate the result toward zero, meaning it",
+    "code": "class Solution:\n    def calculate(self, s: str) -> int:\n        # Initialize the value to hold current number and stack to store values.\n        value, n = 0, len(s)\n        # Set the initial sign to '+' (plus).\n        sign = '+'\n        # Initialize an empty stack to keep numbers and intermediate results.\n        stack = []\n        # Iterate over each character in the input string.\n        for i, char in enumerate(s):\n            # If the character is a digit, update 'value' to be the current multi-digit number.\n            if char.isdigit():\n                value = value * 10 + int(char)\n          \n            # If we reach the end of the string or encounter an operator.\n            if i == n - 1 or char in '+-*/':\n                # Perform an action depending on the last sign observed.\n                if sign == '+':\n                    # If the sign is plus, push the current value onto the stack.\n                    stack.append(value)\n                elif sign == '-':\n                    # If the sign is minus, push the negative of the value onto the stack.\n                    stack.append(-value)\n                elif sign == '*':\n                    # If the sign is times, multiply the top of the stack by the current value and push it back.\n                    stack.append(stack.pop() * value)\n                elif sign == '/':\n                    # If the sign is divide, take the top of the stack, divide by current value and push the result back.\n                    # Use integer division to round towards zero.\n                    stack.append(int(stack.pop() / value))\n              \n                # Update the sign to the current operator.\n                sign = char\n                # Reset 'value' for the next number.\n                value = 0\n      \n        # The final result is the sum of the values in the stack.\n        return sum(stack)"
+  },
+  {
+    "id": 229,
+    "title": "Majority Element II",
+    "difficulty": "Medium",
+    "tags": [
+      "Array",
+      "Hash Table",
+      "Counting",
+      "Sorting"
+    ],
+    "description": "The given problem requires determining all the elements in an integer array of size n that appear more than ⌊ n/3 ⌋ times. This threshold implies that we need to find elements which are present in significant quantities, enough to surpass a third of the array's total size. The output should be a lis",
+    "code": "function majorityElement(nums: number[]): number[] {\n    // Initialize counters for two potential majority elements\n    let count1: number = 0;\n    let count2: number = 0;\n    // Initialize placeholders for two potential majority elements\n    let candidate1: number = nums[0] || 0;\n    let candidate2: number = nums[1] || 1;\n  \n    // Use Boyer-Moore Voting Algorithm to find potential majority elements\n    for (let num of nums) {\n        if (num === candidate1) {\n            // If the current element is the same as candidate1, increment count1\n            count1++;\n        } else if (num === candidate2) {\n            // If the current element is the same as candidate2, increment count2\n            count2++;\n        } else if (count1 === 0) {\n            // If count1 is 0, replace candidate1 with the current element\n            candidate1 = num;\n            count1 = 1;\n        } else if (count2 === 0) {\n            // If count2 is 0, replace candidate2 with the current element\n            candidate2 = num;\n            count2 = 1;\n        } else {\n            // If the current element is not equal to either candidate and both counts are non-zero, decrement both counts\n            count1--;\n            count2--;\n        }\n    }\n    // Initialize a result array to store the final majority elements\n    const result: number[] = [];\n  \n    // Validate if the candidates are indeed majority elements\n    count1 = nums.filter(num => num === candidate1).length;\n    count2 = nums.filter(num => num === candidate2).length;\n  \n    // Add candidate1 to result if count is greater than a third of nums length\n    if (count1 > Math.floor(nums.length / 3)) {\n        result.push(candidate1);\n    }\n    // Add candidate2 to result if it's different from candidate1 and count is greater than a third of nums length\n    if (candidate1 !== candidate2 && count2 > Math.floor(nums.length / 3)) {\n        result.push(candidate2);\n    }\n    // Return the final result\n    return result;\n}"
+  },
+  {
+    "id": 231,
+    "title": "Power of Two",
+    "difficulty": "Easy",
+    "tags": [
+      "Bit Manipulation",
+      "Recursion",
+      "Math"
+    ],
+    "description": "The problem provides us with a single integer n and asks us to determine if this number is a power of two. To rephrase, the question is asking if there exists another integer x such that 2 raised to the power x equals n (mathematically, this can be represented as n == 2^x). We need to return true if",
+    "code": "// This function checks if a given number is a power of two.\n// It uses bitwise AND to determine if there is only one bit set in the binary representation.\n// The number should be greater than zero since 0 is not a power of two.\n// Parameters:\n// n - The number to check if it is a power of two.\n// Returns:\n// A boolean indicating whether the number is a power of two (true) or not (false).\nfunction isPowerOfTwo(n: number): boolean {\n    // Check if 'n' is greater than 0 to avoid non-positive integers.\n    // (n & (n - 1)) will be 0 for powers of two since these numbers have a single high bit.\n    // For example, 4 in binary is 100, and 3 is 011. Bitwise AND is 000.\n    return n > 0 && (n & (n - 1)) === 0;\n}"
+  },
+  {
+    "id": 232,
+    "title": "Implement Queue using Stacks",
+    "difficulty": "Easy",
+    "tags": [
+      "Stack",
+      "Design",
+      "Queue"
+    ],
+    "description": "The task is to implement a queue with the FIFO (first in, first out) principle using two stacks. In a typical queue, elements are added, or 'pushed', to the back and removed, or 'popped', from the front. Additionally, you should be able to 'peek' at the element at the front without removing it and t",
+    "code": "// These arrays will act as the stack containers for the queue.\nlet stack1: number[] = [];\nlet stack2: number[] = [];\n// This function simulates the push operation of a queue, where 'x' is the element to be added to the queue.\nfunction push(x: number): void {\n    stack1.push(x);\n}\n// This function simulates the pop operation of a queue, by moving elements from the first stack to the second if necessary.\nfunction pop(): number {\n    moveStacks();\n    return stack2.pop();\n}\n// This function simulates the peek operation of a queue, returning the element at the front without removing it.\nfunction peek(): number {\n    moveStacks();\n    return stack2[stack2.length - 1];\n}\n// This function checks whether the queue is empty.\nfunction empty(): boolean {\n    return stack1.length === 0 && stack2.length === 0;\n}\n// This helper function moves elements from stack1 to stack2 if stack2 is empty, effectively reversing the order to simulate queue behavior.\nfunction moveStacks(): void {\n    if (stack2.length === 0) {\n        while (stack1.length !== 0) {\n            stack2.push(stack1.pop());\n        }\n    }\n}\n// Usage\n// Instead of creating an instance of MyQueue, you would directly call the functions:\npush(1);\nlet val1 = pop();\nlet val2 = peek();\nlet isEmpty = empty();"
+  },
+  {
+    "id": 233,
+    "title": "Number of Digit One",
+    "difficulty": "Hard",
+    "tags": [
+      "Recursion",
+      "Math",
+      "Dynamic Programming"
+    ],
+    "description": "The problem statement is asking us to calculate the total count of the digit 1 in the range of all non-negative integers less than or equal to a given integer n. In other words, if n is 13, for instance, we should count how many times the digit 1 appears in the following sequence of numbers: 0, 1, 2",
+    "code": "from functools import lru_cache\nclass Solution:\n    def countDigitOne(self, n: int) -> int:\n        # Use lru_cache decorator to memoize the results of the recursive calls\n        @lru_cache(maxsize=None)\n        def dfs(position, count_ones, is_limit):\n            # Base case: if no more digits to process, return the count of ones found\n            if position == 0:\n                return count_ones\n            # Determine the upper bound for the current digit.\n            # If is_limit is True, the upper bound is the current digit in the number.\n            # Otherwise, it is 9 (the maximum value for a digit).\n            upper_bound = digits[position] if is_limit else 9\n          \n            # Initialize the answer for this position\n            ans = 0\n            # Iterate over all possible digits for this position\n            for digit in range(upper_bound + 1):\n                # Calculate the answer recursively. Increase the count if the current digit is 1.\n                # Limit flag is carried over and set to True if we reached the upper_bound.\n                ans += dfs(position - 1, count_ones + (digit == 1), is_limit and digit == upper_bound)\n            return ans\n        # Convert the number to a list of its digits, reversed.\n        digits = [0] * 12\n        length = 0\n        while n:\n            digits[length + 1] = n % 10  # Store the digit\n            n //= 10                     # Move to the next digit\n            length += 1\n      \n        # Invoke the recursive DFS function starting with the most significant digit\n        return dfs(length, 0, True)"
+  },
+  {
+    "id": 234,
+    "title": "Palindrome Linked List",
+    "difficulty": "Easy",
+    "tags": [
+      "Stack",
+      "Recursion",
+      "Linked List",
+      "Two Pointers"
+    ],
+    "description": "The problem presents a scenario where you're given a singly linked list and asks you to determine if it is a palindrome. A palindrome is a sequence that reads the same forward and backward. For example, in the case of a linked list, [1 -> 2 -> 2 -> 1] is a palindrome, but [1 -> 2 -> 3] is not. Intui",
+    "code": "# Definition for singly-linked list.\nclass ListNode:\n    def __init__(self, val=0, next_node=None):\n        self.val = val\n        self.next = next_node\nclass Solution:\n    def isPalindrome(self, head: Optional[ListNode]) -> bool:\n        # Initialize two pointers, slow moves one step at a time, fast moves two steps\n        slow = head\n        fast = head.next\n      \n        # Move fast pointer to the end of the list, and slow to the middle\n        while fast and fast.next:\n            slow = slow.next\n            fast = fast.next.next\n      \n        # Reverse the second half of the list\n        prev = None\n        current = slow.next\n        while current:\n            temp = current.next\n            current.next = prev\n            prev, current = current, temp\n      \n        # Compare the first half and the reversed second half\n        while prev:\n            if prev.val != head.val:\n                return False\n            prev, head = prev.next, head.next\n      \n        # If all nodes matched, it's a palindrome\n        return True"
+  },
+  {
+    "id": 2349,
+    "title": "Design a Number Container System",
+    "difficulty": "Medium",
+    "tags": [
+      "Design",
+      "Hash Table",
+      "Ordered Set",
+      "Heap (Priority Queue)"
+    ],
+    "description": "The LeetCode problem entails designing a system that can manage a set of numbers each located at a unique index. The system needs to support two primary operations:",
+    "code": "// Mapping from index to number.\nconst indexToNumberMap: Map<number, number> = new Map();\n// Mapping from number to a set of indices containing that number.\nconst numberToIndicesMap: Map<number, Set<number>> = new Map();\n/**\n * Changes the number at the given index.\n * @param index The index of the number to change.\n * @param number The new number to set at the index.\n */\nfunction change(index: number, number: number): void {\n    // Check if the index already maps to a number.\n    if (indexToNumberMap.has(index)) {\n        // Retrieve the current number at the index.\n        const currentNumber = indexToNumberMap.get(index);\n        // Remove index from the set of the current number.\n        numberToIndicesMap.get(currentNumber)?.delete(index);\n    }\n    // Update the index to the new number.\n    indexToNumberMap.set(index, number);\n    // If there's no existing set for this number, create one.\n    if (!numberToIndicesMap.has(number)) {\n        numberToIndicesMap.set(number, new Set());\n    }\n    // Add the index to the set corresponding to the new number.\n    numberToIndicesMap.get(number)?.add(index);\n}\n/**\n * Finds the smallest index that contains the given number.\n * @param number The number to find the smallest index for.\n * @returns The smallest index containing the given number, or -1 if not found.\n */\nfunction find(number: number): number {\n    // Attempt to find the set of indices for the given number.\n    const indicesSet = numberToIndicesMap.get(number);\n    // If there's no set for the number or the set is empty, return -1.\n    if (!indicesSet || indicesSet.size === 0) {\n        return -1;\n    }\n    // Return the smallest index (first value) in the sorted set.\n    return Math.min(...indicesSet);\n}\n// Example usage:\n// change(1, 10);\n// let smallestIndex = find(10);\n// console.log(smallestIndex); // Outputs the smallest index where the number 10 is located, if present."
+  },
+  {
+    "id": 237,
+    "title": "Delete Node in a Linked List",
+    "difficulty": "Medium",
+    "tags": [
+      "Linked List"
+    ],
+    "description": "In this problem, we're tasked with deleting a specific node from a singly-linked list, but with a twist: we're only given access to that particular node, not the head of the list. Moreover, the given node will not be the list's tail, and all node values in the list are unique. What makes this task u",
+    "code": "// Given the node to be deleted (except the tail), this function will delete the node in place.\nfunction deleteNode(node: ListNode | null): void {\n    if (node === null || node.next === null) {\n        // If the node is null or it is the tail node, do nothing since deletion is not possible.\n        return;\n    }\n    // Copy the value from the next node to the current node.\n    node.val = node.next.val;\n    // Bypass the next node by pointing the current node's `next` reference to the next node's `next`.\n    node.next = node.next.next;\n}"
+  },
+  {
+    "id": 238,
+    "title": "Product of Array Except Self",
+    "difficulty": "Medium",
+    "tags": [
+      "Array",
+      "Prefix Sum"
+    ],
+    "description": "The problem provided relates to an array transformation challenge. Specifically, you are given an integer array named nums and the task is to generate a new array named answer. For each index i in the new array, answer[i] should be the product of all the elements in nums except for nums[i]. For exam",
+    "code": "function productExceptSelf(nums: number[]): number[] {\n    const length = nums.length; // Total number of elements in input array\n    const result: number[] = new Array(length); // Initialize an array to store the result\n    // Forward pass: Calculate the product of all elements to the left of each index\n    for (let i = 0, productToLeft = 1; i < length; i++) {\n        result[i] = productToLeft; // Set the product (initially 1)\n        productToLeft *= nums[i]; // Update the productToLeft for the next index\n    }\n    // Backward pass: Calculate the product of all elements to the right of each index\n    for (let i = length - 1, productToRight = 1; i >= 0; i--) {\n        result[i] *= productToRight; // Multiply with the already stored product to the left\n        productToRight *= nums[i]; // Update the productToRight for the previous index\n    }\n    return result; // Return the final result array\n}"
+  },
+  {
+    "id": 239,
+    "title": "Sliding Window Maximum",
+    "difficulty": "Hard",
+    "tags": [
+      "Queue",
+      "Array",
+      "Sliding Window",
+      "Monotonic Queue",
+      "Heap (Priority Queue)"
+    ],
+    "description": "In this problem, you're given an array nums of integers, and an integer k which represents the size of a sliding window. This sliding window moves across the array from left to right, one element at a time. At each position of the window, you can only see k numbers within it. The objective is to ret",
+    "code": "/**\n * Calculates the max sliding window for an array of numbers.\n * @param {number[]} nums - The input array of numbers.\n * @param {number} k - The size of the sliding window.\n * @return {number[]} - Array of the maximum numbers for each sliding window.\n */\nfunction maxSlidingWindow(nums: number[], k: number): number[] {\n    // Initialize an array to hold the maximum values for each sliding window.\n    let maxValues: number[] = [];\n  \n    // Initialize a deque to store indices of elements in nums.\n    // Elements in the deque are in decreasing order from the start (front) to the end (back).\n    let deque: number[] = []; \n  \n    // Iterate through nums using 'i' as the right boundary of the sliding window.\n    for (let i = 0; i < nums.length; ++i) {\n        // If the left boundary of the window has exceeded the left-most index in the deque,\n        // remove the left-most index as it's no longer in the window.\n        if (deque.length && i - k + 1 > deque[0]) {\n            deque.shift();\n        }\n      \n        // While the deque is not empty and the current element is greater than the\n        // last element indexed in deque, remove the last element from the deque.\n        // This ensures elements in the deque are always in decreasing order.\n        while (deque.length && nums[deque[deque.length - 1]] <= nums[i]) {\n            deque.pop();\n        }\n      \n        // Add the current index to the deque.\n        deque.push(i);\n      \n        // If we have hit the size of the window, append the maximum value (front of the deque)\n        // to the maxValues array.\n        if (i >= k - 1) {\n            maxValues.push(nums[deque[0]]);\n        }\n    }\n  \n    // Return the array containing the maximum for each sliding window.\n    return maxValues;\n}"
+  },
+  {
+    "id": 241,
+    "title": "Different Ways to Add Parentheses",
+    "difficulty": "Medium",
+    "tags": [
+      "Recursion",
+      "Memoization",
+      "Math",
+      "String",
+      "Dynamic Programming"
+    ],
+    "description": "The problem in question requires us to compute all possible results from a given string expression which includes numbers and arithmetic operators ('+', '-', '*'). The key challenge is to consider all the different groupings of the numbers and operators to find every possible evaluation outcome. Ima",
+    "code": "from typing import List\nfrom functools import lru_cache\nclass Solution:\n    def diff_ways_to_compute(self, expression: str) -> List[int]:\n        # Define a helper function that will find all possible results\n        # of computations given a sub-expression. The lru_cache decorator\n        # is used to memoize the results of the function calls, effectively\n        # caching the intermediate results for optimization.\n        @lru_cache(maxsize=None)\n        def compute_all_ways(sub_exp):\n            # If the sub-expression is a digit, convert it to an integer\n            # and return it as a list.\n            if sub_exp.isdigit():\n                return [int(sub_exp)]\n            # Initialize an empty list to store possible computation results.\n            results = []\n            # Iterate through each character in the sub-expression.\n            for idx, char in enumerate(sub_exp):\n                # Check if the current character is an operator.\n                if char in '-+*':\n                    # Compute all possible results for the left and right\n                    # sub-expressions.\n                    left_results = compute_all_ways(sub_exp[:idx])\n                    right_results = compute_all_ways(sub_exp[idx + 1:])\n                    # Iterate through all combinations of left and\n                    # right results, and apply the operator.\n                    for left_val in left_results:\n                        for right_val in right_results:\n                            # Perform the appropriate operation based\n                            # on the operator.\n                            if char == '-':\n                                results.append(left_val - right_val)\n                            elif char == '+':\n                                results.append(left_val + right_val)\n                            else:  # char == '*'\n                                results.append(left_val * right_val)\n          \n            # Return all possible computation results for this sub-expression.\n            return results\n        # Call the helper function on the entire expression to find all\n        # different ways to compute the expression.\n        return compute_all_ways(expression)"
+  },
+  {
+    "id": 242,
+    "title": "Valid Anagram",
+    "difficulty": "Easy",
+    "tags": [
+      "Hash Table",
+      "String",
+      "Sorting"
+    ],
+    "description": "The problem presents two input strings, s and t, and asks to determine whether t is an anagram of s. An anagram is defined as a word or phrase that is created by rearranging the letters of another word or phrase, using all the original letters exactly once. The goal is to return true if t is an anag",
+    "code": "from collections import Counter\nclass Solution:\n    def isAnagram(self, s: str, t: str) -> bool:\n        # If the lengths of the strings are not equal, they cannot be anagrams\n        if len(s) != len(t):\n            return False\n      \n        # Create a counter dictionary for all characters in the first string 's'\n        char_count = Counter(s)\n      \n        # Iterate over each character in the second string 't'\n        for char in t:\n            # Decrease the count of the character in the counter dictionary\n            char_count[char] -= 1\n          \n            # If the count of a character goes below zero,\n            # it means 't' has more occurrences of that character than 's',\n            # so 's' and 't' cannot be anagrams\n            if char_count[char] < 0:\n                return False\n      \n        # If we've not returned False till now, 's' and 't' are anagrams\n        return True"
+  },
+  {
+    "id": 243,
+    "title": "Shortest Word Distance",
+    "difficulty": "Easy",
+    "tags": [
+      "Array",
+      "String"
+    ],
+    "description": "In this problem, you are given an array of strings called wordsDict, which contains a list of words. You are also given two different strings word1 and word2 which you can be certain are present in wordsDict. Your task is to find the shortest distance between word1 and word2 within wordsDict. The di",
+    "code": "from typing import List\nclass Solution:\n    def shortestDistance(self, wordsDict: List[str], word1: str, word2: str) -> int:\n        # Initialize indices for the positions of word1 and word2\n        index1 = index2 = -1\n        # Initialize the answer as infinite to ensure any actual distance found is smaller\n        shortest_distance = float('inf')\n      \n        # Loop through the words in the dictionary to find the closest distance\n        for index, word in enumerate(wordsDict):\n            if word == word1:\n                index1 = index  # Update the position of word1\n            if word == word2:\n                index2 = index  # Update the position of word2\n              \n            # If both words have been found at least once, calculate the distance\n            if index1 != -1 and index2 != -1:\n                distance = abs(index1 - index2)  # Compute absolute difference\n                shortest_distance = min(shortest_distance, distance)  # Update the shortest distance\n      \n        # Return the shortest distance found between the two words\n        return shortest_distance"
+  },
+  {
+    "id": 244,
+    "title": "Shortest Word Distance II",
+    "difficulty": "Medium",
+    "tags": [
+      "Design",
+      "Array",
+      "Hash Table",
+      "Two Pointers",
+      "String"
+    ],
+    "description": "The problem provides us with the task of designing a data structure that must be able to compute the shortest distance between any two distinct strings within an array of strings. This implies that we first need to initialize the data structure with an array of strings, which we'll refer to as words",
+    "code": "from collections import defaultdict\nfrom math import inf\nclass WordDistance:\n    def __init__(self, words_dict: List[str]):\n        # Initializing a default dictionary to store the indices of each word\n        self.indices_map = defaultdict(list)\n      \n        # Loop through the list of words and populate the indices map\n        for index, word in enumerate(words_dict):\n            self.indices_map[word].append(index)\n    def shortest(self, word1: str, word2: str) -> int:\n        # Retrieve the list of indices for the two words\n        indices_word1, indices_word2 = self.indices_map[word1], self.indices_map[word2]\n        # Initialize the minimum distance to infinity\n        min_distance = inf\n        # Initialize two pointers for the lists of indices\n        i, j = 0, 0\n      \n        # Iterate until we reach the end of one of the lists of indices\n        while i < len(indices_word1) and j < len(indices_word2):\n            # Update the minimum distance as the smaller between the previous\n            # minimum distance and the current distance between word1 and word2\n            min_distance = min(min_distance, abs(indices_word1[i] - indices_word2[j]))\n            # Move the pointer of the list which currently has a smaller index forward\n            if indices_word1[i] <= indices_word2[j]:\n                i += 1\n            else:\n                j += 1\n      \n        # Return the minimum distance found\n        return min_distance\n# Example of usage:\n# word_distance = WordDistance([\"practice\", \"makes\", \"perfect\", \"coding\", \"makes\"])\n# result = word_distance.shortest(\"coding\", \"practice\")\n# result would have the shortest distance between \"coding\" and \"practice\" in the list"
+  },
+  {
+    "id": 245,
+    "title": "Shortest Word Distance III",
+    "difficulty": "Medium",
+    "tags": [
+      "Array",
+      "String"
+    ],
+    "description": "The problem presents us with an array of strings called wordsDict, where we must find the minimum distance between two specified words, word1 and word2. This distance is defined as the number of positions between the two words in the array. An important condition given is that word1 and word2 can so",
+    "code": "from typing import List\nclass Solution:\n    def shortest_word_distance(self, words_dict: List[str], word1: str, word2: str) -> int:\n        # Initialize the minimum distance to the length of the word list\n        min_distance = len(words_dict)\n      \n        # If both words are the same, we need to find the shortest distance\n        # between two occurrences of the same word\n        if word1 == word2:\n            last_occurrence_index = -1  # Initialize the index for the last occurrence of the word\n            for index, word in enumerate(words_dict):\n                if word == word1:\n                    if last_occurrence_index != -1:\n                        # Update minimum distance if the current pair is closer\n                        min_distance = min(min_distance, index - last_occurrence_index)\n                    # Update the last occurrence index to the current index\n                    last_occurrence_index = index\n        else:\n            # If the words are different, find the shortest distance between word1 and word2\n            index1 = index2 = -1  # Initialize the indexes for the occurrences of the words\n          \n            for index, word in enumerate(words_dict):\n                if word == word1:\n                    index1 = index  # Update index when word1 is found\n                if word == word2:\n                    index2 = index  # Update index when word2 is found\n              \n                # If both words have been found, update the minimum distance\n                if index1 != -1 and index2 != -1:\n                    min_distance = min(min_distance, abs(index1 - index2))\n      \n        # Return the minimum distance found\n        return min_distance"
+  },
+  {
+    "id": 246,
+    "title": "Strobogrammatic Number",
+    "difficulty": "Easy",
+    "tags": [
+      "Hash Table",
+      "Two Pointers",
+      "String"
+    ],
+    "description": "The problem requires us to determine if a given string num represents a strobogrammatic number. A strobogrammatic number is one that appears the same when flipped 180 degrees. Imagine looking at certain numbers on a digital clock; when rotated upside down, they still read as valid numbers. Notably, ",
+    "code": "class Solution:\n    def isStrobogrammatic(self, num: str) -> bool:\n        # Mapping of strobogrammatic numerals where the key is the numeral as int\n        # and the value is its 180-degree rotated equivalent (also as an int).\n        # Any numeral that doesn't have a strobogrammatic equivalent is mapped to -1.\n        rotated_numerals = [0, 1, -1, -1, -1, -1, 9, -1, 8, 6]\n      \n        left, right = 0, len(num) - 1  # Pointers to traverse from both ends of the string.\n        # Loop to check the strobogrammatic property of the number.\n        while left <= right:\n            # Convert the left and right pointed numerals in the string to integers.\n            left_numeral, right_numeral = int(num[left]), int(num[right])\n          \n            # If the rotated numeral of left doesn't match the right numeral,\n            # or if the numeral at the current position doesn't have a valid rotation,\n            # then the number is not strobogrammatic.\n            if rotated_numerals[left_numeral] != right_numeral:\n                return False\n            # Move the pointers closer to the center.\n            left += 1\n            right -= 1\n      \n        # The entire number has been checked and is strobogrammatic.\n        return True"
+  },
+  {
+    "id": 247,
+    "title": "Strobogrammatic Number II",
+    "difficulty": "Medium",
+    "tags": [
+      "Recursion",
+      "Array",
+      "String"
+    ],
+    "description": "The task is to generate all strobogrammatic numbers of a given length n. A number is considered strobogrammatic if it looks the same when rotated 180 degrees. This means that when you flip the number upside down, it should appear identical to its original appearance. To understand this better, imagi",
+    "code": "from typing import List\nclass Solution:\n    def findStrobogrammatic(self, n: int) -> List[str]:\n        # Helper function to perform depth-first search.\n        def dfs(depth):\n            # Base case for recursion: when no more characters can be placed.\n            if depth == 0:\n                return ['']\n            # When we have space for one character, only 0, 1, and 8 are strobogrammatic by themselves.\n            if depth == 1:\n                return ['0', '1', '8']\n          \n            # Recurse with two fewer spaces to place the rest.\n            subresults = dfs(depth - 2)\n            full_results = []\n            # Iterate through each subresult from the recursive call.\n            for subresult in subresults:\n                # Add strobogrammatic pairs around the subresult.\n                for left, right in ('11', '88', '69', '96'):\n                    full_results.append(left + subresult + right)\n                # If we are not at the outermost layer, we can use '0' as a strobogrammatic pair as well.\n                if depth != n:\n                    full_results.append('0' + subresult + '0')\n            return full_results\n        # Start the recursion with the full length n.\n        return dfs(n)"
+  },
+  {
+    "id": 248,
+    "title": "Strobogrammatic Number III",
+    "difficulty": "Hard",
+    "tags": [
+      "Recursion",
+      "Array",
+      "String"
+    ],
+    "description": "The challenge presented involves identifying a special class of numbers known as \"strobogrammatic numbers.\" A strobogrammatic number is one that retains its original value when rotated by 180 degrees. Imagine flipping the number upside down; if it still reads the same, it's strobogrammatic. For exam",
+    "code": "class Solution:\n    def strobogrammaticInRange(self, low: str, high: str) -> int:\n        # Helper function to generate strobogrammatic numbers of length 'length'\n        def generate_strobogrammatic(length):\n            # Base case for a strobogrammatic number of length 0 is an empty string\n            if length == 0:\n                return ['']\n            # Base case for length 1 (single digit strobogrammatic numbers)\n            if length == 1:\n                return ['0', '1', '8']\n            sub_ans = []\n            # Recursive call to get the inner strobogrammatic number\n            for sub_number in generate_strobogrammatic(length - 2):\n                # Adding the strobogrammatic pairs to the sub_number\n                for pair in ('11', '88', '69', '96'):\n                    sub_ans.append(pair[0] + sub_number + pair[1])\n                # Numbers like '060', '080' etc. cannot be at the beginning or end\n                # So we add them only when we're not at the outermost level\n                if length != num_length:\n                    sub_ans.append('0' + sub_number + '0')\n            return sub_ans\n        min_length, max_length = len(low), len(high)\n        low, high = int(low), int(high)\n        count = 0  # Counter for strobogrammatic numbers within the range\n        # Loop through all lengths from min_length to max_length\n        for num_length in range(min_length, max_length + 1):\n            # generate strobogrammatic numbers of length 'num_length'\n            for num_str in generate_strobogrammatic(num_length):\n                # Convert the string to an integer and check if it's within range\n                if low <= int(num_str) <= high:\n                    count += 1\n        return count  # Return the count of strobogrammatic numbers within the range"
+  },
+  {
+    "id": 249,
+    "title": "Group Shifted Strings",
+    "difficulty": "Medium",
+    "tags": [
+      "Array",
+      "Hash Table",
+      "String"
+    ],
+    "description": "The given problem involves identifying sequences of strings that are formed by shifting characters. A string shift is where each letter of the string is moved to its next successive character in the alphabet. The task is to group all strings from a provided array that are part of the same shifting s",
+    "code": "// An array of strings representing the input to be grouped\nconst strings: string[] = []; // Populate this array with the desired strings to be grouped\n// A function that calculates the difference needed to shift a character to 'a'\nfunction calculateOffset(char: string): number {\n    return char.charCodeAt(0) - 'a'.charCodeAt(0);\n}\n// A function that normalizes a string based on its first character\nfunction normalizeString(str: string): string {\n    let offset = calculateOffset(str[0]);\n    return str.split('').map(char => {\n        let normalizedCharCode = char.charCodeAt(0) - offset;\n        if (normalizedCharCode < 'a'.charCodeAt(0)) {\n            normalizedCharCode += 26;\n        }\n        return String.fromCharCode(normalizedCharCode);\n    }).join('');\n}\n// A function that groups the strings into vectors by their normalized forms\nfunction groupStrings(strings: string[]): string[][] {\n    const groupedStringsMap: { [key: string]: string[] } = {};\n    // Iterate over each string to normalize and group\n    strings.forEach(str => {\n        const normalizedStr = normalizeString(str);\n        // Debugging: console logging the normalized string\n        console.log(normalizedStr);\n        // If the normalized string is not yet a key in the map, initialize it with an empty array\n        groupedStringsMap[normalizedStr] = groupedStringsMap[normalizedStr] || [];\n        // Add the original string to the array corresponding to the normalized string\n        groupedStringsMap[normalizedStr].push(str);\n    });\n    // Extract the grouped strings into a result array\n    const result = Object.values(groupedStringsMap);\n    return result;\n}\n// Example usage:\n// let inputStrings = ['abc', 'bcd', 'acef', 'xyz', 'az', 'ba', 'a', 'z'];\n// let grouped = groupStrings(inputStrings);\n// console.log(grouped);"
+  },
+  {
+    "id": 251,
+    "title": "Flatten 2D Vector",
+    "difficulty": "Medium",
+    "tags": [
+      "Design",
+      "Array",
+      "Two Pointers",
+      "Iterator"
+    ],
+    "description": "The task is to design a special iterator for a 2D vector (i.e., an array of arrays or a list of lists in Python). The iterator should provide two operations: next and hasNext. The next operation should return the next element in the 2D vector, moving an internal pointer forward by one position. The ",
+    "code": "// Global index variables for keeping track of the current position in the 2D vector\nlet currentIndexI: number = 0;\nlet currentIndexJ: number = 0;\n// The 2D vector to be iterated over\nlet vector: number[][];\n/**\n * Initializes the global variables with a new 2D vector.\n * @param vec The 2D vector to be used for iteration.\n */\nfunction vector2DConstructor(vec: number[][]): void {\n    currentIndexI = 0;\n    currentIndexJ = 0;\n    vector = vec;\n}\n/**\n * Advances to the next element in the 2D vector and returns it.\n * @return The next element in the 2D vector.\n */\nfunction next(): number {\n    forward(); // Ensure the indices are at the correct position for 'next' operation.\n    return vector[currentIndexI][currentIndexJ++]; // Return current element and increment the inner index.\n}\n/**\n * Checks if there is a next element in the 2D vector.\n * @return `true` if there is a next element, `false` otherwise.\n */\nfunction hasNext(): boolean {\n    forward(); // Adjust the indices to point to the next available element, if any.\n    return currentIndexI < vector.length; // Return true if there are more elements to iterate over.\n}\n/**\n * Adjusts the indices to skip empty inner arrays and point to the next available element.\n */\nfunction forward(): void {\n    // Loop until a non-empty row is found or end of the vector is reached\n    while (currentIndexI < vector.length && currentIndexJ >= vector[currentIndexI].length) {\n        ++currentIndexI; // Move to the next row in the 2D vector.\n        currentIndexJ = 0; // Reset the inner index.\n    }\n}\n// Example usage:\n// vector2DConstructor([[1, 2], [3], [], [4, 5, 6]]);\n// while (hasNext()) {\n//     console.log(next());\n// }"
+  },
+  {
+    "id": 252,
+    "title": "Meeting Rooms",
+    "difficulty": "Easy",
+    "tags": [
+      "Array",
+      "Sorting"
+    ],
+    "description": "The problem presents a scenario in which an individual has multiple meetings scheduled, represented by time intervals. Each interval is an array of two values [start_i, end_i], where start_i is the time a particular meeting begins, and end_i is the time the meeting ends. The intervals array contains",
+    "code": "/**\n * Determines if an individual can attend all the given meetings.\n * Meetings are represented by intervals where each interval is an array of two integers,\n * with the start time as the first element and the end time as the second element.\n * \n * @param {number[][]} intervals - A list of intervals representing meetings.\n * @returns {boolean} - Returns true if an individual can attend all meetings without\n *     any overlaps; otherwise, returns false.\n */\nfunction canAttendMeetings(intervals: number[][]): boolean {\n    // Sort the intervals based on their start time.\n    intervals.sort((a, b) => a[0] - b[0]);\n    // Iterate over the sorted intervals starting from the second interval.\n    for (let i = 1; i < intervals.length; i++) {\n        // Check if the current interval starts before the previous interval ends.\n        // If so, there's an overlap, and the person cannot attend all meetings.\n        if (intervals[i][0] < intervals[i - 1][1]) {\n            return false;\n        }\n    }\n    // If there were no overlaps found, return true.\n    return true;\n}"
+  },
+  {
+    "id": 253,
+    "title": "Meeting Rooms II",
+    "difficulty": "Medium",
+    "tags": [
+      "Greedy",
+      "Array",
+      "Two Pointers",
+      "Prefix Sum",
+      "Sorting",
+      "Heap (Priority Queue)"
+    ],
+    "description": "The problem presents a scenario where we have an array of meeting time intervals, each represented by a pair of numbers [start_i, end_i]. These pairs indicate when a meeting starts and ends. The goal is to find the minimum number of conference rooms required to accommodate all these meetings without",
+    "code": "from typing import List\nfrom itertools import accumulate\nclass Solution:\n    def minMeetingRooms(self, intervals: List[List[int]]) -> int:\n        # Initialize a list to keep track of the number of meetings starting or ending at any time\n        # The range is chosen such that it covers all possible meeting times\n        meeting_delta = [0] * 1000010\n        # Go through each interval in the provided list of intervals\n        for start, end in intervals:\n            meeting_delta[start] += 1  # Increment for a meeting starting\n            meeting_delta[end] -= 1    # Decrement for a meeting ending\n        # The `accumulate` function is used to compute the running total of active meetings at each time\n        # `max` is then used to find the maximum number of concurrent meetings, which is the minimum number of rooms required\n        return max(accumulate(meeting_delta))\n# Example usage:\n# sol = Solution()\n# print(sol.minMeetingRooms([[0, 30], [5, 10], [15, 20]]))  # Output: 2"
+  },
+  {
+    "id": 254,
+    "title": "Factor Combinations",
+    "difficulty": "Medium",
+    "tags": [
+      "Array",
+      "Backtracking"
+    ],
+    "description": "The problem requires finding all unique combinations of an integer n's factors, excluding 1 and n itself. A number's factors are the numbers that divide it evenly without leaving a remainder. For example, for n = 8, the combinations of factors can be [2, 2, 2] which multiply together to give 8, or [",
+    "code": "from typing import List\nclass Solution:\n    def getFactors(self, n: int) -> List[List[int]]:\n        # Helper function to perform depth-first search\n        def depth_first_search(target, start_factor):\n            # If temp_factors has elements, then add a combination to the answer\n            if temp_factors:\n                answer.append(temp_factors + [target])\n            # Initialize a factor to start from\n            factor = start_factor\n            # Check for factors only up to the square root of the target\n            while factor * factor <= target:\n                # If factor is a valid factor of target\n                if target % factor == 0:\n                    # Append the factor to the temporary list for possible answer\n                    temp_factors.append(factor)\n                    # Recurse with the reduced number (integer division)\n                    depth_first_search(target // factor, factor)\n                    # Pop the last factor to backtrack\n                    temp_factors.pop()\n                # Increment the factor\n                factor += 1\n        # A list to keep a temporary set of factors for a combination\n        temp_factors = []\n        # The final list of lists to be returned\n        answer = []\n        # Initiate depth-first search with the full target and the smallest factor\n        depth_first_search(n, 2)\n        return answer"
+  },
+  {
+    "id": 255,
+    "title": "Verify Preorder Sequence in Binary Search Tree",
+    "difficulty": "Medium",
+    "tags": [
+      "Stack",
+      "Tree",
+      "Binary Search Tree",
+      "Recursion",
+      "Binary Tree",
+      "Monotonic Stack"
+    ],
+    "description": "The challenge is to determine whether a given array of unique integers represents the correct preorder traversal of a Binary Search Tree (BST). Preorder traversal of a BST means visiting the nodes in the order: root, left, right. To qualify as a valid BST traversal, the sequence must reflect the BST",
+    "code": "// Integer array type alias\ntype IntArray = number[];\n// Stack type alias leveraging Array type for stack operations\ntype Stack = number[];\n// Initialize a stack to hold the nodes\nlet nodeStack: Stack = [];\n// Variable to store the last value that was popped from the stack\nlet lastPopped: number = Number.MIN_SAFE_INTEGER;\n// Function to verify if a given array of integers is a valid preorder traversal of a BST\nfunction verifyPreorder(preorder: IntArray): boolean {\n    // Reset stack and last popped for each validation run\n    nodeStack = [];\n    lastPopped = Number.MIN_SAFE_INTEGER;\n    // Iterate over each element in the given preorder array\n    for (let value of preorder) {\n        // If current value is less than the last popped value, the preorder sequence is invalid\n        if (value < lastPopped) return false;\n        // While the stack isn't empty and the top element is less than the current value,\n        // pop from the stack and update the lastPopped value.\n        while (nodeStack.length > 0 && nodeStack[nodeStack.length - 1] < value) {\n            lastPopped = nodeStack.pop()!;\n        }\n        // Push the current value onto the stack\n        nodeStack.push(value);\n    }\n    // If the loop completes without returning false, the preorder sequence is valid\n    return true;\n}\n// Since TypeScript doesn't have IntArray and Stack as inbuilt types, we're creating aliases\n// to enhance readability and maintain a level of abstraction in our code, similar to the original C++ version."
+  },
+  {
+    "id": 256,
+    "title": "Paint House",
+    "difficulty": "Medium",
+    "tags": [
+      "Array",
+      "Dynamic Programming"
+    ],
+    "description": "In this problem, we are given a scenario where we have n houses in a row, and we need to paint each house in such a way that no two adjacent houses have the same color. There are three colors available: red, blue, and green. The cost of painting each house with each color is different and is provide",
+    "code": "/**\n * Calculates the minimum cost to paint all houses such that no two adjacent houses have the same color.\n * The cost of painting each house with each color is given in an input array.\n *\n * @param {number[][]} paintingCosts - A 2D array where paintingCosts[i][j] represents the cost to paint the i-th house with color j.\n * @return {number} - The minimum cost to paint all houses.\n */\nfunction minCost(paintingCosts: number[][]): number {\n    // Initialize variables to store the cumulative costs of painting houses with three different colors.\n    let costA: number = 0;\n    let costB: number = 0;\n    let costC: number = 0;\n    // Iterate over each house's painting cost array.\n    for (let [costColorA, costColorB, costColorC] of paintingCosts) {\n        // Calculate the cumulative cost of painting the current house with each color.\n        // For each color, we choose the minimum of the other two colors' previous cumulative costs.\n        const newCostA: number = Math.min(costB, costC) + costColorA;\n        const newCostB: number = Math.min(costA, costC) + costColorB;\n        const newCostC: number = Math.min(costA, costB) + costColorC;\n        // Update the cumulative costs for the next iteration.\n        costA = newCostA;\n        costB = newCostB;\n        costC = newCostC;\n    }\n    // The answer is the smallest of the cumulative costs after painting all houses.\n    return Math.min(costA, costB, costC);\n}"
+  },
+  {
+    "id": 700,
+    "title": "Search in a Binary Search Tree",
+    "difficulty": "Easy",
+    "tags": [
+      "Tree",
+      "Binary Search Tree",
+      "Binary Tree"
+    ],
+    "description": "The given problem is about searching for a node with a specific value in a Binary Search Tree (BST). In a BST, every node's left child is less than the node's value, and the right child's value is greater. We are required to implement a function that takes the root of a BST and an integer val as its",
+    "code": "// Definition for a binary tree node.\nclass TreeNode {\n    val: number;         // The value stored in the tree node\n    left: TreeNode | null;   // Pointer to the left child\n    right: TreeNode | null;  // Pointer to the right child\n    // Constructor to initialize the node with default values or with given values for val, left, and right.\n    constructor(val: number = 0, left: TreeNode | null = null, right: TreeNode | null = null) {\n        this.val = val;\n        this.left = left;\n        this.right = right;\n    }\n}\n/**\n * Searches for a node with the given value in a Binary Search Tree.\n * \n * @param root A TreeNode representing the root of the BST.\n * @param value The value to search for in the BST.\n * @return A TreeNode pointer to the found node or null if not found.\n */\nfunction searchBST(root: TreeNode | null, value: number): TreeNode | null {\n    // Base case: if the root is null or the root's value matches the search value\n    if (!root || root.val === value) {\n        return root;\n    }\n    // If the search value is greater than the root's value, search in the right subtree.\n    if (value > root.val) {\n        return searchBST(root.right, value);\n    }\n    // If the search value is less than the root's value, search in the left subtree.\n    return searchBST(root.left, value);\n}"
+  },
+  {
+    "id": 701,
+    "title": "Insert into a Binary Search Tree",
+    "difficulty": "Medium",
+    "tags": [
+      "Tree",
+      "Binary Search Tree",
+      "Binary Tree"
+    ],
+    "description": "In this problem, we are dealing with the operation of inserting a new node into a binary search tree (BST). A BST is a special kind of binary tree where the value of each node must be greater than all values stored in its left subtree and less than the values stored in its right subtree. You are pro",
+    "code": "// Node structure for the binary search tree.\ninterface TreeNode {\n  value: number;\n  leftChild: TreeNode | null;\n  rightChild: TreeNode | null;\n}\n// Function to create a new tree node with a value, and with left and right children initialized to null.\nfunction createTreeNode(value: number, leftChild: TreeNode | null = null, rightChild: TreeNode | null = null): TreeNode {\n  return {\n    value: value,\n    leftChild: leftChild,\n    rightChild: rightChild\n  };\n}\n/**\n * Inserts a value into a binary search tree (BST) and returns the root node of the BST.\n *\n * @param root - The root node of the tree where the value is to be inserted.\n * @param value - The value to be inserted into the BST.\n * @return The root of the BST after the insertion of the value.\n */\nfunction insertIntoBST(root: TreeNode | null, value: number): TreeNode | null {\n  // If the root is null, create a new node with the value to be inserted and return it.\n  if (root === null) {\n    return createTreeNode(value);\n  }\n  // If the value to insert is greater than the root's value, recursively insert into the right subtree.\n  if (value > root.value) {\n    root.rightChild = insertIntoBST(root.rightChild, value);\n  } else { // If the value is less than or equal to the root's value, recursively insert into the left subtree.\n    root.leftChild = insertIntoBST(root.leftChild, value);\n  }\n  // Return the unchanged root node.\n  return root;\n}"
+  },
+  {
+    "id": 702,
+    "title": "Search in a Sorted Array of Unknown Size",
+    "difficulty": "Medium",
+    "tags": [
+      "Array",
+      "Binary Search",
+      "Interactive"
+    ],
+    "description": "In this interactive problem, you are given access to a sorted array of unique elements, but you do not know its size. To interact with this array, you can use the ArrayReader interface, which has a function get(i) that will return the value at the ith index (0-indexed) if it's within the bounds of t",
+    "code": "/**\n * Interface representing an array reader that supplies a `get` method to access elements at a given index.\n */\ninterface ArrayReader {\n  get(index: number): number;\n}\n/**\n * Searches for a target element in a sorted array with an unknown size using the ArrayReader.\n * Implements a binary search algorithm assuming a very large array where negative elements\n * denote the sequence has ended.\n *\n * @param reader - The array reader providing access to elements.\n * @param target - The target value to search for.\n * @returns The index of the target if found, otherwise -1.\n */\nfunction search(reader: ArrayReader, target: number): number {\n  let left: number = 0;\n  // Artificially setting the right boundary very high since the array size is unknown,\n  // but we know the range of possible values based on the problem constraints.\n  let right: number = 20000;\n  while (left < right) {\n    // Calculate the middle index to partition the array into halves.\n    let mid: number = left + Math.floor((right - left) / 2);\n    // Retrieve the value at the middle index using the reader.\n    let valueAtMid: number = reader.get(mid);\n    if (valueAtMid >= target) {\n      // If value at mid is greater or equal to the target, we shrink the right boundary.\n      right = mid;\n    } else {\n      // If value at mid is less than the target, we adjust the left boundary.\n      left = mid + 1;\n    }\n  }\n  // After exiting the loop, left should be at the smallest index whose value is at least the target.\n  // Check if the actual value at the index is equal to the target and return the index if so.\n  return reader.get(left) === target ? left : -1;\n}\n// Example usage:\n// Assume there exists an ArrayReader instance - someReader,\n// and a target value - targetValue.\n// You can call the search function as follows:\n// const index: number = search(someReader, targetValue);"
+  },
+  {
+    "id": 703,
+    "title": "Kth Largest Element in a Stream",
+    "difficulty": "Easy",
+    "tags": [
+      "Tree",
+      "Design",
+      "Binary Search Tree",
+      "Binary Tree",
+      "Data Stream",
+      "Heap (Priority Queue)"
+    ],
+    "description": "In this problem, we are asked to design a KthLargest class that can determine the kth largest element in a stream of numbers. Importantly, when we refer to the kth largest element, we mean according to sorted order, not that the element is distinct from the others. The numbers can be repeated in the",
+    "code": "from heapq import heappush, heappop\nclass KthLargest:\n    def __init__(self, k: int, nums: List[int]):\n        # Initialize a min heap to store the k largest elements\n        self.min_heap = []\n        # Store the size k to know the kth largest value\n        self.k = k\n        # Add the initial elements to the heap\n        for num in nums:\n            self.add(num)\n    def add(self, val: int) -> int:\n        # Add the new value to the min heap\n        heappush(self.min_heap, val)\n        # If the size of the heap exceeds k, remove the smallest element\n        if len(self.min_heap) > self.k:\n            heappop(self.min_heap)\n        # The root of the min heap is the kth largest value\n        return self.min_heap[0]\n# Example usage:\n# kthLargest = KthLargest(3, [4, 5, 8, 2])\n# print(kthLargest.add(3))   # returns 4\n# print(kthLargest.add(5))   # returns 5\n# print(kthLargest.add(10))  # returns 5\n# print(kthLargest.add(9))   # returns 8\n# print(kthLargest.add(4))   # returns 8"
+  },
+  {
+    "id": 704,
+    "title": "Binary Search",
+    "difficulty": "Easy",
+    "tags": [
+      "Array",
+      "Binary Search"
+    ],
+    "description": "This problem asks us to create a function that takes two inputs: an array of integers nums sorted in ascending order, and an integer target. The goal is to search for the target value within the nums array. If the target is found, the function should return the index of the target in the array. If t",
+    "code": "from typing import List\nclass Solution:\n    def search(self, nums: List[int], target: int) -> int:\n        # Initialize the left and right pointers\n        left, right = 0, len(nums) - 1\n      \n        # Use a binary search algorithm\n        while left < right:\n            # Calculate the middle index using bit shifting (equivalent to floor division by 2)\n            mid = (left + right) >> 1\n          \n            # If the middle element is greater than or equal to the target\n            if nums[mid] >= target:\n                # Narrow the search to the left half including the middle element\n                right = mid\n            else:\n                # Narrow the search to the right half excluding the middle element\n                left = mid + 1\n      \n        # After exiting the loop, left should be the smallest index of the target value\n        # Check if the element at the left index is the target\n        return left if nums[left] == target else -1\n        # If the element is not found, return -1\n# Example usage\n# sol = Solution()\n# result = sol.search([1, 2, 3, 4, 5], 3)\n# print(result) # Output: 2"
+  },
+  {
+    "id": 705,
+    "title": "Design HashSet",
+    "difficulty": "Easy",
+    "tags": [
+      "Design",
+      "Array",
+      "Hash Table",
+      "Linked List",
+      "Hash Function"
+    ],
+    "description": "The task is to design a data structure MyHashSet that simulates the behavior of a set without using any built-in hash table libraries. A hash set is a collection of unique elements. The MyHashSet class should support three operations: •\tadd(key): Inserts the value key into the HashSet. •\tcontains(ke",
+    "code": "// Define a global data storage for the HashSet. The `!` indicates that\n// the variable will be definitely assigned later.\nlet hashSetData: boolean[];\n// Initialize the data storage for the HashSet with false values.\n// This is a setup function that needs to be called to create the storage.\nfunction initializeMyHashSet(): void {\n    // Allocate an array of boolean values with default value `false`\n    // The size is 10^6 + 1 to hold values within the range [0, 10^6]\n    hashSetData = new Array(10 ** 6 + 1).fill(false);\n}\n// Add a key to the HashSet by setting the value at the index `key` to true\nfunction addKeyToHashSet(key: number): void {\n    hashSetData[key] = true;\n}\n// Remove a key from the HashSet by setting the value at the index `key` to false\nfunction removeKeyFromHashSet(key: number): void {\n    hashSetData[key] = false;\n}\n// Check if a key exists in the HashSet by returning the value at the index `key`\nfunction containsKeyInHashSet(key: number): boolean {\n    return hashSetData[key];\n}\n// Example usage of the global HashSet implementation:\n// Initialize the HashSet before making any operations\ninitializeMyHashSet();\n// Add a key to the hash set\naddKeyToHashSet(1);\naddKeyToHashSet(2);\n// Check if the hash set contains a key\nlet containsKey1 = containsKeyInHashSet(1); // should return true\nlet containsKey3 = containsKeyInHashSet(3); // should return false\n// Remove a key from the hash set\nremoveKeyFromHashSet(2);"
+  },
+  {
+    "id": 706,
+    "title": "Design HashMap",
+    "difficulty": "Easy",
+    "tags": [
+      "Design",
+      "Array",
+      "Hash Table",
+      "Linked List",
+      "Hash Function"
+    ],
+    "description": "The goal of this problem is to design a simple HashMap from scratch without using any built-in hash table libraries provided by the programming language. The MyHashMap class must have the following functionalities: •\tMyHashMap(): Constructor that creates a new HashMap. •\tput(int key, int value): Thi",
+    "code": "#include <cstring>  // Include for memset\n// 'MyHashMap' implements a fixed-size hash map using an array where\n// the keys are integers and the values are also integers.\nclass MyHashMap {\npublic:\n    static const int SIZE = 1000001; // Define the size of the data array.\n    int data[SIZE];  // Array to store the values mapped by the keys.\n    // Constructor to initialize the hash map (set all values to -1).\n    MyHashMap() {\n        std::memset(data, -1, sizeof(data));\n    }\n    // 'put' method for inserting a key-value pair into the hash map.\n    // If the key already exists, it updates its value.\n    // @param key The key to insert or update.\n    // @param value The value to be associated with the key.\n    void put(int key, int value) {\n        data[key] = value;\n    }\n    // 'get' method to retrieve the value associated with a key.\n    // @param key The key whose value is to be retrieved.\n    // @return The value associated with the key, or -1 if the key does not exist.\n    int get(int key) {\n        return data[key];\n    }\n    // 'remove' method to delete the value associated with a key.\n    // It sets the value at the key index to -1.\n    // @param key The key whose value is to be removed.\n    void remove(int key) {\n        data[key] = -1;\n    }\n};\n/*\n// Example of how 'MyHashMap' can be utilized:\nint main() {\n    MyHashMap* myMap = new MyHashMap();\n    myMap->put(1, 1);             // Map key 1 to value 1\n    int value = myMap->get(1);    // Retrieve the value associated with key 1 (should be 1)\n    myMap->put(1, 2);             // Update key 1 to value 2\n    myMap->remove(2);             // Remove value associated with key 2 (does nothing if key 2 does not exist)\n    delete myMap;                 // Free the allocated memory\n    return 0;\n}\n*/"
+  },
+  {
+    "id": 707,
+    "title": "Design Linked List",
+    "difficulty": "Medium",
+    "tags": [
+      "Design",
+      "Linked List"
+    ],
+    "description": "The problem requires designing a custom implementation of a linked list, with the option to use either a singly or a doubly linked list. A singly linked list is made of nodes where each node contains a value (val) and a reference to the next node (next). In the case of a doubly linked list, an addit",
+    "code": "class ListNode:\n    def __init__(self, value=0, next_node=None):\n        self.val = value\n        self.next = next_node\nclass MyLinkedList:\n    def __init__(self):\n        # A dummy node is used to simplify edge cases by providing a non-null next node.\n        self.dummy = ListNode()\n        # Counter for the number of elements in the linked list.\n        self.size = 0\n    def get(self, index: int) -> int:\n        # If index is out of bounds, return -1.\n        if index < 0 or index >= self.size:\n            return -1\n      \n        # Traverse the linked list to the given index.\n        current = self.dummy.next\n        for _ in range(index):\n            current = current.next\n        # Return the value at the given index.\n        return current.val\n    def addAtHead(self, val: int) -> None:\n        # Delegate to addAtIndex to add an element at the head (index 0).\n        self.addAtIndex(0, val)\n    def addAtTail(self, val: int) -> None:\n        # Delegate to addAtIndex to add an element at the tail (end of the list).\n        self.addAtIndex(self.size, val)\n    def addAtIndex(self, index: int, val: int) -> None:\n        # If index is greater than the size, don't perform the add.\n        if index > self.size:\n            return\n      \n        # Find the predecessor node (pre) for the index where new node will be added.\n        predecessor = self.dummy\n        for _ in range(index):\n            predecessor = predecessor.next\n      \n        # Insert new node with value `val` after predecessor node.\n        new_node = ListNode(val, predecessor.next)\n        predecessor.next = new_node\n        # Increment size after addition.\n        self.size += 1\n    def deleteAtIndex(self, index: int) -> None:\n        # If index is out of range, do nothing.\n        if index < 0 or index >= self.size:\n            return\n      \n        # Find the predecessor node of the node to be deleted.\n        predecessor = self.dummy\n        for _ in range(index):\n            predecessor = predecessor.next\n      \n        # Skip over the node at the index to delete it.\n        to_delete = predecessor.next\n        predecessor.next = to_delete.next\n        # Optional: clear the next reference of the deleted node.\n        to_delete.next = None\n        # Decrement size after deletion.\n        self.size -= 1\n# Commentary on how this code might be used:\n# This MyLinkedList class can be instantiated and then methods can be called on the instance\n# to manipulate the linked list, such as adding at the head, tail, or arbitrary index, \n# deleting at an index, or getting the value at an index. For example:\n# linked_list = MyLinkedList()\n# linked_list.addAtHead(1)\n# linked_list.addAtTail(2)\n# print(linked_list.get(1))  # Should print the value `2`.\n# linked_list.addAtIndex(1, 3)  # Linked list is now 1 -> 3 -> 2.\n# linked_list.deleteAtIndex(1)  # Linked list is now 1 -> 2."
+  },
+  {
+    "id": 708,
+    "title": "Insert into a Sorted Circular Linked List",
+    "difficulty": "Medium",
+    "tags": [
+      "Linked List"
+    ],
+    "description": "This problem involves a special kind of linked list called a Circular Linked List, where the last element points back to the first, creating a closed loop. Your task is to insert a new value into the list so that the list's non-descending (sorted) order is maintained. The nuances of this task are:",
+    "code": "class Node:\n    def __init__(self, value=None, next_node=None):\n        self.value = value\n        self.next_node = next_node\nclass Solution:\n    def insert(self, head: 'Optional[Node]', insert_value: int) -> 'Node':\n        # Create a new node with the insert_value\n        new_node = Node(insert_value)\n        # If the linked list is empty, initialize it with the new node\n        if head is None:\n            new_node.next_node = new_node  # Point the new_node to itself\n            return new_node\n      \n        # Initialize two pointers for iterating the linked list\n        previous, current = head, head.next_node\n        # Traverse the linked list\n        while current != head:\n            # Check if the insert_value should be inserted between previous and current\n            # The first condition checks for normal ordered insertion\n            # The second condition checks for insertion at the boundary of the largest and smallest values\n            if (\n                previous.value <= insert_value <= current.value or\n                (previous.value > current.value and (insert_value >= previous.value or insert_value <= current.value))\n            ):\n                break  # Correct insertion spot is found\n            # Move to the next pair of nodes\n            previous, current = current, current.next_node\n        # Insert new_node between previous and current\n        previous.next_node = new_node\n        new_node.next_node = current\n        # Return the head of the modified linked list\n        return head"
+  },
+  {
+    "id": 709,
+    "title": "To Lower Case",
+    "difficulty": "Easy",
+    "tags": [
+      "String"
+    ],
+    "description": "The problem requires us to take an input string s and return a new string where all uppercase letters have been converted to their corresponding lowercase counterparts. The task focuses on modifying the letter cases without altering any other characters in the string. For instance, if the input stri",
+    "code": "/**\n * Converts a string to lowercase.\n * @param {string} str - The string to be converted to lowercase.\n * @returns {string} The lowercase equivalent of the input string.\n */\nfunction toLowerCase(str: string): string {\n    // Convert the string to an array of characters, then map each character\n    // to its lowercase equivalent by OR-ing the character's char code with 32.\n    // This works because in the ASCII table, the difference between uppercase\n    // and lowercase letters is 32.\n    // Finally, join the array back into a string.\n    const lowerCaseString = [...str].map(char =>\n        // Convert char to lowercase by OR-ing with 32, and then convert back to string\n        String.fromCharCode(char.charCodeAt(0) | 32)\n    ).join('');\n    // Return the resulting lowercase string\n    return lowerCaseString;\n}"
+  },
+  {
+    "id": 710,
+    "title": "Random Pick with Blacklist",
+    "difficulty": "Hard",
+    "tags": [
+      "Array",
+      "Hash Table",
+      "Math",
+      "Binary Search",
+      "Sorting",
+      "Randomized"
+    ],
+    "description": "The problem states that an integer n and an array blacklist are given. The task is to design an algorithm that can randomly choose an integer from 0 to n - 1 that is not included in the blacklist. Every valid integer within the range should have an equal chance of being picked. The algorithm should ",
+    "code": "// TypeScript lacks `unordered_map` and `unordered_set` but has the `Map` and `Set` classes.\nlet whitelistMapping: Map<number, number>;\nlet whitelistSize: number;\n// Initialize necessary structures and perform calculations as would be performed in the constructor.\nfunction initialize(n: number, blacklist: number[]): void {\n    whitelistMapping = new Map<number, number>();\n    whitelistSize = n - blacklist.length;\n    // Convert the blacklist array into a Set for O(1) lookups.\n    let blacklistSet: Set<number> = new Set(blacklist);\n    let upperIndex: number = whitelistSize;\n    // Iterate over each item in the blacklist array.\n    blacklist.forEach(blackNumber => {\n        // Focus on blacklisted numbers within the initial whitelist range.\n        if (blackNumber < whitelistSize) {\n            // Locate a non-blacklisted number beyond the initial whitelist range.\n            while (blacklistSet.has(upperIndex)) {\n                upperIndex++;\n            }\n            // Create a mapping for the blacklisted number to the identified whitelisted number.\n            whitelistMapping.set(blackNumber, upperIndex++);\n        }\n    });\n}\n// Function to select a random whitelisted index.\nfunction pick(): number {\n    // Generate a random index within the initial whitelist range.\n    let randomIndex: number = Math.floor(Math.random() * whitelistSize);\n    // Check and return the mapped index if originally blacklisted, else return the original.\n    return whitelistMapping.get(randomIndex) ?? randomIndex;\n}\n// Usage example:\n// initialize(100, [1, 2, 3]);\n// let randomPick: number = pick();"
+  },
+  {
+    "id": 711,
+    "title": "Number of Distinct Islands II",
+    "difficulty": "Hard",
+    "tags": [
+      "Depth-First Search",
+      "Breadth-First Search",
+      "Union Find",
+      "Hash Table",
+      "Hash Function"
+    ],
+    "description": "In this problem, you are given a binary matrix grid, representing a map where 1s indicate land, and 0s represent water. An island is defined as a contiguous group of 1s that are directly connected horizontally or vertically. The task is to determine the number of distinct islands in the grid. Howeve",
+    "code": "type Point = [number, number]; // Represent a point as a tuple of [x, y] coordinates\n// Counts the distinct islands in the grid\nfunction numDistinctIslands2(grid: number[][]): number {\n    const uniqueShapes: Set<string> = new Set();\n    for (let row = 0; row < grid.length; ++row) {\n        for (let col = 0; col < grid[0].length; ++col) {\n            if (grid[row][col]) {\n                const shape: Point[] = [];\n                depthFirstSearch(row, col, grid, shape);\n                uniqueShapes.add(JSON.stringify(normalizeShape(shape)));\n            }\n        }\n    }\n    return uniqueShapes.size;\n}\n// Normalizes the shape of an island to remove duplicates that are rotations or reflections of each other\nfunction normalizeShape(shape: Point[]): Point[] {\n    const shapes: Point[][] = Array.from({ length: 8 }, () => []);\n    for (const point of shape) {\n        const [x, y] = point;\n        shapes[0].push([x, y]);\n        shapes[1].push([x, -y]);\n        shapes[2].push([-x, y]);\n        shapes[3].push([-x, -y]);\n        shapes[4].push([y, x]);\n        shapes[5].push([y, -x]);\n        shapes[6].push([-y, -x]);\n        shapes[7].push([-y, x]);\n    }\n  \n    for (const e of shapes) {\n        e.sort((a, b) => a[0] === b[0] ? a[1] - b[1] : a[0] - b[0]); // Sort the points\n        const [baseX, baseY] = e[0];\n        e.forEach(point => {\n            point[0] -= baseX;\n            point[1] -= baseY;\n        });\n    }\n  \n    shapes.sort(); // Sort the shapes to get the canonical representation\n    return shapes[0]; // Return the first shape, which is the normalized shape\n}\n// Performs a depth-first search to find the entire shape of an island\nfunction depthFirstSearch(x: number, y: number, grid: number[][], shape: Point[]): void {\n    const directions: number[] = [-1, 0, 1, 0, -1]; // Used to explore adjacent cells\n    shape.push([x, y]);\n    grid[x][y] = 0; // Mark as visited\n  \n    for (let k = 0; k < 4; ++k) {\n        const nextX = x + directions[k];\n        const nextY = y + directions[k + 1];\n        if (nextX >= 0 && nextX < grid.length && nextY >= 0 && nextY < grid[0].length && grid[nextX][nextY] === 1) {\n            depthFirstSearch(nextX, nextY, grid, shape); // Recursive DFS call\n        }\n    }\n}\n// Note: TypeScript doesn't have direct support for set of objects based on value equality.\n// Therefore, to store shapes in a set, shapes are first converted to string with JSON.stringify."
+  },
+  {
+    "id": 712,
+    "title": "Minimum ASCII Delete Sum for Two Strings",
+    "difficulty": "Medium",
+    "tags": [
+      "String",
+      "Dynamic Programming"
+    ],
+    "description": "This problem asks for the lowest ASCII sum of deleted characters to make two given strings, s1 and s2, equal. In other words, we need to find out how many and which characters we should delete (from either or both strings) so that the remaining characters of s1 and s2 will be the same, and the sum o",
+    "code": "class Solution:\n    def minimumDeleteSum(self, s1: str, s2: str) -> int:\n        # Calculate the length of both strings\n        len_s1, len_s2 = len(s1), len(s2)\n      \n        # Initialize a 2D array to store the minimum delete sum for sub-problems\n        dp = [[0] * (len_s2 + 1) for _ in range(len_s1 + 1)]\n      \n        # Pre-fill the first column with the delete sum of s1[i:]\n        for i in range(1, len_s1 + 1):\n            dp[i][0] = dp[i - 1][0] + ord(s1[i - 1])\n      \n        # Pre-fill the first row with the delete sum of s2[j:]\n        for j in range(1, len_s2 + 1):\n            dp[0][j] = dp[0][j - 1] + ord(s2[j - 1])\n      \n        # Start filling the DP table from (1,1) to (len_s1, len_s2)\n        for i in range(1, len_s1 + 1):\n            for j in range(1, len_s2 + 1):\n                # If the current characters are equal, then no deletion is needed\n                if s1[i - 1] == s2[j - 1]:\n                    dp[i][j] = dp[i - 1][j - 1]\n                else:\n                    # Find the minimum between deleting a character from s1 or s2\n                    dp[i][j] = min(\n                        dp[i - 1][j] + ord(s1[i - 1]),  # Delete from s1\n                        dp[i][j - 1] + ord(s2[j - 1])   # Delete from s2\n                    )\n      \n        # The value at dp[len_s1][len_s2] will be the minimum delete sum for s1 and s2\n        return dp[len_s1][len_s2]"
+  },
+  {
+    "id": 713,
+    "title": "Subarray Product Less Than K",
+    "difficulty": "Medium",
+    "tags": [
+      "Array",
+      "Sliding Window"
+    ],
+    "description": "Given an array of integers nums and an integer k, the task is to find out how many contiguous subarrays (a subarray is a sequence of adjacent elements in the array) have a product of all its elements that is less than k. The integers in the array can be any integer and the order of the array must no",
+    "code": "function numSubarrayProductLessThanK(nums: number[], k: number): number {\n    let count = 0; // Initialize the count of subarrays\n    let product = 1; // Initialize the product of the current subarray\n    let left = 0; // Left index of the sliding window\n    // Process all numbers in the input array\n    for (let right = 0; right < nums.length; ++right) {\n        // Accumulate the product of the elements within the sliding window\n        product *= nums[right];\n        // If the product is greater than or equal to k,\n        // shrink the window from the left\n        while (left <= right && product >= k) {\n            product /= nums[left++];\n        }\n        // Add the number of subarrays ending at 'right' that have a product less than k\n        // This step utilizes the idea that if 'right' is the end of a valid subarray,\n        // then there are 'right - left + 1' possible starting positions for subarrays\n        count += right - left + 1;\n    }\n    // Return the total count of subarrays\n    return count;\n}"
+  },
+  {
+    "id": 714,
+    "title": "Best Time to Buy and Sell Stock with Transaction Fee",
+    "difficulty": "Medium",
+    "tags": [
+      "Greedy",
+      "Array",
+      "Dynamic Programming"
+    ],
+    "description": "You are provided with an array called prices, where each element prices[i] represents the price of a particular stock on the i-th day. In addition, you are given an integer fee that represents a transaction fee. Your goal is to calculate the maximum profit you can achieve from trading the stock. You",
+    "code": "# The class Solution contains a method to calculate the maximum profit from trading stocks,\n# given an array that represents the price of a stock on different days, and a fixed transaction fee.\nclass Solution:\n    def maxProfit(self, prices: List[int], fee: int) -> int:\n        # Initialize cash and hold variables:\n        # cash represents the max profit achievable without holding any stock\n        # hold represents the max profit achievable while holding a stock\n        cash, hold = 0, -prices[0]\n      \n        # Iterate through the list of prices, starting from the second price\n        for price in prices[1:]:\n            # Update cash to the max of itself or the profit from selling a stock at the current price minus the fee\n            # Update hold to the max of itself or the value of the cash after buying a stock at the current price\n            cash, hold = max(cash, hold + price - fee), max(hold, cash - price)\n      \n        # The value of cash at the end of iteration will represent the maximum profit achievable\n        return cash"
+  }
+]

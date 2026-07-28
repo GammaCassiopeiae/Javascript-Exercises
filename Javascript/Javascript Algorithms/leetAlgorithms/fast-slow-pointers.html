@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fast & Slow Pointers - Floyd's Cycle Detection</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Home</a>
+            <h1 class="c-title">🔄 Fast & Slow Pointers</h1>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <div class="c-code-block">
+                <pre><code>// Floyd's Cycle Detection
+function hasCycle(head) {
+    if (!head || !head.next) return false;
+    
+    let slow = head, fast = head;
+    while (fast && fast.next) {
+        slow = slow.next;
+        fast = fast.next.next;
+        if (slow === fast) return true;
+    }
+    
+    return false;
+}
+
+// Find Cycle Start Node
+function findCycleStart(head) {
+    if (!head || !head.next) return null;
+    
+    let slow = head, fast = head;
+    while (fast && fast.next) {
+        slow = slow.next;
+        fast = fast.next.next;
+        if (slow === fast) break;
+    }
+    
+    if (!fast || !fast.next) return null;
+    
+    slow = head;
+    while (slow !== fast) {
+        slow = slow.next;
+        fast = fast.next;
+    }
+    
+    return slow;
+}
+
+// Find Middle of Linked List
+function findMiddle(head) {
+    let slow = head, fast = head;
+    while (fast && fast.next) {
+        slow = slow.next;
+        fast = fast.next.next;
+    }
+    return slow;
+}
+
+// Time: O(n), Space: O(1)</code></pre>
+            </div>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">🌌 Neon-Noir Design System</p>
+        </div>
+    </footer>
+</body>
+</html>

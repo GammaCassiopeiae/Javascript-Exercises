@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monotonic Stack</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Home</a>
+            <h1 class="c-title">📚 Monotonic Stack</h1>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <div class="c-code-block">
+                <pre><code>// Monotonic Stack - Next Greater Element
+function nextGreaterElement(nums) {
+    const result = Array(nums.length).fill(-1);
+    const stack = [];
+    
+    for (let i = nums.length - 1; i >= 0; i--) {
+        while (stack.length > 0 && stack[stack.length - 1] <= nums[i]) {
+            stack.pop();
+        }
+        if (stack.length > 0) {
+            result[i] = stack[stack.length - 1];
+        }
+        stack.push(nums[i]);
+    }
+    
+    return result;
+}
+
+// Largest Rectangle in Histogram
+function largestRectangleArea(heights) {
+    const stack = [];
+    let maxArea = 0;
+    let index = 0;
+    
+    while (index < heights.length) {
+        if (stack.length === 0 || heights[index] >= heights[stack[stack.length - 1]]) {
+            stack.push(index);
+            index++;
+        } else {
+            const h = heights[stack.pop()];
+            const w = stack.length === 0 ? index : index - stack[stack.length - 1] - 1;
+            maxArea = Math.max(maxArea, h * w);
+        }
+    }
+    
+    while (stack.length > 0) {
+        const h = heights[stack.pop()];
+        const w = stack.length === 0 ? index : index - stack[stack.length - 1] - 1;
+        maxArea = Math.max(maxArea, h * w);
+    }
+    
+    return maxArea;
+}
+
+// Time: O(n), Space: O(n)</code></pre>
+            </div>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">🌌 Neon-Noir Design System</p>
+        </div>
+    </footer>
+</body>
+</html>

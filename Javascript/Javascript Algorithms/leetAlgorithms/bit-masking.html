@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bit Masking - Bit Manipulation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Home</a>
+            <h1 class="c-title">🎭 Bit Masking</h1>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <div class="c-code-block">
+                <pre><code>// Power Set using Bit Masking
+function powerSet(nums) {
+    const n = nums.length;
+    const result = [];
+    
+    for (let mask = 0; mask < (1 << n); mask++) {
+        const subset = [];
+        for (let i = 0; i < n; i++) {
+            if (mask & (1 << i)) {
+                subset.push(nums[i]);
+            }
+        }
+        result.push(subset);
+    }
+    
+    return result;
+}
+
+// Traveling Salesman Problem with Bitmask DP
+function tsp(graph) {
+    const n = graph.length;
+    const dp = Array(1 << n).fill(null).map(() => Array(n).fill(Infinity));
+    
+    dp[1][0] = 0;
+    
+    for (let mask = 1; mask < (1 << n); mask++) {
+        for (let u = 0; u < n; u++) {
+            if (!(mask & (1 << u))) continue;
+            for (let v = 0; v < n; v++) {
+                if (mask & (1 << v)) continue;
+                const newMask = mask | (1 << v);
+                dp[newMask][v] = Math.min(dp[newMask][v], dp[mask][u] + graph[u][v]);
+            }
+        }
+    }
+    
+    const fullMask = (1 << n) - 1;
+    return Math.min(...dp[fullMask]);
+}
+
+// Bit Operations:
+// Set bit i: mask | (1 << i)
+// Unset bit i: mask & ~(1 << i)
+// Check bit i: mask & (1 << i)
+// Toggle bit i: mask ^ (1 << i)
+
+// Time: O(2^n)</code></pre>
+            </div>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">🌌 Neon-Noir Design System</p>
+        </div>
+    </footer>
+</body>
+</html>

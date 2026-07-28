@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="LeetCode Problem 46: Remove Nth Node From End of List - Solution and Explanation">
+  <title>Remove Nth Node From End of List | LeetCode Explorer</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="problem-styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Orbitron:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body class="js-body">
+  <div class="l-page">
+    <header class="c-header" role="banner">
+      <div class="c-header__container">
+        <a href="index.html" class="c-header__logo">
+          <span class="c-header__logo-icon">◈</span>
+          <span class="c-header__logo-text">LeetCode<span class="c-header__logo-accent">Explorer</span></span>
+        </a>
+        <nav class="c-nav" aria-label="Main navigation">
+          <ul class="c-nav__list">
+            <li class="c-nav__item">
+              <a href="index.html" class="c-nav__link">Problems</a>
+            </li>
+          </ul>
+        </nav>
+        <button class="c-theme-toggle js-theme-toggle" aria-label="Toggle theme" type="button">
+          <span class="c-theme-toggle__icon">◑</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="l-main l-main--problem" role="main" id="main-content">
+      <article class="c-problem-detail">
+        <header class="c-problem-detail__header">
+          <div class="c-problem-detail__meta">
+            <a href="index.html" class="c-back-link">← Back to Problems</a>
+            <span class="c-problem-detail__number">#046</span>
+          </div>
+          <h1 class="c-problem-detail__title">Remove Nth Node From End of List</h1>
+          <div class="c-problem-detail__badges">
+            <span class="c-difficulty-badge c-difficulty-badge--medium">Medium</span>
+            <div class="c-topic-tags">
+              <span class="c-topic-tag">Linked List</span><span class="c-topic-tag">Two Pointers</span>
+            </div>
+          </div>
+        </header>
+
+        <section class="c-problem-detail__content">
+          <h2 class="c-problem-detail__section-title">Problem Description</h2>
+          <div class="c-problem-detail__description">
+            <p>Remove the nth node from the end of the list and return its head.</p>
+          </div>
+
+          
+          <div class="c-example">
+            <h3 class="c-example__title">Example 1:</h3>
+            <div class="c-example__content">
+              <pre><code>Input: head = [1,2,3,4,5], n = 2
+Output: [1,2,3,5]</code></pre>
+            </div>
+          </div>
+
+          <div class="c-constraints">
+            <h3 class="c-constraints__title">Constraints:</h3>
+            <ul>
+              <li><code>1 <= sz <= 30</code></li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="c-problem-detail__solution">
+          <h2 class="c-problem-detail__section-title">Solution</h2>
+          <div class="c-solution-tabs">
+            <button class="c-solution-tab is-active" data-solution="1" type="button">Two Pointers</button>
+          </div>
+          <div class="c-solution-content">
+            <div class="c-solution-panel is-active" data-panel="1">
+              <h3>Two Pointers Solution</h3>
+              <p>Optimal approach for solving Remove Nth Node From End of List.</p>
+              <pre><code class="language-javascript">function removeNthFromEnd(head, n) {
+  const dummy = { next: head };
+  let first = dummy, second = dummy;
+  for (let i = 0; i <= n; i++) first = first.next;
+  while (first) { first = first.next; second = second.next; }
+  second.next = second.next.next;
+  return dummy.next;
+}</code></pre>
+              <div class="c-complexity">
+                <h4>Complexity Analysis:</h4>
+                <ul>
+                  <li><strong>Time:</strong> <code>O(n)</code></li>
+                  <li><strong>Space:</strong> <code>O(1)</code></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+      </article>
+
+      <nav class="c-problem-nav">
+        
+        <a href="problem-45.html" class="c-problem-nav__link c-problem-nav__link--prev">
+          <span class="c-problem-nav__arrow">←</span>
+          <span class="c-problem-nav__text">Problem 45</span>
+        </a>
+        
+        <a href="problem-47.html" class="c-problem-nav__link c-problem-nav__link--next">
+          <span class="c-problem-nav__text">Problem 47</span>
+          <span class="c-problem-nav__arrow">→</span>
+        </a>
+      </nav>
+    </main>
+
+    <footer class="c-footer" role="contentinfo">
+      <div class="c-footer__content">
+        <p class="c-footer__text">
+          <span class="c-footer__accent">◈</span>
+          LeetCode Explorer • Built with Neon-Noir Design System
+        </p>
+        <p class="c-footer__text c-footer__text--small">
+          Algorithm Practice Hub • ES6+ Vanilla JavaScript
+        </p>
+      </div>
+    </footer>
+  </div>
+
+  <script src="problem-app.js"></script>
+</body>
+</html>

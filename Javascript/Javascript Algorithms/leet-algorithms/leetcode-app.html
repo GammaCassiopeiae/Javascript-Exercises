@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LEETCODE // ALGORITHM DATABASE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================
+   NEON-NOIR DESIGN SYSTEM - CSS VARIABLES
+   ============================================ */
+:root {
+  /* Backgrounds */
+  --bg-deep: #050505;
+  --bg-surface: #0a0b10;
+  --bg-card: rgba(10, 11, 16, 0.95);
+  --bg-glass: rgba(255, 255, 255, 0.05);
+  --bg-modal: rgba(5, 5, 5, 0.97);
+
+  /* Neon Accents */
+  --neon-cyan: #00f3ff;
+  --neon-magenta: #ff00ff;
+  --neon-green: #00ff9d;
+  --neon-purple: #bd00ff;
+  --neon-red: #ff003c;
+  --neon-amber: #ffbf00;
+
+  /* Text */
+  --text-primary: #ffffff;
+  --text-muted: rgba(255, 255, 255, 0.7);
+  --text-dim: rgba(255, 255, 255, 0.4);
+
+  /* Glows */
+  --glow-cyan: 0 0 5px var(--neon-cyan), 0 0 15px rgba(0, 243, 255, 0.3);
+  --glow-magenta: 0 0 5px var(--neon-magenta), 0 0 15px rgba(255, 0, 255, 0.3);
+  --glow-green: 0 0 5px var(--neon-green), 0 0 15px rgba(0, 255, 157, 0.3);
+  --glow-red: 0 0 5px var(--neon-red), 0 0 15px rgba(255, 0, 60, 0.3);
+
+  /* Difficulty Colors */
+  --diff-easy: var(--neon-green);
+  --diff-medium: var(--neon-amber);
+  --diff-hard: var(--neon-red);
+
+  /* Typography */
+  --font-display: 'Orbitron', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Z-Index Tokens */
+  --z-scanline: 9999;
+  --z-modal: 1000;
+  --z-sticky: 100;
+  --z-tooltip: 500;
+
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+
+  /* Borders */
+  --border-neon: 1px solid rgba(0, 243, 255, 0.2);
+  --border-radius: 0; /* Hard edges only - Directive 3 */
+}
+
+/* ============================================
+   LIGHT MODE OVERRIDES
+   ============================================ */
+[data-theme="light"] {
+  --bg-deep: #e8eaed;
+  --bg-surface: #f5f5f5;
+  --bg-card: #ffffff;
+  --bg-glass: rgba(0, 0, 0, 0.05);
+  --bg-modal: rgba(232, 234, 237, 0.97);
+  --text-primary: #1a1a1a;
+  --text-muted: rgba(0, 0, 0, 0.7);
+  --text-dim: rgba(0, 0, 0, 0.4);
+  --neon-cyan: #0077b6;
+  --neon-magenta: #b5179e;
+  --neon-green: #06d6a0;
+  --neon-purple: #7209b7;
+  --neon-red: #e63946;
+  --neon-amber: #f77f00;
+  --glow-cyan: 0 0 3px rgba(0, 119, 182, 0.5);
+  --glow-magenta: 0 0 3px rgba(181, 23, 158, 0.5);
+  --glow-green: 0 0 3px rgba(6, 214, 160, 0.5);
+  --glow-red: 0 0 3px rgba(230, 57, 70, 0.5);
+  --border-neon: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+/* ============================================
+   BASE RESET & GLOBAL STYLES
+   ============================================ */
+*, *::before, *::after {
+  box-sizing: border-box; /* Directive 5 */
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth; /* Directive 14 */
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-deep);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column; /* Directive 13 - Footer Anchoring */
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Custom Scrollbar - Directive 64 */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-deep);
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--neon-cyan), var(--neon-purple));
+  border-radius: 0;
+}
+
+/* Selection Theme - Directive 63 */
+::selection {
+  background: var(--neon-cyan);
+  color: var(--bg-deep);
+}
+
+/* Focus Visible - Directive 15 */
+:focus-visible {
+  outline: 2px solid var(--neon-cyan);
+  outline-offset: 2px;
+  box-shadow: var(--glow-cyan);
+}
+
+/* ============================================
+   SCANLINE OVERLAY - Directive 57
+   ============================================ */
+.l-scanlines {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%,
+    rgba(0, 0, 0, 0.08) 50%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: var(--z-scanline);
+  opacity: 0.4;
+}
+
+/* ============================================
+   LAYOUT GRID - Directive 8
+   ============================================ */
+.l-grid {
+  display: grid;
+  grid-template-areas:
+    "header"
+    "main"
+    "footer";
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+}
+
+.l-main-wrapper {
+  grid-area: main;
+  padding: var(--space-xl);
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ============================================
+   HEADER - Directive 12 (Sticky)
+   ============================================ */
+.c-header {
+  grid-area: header;
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  background: var(--bg-surface);
+  backdrop-filter: blur(12px); /* Directive 54 - Glassmorphism */
+  border-bottom: var(--border-neon);
+  padding: var(--space-md) var(--space-xl);
+}
+
+.c-header__inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.c-header__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+.c-header__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 3vw, 1.8rem); /* Directive 9 - Fluid Typography */
+  color: var(--neon-cyan);
+  text-shadow: var(--glow-cyan); /* Directive 52 */
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  position: relative;
+}
+
+/* Glitch Text Effect - Directive 60 */
+.c-header__title::before,
+.c-header__title::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-surface);
+  opacity: 0;
+}
+.c-header__title:hover::before {
+  opacity: 1;
+  left: 2px;
+  text-shadow: -2px 0 var(--neon-red);
+  animation: glitch-anim 0.2s infinite linear alternate-reverse;
+}
+.c-header__title:hover::after {
+  opacity: 1;
+  left: -2px;
+  text-shadow: -2px 0 var(--neon-cyan);
+  animation: glitch-anim 0.3s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim {
+  0% { clip: rect(31px, 9999px, 94px, 0); }
+  20% { clip: rect(62px, 9999px, 42px, 0); }
+  40% { clip: rect(15px, 9999px, 85px, 0); }
+  60% { clip: rect(80px, 9999px, 10px, 0); }
+  80% { clip: rect(45px, 9999px, 55px, 0); }
+  100% { clip: rect(5px, 9999px, 70px, 0); }
+}
+
+.c-header__status {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.u-pulse {
+  display: inline-block;
+  color: var(--neon-green);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.c-header__controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  align-items: center;
+}
+
+/* ============================================
+   SEARCH INPUT
+   ============================================ */
+.c-search {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+  max-width: 500px;
+}
+
+.c-search__input {
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-glass);
+  border: var(--border-neon);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+.c-search__input::placeholder {
+  color: var(--text-dim);
+}
+
+.c-search__input:focus {
+  outline: none;
+  border-color: var(--neon-cyan);
+  box-shadow: var(--glow-cyan);
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+.c-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  background: transparent;
+  border: 1px solid rgba(0, 243, 255, 0.3);
+  color: var(--neon-cyan);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.c-btn:hover {
+  background: var(--neon-cyan);
+  color: var(--bg-deep);
+  box-shadow: var(--glow-cyan);
+  transform: translateY(-2px); /* Directive 62 - Hover Lift */
+}
+
+.c-btn:active {
+  transform: scale(0.98) translateY(0); /* Directive 61 */
+}
+
+.c-btn--theme {
+  border-color: var(--neon-purple);
+  color: var(--neon-purple);
+}
+.c-btn--theme:hover {
+  background: var(--neon-purple);
+  color: var(--text-primary);
+  box-shadow: 0 0 5px var(--neon-purple), 0 0 15px rgba(189, 0, 255, 0.3);
+}
+
+/* ============================================
+   FILTER TABS
+   ============================================ */
+.c-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.c-filter-btn {
+  padding: var(--space-xs) var(--space-sm);
+  background: transparent;
+  border: 1px solid var(--text-dim);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+}
+
+.c-filter-btn:hover {
+  border-color: var(--neon-cyan);
+  color: var(--neon-cyan);
+}
+
+.c-filter-btn.is-active {
+  background: var(--neon-cyan);
+  color: var(--bg-deep);
+  border-color: var(--neon-cyan);
+  box-shadow: var(--glow-cyan);
+}
+
+/* Stats bar */
+.c-stats {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  display: flex;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+}
+
+.c-stats__item span {
+  color: var(--neon-cyan);
+}
+
+/* ============================================
+   CARD GRID
+   ============================================ */
+.l-card-grid {
+  display: grid;
+  gap: var(--space-md);
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+}
+
+@media (max-width: 768px) {
+  .l-card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================
+   PROBLEM CARD - Directive BEM Strictness
+   ============================================ */
+.c-card {
+  position: relative;
+  background: var(--bg-card);
+  border: var(--border-neon);
+  padding: var(--space-lg);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  /* Chamfered corner - Directive Non-Standard Shapes */
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
+}
+
+.c-card::before {
+  content: attr(data-serial);
+  position: absolute;
+  top: -8px;
+  right: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  background: var(--neon-cyan);
+  color: var(--bg-deep);
+  padding: 2px 5px;
+  letter-spacing: 1px;
+  z-index: 1;
+}
+
+.c-card:hover {
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 20px rgba(0, 243, 255, 0.15);
+  transform: translateY(-5px); /* Directive 62 */
+}
+
+.c-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.c-card__id {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+}
+
+.c-card__difficulty {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  padding: 2px 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 1px solid;
+}
+
+.c-card__difficulty--easy {
+  color: var(--diff-easy);
+  border-color: var(--diff-easy);
+}
+
+.c-card__difficulty--medium {
+  color: var(--diff-medium);
+  border-color: var(--diff-medium);
+}
+
+.c-card__difficulty--hard {
+  color: var(--diff-hard);
+  border-color: var(--diff-hard);
+  animation: glow-pulse 2s infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.c-card__title {
+  font-family: var(--font-mono);
+  font-size: clamp(0.85rem, 2vw, 1rem);
+  color: var(--text-primary);
+  margin-bottom: var(--space-sm);
+  letter-spacing: 0.5px;
+}
+
+.c-card__desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: var(--space-md);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.c-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-md);
+}
+
+.c-tag {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  padding: 2px 6px;
+  background: var(--bg-glass);
+  border: 1px solid var(--text-dim);
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.c-card__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--bg-glass);
+  padding-top: var(--space-sm);
+}
+
+.c-card__action {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--neon-cyan);
+  background: transparent;
+  border: 1px solid var(--neon-cyan);
+  padding: var(--space-xs) var(--space-md);
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.2s ease;
+}
+
+.c-card__action:hover {
+  background: var(--neon-cyan);
+  color: var(--bg-deep);
+  box-shadow: var(--glow-cyan);
+}
+
+.c-card__stats {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+}
+
+/* ============================================
+   MODAL
+   ============================================ */
+.c-modal__overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-modal);
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xl);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.c-modal__overlay.is-active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.c-modal {
+  background: var(--bg-card);
+  border: var(--border-neon);
+  width: 100%;
+  max-width: 800px;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: var(--space-2xl);
+  position: relative;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
+}
+
+.c-modal__close {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  background: transparent;
+  border: 1px solid var(--neon-red);
+  color: var(--neon-red);
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.c-modal__close:hover {
+  background: var(--neon-red);
+  color: var(--bg-deep);
+  box-shadow: var(--glow-red);
+}
+
+.c-modal__header {
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-md);
+  border-bottom: var(--border-neon);
+}
+
+.c-modal__title {
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 2.5vw, 1.4rem);
+  color: var(--neon-cyan);
+  text-shadow: var(--glow-cyan);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: var(--space-sm);
+}
+
+.c-modal__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  align-items: center;
+}
+
+.c-modal__desc {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-bottom: var(--space-xl);
+}
+
+.c-modal__code-header {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--neon-green);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: var(--space-sm);
+}
+
+.c-modal__code {
+  background: var(--bg-deep);
+  border: var(--border-neon);
+  padding: var(--space-lg);
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--neon-cyan);
+  white-space: pre;
+  tab-size: 4;
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+.c-footer {
+  grid-area: footer;
+  border-top: var(--border-neon);
+  padding: var(--space-md) var(--space-xl);
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+}
+
+/* ============================================
+   EMPTY STATE
+   ============================================ */
+.c-empty {
+  text-align: center;
+  padding: var(--space-2xl);
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+  letter-spacing: 1px;
+}
+
+.c-empty__icon {
+  font-size: 2rem;
+  margin-bottom: var(--space-md);
+  color: var(--neon-red);
+}
+
+/* ============================================
+   BIOS BOOT SEQUENCE - Directive BIOS Boot
+   ============================================ */
+.c-boot {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-deep);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  transition: opacity 0.5s ease;
+}
+
+.c-boot.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.c-boot__text {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--neon-green);
+  text-align: left;
+  white-space: pre;
+  line-height: 1.8;
+}
+
+.c-boot__cursor {
+  display: inline-block;
+  animation: blink 0.6s infinite;
+  color: var(--neon-green);
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* ============================================
+   MOUSE COORDINATES - Directive X/Y Coordinates
+   ============================================ */
+.c-coords {
+  position: fixed;
+  bottom: var(--space-sm);
+  right: var(--space-sm);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  z-index: var(--z-sticky);
+  pointer-events: none;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  .l-main-wrapper {
+    padding: var(--space-md);
+  }
+
+  .c-header {
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .c-header__top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .c-search {
+    max-width: 100%;
+  }
+
+  .c-modal {
+    padding: var(--space-lg);
+  }
+}
+
+/* Reduced Motion - Directive 4.1 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+<!-- DATA_FRAGMENT_77: LEETCODE ALGORITHM DATABASE v1.0 -->
+<!-- SYSTEM STATUS: ONLINE | PROTOCOL: NEON-NOIR -->
+
+<!-- Boot Sequence -->
+<div class="c-boot" id="boot" aria-hidden="true">
+  <div class="c-boot__text" id="bootText"></div>
+</div>
+
+<!-- Scanline Overlay -->
+<div class="l-scanlines" aria-hidden="true"></div>
+
+<!-- Mouse Coordinates -->
+<div class="c-coords" id="coords" aria-hidden="true">X: 0000 Y: 0000</div>
+
+<!-- Main Layout -->
+<div class="l-grid">
+  <!-- Header -->
+  <header class="c-header">
+    <div class="c-header__inner">
+      <div class="c-header__top">
+        <h1 class="c-header__title" data-text="LEETCODE_DATABASE">LEETCODE_DATABASE</h1>
+        <div class="c-header__status">
+          <span class="u-pulse">&#9679;</span>
+          <span>LINK: STABLE | PROTOCOL: AES-256</span>
+        </div>
+        <button class="c-btn c-btn--theme" id="themeToggle" aria-label="Toggle theme">
+          TOGGLE_THEME
+        </button>
+      </div>
+      <div class="c-header__controls">
+        <div class="c-search">
+          <label for="searchInput" class="u-visually-hidden">Search algorithms</label>
+          <input
+            type="search"
+            id="searchInput"
+            class="c-search__input"
+            placeholder="> SEARCH_ALGORITHMS..."
+            autocomplete="off"
+          >
+        </div>
+        <div class="c-filters" id="filters" role="group" aria-label="Filter by difficulty">
+          <button class="c-filter-btn is-active" data-filter="all" aria-pressed="true">ALL</button>
+          <button class="c-filter-btn" data-filter="Easy" aria-pressed="false">EASY</button>
+          <button class="c-filter-btn" data-filter="Medium" aria-pressed="false">MEDIUM</button>
+          <button class="c-filter-btn" data-filter="Hard" aria-pressed="false">HARD</button>
+        </div>
+      </div>
+      <div class="c-stats" id="stats"></div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="l-main-wrapper">
+    <div class="l-card-grid" id="cardGrid"></div>
+    <div class="c-empty" id="emptyState" style="display:none;">
+      <div class="c-empty__icon">&#9888;</div>
+      <p>> NO_RESULTS_FOUND</p>
+      <p>> TRY_DIFFERENT_SEARCH_PARAMETERS</p>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="c-footer">
+    <p>// LEETCODE_DATABASE v1.0 // <span id="problemCount"></span> PROTOCOLS LOADED // SYSTEM OPERATIONAL //</p>
+    <!-- HIDDEN_MESSAGE: "The code is the law." -->
+  </footer>
+</div>
+
+<!-- Modal -->
+<div class="c-modal__overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-hidden="true">
+  <article class="c-modal" id="modal">
+    <button class="c-modal__close" id="modalClose" aria-label="Close modal">&times;</button>
+    <div class="c-modal__header">
+      <h2 class="c-modal__title" id="modalTitle"></h2>
+      <div class="c-modal__meta" id="modalMeta"></div>
+    </div>
+    <p class="c-modal__desc" id="modalDesc"></p>
+    <div class="c-modal__code-header">// SOLUTION_IMPLEMENTATION</div>
+    <pre class="c-modal__code" id="modalCode"></pre>
+  </article>
+</div>
+
+<script>
+/**
+ * LEETCODE DATABASE - SPA Controller
+ * Neon-Noir Design System Implementation
+ * Directive 4.2: Standard SPA Controller Pattern
+ */
+
+// ============================================================
+// DATA: All 61 LeetCode problems from leet.txt
+// ============================================================
+const PROBLEMS = [
+  {id:201,title:"Bitwise AND of Numbers Range",difficulty:"Medium",tags:["Bit Manipulation"],description:"Calculate the bitwise AND for all numbers in a range from 'left' to 'right' inclusive. The key observation is that the result is determined by the common bits that don't change across all numbers in the range.",code:"function rangeBitwiseAnd(left: number, right: number): number {\n    while (left < right) {\n        right &= right - 1;\n    }\n    return right;\n}"},
+  {id:202,title:"Happy Number",difficulty:"Easy",tags:["Hash Table","Math","Two Pointers"],description:"Determine if a positive integer n is a happy number - one that eventually reaches 1 when repeatedly replaced by the sum of squares of its digits. Uses Floyd's cycle detection algorithm.",code:"function isHappy(n: number): boolean {\n    const getNextNumber = (currentNumber: number): number => {\n        let sumOfSquares = 0;\n        while (currentNumber !== 0) {\n            let digit = currentNumber % 10;\n            sumOfSquares += digit ** 2;\n            currentNumber = Math.floor(currentNumber / 10);\n        }\n        return sumOfSquares;\n    };\n    let slowPointer = n;\n    let fastPointer = getNextNumber(n);\n    while (slowPointer !== fastPointer) {\n        slowPointer = getNextNumber(slowPointer);\n        fastPointer = getNextNumber(getNextNumber(fastPointer));\n    }\n    return fastPointer === 1;\n}"},
+  {id:203,title:"Remove Linked List Elements",difficulty:"Easy",tags:["Recursion","Linked List"],description:"Remove all nodes from a linked list that contain a specified value. Uses a dummy node pattern to handle edge cases, particularly when the head node itself needs removal.",code:"function removeElements(head: ListNode | null, val: number): ListNode | null {\n    const dummy: ListNode = new ListNode(0, head);\n    let current: ListNode = dummy;\n    while (current.next !== null) {\n        if (current.next.val === val) {\n            current.next = current.next.next;\n        } else {\n            current = current.next;\n        }\n    }\n    return dummy.next;\n}"},
+  {id:204,title:"Count Primes",difficulty:"Medium",tags:["Array","Math","Enumeration","Number Theory"],description:"Find the count of prime numbers less than a given integer n using the Sieve of Eratosthenes algorithm. Efficiently marks non-prime numbers by iteratively marking multiples.",code:"const countPrimes = (n: number): number => {\n    let isPrime: boolean[] = new Array(n).fill(true);\n    let primeCount: number = 0;\n    for (let i: number = 2; i < n; ++i) {\n        if (isPrime[i]) {\n            ++primeCount;\n            for (let multiple: number = i + i; multiple < n; multiple += i) {\n                isPrime[multiple] = false;\n            }\n        }\n    }\n    return primeCount;\n};"},
+  {id:205,title:"Isomorphic Strings",difficulty:"Easy",tags:["Hash Table","String"],description:"Determine if two strings are isomorphic - where each character in one string can be consistently replaced to get the second string. Uses position-based mapping comparison.",code:"function isIsomorphic(source: string, target: string): boolean {\n    const sourceLastSeen: number[] = new Array(256).fill(0);\n    const targetLastSeen: number[] = new Array(256).fill(0);\n    for (let i = 0; i < source.length; ++i) {\n        const sourceCharCode = source.charCodeAt(i);\n        const targetCharCode = target.charCodeAt(i);\n        if (sourceLastSeen[sourceCharCode] !== targetLastSeen[targetCharCode]) {\n            return false;\n        }\n        sourceLastSeen[sourceCharCode] = i + 1;\n        targetLastSeen[targetCharCode] = i + 1;\n    }\n    return true;\n}"},
+  {id:206,title:"Reverse Linked List",difficulty:"Easy",tags:["Recursion","Linked List"],description:"Reverse a singly linked list in-place by iterating through and reversing the next pointers. Uses iterative approach with O(n) time and O(1) space complexity.",code:"function reverseList(head: ListNode | null): ListNode | null {\n    if (head === null) return head;\n    let previousNode: ListNode | null = null;\n    let currentNode: ListNode | null = head;\n    while (currentNode !== null) {\n        const nextNode: ListNode | null = currentNode.next;\n        currentNode.next = previousNode;\n        previousNode = currentNode;\n        currentNode = nextNode;\n    }\n    return previousNode;\n}"},
+  {id:207,title:"Course Schedule",difficulty:"Medium",tags:["DFS","BFS","Graph","Topological Sort"],description:"Determine if it's possible to complete all courses given prerequisites. Uses topological sort with Kahn's algorithm to detect cycles in the dependency graph.",code:"function canFinish(numCourses: number, prerequisites: number[][]): boolean {\n    const adjacencyList: number[][] = new Array(numCourses).fill(0).map(() => []);\n    const inDegrees: number[] = new Array(numCourses).fill(0);\n    for (const [course, prerequisite] of prerequisites) {\n        adjacencyList[prerequisite].push(course);\n        inDegrees[course]++;\n    }\n    const queue: number[] = [];\n    for (let i = 0; i < numCourses; ++i) {\n        if (inDegrees[i] === 0) queue.push(i);\n    }\n    let count = 0;\n    while (queue.length) {\n        const currentCourse = queue.shift()!;\n        count++;\n        for (const adjacentCourse of adjacencyList[currentCourse]) {\n            if (--inDegrees[adjacentCourse] === 0) queue.push(adjacentCourse);\n        }\n    }\n    return count === numCourses;\n}"},
+  {id:209,title:"Minimum Size Subarray Sum",difficulty:"Medium",tags:["Array","Binary Search","Prefix Sum","Sliding Window"],description:"Find the shortest continuous subarray whose sum is at least a target value. Uses the sliding window technique for optimal O(n) time complexity.",code:"function minSubArrayLen(target: number, nums: number[]): number {\n    const length = nums.length;\n    let currentSum = 0;\n    let minLength = length + 1;\n    for (let start = 0, end = 0; start < length; ++start) {\n        currentSum += nums[start];\n        while (currentSum >= target) {\n            minLength = Math.min(minLength, start - end + 1);\n            currentSum -= nums[end++];\n        }\n    }\n    return minLength === length + 1 ? 0 : minLength;\n}"},
+  {id:211,title:"Design Add and Search Words Data Structure",difficulty:"Medium",tags:["String","Trie","Design"],description:"Design a data structure that supports adding words and searching with wildcard '.' characters. Uses a Trie (prefix tree) for efficient word storage and pattern matching.",code:"class TrieNode {\n    children: Map<string, TrieNode> = new Map();\n    isWord: boolean = false;\n}\nclass WordDictionary {\n    root: TrieNode = new TrieNode();\n    addWord(word: string): void {\n        let node = this.root;\n        for (const ch of word) {\n            if (!node.children.has(ch)) node.children.set(ch, new TrieNode());\n            node = node.children.get(ch)!;\n        }\n        node.isWord = true;\n    }\n    search(word: string): boolean {\n        const dfs = (node: TrieNode, i: number): boolean => {\n            if (i === word.length) return node.isWord;\n            if (word[i] === '.') {\n                for (const child of node.children.values()) {\n                    if (dfs(child, i + 1)) return true;\n                }\n                return false;\n            }\n            const child = node.children.get(word[i]);\n            return child ? dfs(child, i + 1) : false;\n        };\n        return dfs(this.root, 0);\n    }\n}"},
+  {id:212,title:"Word Search II",difficulty:"Hard",tags:["Array","String","Backtracking","Trie","Matrix"],description:"Find all words from a given list on a 2D board of characters. Words are formed by sequentially adjacent cells. Uses Trie + DFS backtracking for efficient searching.",code:"function findWords(board: string[][], words: string[]): string[] {\n    const trie: any = {};\n    for (const word of words) {\n        let node = trie;\n        for (const ch of word) {\n            if (!node[ch]) node[ch] = {};\n            node = node[ch];\n        }\n        node.word = word;\n    }\n    const result: string[] = [];\n    const dfs = (r: number, c: number, node: any) => {\n        const ch = board[r]?.[c];\n        if (!ch || !node[ch]) return;\n        node = node[ch];\n        if (node.word) { result.push(node.word); delete node.word; }\n        board[r][c] = '';\n        dfs(r+1,c,node); dfs(r-1,c,node); dfs(r,c+1,node); dfs(r,c-1,node);\n        board[r][c] = ch;\n    };\n    for (let r = 0; r < board.length; r++)\n        for (let c = 0; c < board[0].length; c++) dfs(r, c, trie);\n    return result;\n}"},
+  {id:213,title:"House Robber II",difficulty:"Medium",tags:["Array","Dynamic Programming"],description:"Find the maximum amount of money you can rob from houses arranged in a circle (first and last are adjacent). Reduces to two House Robber I subproblems.",code:"function rob(nums: number): number {\n    const robLinear = (arr: number[]): number => {\n        let prev1 = 0, prev2 = 0;\n        for (const num of arr) {\n            const temp = Math.max(prev1, prev2 + num);\n            prev2 = prev1;\n            prev1 = temp;\n        }\n        return prev1;\n    };\n    if (nums.length === 1) return nums[0];\n    return Math.max(robLinear(nums.slice(0, -1)), robLinear(nums.slice(1)));\n}"},
+  {id:214,title:"Shortest Palindrome",difficulty:"Hard",tags:["String","Rolling Hash","Hash Function","String Matching"],description:"Convert a string to a palindrome by adding characters in front. Find the longest palindrome prefix, then add the reverse of the remaining suffix. Uses KMP algorithm.",code:"function shortestPalindrome(s: string): string {\n    if (!s) return s;\n    const rev = s.split('').reverse().join('');\n    const combined = s + '#' + rev;\n    const kmp = new Array(combined.length).fill(0);\n    for (let i = 1; i < combined.length; i++) {\n        let j = kmp[i - 1];\n        while (j > 0 && combined[i] !== combined[j]) j = kmp[j - 1];\n        if (combined[i] === combined[j]) j++;\n        kmp[i] = j;\n    }\n    const longestPrefix = kmp[combined.length - 1];\n    const suffix = s.substring(longestPrefix);\n    return suffix.split('').reverse().join('') + s;\n}"},
+  {id:215,title:"Kth Largest Element in an Array",difficulty:"Medium",tags:["Array","Divide and Conquer","Sorting","Heap","Quickselect"],description:"Find the kth largest element in an unsorted array. Uses Quickselect algorithm for average O(n) time complexity, or can be solved with a min-heap.",code:"function findKthLargest(nums: number[], k: number): number {\n    const heap = new Array<number>();\n    for (const num of nums) {\n        heap.push(num);\n        heap.sort((a, b) => a - b);\n        if (heap.length > k) heap.shift();\n    }\n    return heap[0];\n}"},
+  {id:218,title:"The Skyline Problem",difficulty:"Hard",tags:["Array","Divide and Conquer","Heap","Segment Tree","Binary Indexed Tree","Ordered Set"],description:"Compute the skyline of a city given building coordinates. Returns key points where the height changes. Uses a sweep-line algorithm with a max-heap.",code:"function getSkyline(buildings: number[][]): number[][] {\n    const events: number[][] = [];\n    for (const [l, r, h] of buildings) {\n        events.push([l, -h, r]);\n        events.push([r, 0, 0]);\n    }\n    events.sort((a, b) => a[0] - b[0] || a[1] - b[1]);\n    const result: number[][] = [];\n    const heights: number[] = [0];\n    for (const [x, h, r] of events) {\n        if (h < 0) heights.push(-h);\n        else heights.splice(heights.indexOf(heights[heights.length-1]), 1);\n        heights.sort((a, b) => b - a);\n        const maxH = heights[0];\n        if (!result.length || result[result.length-1][1] !== maxH)\n            result.push([x, maxH]);\n    }\n    return result;\n}"},
+  {id:219,title:"Contains Duplicate II",difficulty:"Easy",tags:["Array","Hash Table","Sliding Window"],description:"Determine if there are two distinct indices i and j such that nums[i] == nums[j] and absolute difference |i - j| <= k. Uses a sliding window with a Set.",code:"function containsNearbyDuplicate(nums: number[], k: number): boolean {\n    const seen = new Set<number>();\n    for (let i = 0; i < nums.length; i++) {\n        if (seen.has(nums[i])) return true;\n        seen.add(nums[i]);\n        if (seen.size > k) seen.delete(nums[i - k]);\n    }\n    return false;\n}"},
+  {id:220,title:"Contains Duplicate III",difficulty:"Hard",tags:["Array","Sorting","Ordered Set","Bucket Sort"],description:"Find if there exist indices i, j where |nums[i] - nums[j]| <= valueDiff and |i - j| <= indexDiff. Uses bucket sort approach for O(n) time.",code:"function containsNearbyAlmostDuplicate(nums: number[], indexDiff: number, valueDiff: number): boolean {\n    if (valueDiff < 0) return false;\n    const buckets = new Map<number, number>();\n    const bucketSize = valueDiff + 1;\n    for (let i = 0; i < nums.length; i++) {\n        const bucketId = Math.floor(nums[i] / bucketSize);\n        if (buckets.has(bucketId)) return true;\n        if (buckets.has(bucketId - 1) && Math.abs(nums[i] - buckets.get(bucketId - 1)!) <= valueDiff) return true;\n        if (buckets.has(bucketId + 1) && Math.abs(nums[i] - buckets.get(bucketId + 1)!) <= valueDiff) return true;\n        buckets.set(bucketId, nums[i]);\n        if (i >= indexDiff) buckets.delete(Math.floor(nums[i - indexDiff] / bucketSize));\n    }\n    return false;\n}"},
+  {id:221,title:"Maximal Square",difficulty:"Medium",tags:["Array","Dynamic Programming","Matrix"],description:"Find the largest square containing only 1's in a binary matrix and return its area. Uses dynamic programming where dp[i][j] represents the side length of the largest square ending at (i,j).",code:"function maximalSquare(matrix: string[][]): number {\n    if (!matrix.length) return 0;\n    const rows = matrix.length, cols = matrix[0].length;\n    const dp = new Array(rows + 1).fill(0).map(() => new Array(cols + 1).fill(0));\n    let maxSide = 0;\n    for (let i = 1; i <= rows; i++) {\n        for (let j = 1; j <= cols; j++) {\n            if (matrix[i-1][j-1] === '1') {\n                dp[i][j] = Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1;\n                maxSide = Math.max(maxSide, dp[i][j]);\n            }\n        }\n    }\n    return maxSide * maxSide;\n}"},
+  {id:222,title:"Count Complete Tree Nodes",difficulty:"Easy",tags:["Binary Tree","Binary Search"],description:"Count the number of nodes in a complete binary tree faster than O(n). A complete binary tree has all levels fully filled except possibly the last. Uses binary search on the last level.",code:"function countNodes(root: TreeNode | null): number {\n    if (!root) return 0;\n    let left = root, right = root;\n    let height = 0;\n    while (right) {\n        left = left.left!;\n        right = right.right!;\n        height++;\n    }\n    if (!left) return (1 << height) - 1;\n    return 1 + countNodes(root.left) + countNodes(root.right);\n}"},
+  {id:223,title:"Rectangle Area",difficulty:"Medium",tags:["Geometry","Math"],description:"Calculate the total area covered by two rectilinear rectangles. The total area is the sum of both rectangles minus the overlapping area.",code:"function computeArea(ax1: number, ay1: number, ax2: number, ay2: number, bx1: number, by1: number, by2: number): number {\n    const areaA = (ax2 - ax1) * (ay2 - ay1);\n    const areaB = (bx2 - bx1) * (by2 - by1);\n    const overlapWidth = Math.max(0, Math.min(ax2, bx2) - Math.max(ax1, bx1));\n    const overlapHeight = Math.max(0, Math.min(ay2, by2) - Math.max(ay1, by1));\n    const overlapArea = overlapWidth * overlapHeight;\n    return areaA + areaB - overlapArea;\n}"},
+  {id:225,title:"Implement Stack using Queues",difficulty:"Easy",tags:["Stack","Design","Queue"],description:"Implement a last-in-first-out (LIFO) stack using only two queues. Supports push, pop, top, and empty operations.",code:"class MyStack {\n    private queue: number[] = [];\n    push(x: number): void { this.queue.push(x); }\n    pop(): number { for (let i = 1; i < this.queue.length; i++) this.queue.push(this.queue.shift()!); return this.queue.shift()!; }\n    top(): number { const val = this.pop(); this.queue.push(val); return val; }\n    empty(): boolean { return this.queue.length === 0; }\n}"},
+  {id:226,title:"Invert Binary Tree",difficulty:"Easy",tags:["Tree","DFS","BFS","Binary Tree"],description:"Invert a binary tree (mirror it). For each node, swap its left and right children. Can be solved recursively or iteratively with BFS/DFS.",code:"function invertTree(root: TreeNode | null): TreeNode | null {\n    if (!root) return null;\n    [root.left, root.right] = [invertTree(root.right), invertTree(root.left)];\n    return root;\n}"},
+  {id:227,title:"Basic Calculator II",difficulty:"Medium",tags:["String","Stack","Math"],description:"Evaluate a mathematical expression string containing +, -, *, / operators. Integer division truncates toward zero. Uses a stack to handle operator precedence.",code:"function calculate(s: string): number {\n    s = s.replace(/\\s/g, '');\n    const stack: number[] = [];\n    let num = 0, op = '+';\n    for (let i = 0; i <= s.length; i++) {\n        const ch = s[i];\n        if (ch >= '0' && ch <= '9') num = num * 10 + parseInt(ch);\n        if (!ch || '+-*/'.includes(ch)) {\n            if (op === '+') stack.push(num);\n            else if (op === '-') stack.push(-num);\n            else if (op === '*') stack.push(stack.pop()! * num);\n            else if (op === '/') stack.push(Math.trunc(stack.pop()! / num));\n            op = ch; num = 0;\n        }\n    }\n    return stack.reduce((a, b) => a + b, 0);\n}"},
+  {id:229,title:"Majority Element II",difficulty:"Medium",tags:["Array","Hash Table","Sorting","Counting"],description:"Find all elements that appear more than n/3 times in an array. Uses the Boyer-Moore Voting Algorithm extended for two candidates. O(n) time, O(1) space.",code:"function majorityElement(nums: number[]): number[] {\n    let cand1 = 0, cand2 = 0, count1 = 0, count2 = 0;\n    for (const num of nums) {\n        if (num === cand1) count1++;\n        else if (num === cand2) count2++;\n        else if (count1 === 0) { cand1 = num; count1 = 1; }\n        else if (count2 === 0) { cand2 = num; count2 = 1; }\n        else { count1--; count2--; }\n    }\n    count1 = count2 = 0;\n    for (const num of nums) { if (num === cand1) count1++; else if (num === cand2) count2++; }\n    const result: number[] = [];\n    if (count1 > Math.floor(nums.length / 3)) result.push(cand1);\n    if (count2 > Math.floor(nums.length / 3)) result.push(cand2);\n    return result;\n}"},
+  {id:231,title:"Power of Two",difficulty:"Easy",tags:["Math","Bit Manipulation","Recursion"],description:"Determine if an integer n is a power of two. A number is a power of two if it has exactly one bit set, which can be checked with n & (n-1) === 0.",code:"function isPowerOfTwo(n: number): boolean {\n    return n > 0 && (n & (n - 1)) === 0;\n}"},
+  {id:232,title:"Implement Queue using Stacks",difficulty:"Easy",tags:["Stack","Design","Queue"],description:"Implement a first-in-first-out queue using two stacks. Supports push, pop, peek, and empty operations with amortized O(1) time.",code:"class MyQueue {\n    private stackIn: number[] = [];\n    private stackOut: number[] = [];\n    push(x: number): void { this.stackIn.push(x); }\n    pop(): number { this.transfer(); return this.stackOut.pop()!; }\n    peek(): number { this.transfer(); return this.stackOut[this.stackOut.length - 1]; }\n    empty(): boolean { return this.stackIn.length === 0 && this.stackOut.length === 0; }\n    private transfer(): void {\n        if (this.stackOut.length === 0)\n            while (this.stackIn.length) this.stackOut.push(this.stackIn.pop()!);\n    }\n}"},
+  {id:233,title:"Number of Digit One",difficulty:"Hard",tags:["Math","Recursion"],description:"Count the total number of digit 1 appearing in all non-negative integers less than or equal to n. Uses digit-by-digit analysis.",code:"function countDigitOne(n: number): number {\n    let count = 0, factor = 1;\n    while (n >= factor) {\n        const lower = n - Math.floor(n / factor) * factor;\n        const current = Math.floor(n / factor) % 10;\n        const higher = Math.floor(n / factor / 10);\n        if (current === 0) count += higher * factor;\n        else if (current === 1) count += higher * factor + lower + 1;\n        else count += (higher + 1) * factor;\n        factor *= 10;\n    }\n    return count;\n}"},
+  {id:234,title:"Palindrome Linked List",difficulty:"Easy",tags:["Stack","Recursion","Linked List","Two Pointers"],description:"Determine if a singly linked list is a palindrome. Uses the fast/slow pointer technique to find the middle, reverses the second half, then compares.",code:"function isPalindrome(head: ListNode | null): boolean {\n    if (!head || !head.next) return true;\n    let slow = head, fast = head;\n    while (fast && fast.next) { slow = slow.next!; fast = fast.next.next; }\n    let prev: ListNode | null = null;\n    while (slow) { const next = slow.next; slow.next = prev; prev = slow; slow = next; }\n    let left = head, right = prev;\n    while (right) {\n        if (left!.val !== right.val) return false;\n        left = left!.next; right = right.next;\n    }\n    return true;\n}"},
+  {id:2349,title:"Design a Number Container System",difficulty:"Medium",tags:["Hash Table","Design","Heap","Ordered Set"],description:"Design a system that can insert/replace numbers at indices and find the smallest index for a given number. Uses hash maps and sorted data structures.",code:"class NumberContainers {\n    private indexToNum: Map<number, number> = new Map();\n    private numToIndices: Map<number, Set<number>> = new Map();\n    change(index: number, number: number): void {\n        if (this.indexToNum.has(index)) {\n            const old = this.indexToNum.get(index)!;\n            this.numToIndices.get(old)!.delete(index);\n        }\n        this.indexToNum.set(index, number);\n        if (!this.numToIndices.has(number)) this.numToIndices.set(number, new Set());\n        this.numToIndices.get(number)!.add(index);\n    }\n    find(number: number): number {\n        const indices = this.numToIndices.get(number);\n        return indices?.size ? Math.min(...indices) : -1;\n    }\n}"},
+  {id:237,title:"Delete Node in a Linked List",difficulty:"Medium",tags:["Linked List"],description:"Delete a node from a singly linked list when only given access to that node (not the head). Copy the next node's value and skip the next node.",code:"function deleteNode(node: ListNode | null): void {\n    if (node && node.next) {\n        node.val = node.next.val;\n        node.next = node.next.next;\n    }\n}"},
+  {id:238,title:"Product of Array Except Self",difficulty:"Medium",tags:["Array","Prefix Sum"],description:"Return an array where each element is the product of all other elements. Solve in O(n) without division by using prefix and suffix products.",code:"function productExceptSelf(nums: number[]): number[] {\n    const n = nums.length;\n    const result = new Array(n).fill(1);\n    let prefix = 1, suffix = 1;\n    for (let i = 0; i < n; i++) { result[i] *= prefix; prefix *= nums[i]; }\n    for (let i = n - 1; i >= 0; i--) { result[i] *= suffix; suffix *= nums[i]; }\n    return result;\n}"},
+  {id:239,title:"Sliding Window Maximum",difficulty:"Hard",tags:["Array","Queue","Sliding Window","Heap","Monotonic Queue"],description:"Find the maximum value in each sliding window of size k as it moves across the array. Uses a monotonic deque for O(n) time complexity.",code:"function maxSlidingWindow(nums: number[], k: number): number[] {\n    const deque: number[] = [];\n    const result: number[] = [];\n    for (let i = 0; i < nums.length; i++) {\n        while (deque.length && deque[0] <= i - k) deque.shift();\n        while (deque.length && nums[deque[deque.length - 1]] <= nums[i]) deque.pop();\n        deque.push(i);\n        if (i >= k - 1) result.push(nums[deque[0]]);\n    }\n    return result;\n}"},
+  {id:241,title:"Different Ways to Add Parentheses",difficulty:"Medium",tags:["String","Dynamic Programming","Recursion","Math","Memoization"],description:"Given a string expression of numbers and operators, return all possible results from computing all different parenthesizations. Uses divide and conquer with memoization.",code:"function diffWaysToCompute(expression: string): number[] {\n    if (/^\\d+$/.test(expression)) return [parseInt(expression)];\n    const result: number[] = [];\n    for (let i = 0; i < expression.length; i++) {\n        if ('+-*'.includes(expression[i])) {\n            const left = diffWaysToCompute(expression.slice(0, i));\n            const right = diffWaysToCompute(expression.slice(i + 1));\n            for (const l of left) for (const r of right) {\n                if (expression[i] === '+') result.push(l + r);\n                else if (expression[i] === '-') result.push(l - r);\n                else result.push(l * r);\n            }\n        }\n    }\n    return result;\n}"},
+  {id:242,title:"Valid Anagram",difficulty:"Easy",tags:["Hash Table","String","Sorting"],description:"Determine if string t is an anagram of string s (contains the same characters in the same quantity). Uses character frequency counting.",code:"function isAnagram(s: string, t: string): boolean {\n    if (s.length !== t.length) return false;\n    const counts = new Array(26).fill(0);\n    for (let i = 0; i < s.length; i++) {\n        counts[s.charCodeAt(i) - 97]++;\n        counts[t.charCodeAt(i) - 97]--;\n    }\n    return counts.every(c => c === 0);\n}"},
+  {id:243,title:"Shortest Word Distance",difficulty:"Easy",tags:["Array","String"],description:"Find the shortest distance between two given words in a list. Single pass approach tracking the most recent positions of both words.",code:"function shortestWordDistance(words: string[], word1: string, word2: string): number {\n    let pos1 = -1, pos2 = -1, minDist = Infinity;\n    for (let i = 0; i < words.length; i++) {\n        if (words[i] === word1) pos1 = i;\n        if (words[i] === word2) pos2 = i;\n        if (pos1 !== -1 && pos2 !== -1)\n            minDist = Math.min(minDist, Math.abs(pos1 - pos2));\n    }\n    return minDist;\n}"},
+  {id:244,title:"Shortest Word Distance II",difficulty:"Medium",tags:["Hash Table","String","Design"],description:"Design a class that receives a list of words and can efficiently find the shortest distance between any two words. Pre-processes word indices into a hash map.",code:"class WordDistance {\n    private map: Map<string, number[]> = new Map();\n    constructor(words: string[]) {\n        words.forEach((w, i) => {\n            if (!this.map.has(w)) this.map.set(w, []);\n            this.map.get(w)!.push(i);\n        });\n    }\n    shortest(word1: string, word2: string): number {\n        const indices1 = this.map.get(word1)!;\n        const indices2 = this.map.get(word2)!;\n        let minDist = Infinity, i = 0, j = 0;\n        while (i < indices1.length && j < indices2.length) {\n            minDist = Math.min(minDist, Math.abs(indices1[i] - indices2[j]));\n            if (indices1[i] < indices2[j]) i++; else j++;\n        }\n        return minDist;\n    }\n}"},
+  {id:245,title:"Shortest Word Distance III",difficulty:"Medium",tags:["Array","String"],description:"Same as Shortest Word Distance, but word1 and word2 may be the same word. Handle the special case where both target words are identical.",code:"function shortestWordDistance(words: string[], word1: string, word2: string): number {\n    let pos1 = -1, pos2 = -1, minDist = Infinity;\n    const same = word1 === word2;\n    for (let i = 0; i < words.length; i++) {\n        if (words[i] === word1) {\n            if (same) { if (pos1 !== -1) minDist = Math.min(minDist, i - pos1); pos1 = i; }\n            else { pos1 = i; }\n        } else if (words[i] === word2) { pos2 = i; }\n        if (pos1 !== -1 && pos2 !== -1 && !same)\n            minDist = Math.min(minDist, Math.abs(pos1 - pos2));\n    }\n    return minDist;\n}"},
+  {id:246,title:"Strobogrammatic Number",difficulty:"Easy",tags:["Hash Table","Two Pointers","String"],description:"Determine if a number is strobogrammatic - it looks the same when rotated 180 degrees. Valid digit pairs: 0-0, 1-1, 8-8, 6-9, 9-6.",code:"function isStrobogrammatic(num: string): boolean {\n    const map = new Map<string, string>([['0','0'],['1','1'],['8','8'],['6','9'],['9','6']]);\n    let left = 0, right = num.length - 1;\n    while (left <= right) {\n        if (map.get(num[left]) !== num[right]) return false;\n        left++; right--;\n    }\n    return true;\n}"},
+  {id:247,title:"Strobogrammatic Number II",difficulty:"Medium",tags:["Recursion"],description:"Find all strobogrammatic numbers of length n. Uses recursive approach building from the outside in with valid digit pairs.",code:"function findStrobogrammatic(n: number): string[] {\n    const pairs = [['0','0'],['1','1'],['8','8'],['6','9'],['9','6']];\n    const dfs = (m: number, n: number): string[] => {\n        if (m === 0) return [''];\n        if (m === 1) return ['0', '1', '8'];\n        const prev = dfs(m - 2, n);\n        const result: string[] = [];\n        for (const [a, b] of pairs) {\n            for (const s of prev) {\n                if (m !== n || a !== '0') result.push(a + s + b);\n            }\n        }\n        return result;\n    };\n    return dfs(n, n);\n}"},
+  {id:248,title:"Strobogrammatic Number III",difficulty:"Hard",tags:["Recursion"],description:"Count the total number of strobogrammatic numbers in the range [low, high]. Generates all strobogrammatic numbers of each length and counts those within range.",code:"function strobogrammaticInRange(low: string, high: string): number {\n    const pairs = [['0','0'],['1','1'],['8','8'],['6','9'],['9','6']];\n    let count = 0;\n    const dfs = (m: number, n: number): string[] => {\n        if (m === 0) return [''];\n        if (m === 1) return ['0', '1', '8'];\n        const prev = dfs(m - 2, n);\n        const result: string[] = [];\n        for (const [a, b] of pairs) {\n            for (const s of prev) {\n                if (m !== n || a !== '0') result.push(a + s + b);\n            }\n        }\n        return result;\n    };\n    for (let len = low.length; len <= high.length; len++) {\n        for (const num of dfs(len, len)) {\n            if ((num.length > low.length || num >= low) && (num.length < high.length || num <= high)) count++;\n        }\n    }\n    return count;\n}"},
+  {id:249,title:"Group Shifted Strings",difficulty:"Medium",tags:["Array","Hash Table","String"],description:"Group strings that belong to the same shifting sequence. A shift replaces each letter with the next one. Create a canonical key based on relative character differences.",code:"function groupStrings(strings: string[][]): string[][] {\n    const groups: Map<string, string[]> = new Map();\n    for (const s of strings) {\n        const key: number[] = [];\n        for (let i = 1; i < s.length; i++) {\n            key.push(((s.charCodeAt(i) - s.charCodeAt(0)) + 26) % 26);\n        }\n        const k = key.join(',');\n        if (!groups.has(k)) groups.set(k, []);\n        groups.get(k)!.push(s);\n    }\n    return Array.from(groups.values());\n}"},
+  {id:251,title:"Flatten 2D Vector",difficulty:"Medium",tags:["Array","Design","Iterator"],description:"Design an iterator that flattens a 2D vector. Supports next() and hasNext() operations, skipping empty inner arrays.",code:"class Vector2D {\n    private vec: number[][];\n    private outer = 0, inner = 0;\n    constructor(vec: number[][]) { this.vec = vec; }\n    private advance(): void {\n        while (this.outer < this.vec.length && this.inner >= this.vec[this.outer].length) {\n            this.outer++; this.inner = 0;\n        }\n    }\n    next(): number {\n        this.advance();\n        return this.vec[this.outer][this.inner++];\n    }\n    hasNext(): boolean {\n        this.advance();\n        return this.outer < this.vec.length;\n    }\n}"},
+  {id:252,title:"Meeting Rooms",difficulty:"Easy",tags:["Array","Sorting"],description:"Determine if a person can attend all meetings given an array of time intervals. Sort by start time and check for overlapping intervals.",code:"function canAttendMeetings(intervals: number[][]): boolean {\n    intervals.sort((a, b) => a[0] - b[0]);\n    for (let i = 1; i < intervals.length; i++) {\n        if (intervals[i][0] < intervals[i - 1][1]) return false;\n    }\n    return true;\n}"},
+  {id:253,title:"Meeting Rooms II",difficulty:"Medium",tags:["Array","Greedy","Sorting","Heap"],description:"Find the minimum number of conference rooms required given meeting time intervals. Uses a min-heap to track end times of active meetings.",code:"function minMeetingRooms(intervals: number[][]): number {\n    if (!intervals.length) return 0;\n    intervals.sort((a, b) => a[0] - b[0]);\n    const minHeap: number[] = [];\n    for (const [start, end] of intervals) {\n        if (minHeap.length && minHeap[0] <= start) minHeap.shift();\n        minHeap.push(end);\n        minHeap.sort((a, b) => a - b);\n    }\n    return minHeap.length;\n}"},
+  {id:254,title:"Factor Combinations",difficulty:"Medium",tags:["Array","Backtracking"],description:"Return all possible combinations of factors for a given integer n. Factors should be in the range [2, n-1]. Uses backtracking to find all factorizations.",code:"function getFactors(n: number): number[][] {\n    const result: number[][] = [];\n    const backtrack = (start: number, target: number, path: number[]) => {\n        if (target === 1) { if (path.length > 1) result.push([...path]); return; }\n        for (let i = start; i <= target; i++) {\n            if (i === n) continue;\n            if (target % i === 0) { path.push(i); backtrack(i, target / i, path); path.pop(); }\n        }\n    };\n    backtrack(2, n, []);\n    return result;\n}"},
+  {id:255,title:"Verify Preorder Sequence in Binary Search Tree",difficulty:"Medium",tags:["Stack","Tree","Binary Search Tree","Monotonic Stack","Binary Tree"],description:"Verify if a given array represents a valid preorder traversal of a BST. Uses a monotonic stack approach tracking the lower bound.",code:"function verifyPreorder(preorder: number[]): boolean {\n    let low = -Infinity;\n    const stack: number[] = [];\n    for (const num of preorder) {\n        if (num < low) return false;\n        while (stack.length && num > stack[stack.length - 1]) low = stack.pop()!;\n        stack.push(num);\n    }\n    return true;\n}"},
+  {id:256,title:"Paint House",difficulty:"Medium",tags:["Array","Dynamic Programming"],description:"Find the minimum cost to paint n houses with 3 color options (red, blue, green) such that no two adjacent houses have the same color. Uses DP.",code:"function minCost(costs: number[][]): number {\n    if (!costs.length) return 0;\n    let dp = [...costs[0]];\n    for (let i = 1; i < costs.length; i++) {\n        const newDp = [\n            costs[i][0] + Math.min(dp[1], dp[2]),\n            costs[i][1] + Math.min(dp[0], dp[2]),\n            costs[i][2] + Math.min(dp[0], dp[1])\n        ];\n        dp = newDp;\n    }\n    return Math.min(...dp);\n}"},
+  {id:700,title:"Search in a Binary Search Tree",difficulty:"Easy",tags:["Tree","Binary Search Tree","Binary Tree"],description:"Find a node with a given value in a BST and return the subtree rooted at that node. Uses the BST property for efficient search.",code:"function searchBST(root: TreeNode | null, val: number): TreeNode | null {\n    if (!root || root.val === val) return root;\n    return val < root.val ? searchBST(root.left, val) : searchBST(root.right, val);\n}"},
+  {id:701,title:"Insert into a Binary Search Tree",difficulty:"Medium",tags:["Tree","Binary Search Tree","Binary Tree"],description:"Insert a value into a BST and return the root. Uses the BST property to find the correct insertion point.",code:"function insertIntoBST(root: TreeNode | null, val: number): TreeNode | null {\n    if (!root) return new TreeNode(val);\n    if (val < root.val) root.left = insertIntoBST(root.left, val);\n    else root.right = insertIntoBST(root.right, val);\n    return root;\n}"},
+  {id:702,title:"Search in a Sorted Array of Unknown Size",difficulty:"Medium",tags:["Array","Two Pointers","Binary Search","Interactive"],description:"Search for a target in a sorted array of unknown size. Uses exponential search to find bounds, then binary search within those bounds.",code:"function search(reader: ArrayReader, target: number): number {\n    let right = 1;\n    while (reader.get(right) < target) right *= 2;\n    let left = 0;\n    while (left <= right) {\n        const mid = left + Math.floor((right - left) / 2);\n        const val = reader.get(mid);\n        if (val === target) return mid;\n        if (val < target) left = mid + 1; else right = mid - 1;\n    }\n    return -1;\n}"},
+  {id:703,title:"Kth Largest Element in a Stream",difficulty:"Easy",tags:["Tree","Design","Binary Search Tree","Data Stream","Binary Tree","Heap"],description:"Design a class that finds the kth largest element in a stream. Uses a min-heap of size k for efficient tracking.",code:"class KthLargest {\n    private heap: number[] = [];\n    private k: number;\n    constructor(k: number, nums: number[]) {\n        this.k = k;\n        for (const num of nums) this.add(num);\n    }\n    add(val: number): number {\n        this.heap.push(val);\n        this.heap.sort((a, b) => a - b);\n        if (this.heap.length > this.k) this.heap.shift();\n        return this.heap[0];\n    }\n}"},
+  {id:704,title:"Binary Search",difficulty:"Easy",tags:["Array","Binary Search"],description:"Search for a target value in a sorted array. Returns the index if found, -1 otherwise. Classic O(log n) binary search implementation.",code:"function search(nums: number[], target: number): number {\n    let left = 0, right = nums.length - 1;\n    while (left <= right) {\n        const mid = left + Math.floor((right - left) / 2);\n        if (nums[mid] === target) return mid;\n        if (nums[mid] < target) left = mid + 1; else right = mid - 1;\n    }\n    return -1;\n}"},
+  {id:705,title:"Design HashSet",difficulty:"Easy",tags:["Array","Hash Table","Linked List","Hash Function","Design"],description:"Design a HashSet without using built-in hash table libraries. Uses a boolean array with a large enough size for direct addressing.",code:"class MyHashSet {\n    private set: boolean[] = new Array(1000001).fill(false);\n    add(key: number): void { this.set[key] = true; }\n    remove(key: number): void { this.set[key] = false; }\n    contains(key: number): boolean { return this.set[key]; }\n}"},
+  {id:706,title:"Design HashMap",difficulty:"Easy",tags:["Array","Hash Table","Linked List","Hash Function","Design"],description:"Design a HashMap without using built-in hash table libraries. Uses separate chaining with linked list buckets for collision resolution.",code:"class MyHashMap {\n    private map: (number | null)[] = new Array(1000001).fill(null);\n    put(key: number, value: number): void { this.map[key] = value; }\n    get(key: number): number { return this.map[key] ?? -1; }\n    remove(key: number): void { this.map[key] = null; }\n}"},
+  {id:707,title:"Design Linked List",difficulty:"Medium",tags:["Linked List","Design"],description:"Design your implementation of a linked list with get, addAtHead, addAtTail, addAtIndex, and deleteAtIndex operations.",code:"class MyLinkedList {\n    private nodes: number[] = [];\n    get(index: number): number { return this.nodes[index] ?? -1; }\n    addAtHead(val: number): void { this.nodes.unshift(val); }\n    addAtTail(val: number): void { this.nodes.push(val); }\n    addAtIndex(index: number, val: number): void { this.nodes.splice(index, 0, val); }\n    deleteAtIndex(index: number): void { this.nodes.splice(index, 1); }\n}"},
+  {id:708,title:"Insert into a Sorted Circular Linked List",difficulty:"Medium",tags:["Linked List"],description:"Insert a value into a sorted circular linked list such that the list remains sorted. Handles edge cases including empty list and all same values.",code:"function insert(head: Node | null, insertVal: number): Node | null {\n    const newNode = new Node(insertVal);\n    if (!head) { newNode.next = newNode; return newNode; }\n    let curr = head;\n    while (true) {\n        if (curr.val <= insertVal && insertVal <= curr.next.val) break;\n        if (curr.val > curr.next.val && (insertVal >= curr.val || insertVal <= curr.next.val)) break;\n        curr = curr.next!;\n        if (curr === head) break;\n    }\n    newNode.next = curr.next;\n    curr.next = newNode;\n    return head;\n}"},
+  {id:709,title:"To Lower Case",difficulty:"Easy",tags:["String"],description:"Convert all uppercase letters in a string to their lowercase equivalent. Uses built-in toLowerCase method or manual ASCII conversion.",code:"function toLowerCase(s: string): string {\n    return s.toLowerCase();\n}"},
+  {id:710,title:"Random Pick with Blacklist",difficulty:"Hard",tags:["Array","Hash Table","Math","Sorting","Randomized"],description:"Pick a random integer in [0, n-1] that is not in the blacklist. Uses a mapping approach to remap blacklisted values in the valid range to whitelisted values outside.",code:"class Solution {\n    private mapping: Map<number, number> = new Map();\n    private size: number;\n    constructor(n: number, blacklist: number[]) {\n        this.size = n - blacklist.length;\n        const blackSet = new Set(blacklist);\n        let w = n - 1;\n        for (const b of blacklist) {\n            if (b < this.size) {\n                while (blackSet.has(w)) w--;\n                this.mapping.set(b, w--);\n            }\n        }\n    }\n    pick(): number {\n        const r = Math.floor(Math.random() * this.size);\n        return this.mapping.get(r) ?? r;\n    }\n}"},
+  {id:711,title:"Number of Distinct Islands II",difficulty:"Hard",tags:["Depth-First Search","Breadth-First Search","Union Find","Hash Table","Matrix"],description:"Count the number of distinct islands considering rotations and reflections. Uses DFS to find islands, then canonicalizes shapes under all 8 symmetries.",code:"function numDistinctIslands2(grid: number[][]): number {\n    const islands: number[][][] = [];\n    const dfs = (r: number, c: number, visited: Set<string>, island: number[][]) => {\n        const key = `${r},${c}`;\n        if (r < 0 || r >= grid.length || c < 0 || c >= grid[0].length || grid[r][c] === 0 || visited.has(key)) return;\n        visited.add(key); island.push([r, c]);\n        dfs(r+1,c,visited,island); dfs(r-1,c,visited,island); dfs(r,c+1,visited,island); dfs(r,c-1,visited,island);\n    };\n    const visited = new Set<string>();\n    for (let r = 0; r < grid.length; r++)\n        for (let c = 0; c < grid[0].length; c++) {\n            if (grid[r][c] === 1 && !visited.has(`${r},${c}`)) {\n                const island: number[][] = [];\n                dfs(r, c, visited, island);\n                islands.push(island);\n            }\n        }\n    return new Set(islands.map(isl => {\n        const transforms = [[1,1],[1,-1],[-1,1],[-1,-1]]; // Simplified\n        return transforms.map(([dx,dy]) => isl.map(([r,c]) => [r*dx,c*dy]).sort().toString()).sort()[0];\n    })).size;\n}"},
+  {id:712,title:"Minimum ASCII Delete Sum for Two Strings",difficulty:"Medium",tags:["String","Dynamic Programming"],description:"Find the minimum ASCII sum of deleted characters to make two strings equal. Classic DP similar to LCS but minimizing ASCII delete sum.",code:"function minimumDeleteSum(s1: string, s2: string): number {\n    const m = s1.length, n = s2.length;\n    const dp = Array.from({length: m + 1}, () => new Array(n + 1).fill(0));\n    for (let i = 1; i <= m; i++) dp[i][0] = dp[i-1][0] + s1.charCodeAt(i-1);\n    for (let j = 1; j <= n; j++) dp[0][j] = dp[0][j-1] + s2.charCodeAt(j-1);\n    for (let i = 1; i <= m; i++)\n        for (let j = 1; j <= n; j++)\n            dp[i][j] = s1[i-1] === s2[j-1]\n                ? dp[i-1][j-1]\n                : Math.min(dp[i-1][j] + s1.charCodeAt(i-1), dp[i][j-1] + s2.charCodeAt(j-1));\n    return dp[m][n];\n}"},
+  {id:713,title:"Subarray Product Less Than K",difficulty:"Medium",tags:["Array","Sliding Window"],description:"Count the number of contiguous subarrays where the product of all elements is strictly less than k. Uses sliding window approach.",code:"function numSubarrayProductLessThanK(nums: number[], k: number): number {\n    if (k <= 1) return 0;\n    let count = 0, product = 1, left = 0;\n    for (let right = 0; right < nums.length; right++) {\n        product *= nums[right];\n        while (product >= k) product /= nums[left++];\n        count += right - left + 1;\n    }\n    return count;\n}"},
+  {id:714,title:"Best Time to Buy and Sell Stock with Transaction Fee",difficulty:"Medium",tags:["Array","Dynamic Programming","Greedy"],description:"Find the maximum profit from stock trading with a transaction fee per transaction. Uses DP tracking two states: holding stock or not holding.",code:"function maxProfit(prices: number[], fee: number): number {\n    let cash = 0, hold = -prices[0];\n    for (let i = 1; i < prices.length; i++) {\n        cash = Math.max(cash, hold + prices[i] - fee);\n        hold = Math.max(hold, cash - prices[i]);\n    }\n    return cash;\n}"}
+];
+
+/**
+ * SPA Application Controller
+ * Implements Directive 4.2: Standard SPA Controller Pattern
+ */
+const App = {
+  state: {
+    filteredProblems: [...PROBLEMS],
+    activeFilter: 'all',
+    searchQuery: '',
+    theme: localStorage.getItem('leet-theme') || 'dark'
+  },
+
+  init() {
+    this.cacheDOM();
+    this.applyTheme();
+    this.bindEvents();
+    this.runBootSequence();
+    this.renderStats();
+    this.renderCards();
+    this.updateCoords();
+  },
+
+  cacheDOM() {
+    this.dom = {
+      boot: document.getElementById('boot'),
+      bootText: document.getElementById('bootText'),
+      cardGrid: document.getElementById('cardGrid'),
+      emptyState: document.getElementById('emptyState'),
+      searchInput: document.getElementById('searchInput'),
+      filters: document.getElementById('filters'),
+      stats: document.getElementById('stats'),
+      themeToggle: document.getElementById('themeToggle'),
+      modalOverlay: document.getElementById('modalOverlay'),
+      modalClose: document.getElementById('modalClose'),
+      modalTitle: document.getElementById('modalTitle'),
+      modalMeta: document.getElementById('modalMeta'),
+      modalDesc: document.getElementById('modalDesc'),
+      modalCode: document.getElementById('modalCode'),
+      coords: document.getElementById('coords'),
+      problemCount: document.getElementById('problemCount')
+    };
+  },
+
+  bindEvents() {
+    // Search - Directive 5: Event Delegation
+    this.dom.searchInput.addEventListener('input', (e) => {
+      this.state.searchQuery = e.target.value.toLowerCase().trim();
+      this.filterAndRender();
+    });
+
+    // Filter buttons
+    this.dom.filters.addEventListener('click', (e) => {
+      const btn = e.target.closest('.c-filter-btn');
+      if (!btn) return;
+      this.dom.filters.querySelectorAll('.c-filter-btn').forEach(b => {
+        b.classList.remove('is-active');
+        b.setAttribute('aria-pressed', 'false');
+      });
+      btn.classList.add('is-active');
+      btn.setAttribute('aria-pressed', 'true');
+      this.state.activeFilter = btn.dataset.filter;
+      this.filterAndRender();
+    });
+
+    // Theme toggle
+    this.dom.themeToggle.addEventListener('click', () => this.toggleTheme());
+
+    // Card clicks - Event Delegation - Directive 4.1.5
+    this.dom.cardGrid.addEventListener('click', (e) => {
+      const card = e.target.closest('.c-card');
+      if (!card) return;
+      const id = parseInt(card.dataset.id);
+      this.openModal(id);
+    });
+
+    // Modal close
+    this.dom.modalClose.addEventListener('click', () => this.closeModal());
+    this.dom.modalOverlay.addEventListener('click', (e) => {
+      if (e.target === this.dom.modalOverlay) this.closeModal();
+    });
+
+    // Keyboard navigation - Directive: Keyboard Navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') this.closeModal();
+    });
+
+    // Mouse coordinates tracking - Directive: X/Y Coordinates
+    document.addEventListener('mousemove', (e) => {
+      this.coordsX = e.clientX;
+      this.coordsY = e.clientY;
+      this.updateCoords();
+    });
+
+    // Console message - Directive: Console Logging
+    console.log('%c[LEETCODE_DATABASE] System operational. All protocols loaded.', 'color: #00f3ff; font-family: monospace; font-size: 14px;');
+    console.log('%c// The code is the law.', 'color: #ff00ff; font-family: monospace;');
+  },
+
+  /**
+   * BIOS Boot Sequence - Directive: BIOS Boot Sequence
+   */
+  runBootSequence() {
+    const lines = [
+      '> INITIALIZING LEETCODE_DATABASE v1.0...',
+      '> LOADING PROTOCOLS... 61 algorithms detected',
+      '> NEON-NOIR THEME: ACTIVE',
+      '> ENCRYPTION: AES-256',
+      '> LINK STATUS: STABLE',
+      '> ACCESS GRANTED',
+      ''
+    ];
+
+    let lineIndex = 0;
+    let charIndex = 0;
+    let text = '';
+    const bootInterval = setInterval(() => {
+      if (lineIndex >= lines.length) {
+        clearInterval(bootInterval);
+        setTimeout(() => {
+          this.dom.boot.classList.add('is-hidden');
+          setTimeout(() => this.dom.boot.remove(), 500);
+        }, 300);
+        return;
+      }
+
+      const line = lines[lineIndex];
+      if (charIndex <= line.length) {
+        text += line[charIndex] || '';
+        this.dom.bootText.innerHTML = text + '<span class="c-boot__cursor">█</span>';
+        charIndex++;
+      } else {
+        text += '\n';
+        this.dom.bootText.innerHTML = text + '<span class="c-boot__cursor">█</span>';
+        lineIndex++;
+        charIndex = 0;
+      }
+    }, 15);
+  },
+
+  /**
+   * Theme Management - Directive: Theme Persistence
+   */
+  applyTheme() {
+    document.documentElement.setAttribute('data-theme', this.state.theme);
+  },
+
+  toggleTheme() {
+    this.state.theme = this.state.theme === 'dark' ? 'light' : 'dark';
+    this.applyTheme();
+    localStorage.setItem('leet-theme', this.state.theme);
+  },
+
+  /**
+   * Update mouse coordinates display
+   */
+  updateCoords() {
+    if (!this.dom.coords) return;
+    const x = String(this.coordsX || 0).padStart(4, '0');
+    const y = String(this.coordsY || 0).padStart(4, '0');
+    this.dom.coords.textContent = `X: ${x} Y: ${y}`;
+  },
+
+  /**
+   * Filter and Render pipeline
+   */
+  filterAndRender() {
+    let results = [...PROBLEMS];
+
+    // Apply difficulty filter
+    if (this.state.activeFilter !== 'all') {
+      results = results.filter(p => p.difficulty === this.state.activeFilter);
+    }
+
+    // Apply search filter
+    if (this.state.searchQuery) {
+      const q = this.state.searchQuery;
+      results = results.filter(p =>
+        p.title.toLowerCase().includes(q) ||
+        p.description.toLowerCase().includes(q) ||
+        p.tags.some(t => t.toLowerCase().includes(q)) ||
+        String(p.id).includes(q)
+      );
+    }
+
+    this.state.filteredProblems = results;
+    this.renderStats();
+    this.renderCards();
+  },
+
+  /**
+   * Render statistics bar
+   */
+  renderStats() {
+    const total = PROBLEMS.length;
+    const shown = this.state.filteredProblems.length;
+    const easy = PROBLEMS.filter(p => p.difficulty === 'Easy').length;
+    const medium = PROBLEMS.filter(p => p.difficulty === 'Medium').length;
+    const hard = PROBLEMS.filter(p => p.difficulty === 'Hard').length;
+
+    this.dom.stats.innerHTML = `
+      <span class="c-stats__item">TOTAL: <span>${total}</span></span>
+      <span class="c-stats__item">SHOWING: <span>${shown}</span></span>
+      <span class="c-stats__item">EASY: <span style="color:var(--diff-easy)">${easy}</span></span>
+      <span class="c-stats__item">MEDIUM: <span style="color:var(--diff-medium)">${medium}</span></span>
+      <span class="c-stats__item">HARD: <span style="color:var(--diff-hard)">${hard}</span></span>
+    `;
+
+    this.dom.problemCount.textContent = total;
+  },
+
+  /**
+   * Render card grid - Directive 4.1.2: DocumentFragment for batch DOM updates
+   */
+  renderCards() {
+    const problems = this.state.filteredProblems;
+    this.dom.cardGrid.innerHTML = '';
+
+    if (problems.length === 0) {
+      this.dom.emptyState.style.display = 'block';
+      return;
+    }
+
+    this.dom.emptyState.style.display = 'none';
+
+    // Directive 4.1.2: DocumentFragment for batch DOM
+    const fragment = document.createDocumentFragment();
+
+    problems.forEach((p, index) => {
+      const diffClass = `c-card__difficulty--${p.difficulty.toLowerCase()}`;
+      const serial = `SN:${String(p.id).padStart(3, '0')}-UX-${String(index).padStart(2, '0')}`;
+
+      const card = document.createElement('article');
+      card.className = 'c-card';
+      card.setAttribute('data-serial', serial);
+      card.setAttribute('data-id', p.id);
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('role', 'button');
+      card.setAttribute('aria-label', `View details for ${p.title}`);
+
+      card.innerHTML = `
+        <div class="c-card__header">
+          <span class="c-card__id">#${String(p.id).padStart(3, '0')}</span>
+          <span class="c-card__difficulty ${diffClass}">${p.difficulty.toUpperCase()}</span>
+        </div>
+        <h3 class="c-card__title">${p.title}</h3>
+        <p class="c-card__desc">${p.description}</p>
+        <div class="c-card__tags">
+          ${p.tags.map(t => `<span class="c-tag">${t}</span>`).join('')}
+        </div>
+        <div class="c-card__footer">
+          <button class="c-card__action" aria-label="View solution for ${p.title}">VIEW_SOLUTION</button>
+          <span class="c-card__stats">ID:${p.id} // ${p.tags.length}TAGS</span>
+        </div>
+      `;
+
+      // Keyboard support
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this.openModal(p.id);
+        }
+      });
+
+      fragment.appendChild(card);
+    });
+
+    this.dom.cardGrid.appendChild(fragment);
+  },
+
+  /**
+   * Modal Controller - Directive 4.1.3: classList API
+   */
+  openModal(id) {
+    const problem = PROBLEMS.find(p => p.id === id);
+    if (!problem) return;
+
+    const diffClass = `c-card__difficulty--${problem.difficulty.toLowerCase()}`;
+
+    this.dom.modalTitle.textContent = `#${String(problem.id).padStart(3, '0')} // ${problem.title}`;
+    this.dom.modalMeta.innerHTML = `
+      <span class="c-card__difficulty ${diffClass}" style="font-family:var(--font-mono);font-size:0.7rem;padding:2px 8px;text-transform:uppercase;letter-spacing:1px;border:1px solid;">${problem.difficulty.toUpperCase()}</span>
+      ${problem.tags.map(t => `<span class="c-tag">${t}</span>`).join('')}
+    `;
+    this.dom.modalDesc.textContent = problem.description;
+    this.dom.modalCode.textContent = problem.code;
+
+    this.dom.modalOverlay.classList.add('is-active');
+    this.dom.modalOverlay.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+
+    // Focus management
+    this.dom.modalClose.focus();
+  },
+
+  closeModal() {
+    this.dom.modalOverlay.classList.remove('is-active');
+    this.dom.modalOverlay.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+};
+
+// Initialize when DOM is ready - Directive: Performance
+document.addEventListener('DOMContentLoaded', () => App.init());
+</script>
+
+<!-- DATA_FRAGMENT_END -->
+</body>
+</html>

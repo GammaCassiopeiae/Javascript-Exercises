@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Binary Search Algorithm - LeetCode Tutorial">
+    <title>Binary Search - LeetCode Algorithms</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Back to Home</a>
+            <h1 class="c-title">🔍 Binary Search</h1>
+            <p class="c-subtitle">Finding Elements & Searching on Answer Spaces</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <div class="c-algo-content">
+                <aside class="c-algo-aside">
+                    <h3>Quick Facts</h3>
+                    <ul>
+                        <li><strong>Category:</strong> Searching & Sorting</li>
+                        <li><strong>Time:</strong> O(log n)</li>
+                        <li><strong>Space:</strong> O(1)</li>
+                        <li><strong>Best For:</strong> Sorted arrays</li>
+                        <li><strong>Difficulty:</strong> Easy to Medium</li>
+                    </ul>
+                    <h3>Key Use Cases</h3>
+                    <ul>
+                        <li>Binary Search on Answer</li>
+                        <li>Find Target in Sorted Array</li>
+                        <li>Find First/Last Position</li>
+                        <li>Search for Peak</li>
+                        <li>Koko Eating Bananas</li>
+                    </ul>
+                </aside>
+
+                <div class="c-algo-details">
+                    <div class="c-algo-description">
+                        <h2>Overview</h2>
+                        <p>Binary search eliminates half of the remaining elements with each comparison. Works only on sorted data. Two main patterns: finding an exact value and "binary search on answer" where you search in a solution space.</p>
+                        <p><strong>Key:</strong> Maintain left and right pointers, calculate mid, and adjust based on comparison.</p>
+                    </div>
+
+                    <div class="c-code-block">
+                        <pre><code>// Standard Binary Search - Find Target
+function binarySearch(arr, target) {
+    let left = 0;
+    let right = arr.length - 1;
+    
+    while (left <= right) {
+        const mid = Math.floor((left + right) / 2);
+        
+        if (arr[mid] === target) {
+            return mid;  // Found
+        } else if (arr[mid] < target) {
+            left = mid + 1;  // Search right
+        } else {
+            right = mid - 1;  // Search left
+        }
+    }
+    
+    return -1;  // Not found
+}
+
+// Example
+console.log(binarySearch([1, 3, 5, 7, 9, 11], 7));  // 3
+console.log(binarySearch([1, 3, 5, 7, 9, 11], 8));  // -1</code></pre>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Problem: Find First and Last Position</h2>
+                        <p>Find the starting and ending position of a given target value in a sorted array.</p>
+                    </div>
+
+                    <div class="c-code-block">
+                        <pre><code>// Find First and Last Position of Target
+function searchRange(arr, target) {
+    function findFirst(arr, target) {
+        let left = 0, right = arr.length - 1;
+        let result = -1;
+        
+        while (left <= right) {
+            const mid = Math.floor((left + right) / 2);
+            if (arr[mid] === target) {
+                result = mid;
+                right = mid - 1;  // Keep searching left
+            } else if (arr[mid] < target) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+        
+        return result;
+    }
+    
+    function findLast(arr, target) {
+        let left = 0, right = arr.length - 1;
+        let result = -1;
+        
+        while (left <= right) {
+            const mid = Math.floor((left + right) / 2);
+            if (arr[mid] === target) {
+                result = mid;
+                left = mid + 1;  // Keep searching right
+            } else if (arr[mid] < target) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+        
+        return result;
+    }
+    
+    return [findFirst(arr, target), findLast(arr, target)];
+}
+
+// Example
+console.log(searchRange([5, 7, 7, 8, 8, 10], 8));  // [3, 4]
+console.log(searchRange([5, 7, 7, 8, 8, 10], 6));  // [-1, -1]</code></pre>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Binary Search on Answer</h2>
+                        <p>Use binary search to find an optimal answer in a solution space rather than searching in an array.</p>
+                    </div>
+
+                    <div class="c-code-block">
+                        <pre><code>// Binary Search on Answer - Koko Eating Bananas
+function minEatingSpeed(piles, h) {
+    function canFinish(speed) {
+        let hours = 0;
+        for (let pile of piles) {
+            hours += Math.ceil(pile / speed);
+        }
+        return hours <= h;
+    }
+    
+    let left = 1;
+    let right = Math.max(...piles);
+    
+    while (left < right) {
+        const mid = Math.floor((left + right) / 2);
+        
+        if (canFinish(mid)) {
+            right = mid;  // Try slower speeds
+        } else {
+            left = mid + 1;  // Need faster speed
+        }
+    }
+    
+    return left;
+}
+
+// Example
+console.log(minEatingSpeed([1, 1, 1, 1], 4));        // 1
+console.log(minEatingSpeed([312884132], 968709470)); // 1</code></pre>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Key Insights</h2>
+                        <ul style="color: var(--text-secondary);">
+                            <li><strong>Invariant:</strong> target is always in [left, right]</li>
+                            <li><strong>Mid Calculation:</strong> Use Math.floor to avoid overflow</li>
+                            <li><strong>First/Last:</strong> Continue searching after finding target</li>
+                            <li><strong>Answer Space:</strong> Search space can be values, not just indices</li>
+                        </ul>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Time & Space Complexity</h2>
+                        <ul style="color: var(--text-secondary);">
+                            <li><strong>Time:</strong> O(log n)</li>
+                            <li><strong>Space:</strong> O(1) iterative, O(log n) recursive</li>
+                            <li><strong>Iterations:</strong> At most log₂(n) iterations</li>
+                        </ul>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Practice Problems</h2>
+                        <ul style="color: var(--text-secondary);">
+                            <li><strong>Easy:</strong> Binary Search, Search Insert Position</li>
+                            <li><strong>Medium:</strong> Find K Closest Elements, Koko Eating Bananas</li>
+                            <li><strong>Hard:</strong> Median of Two Sorted Arrays</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <nav class="c-nav">
+                <ul class="c-nav__list">
+                    <li class="c-nav__item"><a href="algorithms.html" class="c-link c-link--small">← Back to All Algorithms</a></li>
+                    <li class="c-nav__item"><a href="quickselect.html" class="c-link c-link--small">Quickselect →</a></li>
+                </ul>
+            </nav>
+            <p class="u-text-center">🌌 Neon-Noir Design System</p>
+        </div>
+    </footer>
+</body>
+</html>

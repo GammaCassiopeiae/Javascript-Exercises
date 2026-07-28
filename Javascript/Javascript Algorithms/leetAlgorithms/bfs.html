@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="BFS Algorithm - LeetCode Tutorial">
+    <title>BFS - Breadth-First Search - LeetCode Algorithms</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Back to Home</a>
+            <h1 class="c-title">🔀 BFS</h1>
+            <p class="c-subtitle">Breadth-First Search for Shortest Paths & Level Order</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <div class="c-algo-content">
+                <aside class="c-algo-aside">
+                    <h3>Quick Facts</h3>
+                    <ul>
+                        <li><strong>Category:</strong> Tree & Graph Traversal</li>
+                        <li><strong>Time:</strong> O(V + E)</li>
+                        <li><strong>Space:</strong> O(V)</li>
+                        <li><strong>Best For:</strong> Shortest path (unweighted)</li>
+                        <li><strong>Data Structure:</strong> Queue</li>
+                    </ul>
+                    <h3>Key Use Cases</h3>
+                    <ul>
+                        <li>Shortest Path</li>
+                        <li>Level Order Traversal</li>
+                        <li>Connected Components</li>
+                        <li>Bipartite Check</li>
+                        <li>Word Ladder</li>
+                    </ul>
+                </aside>
+
+                <div class="c-algo-details">
+                    <div class="c-algo-description">
+                        <h2>Overview</h2>
+                        <p>BFS explores nodes level by level using a queue. Best for finding shortest paths in unweighted graphs. Visits all neighbors before moving to next level.</p>
+                        <p><strong>Key:</strong> Queue ensures FIFO order - neighbors visited in order they were discovered.</p>
+                    </div>
+
+                    <div class="c-code-block">
+                        <pre><code>// BFS - Shortest Path in Unweighted Graph
+function bfs(graph, start, target) {
+    const queue = [[start, 0]];  // [node, distance]
+    const visited = new Set([start]);
+    
+    while (queue.length > 0) {
+        const [node, dist] = queue.shift();
+        
+        if (node === target) return dist;
+        
+        for (let neighbor of graph[node] || []) {
+            if (!visited.has(neighbor)) {
+                visited.add(neighbor);
+                queue.push([neighbor, dist + 1]);
+            }
+        }
+    }
+    
+    return -1;  // No path found
+}
+
+// Example
+const graph = {
+    1: [2, 3],
+    2: [1, 4],
+    3: [1, 5],
+    4: [2],
+    5: [3]
+};
+
+console.log(bfs(graph, 1, 5));  // 2 (path: 1→3→5)</code></pre>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Problem: Binary Tree Level Order Traversal</h2>
+                        <p>Return tree nodes grouped by level.</p>
+                    </div>
+
+                    <div class="c-code-block">
+                        <pre><code>// BFS - Tree Level Order Traversal
+function levelOrder(root) {
+    if (!root) return [];
+    
+    const result = [];
+    const queue = [root];
+    
+    while (queue.length > 0) {
+        const levelSize = queue.length;
+        const level = [];
+        
+        // Process all nodes at current level
+        for (let i = 0; i < levelSize; i++) {
+            const node = queue.shift();
+            level.push(node.val);
+            
+            if (node.left) queue.push(node.left);
+            if (node.right) queue.push(node.right);
+        }
+        
+        result.push(level);
+    }
+    
+    return result;
+}
+
+// Example
+//     3
+//    / \
+//   9  20
+//     /  \
+//    15   7
+
+// Output: [[3], [9, 20], [15, 7]]</code></pre>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Problem: Word Ladder</h2>
+                        <p>Find shortest transformation sequence from one word to another, changing one letter at a time.</p>
+                    </div>
+
+                    <div class="c-code-block">
+                        <pre><code>// BFS - Word Ladder (Shortest Path)
+function ladderLength(beginWord, endWord, wordList) {
+    const wordSet = new Set(wordList);
+    if (!wordSet.has(endWord)) return 0;
+    
+    const queue = [[beginWord, 1]];
+    const visited = new Set([beginWord]);
+    
+    while (queue.length > 0) {
+        const [word, steps] = queue.shift();
+        
+        if (word === endWord) return steps;
+        
+        // Generate all neighbors (change one letter)
+        for (let i = 0; i < word.length; i++) {
+            for (let c = 97; c <= 122; c++) {  // a-z
+                const char = String.fromCharCode(c);
+                if (char === word[i]) continue;
+                
+                const neighbor = word.slice(0, i) + char + word.slice(i + 1);
+                
+                if (wordSet.has(neighbor) && !visited.has(neighbor)) {
+                    visited.add(neighbor);
+                    queue.push([neighbor, steps + 1]);
+                }
+            }
+        }
+    }
+    
+    return 0;  // No transformation possible
+}
+
+// Example
+// beginWord = "hit", endWord = "cog"
+// wordList = ["hot","dot","dog","lot","log","cog"]
+// Output: 5 (hit → hot → dot → dog → cog)</code></pre>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>BFS vs DFS Comparison</h2>
+                        <ul style="color: var(--text-secondary);">
+                            <li><strong>BFS:</strong> Queue, level-by-level, shortest path (unweighted)</li>
+                            <li><strong>DFS:</strong> Stack/Recursion, depth-first, explores completely</li>
+                            <li><strong>Use BFS:</strong> Shortest paths, connected components, level queries</li>
+                            <li><strong>Use DFS:</strong> All paths, topological sort, backtracking</li>
+                        </ul>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Key Insights</h2>
+                        <ul style="color: var(--text-secondary);">
+                            <li><strong>Queue Essential:</strong> FIFO order guarantees shortest path</li>
+                            <li><strong>Visited Set:</strong> Prevents revisiting nodes</li>
+                            <li><strong>Level Processing:</strong> Process all nodes at level before next</li>
+                            <li><strong>Distance Tracking:</strong> Keep distance with node in queue</li>
+                        </ul>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Time & Space Complexity</h2>
+                        <ul style="color: var(--text-secondary);">
+                            <li><strong>Time:</strong> O(V + E) where V = vertices, E = edges</li>
+                            <li><strong>Space:</strong> O(V) for queue and visited set</li>
+                            <li><strong>Always Explores:</strong> Every node and edge once</li>
+                        </ul>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Practice Problems</h2>
+                        <ul style="color: var(--text-secondary);">
+                            <li><strong>Easy:</strong> Level Order Traversal, Average of Levels</li>
+                            <li><strong>Medium:</strong> Word Ladder, Number of Islands, Course Schedule II</li>
+                            <li><strong>Hard:</strong> Minimum Genetic Mutation, Slip Chained Ladder</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <nav class="c-nav">
+                <ul class="c-nav__list">
+                    <li class="c-nav__item"><a href="algorithms.html" class="c-link c-link--small">← Back to All Algorithms</a></li>
+                    <li class="c-nav__item"><a href="dfs.html" class="c-link c-link--small">DFS →</a></li>
+                </ul>
+            </nav>
+            <p class="u-text-center">🌌 Neon-Noir Design System</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,750 @@
+/* ==========================================================================
+   NEON-NOIR DESIGN SYSTEM - LeetCode Explorer
+   Following RAG.md Directives v4.0
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. CSS CUSTOM PROPERTIES (Directive 6: CSS Variables DRY)
+   -------------------------------------------------------------------------- */
+:root {
+  /* Backgrounds */
+  --bg-deep: #050505;
+  --bg-surface: #0a0b10;
+  --bg-elevated: #0f1118;
+  --bg-glass: rgba(255, 255, 255, 0.05);
+  --bg-glass-hover: rgba(255, 255, 255, 0.08);
+
+  /* Neon Accents */
+  --neon-cyan: #00f3ff;
+  --neon-magenta: #ff00ff;
+  --neon-green: #00ff9d;
+  --neon-purple: #bd00ff;
+  --neon-yellow: #ffe600;
+
+  /* Difficulty Colors */
+  --difficulty-easy: #00ff9d;
+  --difficulty-medium: #ffe600;
+  --difficulty-hard: #ff4757;
+
+  /* Text */
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.85);
+  --text-muted: rgba(255, 255, 255, 0.6);
+  --text-disabled: rgba(255, 255, 255, 0.4);
+
+  /* Glows */
+  --glow-cyan: 0 0 5px var(--neon-cyan), 0 0 15px rgba(0, 243, 255, 0.4);
+  --glow-cyan-strong: 0 0 10px var(--neon-cyan), 0 0 30px rgba(0, 243, 255, 0.6);
+  --glow-magenta: 0 0 5px var(--neon-magenta), 0 0 15px rgba(255, 0, 255, 0.4);
+  --glow-green: 0 0 5px var(--neon-green), 0 0 15px rgba(0, 255, 157, 0.4);
+  --glow-purple: 0 0 5px var(--neon-purple), 0 0 15px rgba(189, 0, 255, 0.4);
+
+  /* Typography (Directive 9: Fluid Typography) */
+  --font-display: 'Orbitron', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'Fira Code', monospace;
+
+  --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+  --text-base: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+  --text-lg: clamp(1.125rem, 1rem + 0.6vw, 1.25rem);
+  --text-xl: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
+  --text-2xl: clamp(1.5rem, 1.2rem + 1.5vw, 2rem);
+  --text-3xl: clamp(2rem, 1.5rem + 2.5vw, 3rem);
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* Borders */
+  --border-subtle: 1px solid rgba(255, 255, 255, 0.1);
+  --border-neon: 1px solid rgba(0, 243, 255, 0.3);
+  --border-neon-strong: 1px solid var(--neon-cyan);
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+
+  /* Z-Index Tokens (Directive 10) */
+  --z-base: 0;
+  --z-sticky: 100;
+  --z-dropdown: 200;
+  --z-modal: 1000;
+  --z-tooltip: 1100;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms ease;
+
+  /* Light Theme Overrides */
+  --light-bg-deep: #f8fafc;
+  --light-bg-surface: #ffffff;
+  --light-bg-elevated: #f1f5f9;
+  --light-text-primary: #0f172a;
+  --light-text-secondary: #334155;
+  --light-text-muted: #64748b;
+  --light-border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Light Theme */
+[data-theme="light"] {
+  --bg-deep: var(--light-bg-deep);
+  --bg-surface: var(--light-bg-surface);
+  --bg-elevated: var(--light-bg-elevated);
+  --bg-glass: rgba(0, 0, 0, 0.03);
+  --bg-glass-hover: rgba(0, 0, 0, 0.06);
+  --text-primary: var(--light-text-primary);
+  --text-secondary: var(--light-text-secondary);
+  --text-muted: var(--light-text-muted);
+  --border-subtle: var(--light-border);
+  --border-neon: 1px solid rgba(0, 243, 255, 0.5);
+  --glow-cyan: 0 0 5px rgba(0, 243, 255, 0.5);
+  --glow-cyan-strong: 0 0 10px rgba(0, 243, 255, 0.3);
+}
+
+[data-theme="light"] .c-header {
+  background: rgba(248, 250, 252, 0.9);
+}
+
+[data-theme="light"] .c-problem-card {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+[data-theme="light"] .c-hero__scanlines {
+  opacity: 0.3;
+}
+
+/* --------------------------------------------------------------------------
+   2. RESET & BASE STYLES (Directive 1, 5: Mobile-First, Box Model Reset)
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth; /* Directive 14 */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.6;
+  color: var(--text-primary);
+  background-color: var(--bg-deep);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* --------------------------------------------------------------------------
+   3. LAYOUT (Directive 7, 8: Grid, Holy Trinity Layout)
+   -------------------------------------------------------------------------- */
+.l-page {
+  display: grid;
+  grid-template-areas:
+    "header"
+    "main"
+    "footer";
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+}
+
+.l-main {
+  grid-area: main;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .l-main {
+    padding: var(--space-8) var(--space-6);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   4. HEADER (Directive 12: Sticky Header)
+   -------------------------------------------------------------------------- */
+.c-header {
+  grid-area: header;
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  background: rgba(5, 5, 5, 0.85);
+  backdrop-filter: blur(12px); /* Directive 54: Glassmorphism */
+  border-bottom: var(--border-subtle);
+}
+
+[data-theme="light"] .c-header {
+  background: rgba(248, 250, 252, 0.85);
+}
+
+.c-header__container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--space-4) var(--space-6);
+  gap: var(--space-4);
+}
+
+.c-header__logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: transform var(--transition-fast);
+}
+
+.c-header__logo:hover {
+  transform: scale(1.02);
+}
+
+.c-header__logo-icon {
+  font-size: var(--text-xl);
+  color: var(--neon-cyan);
+  text-shadow: var(--glow-cyan);
+}
+
+.c-header__logo-text {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.c-header__logo-accent {
+  color: var(--neon-cyan);
+  text-shadow: var(--glow-cyan);
+}
+
+/* --------------------------------------------------------------------------
+   5. NAVIGATION
+   -------------------------------------------------------------------------- */
+.c-nav__list {
+  display: flex;
+  list-style: none;
+  gap: var(--space-1);
+}
+
+.c-nav__link {
+  display: inline-block;
+  padding: var(--space-2) var(--space-4);
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+  position: relative;
+}
+
+.c-nav__link::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--bg-glass);
+  border-radius: var(--radius-md);
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.c-nav__link:hover {
+  color: var(--text-primary);
+}
+
+.c-nav__link:hover::before {
+  opacity: 1;
+}
+
+.c-nav__link.is-active {
+  color: var(--neon-cyan);
+  text-shadow: 0 0 8px rgba(0, 243, 255, 0.5);
+}
+
+.c-nav__link.is-active::before {
+  opacity: 1;
+  background: rgba(0, 243, 255, 0.1);
+}
+
+/* --------------------------------------------------------------------------
+   6. THEME TOGGLE
+   -------------------------------------------------------------------------- */
+.c-theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--bg-glass);
+  border: var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.c-theme-toggle:hover {
+  background: var(--bg-glass-hover);
+  border-color: var(--neon-cyan);
+  box-shadow: var(--glow-cyan);
+  transform: translateY(-2px); /* Directive 62: Hover Lift */
+}
+
+.c-theme-toggle:active {
+  transform: scale(0.98); /* Directive 61: Active Press */
+}
+
+.c-theme-toggle__icon {
+  font-size: var(--text-lg);
+}
+
+/* --------------------------------------------------------------------------
+   7. HERO SECTION
+   -------------------------------------------------------------------------- */
+.c-hero {
+  position: relative;
+  text-align: center;
+  padding: var(--space-12) var(--space-4);
+  margin-bottom: var(--space-8);
+  overflow: hidden;
+}
+
+.c-hero__content {
+  position: relative;
+  z-index: 1;
+}
+
+.c-hero__title {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  margin-bottom: var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.c-hero__title-glow {
+  color: var(--text-primary);
+  text-shadow: var(--glow-cyan);
+}
+
+.c-hero__title-accent {
+  color: var(--neon-cyan);
+  text-shadow: var(--glow-cyan-strong);
+}
+
+.c-hero__subtitle {
+  font-size: var(--text-lg);
+  color: var(--text-muted);
+  margin-bottom: var(--space-8);
+}
+
+.c-hero__stats {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.c-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-4) var(--space-6);
+  background: var(--bg-glass);
+  border: var(--border-neon);
+  border-radius: var(--radius-lg);
+  min-width: 100px;
+}
+
+.c-stat__value {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  color: var(--neon-cyan);
+  text-shadow: var(--glow-cyan);
+}
+
+.c-stat__label {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.c-hero__scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 243, 255, 0.03) 2px,
+    rgba(0, 243, 255, 0.03) 4px
+  );
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   8. PROBLEMS SECTION
+   -------------------------------------------------------------------------- */
+.c-problems {
+  margin-top: var(--space-8);
+}
+
+.c-problems__filters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+@media (min-width: 640px) {
+  .c-problems__filters {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+/* Search */
+.c-search {
+  position: relative;
+  flex: 1;
+  max-width: 400px;
+}
+
+.c-search__input {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  padding-left: 2.75rem;
+  background: var(--bg-glass);
+  border: var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  font-family: var(--font-body);
+  transition: all var(--transition-base);
+}
+
+.c-search__input::placeholder {
+  color: var(--text-muted);
+}
+
+.c-search__input:focus {
+  outline: none;
+  border-color: var(--neon-cyan);
+  box-shadow: var(--glow-cyan);
+}
+
+.c-search__icon {
+  position: absolute;
+  left: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
+/* Filter Group */
+.c-filter-group {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.c-filter-btn {
+  padding: var(--space-2) var(--space-4);
+  background: var(--bg-glass);
+  border: var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  font-family: var(--font-body);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.c-filter-btn:hover {
+  background: var(--bg-glass-hover);
+  border-color: var(--neon-cyan);
+  color: var(--text-primary);
+}
+
+.c-filter-btn.is-active {
+  background: rgba(0, 243, 255, 0.15);
+  border-color: var(--neon-cyan);
+  color: var(--neon-cyan);
+  box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+}
+
+/* Problems Grid */
+.c-problems__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-4);
+}
+
+/* Problem Card */
+.c-problem-card {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-5);
+  background: var(--bg-glass);
+  border: var(--border-subtle);
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+
+.c-problem-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta), var(--neon-purple));
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.c-problem-card:hover {
+  background: var(--bg-glass-hover);
+  border-color: rgba(0, 243, 255, 0.3);
+  transform: translateY(-4px); /* Directive 62 */
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.c-problem-card:hover::before {
+  opacity: 1;
+}
+
+.c-problem-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.c-problem-card__number {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.c-problem-card__difficulty {
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: var(--radius-sm);
+}
+
+.c-problem-card__difficulty--easy {
+  background: rgba(0, 255, 157, 0.15);
+  color: var(--difficulty-easy);
+  border: 1px solid rgba(0, 255, 157, 0.3);
+}
+
+.c-problem-card__difficulty--medium {
+  background: rgba(255, 230, 0, 0.15);
+  color: var(--difficulty-medium);
+  border: 1px solid rgba(255, 230, 0, 0.3);
+}
+
+.c-problem-card__difficulty--hard {
+  background: rgba(255, 71, 87, 0.15);
+  color: var(--difficulty-hard);
+  border: 1px solid rgba(255, 71, 87, 0.3);
+}
+
+.c-problem-card__title {
+  font-size: var(--text-base);
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: var(--space-3);
+  color: var(--text-primary);
+}
+
+.c-problem-card__topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: auto;
+}
+
+.c-problem-card__topic {
+  padding: var(--space-1) var(--space-2);
+  background: var(--bg-elevated);
+  border: var(--border-subtle);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+/* Empty State */
+.c-problems__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-16) var(--space-4);
+  text-align: center;
+}
+
+.c-problems__empty-icon {
+  font-size: 3rem;
+  color: var(--text-muted);
+  margin-bottom: var(--space-4);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.c-problems__empty-text {
+  color: var(--text-muted);
+  font-size: var(--text-lg);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* --------------------------------------------------------------------------
+   9. FOOTER (Directive 13: Footer Anchoring)
+   -------------------------------------------------------------------------- */
+.c-footer {
+  grid-area: footer;
+  padding: var(--space-8) var(--space-6);
+  background: var(--bg-surface);
+  border-top: var(--border-subtle);
+}
+
+.c-footer__content {
+  max-width: 1400px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.c-footer__text {
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
+.c-footer__text--small {
+  font-size: var(--text-xs);
+  margin-top: var(--space-2);
+}
+
+.c-footer__accent {
+  color: var(--neon-cyan);
+  margin-right: var(--space-2);
+}
+
+/* --------------------------------------------------------------------------
+   10. UTILITIES (Directive 15: Focus Visible)
+   -------------------------------------------------------------------------- */
+.u-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Focus Styles (Directive 15) */
+:focus-visible {
+  outline: 2px solid var(--neon-cyan);
+  outline-offset: 2px;
+  box-shadow: var(--glow-cyan);
+}
+
+/* Selection (Directive 63) */
+::selection {
+  background: var(--neon-cyan);
+  color: var(--bg-deep);
+}
+
+/* Custom Scrollbar (Directive 64) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-deep);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--neon-cyan), var(--neon-purple));
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--neon-magenta), var(--neon-purple));
+}
+
+/* --------------------------------------------------------------------------
+   11. ANIMATIONS
+   -------------------------------------------------------------------------- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.c-problem-card {
+  animation: fadeIn 0.4s ease forwards;
+}
+
+/* Reduced Motion (Directive 4.1-6) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  html {
+    scroll-behavior: auto;
+  }
+}

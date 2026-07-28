@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sliding Window Algorithm - LeetCode Tutorial">
+    <title>Sliding Window - LeetCode Algorithms</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Back to Home</a>
+            <h1 class="c-title">🪟 Sliding Window</h1>
+            <p class="c-subtitle">Find Subarrays & Substrings Efficiently</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <div class="c-algo-content">
+                <aside class="c-algo-aside">
+                    <h3>Quick Facts</h3>
+                    <ul>
+                        <li><strong>Category:</strong> Linear Data Structures</li>
+                        <li><strong>Time:</strong> O(n)</li>
+                        <li><strong>Space:</strong> O(k)</li>
+                        <li><strong>Best For:</strong> Contiguous subarrays/substrings</li>
+                        <li><strong>Difficulty:</strong> Medium</li>
+                    </ul>
+                    <h3>Key Use Cases</h3>
+                    <ul>
+                        <li>Longest Substring</li>
+                        <li>Maximum Sum Subarray</li>
+                        <li>Minimum Window</li>
+                        <li>Fruit Into Baskets</li>
+                        <li>Permutation in String</li>
+                    </ul>
+                </aside>
+
+                <div class="c-algo-details">
+                    <div class="c-algo-description">
+                        <h2>Overview</h2>
+                        <p>Sliding window is a technique where you create a window of fixed or variable size that slides through an array or string. Instead of recalculating sums for overlapping subarrays, you expand and shrink the window dynamically.</p>
+                        <p><strong>Pattern:</strong> Two pointers (left/right) expand the window, shrink when condition fails, track result at each step.</p>
+                    </div>
+
+                    <div class="c-code-block">
+                        <pre><code>// Fixed-size Sliding Window
+function maxSumSubarray(arr, k) {
+    let maxSum = 0;
+    let currentSum = 0;
+    
+    // Calculate sum of first window
+    for (let i = 0; i < k; i++) {
+        currentSum += arr[i];
+    }
+    maxSum = currentSum;
+    
+    // Slide the window
+    for (let i = k; i < arr.length; i++) {
+        currentSum = currentSum - arr[i - k] + arr[i];
+        maxSum = Math.max(maxSum, currentSum);
+    }
+    
+    return maxSum;
+}
+
+// Example
+console.log(maxSumSubarray([1, 4, 2, 10, 2, 3, 1, 0, 20], 4));
+// Output: 24 (subarray [10, 2, 3, 1] + some overlap)</code></pre>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Problem: Longest Substring Without Repeating Characters</h2>
+                        <p>Find the length of the longest substring without repeating characters.</p>
+                    </div>
+
+                    <div class="c-code-block">
+                        <pre><code>// Variable-size Sliding Window
+function lengthOfLongestSubstring(s) {
+    const charIndex = {};  // Map of char -> last index
+    let maxLen = 0;
+    let left = 0;
+    
+    for (let right = 0; right < s.length; right++) {
+        // If char seen and within window, move left
+        if (s[right] in charIndex && charIndex[s[right]] >= left) {
+            left = charIndex[s[right]] + 1;
+        }
+        
+        // Record the character's position
+        charIndex[s[right]] = right;
+        
+        // Update max length
+        maxLen = Math.max(maxLen, right - left + 1);
+    }
+    
+    return maxLen;
+}
+
+// Example
+console.log(lengthOfLongestSubstring("abcabcbb"));
+// Output: 3 (substring "abc")
+console.log(lengthOfLongestSubstring("bbbbb"));
+// Output: 1 (substring "b")</code></pre>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Problem: Minimum Window Substring</h2>
+                        <p>Find the smallest substring containing all characters of a pattern.</p>
+                    </div>
+
+                    <div class="c-code-block">
+                        <pre><code>// Minimum Window Substring with Character Count
+function minWindow(s, t) {
+    if (t.length > s.length) return "";
+    
+    const tCount = {};
+    for (let char of t) {
+        tCount[char] = (tCount[char] || 0) + 1;
+    }
+    
+    const windowCount = {};
+    let formed = 0;  // Number of unique chars with desired frequency
+    let required = Object.keys(tCount).length;
+    
+    let left = 0, right = 0;
+    let minLen = Infinity;
+    let minStart = 0;
+    
+    while (right < s.length) {
+        // Add character from right
+        const char = s[right];
+        windowCount[char] = (windowCount[char] || 0) + 1;
+        
+        // If frequency matches, increment formed
+        if (char in tCount && windowCount[char] === tCount[char]) {
+            formed++;
+        }
+        
+        // Try to contract window
+        while (left <= right && formed === required) {
+            // Update result if window is smaller
+            if (right - left + 1 < minLen) {
+                minLen = right - left + 1;
+                minStart = left;
+            }
+            
+            // Remove character from left
+            const leftChar = s[left];
+            windowCount[leftChar]--;
+            if (leftChar in tCount && windowCount[leftChar] < tCount[leftChar]) {
+                formed--;
+            }
+            
+            left++;
+        }
+        
+        right++;
+    }
+    
+    return minLen === Infinity ? "" : s.substring(minStart, minStart + minLen);
+}
+
+// Example
+console.log(minWindow("ADOBECODEBANC", "ABC"));
+// Output: "BANC"</code></pre>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Key Insights</h2>
+                        <ul style="color: var(--text-secondary);">
+                            <li><strong>Two Pointers:</strong> Expand with right, contract with left pointer</li>
+                            <li><strong>Condition-Based:</strong> Keep expanding until condition met, then shrink</li>
+                            <li><strong>Hash Map/Set:</strong> Track characters or elements in current window</li>
+                            <li><strong>Update Result:</strong> Check result at every valid window state</li>
+                        </ul>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Time & Space Complexity</h2>
+                        <ul style="color: var(--text-secondary);">
+                            <li><strong>Time:</strong> O(n) where n is length of string</li>
+                            <li><strong>Space:</strong> O(k) where k is size of character set</li>
+                            <li><strong>Why O(n)?:</strong> Each element visited at most twice (once by right, once by left)</li>
+                        </ul>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Practice Problems</h2>
+                        <ul style="color: var(--text-secondary);">
+                            <li><strong>Easy:</strong> Longest Substring, Maximum Average Subarray</li>
+                            <li><strong>Medium:</strong> Minimum Window, Fruit Into Baskets, Permutation in String</li>
+                            <li><strong>Hard:</strong> Subarrays with K Different Integers</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <nav class="c-nav">
+                <ul class="c-nav__list">
+                    <li class="c-nav__item"><a href="algorithms.html" class="c-link c-link--small">← Back to All Algorithms</a></li>
+                    <li class="c-nav__item"><a href="two-pointers.html" class="c-link c-link--small">← Two Pointers</a></li>
+                    <li class="c-nav__item"><a href="prefix-sum.html" class="c-link c-link--small">Prefix Sum →</a></li>
+                </ul>
+            </nav>
+            <p class="u-text-center">🌌 Neon-Noir Design System</p>
+        </div>
+    </footer>
+</body>
+</html>

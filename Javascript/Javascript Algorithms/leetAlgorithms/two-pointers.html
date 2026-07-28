@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Two Pointers Algorithm - LeetCode Tutorial">
+    <title>Two Pointers - LeetCode Algorithms</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Back to Home</a>
+            <h1 class="c-title">🎯 Two Pointers</h1>
+            <p class="c-subtitle">Master the Two Pointers Technique</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <div class="c-algo-content">
+                <aside class="c-algo-aside">
+                    <h3>Quick Facts</h3>
+                    <ul>
+                        <li><strong>Category:</strong> Linear Data Structures</li>
+                        <li><strong>Time:</strong> O(n)</li>
+                        <li><strong>Space:</strong> O(1)</li>
+                        <li><strong>Best For:</strong> Sorted arrays, linked lists</li>
+                        <li><strong>Difficulty:</strong> Easy to Medium</li>
+                    </ul>
+                    <h3>Key Use Cases</h3>
+                    <ul>
+                        <li>3Sum Problem</li>
+                        <li>Container With Most Water</li>
+                        <li>Valid Palindrome</li>
+                        <li>Two Sum II (Sorted)</li>
+                        <li>Remove Duplicates</li>
+                    </ul>
+                </aside>
+
+                <div class="c-algo-details">
+                    <div class="c-algo-description">
+                        <h2>Overview</h2>
+                        <p>The two pointers technique uses two variables pointing to different locations in a data structure, typically an array or linked list. One pointer moves faster than the other, making it ideal for sorted data.</p>
+                        <p><strong>When to Use:</strong> Arrays/lists are sorted, you need to find a pair or remove elements, minimize iterations through data.</p>
+                    </div>
+
+                    <div class="c-code-block">
+                        <pre><code>// Two Pointers - Classic Pattern
+function twoPointers(arr, target) {
+    let left = 0;
+    let right = arr.length - 1;
+    
+    while (left < right) {
+        const sum = arr[left] + arr[right];
+        
+        if (sum === target) {
+            return [left, right];
+        } else if (sum < target) {
+            left++;  // Need larger sum
+        } else {
+            right--;  // Need smaller sum
+        }
+    }
+    
+    return null;  // Not found
+}
+
+// Example usage
+const arr = [2, 7, 11, 15];
+const result = twoPointers(arr, 9);
+console.log(result);  // [0, 1] → arr[0]=2, arr[1]=7</code></pre>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Problem: 3Sum</h2>
+                        <p>Find all unique triplets in an array that sum to a target value (usually 0).</p>
+                    </div>
+
+                    <div class="c-code-block">
+                        <pre><code>// 3Sum - Find all triplets that sum to target
+function threeSum(nums) {
+    nums.sort((a, b) => a - b);
+    const result = [];
+    
+    for (let i = 0; i < nums.length - 2; i++) {
+        // Skip duplicates
+        if (i > 0 && nums[i] === nums[i - 1]) continue;
+        
+        // If smallest number too large, break
+        if (nums[i] > 0) break;
+        
+        let left = i + 1;
+        let right = nums.length - 1;
+        
+        while (left < right) {
+            const sum = nums[i] + nums[left] + nums[right];
+            
+            if (sum === 0) {
+                result.push([nums[i], nums[left], nums[right]]);
+                
+                // Skip duplicate left values
+                while (left < right && nums[left] === nums[left + 1]) left++;
+                // Skip duplicate right values
+                while (left < right && nums[right] === nums[right - 1]) right--;
+                
+                left++;
+                right--;
+            } else if (sum < 0) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+    }
+    
+    return result;
+}
+
+// Example
+console.log(threeSum([-1, 0, 1, 2, -1, -4]));
+// Output: [[-1, -1, 2], [-1, 0, 1]]</code></pre>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Problem: Container With Most Water</h2>
+                        <p>Find two lines that together with the x-axis form a container such that it holds the most water.</p>
+                    </div>
+
+                    <div class="c-code-block">
+                        <pre><code>// Container With Most Water
+function maxArea(heights) {
+    let left = 0;
+    let right = heights.length - 1;
+    let maxWater = 0;
+    
+    while (left < right) {
+        // Width × shorter height
+        const width = right - left;
+        const height = Math.min(heights[left], heights[right]);
+        const area = width * height;
+        
+        maxWater = Math.max(maxWater, area);
+        
+        // Move the pointer pointing to shorter line
+        if (heights[left] < heights[right]) {
+            left++;
+        } else {
+            right--;
+        }
+    }
+    
+    return maxWater;
+}
+
+// Example
+console.log(maxArea([1,8,6,2,5,4,8,3,7]));
+// Output: 49 (width=8, height=6, area=8×6=48)
+// Actually: width=8, min(1,7)=1... let's recalculate
+// Best: between indices 1 and 8: width=7, height=min(8,7)=7, area=49</code></pre>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Key Insights</h2>
+                        <ul style="color: var(--text-secondary);">
+                            <li><strong>Sort First:</strong> Most two-pointer problems require sorted input</li>
+                            <li><strong>Skip Duplicates:</strong> Avoid duplicate results by skipping equal adjacent elements</li>
+                            <li><strong>Movement Logic:</strong> Decide when to move left/right based on problem constraints</li>
+                            <li><strong>Termination:</strong> Usually terminates when pointers meet (left >= right)</li>
+                        </ul>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Time & Space Complexity</h2>
+                        <ul style="color: var(--text-secondary);">
+                            <li><strong>Time:</strong> O(n) for iteration + O(n log n) for sorting = O(n log n)</li>
+                            <li><strong>Space:</strong> O(1) for pointers (excluding output array)</li>
+                            <li><strong>Best Case:</strong> O(n) if already sorted</li>
+                            <li><strong>Worst Case:</strong> O(n log n) due to sorting</li>
+                        </ul>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Practice Problems</h2>
+                        <ul style="color: var(--text-secondary);">
+                            <li><strong>Easy:</strong> Valid Palindrome, Remove Duplicates from Sorted Array</li>
+                            <li><strong>Medium:</strong> 3Sum, Container With Most Water, Trapping Rain Water</li>
+                            <li><strong>Hard:</strong> 4Sum, 3Sum Closest</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <nav class="c-nav">
+                <ul class="c-nav__list">
+                    <li class="c-nav__item"><a href="algorithms.html" class="c-link c-link--small">← Back to All Algorithms</a></li>
+                    <li class="c-nav__item"><a href="sliding-window.html" class="c-link c-link--small">Next: Sliding Window →</a></li>
+                </ul>
+            </nav>
+            <p class="u-text-center">🌌 Neon-Noir Design System</p>
+        </div>
+    </footer>
+</body>
+</html>

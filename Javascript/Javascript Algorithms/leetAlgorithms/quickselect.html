@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Quickselect Algorithm - LeetCode Tutorial">
+    <title>Quickselect - LeetCode Algorithms</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Back to Home</a>
+            <h1 class="c-title">⚡ Quickselect</h1>
+            <p class="c-subtitle">Find K-th Smallest Element in O(n) Average Time</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <div class="c-algo-content">
+                <aside class="c-algo-aside">
+                    <h3>Quick Facts</h3>
+                    <ul>
+                        <li><strong>Category:</strong> Searching & Sorting</li>
+                        <li><strong>Time:</strong> O(n) avg, O(n²) worst</li>
+                        <li><strong>Space:</strong> O(log n)</li>
+                        <li><strong>Best For:</strong> Finding K-th element</li>
+                        <li><strong>Difficulty:</strong> Medium</li>
+                    </ul>
+                    <h3>Key Use Cases</h3>
+                    <ul>
+                        <li>K-th Largest Element</li>
+                        <li>K-th Smallest Element</li>
+                        <li>Median of Stream</li>
+                        <li>Top K Elements</li>
+                    </ul>
+                </aside>
+
+                <div class="c-algo-details">
+                    <div class="c-algo-description">
+                        <h2>Overview</h2>
+                        <p>Quickselect uses the partition function from Quicksort. Instead of fully sorting, it focuses on finding the K-th element by recursively partitioning around a pivot.</p>
+                        <p><strong>Advantage:</strong> Faster than sorting for finding single K-th element (O(n) vs O(n log n)).</p>
+                    </div>
+
+                    <div class="c-code-block">
+                        <pre><code>// Quickselect - Find K-th Smallest Element
+function findKthSmallest(arr, k) {
+    function quickSelect(left, right, kSmallest) {
+        if (left === right) return arr[left];
+        
+        const pivotIdx = partition(left, right);
+        
+        if (kSmallest === pivotIdx) {
+            return arr[kSmallest];
+        } else if (kSmallest < pivotIdx) {
+            return quickSelect(left, pivotIdx - 1, kSmallest);
+        } else {
+            return quickSelect(pivotIdx + 1, right, kSmallest);
+        }
+    }
+    
+    function partition(left, right) {
+        const pivot = arr[right];
+        let i = left;
+        
+        for (let j = left; j < right; j++) {
+            if (arr[j] < pivot) {
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+                i++;
+            }
+        }
+        
+        [arr[i], arr[right]] = [arr[right], arr[i]];
+        return i;
+    }
+    
+    // Convert k to 0-indexed (k=1 → index 0)
+    return quickSelect(0, arr.length - 1, k - 1);
+}
+
+// Example
+console.log(findKthSmallest([3, 2, 1, 5, 6, 4], 2));  // 2
+console.log(findKthSmallest([3, 2, 3, 1, 2, 4, 5, 5, 6], 4));  // 4</code></pre>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Problem: K-th Largest Element</h2>
+                        <p>Find the K-th largest element in an array.</p>
+                    </div>
+
+                    <div class="c-code-block">
+                        <pre><code>// K-th Largest Element using Quickselect
+function findKthLargest(arr, k) {
+    function quickSelect(left, right, kIndex) {
+        if (left === right) return arr[left];
+        
+        const pivotIdx = partition(left, right);
+        
+        if (kIndex === pivotIdx) {
+            return arr[kIndex];
+        } else if (kIndex < pivotIdx) {
+            return quickSelect(left, pivotIdx - 1, kIndex);
+        } else {
+            return quickSelect(pivotIdx + 1, right, kIndex);
+        }
+    }
+    
+    function partition(left, right) {
+        const pivot = arr[right];
+        let i = left;
+        
+        for (let j = left; j < right; j++) {
+            if (arr[j] > pivot) {  // Note: > for largest
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+                i++;
+            }
+        }
+        
+        [arr[i], arr[right]] = [arr[right], arr[i]];
+        return i;
+    }
+    
+    return quickSelect(0, arr.length - 1, k - 1);
+}
+
+// Example
+console.log(findKthLargest([3, 2, 1, 5, 6, 4], 2));  // 5
+console.log(findKthLargest([3, 2, 3, 1], 1));  // 3</code></pre>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Comparison with Heap</h2>
+                        <p><strong>Quickselect:</strong> O(n) average, O(n²) worst case</p>
+                        <p><strong>Min-Heap:</strong> O(n log k) always, better for very small k</p>
+                        <p><strong>Max-Heap:</strong> O(n + k log n) for finding all top k elements</p>
+                    </div>
+
+                    <div class="c-code-block">
+                        <pre><code>// Quickselect with Random Pivot (Improves Average Case)
+function findKthLargestRandom(arr, k) {
+    function quickSelect(left, right, kIndex) {
+        if (left === right) return arr[left];
+        
+        const pivotIdx = partitionRandom(left, right);
+        
+        if (kIndex === pivotIdx) {
+            return arr[kIndex];
+        } else if (kIndex < pivotIdx) {
+            return quickSelect(left, pivotIdx - 1, kIndex);
+        } else {
+            return quickSelect(pivotIdx + 1, right, kIndex);
+        }
+    }
+    
+    function partitionRandom(left, right) {
+        const randomIdx = left + Math.floor(Math.random() * (right - left + 1));
+        [arr[randomIdx], arr[right]] = [arr[right], arr[randomIdx]];
+        
+        const pivot = arr[right];
+        let i = left;
+        
+        for (let j = left; j < right; j++) {
+            if (arr[j] > pivot) {
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+                i++;
+            }
+        }
+        
+        [arr[i], arr[right]] = [arr[right], arr[i]];
+        return i;
+    }
+    
+    return quickSelect(0, arr.length - 1, k - 1);
+}
+
+// Time: O(n) average, Space: O(log n)</code></pre>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Key Insights</h2>
+                        <ul style="color: var(--text-secondary);">
+                            <li><strong>Pivot Selection:</strong> Random pivot improves average case</li>
+                            <li><strong>Index vs Element:</strong> Find index of k-th element, not k</li>
+                            <li><strong>Largest/Smallest:</strong> Reverse comparison for largest</li>
+                            <li><strong>Better than Sorting:</strong> O(n) vs O(n log n)</li>
+                        </ul>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Time & Space Complexity</h2>
+                        <ul style="color: var(--text-secondary);">
+                            <li><strong>Time:</strong> O(n) average, O(n²) worst case</li>
+                            <li><strong>Space:</strong> O(log n) for recursion stack</li>
+                            <li><strong>In-place:</strong> Yes, modifies input array</li>
+                        </ul>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Practice Problems</h2>
+                        <ul style="color: var(--text-secondary);">
+                            <li><strong>Medium:</strong> K-th Largest Element, Top K Frequent Elements</li>
+                            <li><strong>Hard:</strong> Sliding Window Maximum (with deque)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <nav class="c-nav">
+                <ul class="c-nav__list">
+                    <li class="c-nav__item"><a href="algorithms.html" class="c-link c-link--small">← Back to All Algorithms</a></li>
+                    <li class="c-nav__item"><a href="merge-sort.html" class="c-link c-link--small">Merge Sort →</a></li>
+                </ul>
+            </nav>
+            <p class="u-text-center">🌌 Neon-Noir Design System</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Complete LeetCode Algorithms List with Code Examples">
+    <title>All Algorithms - LeetCode Archive</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Back to Home</a>
+            <h1 class="c-title">📋 All Algorithms</h1>
+            <p class="c-subtitle">Complete LeetCode Algorithm Reference with Code</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-section">
+                <div class="c-algo-description">
+                    <h3>🔍 Algorithm Database</h3>
+                    <p>Below is a comprehensive list of all LeetCode algorithms organized by category. Each algorithm includes implementation details and example code displayed in limegreen.</p>
+                </div>
+
+                <!-- TWO POINTERS -->
+                <article class="c-algo-section">
+                    <h2>Two Pointers</h2>
+                    <p class="c-card__description">Used for sorted arrays/linked lists (e.g., 3Sum, Container With Most Water)</p>
+                    
+                    <div class="c-code-block">
+                        <pre><code>// Two Pointers Approach - Find target sum in sorted array
+function twoSum(arr, target) {
+    let left = 0, right = arr.length - 1;
+    
+    while (left < right) {
+        const sum = arr[left] + arr[right];
+        if (sum === target) return [left, right];
+        sum < target ? left++ : right--;
+    }
+    
+    return [];
+}
+
+// Time: O(n), Space: O(1)
+// Example: twoSum([2, 7, 11, 15], 9) → [0, 1]</code></pre>
+                    </div>
+                </article>
+
+                <!-- SLIDING WINDOW -->
+                <article class="c-algo-section">
+                    <h2>Sliding Window</h2>
+                    <p class="c-card__description">For contiguous subarrays/substrings (e.g., Longest Substring Without Repeating Characters)</p>
+                    
+                    <div class="c-code-block">
+                        <pre><code>// Sliding Window - Longest substring without repeating chars
+function lengthOfLongestSubstring(s) {
+    const charIndex = {};
+    let maxLen = 0, left = 0;
+    
+    for (let right = 0; right < s.length; right++) {
+        if (s[right] in charIndex && charIndex[s[right]] >= left) {
+            left = charIndex[s[right]] + 1;
+        }
+        charIndex[s[right]] = right;
+        maxLen = Math.max(maxLen, right - left + 1);
+    }
+    
+    return maxLen;
+}
+
+// Time: O(n), Space: O(min(n, charset size))</code></pre>
+                    </div>
+                </article>
+
+                <!-- PREFIX SUM -->
+                <article class="c-algo-section">
+                    <h2>Prefix Sum</h2>
+                    <p class="c-card__description">Pre-calculating sums to answer range queries in O(1) time</p>
+                    
+                    <div class="c-code-block">
+                        <pre><code>// Prefix Sum - Answer range sum queries in O(1)
+class PrefixSum {
+    constructor(arr) {
+        this.prefix = [0];
+        for (let num of arr) {
+            this.prefix.push(this.prefix[this.prefix.length - 1] + num);
+        }
+    }
+    
+    rangeSum(left, right) {
+        // Query sum of arr[left..right]
+        return this.prefix[right + 1] - this.prefix[left];
+    }
+}
+
+// Build: O(n), Query: O(1)
+// Example: ps = new PrefixSum([1,2,3,4]); ps.rangeSum(1,3) → 9</code></pre>
+                    </div>
+                </article>
+
+                <!-- BINARY SEARCH -->
+                <article class="c-algo-section">
+                    <h2>Binary Search</h2>
+                    <p class="c-card__description">Not just for finding a number, but for "Binary Search on Answer" (e.g., Koko Eating Bananas)</p>
+                    
+                    <div class="c-code-block">
+                        <pre><code>// Binary Search - Find target in sorted array
+function binarySearch(arr, target) {
+    let left = 0, right = arr.length - 1;
+    
+    while (left <= right) {
+        const mid = Math.floor((left + right) / 2);
+        if (arr[mid] === target) return mid;
+        arr[mid] < target ? left = mid + 1 : right = mid - 1;
+    }
+    
+    return -1;
+}
+
+// Binary Search on Answer - Minimum bananas per hour
+function minEatingSpeed(piles, h) {
+    let left = 1, right = Math.max(...piles);
+    
+    while (left < right) {
+        const mid = Math.floor((left + right) / 2);
+        const hours = piles.reduce((sum, p) => sum + Math.ceil(p / mid), 0);
+        hours <= h ? right = mid : left = mid + 1;
+    }
+    
+    return left;
+}
+
+// Time: O(log n), Space: O(1)</code></pre>
+                    </div>
+                </article>
+
+                <!-- QUICKSELECT -->
+                <article class="c-algo-section">
+                    <h2>Quickselect</h2>
+                    <p class="c-card__description">Finding the k-th smallest/largest element in O(n) average time</p>
+                    
+                    <div class="c-code-block">
+                        <pre><code>// Quickselect - Find k-th smallest element
+function findKthSmallest(arr, k) {
+    function quickSelect(left, right, kSmallest) {
+        if (left === right) return arr[left];
+        
+        const pivotIdx = partition(left, right);
+        
+        if (kSmallest === pivotIdx) return arr[kSmallest];
+        return kSmallest < pivotIdx 
+            ? quickSelect(left, pivotIdx - 1, kSmallest)
+            : quickSelect(pivotIdx + 1, right, kSmallest);
+    }
+    
+    function partition(left, right) {
+        const pivot = arr[right];
+        let i = left;
+        for (let j = left; j < right; j++) {
+            if (arr[j] < pivot) {
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+                i++;
+            }
+        }
+        [arr[i], arr[right]] = [arr[right], arr[i]];
+        return i;
+    }
+    
+    return quickSelect(0, arr.length - 1, k - 1);
+}
+
+// Time: O(n) average, O(n²) worst case</code></pre>
+                    </div>
+                </article>
+
+                <!-- MERGE SORT -->
+                <article class="c-algo-section">
+                    <h2>Merge Sort</h2>
+                    <p class="c-card__description">Understanding the Divide and Conquer philosophy - stable O(n log n) sorting</p>
+                    
+                    <div class="c-code-block">
+                        <pre><code>// Merge Sort - Divide and Conquer O(n log n) stable sort
+function mergeSort(arr) {
+    if (arr.length <= 1) return arr;
+    
+    const mid = Math.floor(arr.length / 2);
+    const left = mergeSort(arr.slice(0, mid));
+    const right = mergeSort(arr.slice(mid));
+    
+    return merge(left, right);
+}
+
+function merge(left, right) {
+    const result = [];
+    let i = 0, j = 0;
+    
+    while (i < left.length && j < right.length) {
+        if (left[i] <= right[j]) {
+            result.push(left[i++]);
+        } else {
+            result.push(right[j++]);
+        }
+    }
+    
+    return result.concat(left.slice(i), right.slice(j));
+}
+
+// Time: O(n log n), Space: O(n)</code></pre>
+                    </div>
+                </article>
+
+                <!-- QUICK SORT -->
+                <article class="c-algo-section">
+                    <h2>Quick Sort</h2>
+                    <p class="c-card__description">In-place sorting with average O(n log n) time complexity</p>
+                    
+                    <div class="c-code-block">
+                        <pre><code>// Quick Sort - In-place O(n log n) average case
+function quickSort(arr, left = 0, right = arr.length - 1) {
+    if (left < right) {
+        const pi = partition(arr, left, right);
+        quickSort(arr, left, pi - 1);
+        quickSort(arr, pi + 1, right);
+    }
+    return arr;
+}
+
+function partition(arr, left, right) {
+    const pivot = arr[right];
+    let i = left - 1;
+    
+    for (let j = left; j < right; j++) {
+        if (arr[j] < pivot) {
+            i++;
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+    }
+    
+    [arr[i + 1], arr[right]] = [arr[right], arr[i + 1]];
+    return i + 1;
+}
+
+// Time: O(n log n) avg, O(n²) worst, Space: O(log n)</code></pre>
+                    </div>
+                </article>
+
+                <!-- BFS -->
+                <article class="c-algo-section">
+                    <h2>Breadth-First Search (BFS)</h2>
+                    <p class="c-card__description">Best for finding shortest path in unweighted graphs and level-order traversal</p>
+                    
+                    <div class="c-code-block">
+                        <pre><code>// BFS - Shortest path in unweighted graph
+function bfs(graph, start, target) {
+    const queue = [[start, 0]];
+    const visited = new Set([start]);
+    
+    while (queue.length > 0) {
+        const [node, dist] = queue.shift();
+        
+        if (node === target) return dist;
+        
+        for (let neighbor of graph[node] || []) {
+            if (!visited.has(neighbor)) {
+                visited.add(neighbor);
+                queue.push([neighbor, dist + 1]);
+            }
+        }
+    }
+    
+    return -1;
+}
+
+// Tree Level Order Traversal
+function levelOrder(root) {
+    if (!root) return [];
+    const result = [];
+    const queue = [root];
+    
+    while (queue.length > 0) {
+        const level = [];
+        for (let i = 0; i < queue.length; i++) {
+            const node = queue.shift();
+            level.push(node.val);
+            if (node.left) queue.push(node.left);
+            if (node.right) queue.push(node.right);
+        }
+        result.push(level);
+    }
+    
+    return result;
+}
+
+// Time: O(V + E), Space: O(V)</code></pre>
+                    </div>
+                </article>
+
+                <!-- DFS -->
+                <article class="c-algo-section">
+                    <h2>Depth-First Search (DFS)</h2>
+                    <p class="c-card__description">Recursive exploration with pre-order, in-order, post-order variations</p>
+                    
+                    <div class="c-code-block">
+                        <pre><code>// DFS - Recursive graph traversal
+function dfs(graph, node, visited = new Set()) {
+    visited.add(node);
+    console.log(node);
+    
+    for (let neighbor of graph[node] || []) {
+        if (!visited.has(neighbor)) {
+            dfs(graph, neighbor, visited);
+        }
+    }
+}
+
+// In-order Tree Traversal (Left-Root-Right)
+function inorderTraversal(root, result = []) {
+    if (!root) return result;
+    inorderTraversal(root.left, result);
+    result.push(root.val);
+    inorderTraversal(root.right, result);
+    return result;
+}
+
+// Post-order Tree Traversal (Left-Right-Root)
+function postorderTraversal(root, result = []) {
+    if (!root) return result;
+    postorderTraversal(root.left, result);
+    postorderTraversal(root.right, result);
+    result.push(root.val);
+    return result;
+}
+
+// Time: O(V + E), Space: O(V)</code></pre>
+                    </div>
+                </article>
+
+                <!-- BACKTRACKING -->
+                <article class="c-algo-section">
+                    <h2>Backtracking</h2>
+                    <p class="c-card__description">For exhaustive searches like Permutations, Combinations, and Sudoku Solver</p>
+                    
+                    <div class="c-code-block">
+                        <pre><code>// Backtracking - Generate all permutations
+function permute(nums) {
+    const result = [];
+    
+    function backtrack(current) {
+        if (current.length === nums.length) {
+            result.push([...current]);
+            return;
+        }
+        
+        for (let num of nums) {
+            if (!current.includes(num)) {
+                current.push(num);
+                backtrack(current);
+                current.pop();
+            }
+        }
+    }
+    
+    backtrack([]);
+    return result;
+}
+
+// Backtracking - Subsets (Power Set)
+function subsets(nums) {
+    const result = [[]];
+    
+    for (let num of nums) {
+        for (let i = result.length - 1; i >= 0; i--) {
+            result.push([...result[i], num]);
+        }
+    }
+    
+    return result;
+}
+
+// Time: O(2^n) for subsets, O(n!) for permutations</code></pre>
+                    </div>
+                </article>
+
+                <!-- DIJKSTRA -->
+                <article class="c-algo-section">
+                    <h2>Dijkstra's Algorithm</h2>
+                    <p class="c-card__description">Shortest path in weighted graphs with non-negative edges</p>
+                    
+                    <div class="c-code-block">
+                        <pre><code>// Dijkstra's Algorithm - Shortest path in weighted graph
+function dijkstra(graph, start) {
+    const distances = {};
+    const pq = [[0, start]]; // [distance, node]
+    const visited = new Set();
+    
+    for (let node in graph) {
+        distances[node] = Infinity;
+    }
+    distances[start] = 0;
+    
+    while (pq.length > 0) {
+        pq.sort((a, b) => a[0] - b[0]);
+        const [dist, node] = pq.shift();
+        
+        if (visited.has(node)) continue;
+        visited.add(node);
+        
+        for (let [neighbor, weight] of graph[node] || []) {
+            const newDist = dist + weight;
+            if (newDist < distances[neighbor]) {
+                distances[neighbor] = newDist;
+                pq.push([newDist, neighbor]);
+            }
+        }
+    }
+    
+    return distances;
+}
+
+// Time: O((V + E) log V) with min-heap</code></pre>
+                    </div>
+                </article>
+
+                <!-- TOPOLOGICAL SORT -->
+                <article class="c-algo-section">
+                    <h2>Topological Sort (Kahn's Algorithm)</h2>
+                    <p class="c-card__description">Handling dependencies (e.g., Course Schedule)</p>
+                    
+                    <div class="c-code-block">
+                        <pre><code>// Topological Sort - Kahn's Algorithm (BFS-based)
+function topologicalSort(numNodes, edges) {
+    const inDegree = Array(numNodes).fill(0);
+    const graph = Array.from({length: numNodes}, () => []);
+    const queue = [];
+    
+    for (let [u, v] of edges) {
+        graph[u].push(v);
+        inDegree[v]++;
+    }
+    
+    for (let i = 0; i < numNodes; i++) {
+        if (inDegree[i] === 0) queue.push(i);
+    }
+    
+    const result = [];
+    while (queue.length > 0) {
+        const node = queue.shift();
+        result.push(node);
+        
+        for (let neighbor of graph[node]) {
+            inDegree[neighbor]--;
+            if (inDegree[neighbor] === 0) {
+                queue.push(neighbor);
+            }
+        }
+    }
+    
+    return result.length === numNodes ? result : []; // Empty if cycle
+}
+
+// Time: O(V + E), Space: O(V)</code></pre>
+                    </div>
+                </article>
+
+                <!-- UNION-FIND -->
+                <article class="c-algo-section">
+                    <h2>Union-Find (DSU)</h2>
+                    <p class="c-card__description">Detecting cycles and counting connected components in O(α(n)) time</p>
+                    
+                    <div class="c-code-block">
+                        <pre><code>// Union-Find (Disjoint Set Union) with path compression
+class UnionFind {
+    constructor(n) {
+        this.parent = Array.from({length: n}, (_, i) => i);
+        this.rank = Array(n).fill(0);
+    }
+    
+    find(x) {
+        if (this.parent[x] !== x) {
+            this.parent[x] = this.find(this.parent[x]); // Path compression
+        }
+        return this.parent[x];
+    }
+    
+    union(x, y) {
+        const px = this.find(x), py = this.find(y);
+        if (px === py) return false;
+        
+        // Union by rank
+        if (this.rank[px] < this.rank[py]) {
+            this.parent[px] = py;
+        } else if (this.rank[px] > this.rank[py]) {
+            this.parent[py] = px;
+        } else {
+            this.parent[py] = px;
+            this.rank[px]++;
+        }
+        return true;
+    }
+}
+
+// Time: O(α(n)) ≈ O(1), Space: O(n)</code></pre>
+                    </div>
+                </article>
+
+                <!-- TRIE -->
+                <article class="c-algo-section">
+                    <h2>Trie (Prefix Tree)</h2>
+                    <p class="c-card__description">Efficient string searching and prefix matching</p>
+                    
+                    <div class="c-code-block">
+                        <pre><code>// Trie - Prefix tree for efficient string operations
+class TrieNode {
+    constructor() {
+        this.children = {};
+        this.isEnd = false;
+    }
+}
+
+class Trie {
+    constructor() {
+        this.root = new TrieNode();
+    }
+    
+    insert(word) {
+        let node = this.root;
+        for (let char of word) {
+            if (!node.children[char]) {
+                node.children[char] = new TrieNode();
+            }
+            node = node.children[char];
+        }
+        node.isEnd = true;
+    }
+    
+    search(word) {
+        let node = this.root;
+        for (let char of word) {
+            if (!node.children[char]) return false;
+            node = node.children[char];
+        }
+        return node.isEnd;
+    }
+    
+    startsWith(prefix) {
+        let node = this.root;
+        for (let char of prefix) {
+            if (!node.children[char]) return false;
+            node = node.children[char];
+        }
+        return true;
+    }
+}
+
+// Time: O(m) for operations, Space: O(ALPHABET * N)</code></pre>
+                    </div>
+                </article>
+
+                <!-- KNAPSACK -->
+                <article class="c-algo-section">
+                    <h2>0/1 Knapsack</h2>
+                    <p class="c-card__description">The basis for most optimization problems in Dynamic Programming</p>
+                    
+                    <div class="c-code-block">
+                        <pre><code>// 0/1 Knapsack - Classic DP problem
+function knapsack(weights, values, capacity) {
+    const n = weights.length;
+    const dp = Array(capacity + 1).fill(0);
+    
+    for (let i = 0; i < n; i++) {
+        for (let w = capacity; w >= weights[i]; w--) {
+            dp[w] = Math.max(dp[w], dp[w - weights[i]] + values[i]);
+        }
+    }
+    
+    return dp[capacity];
+}
+
+// 2D DP approach for tracking items
+function knapsack2D(weights, values, capacity) {
+    const n = weights.length;
+    const dp = Array.from({length: n + 1}, () => Array(capacity + 1).fill(0));
+    
+    for (let i = 1; i <= n; i++) {
+        for (let w = 0; w <= capacity; w++) {
+            if (weights[i - 1] <= w) {
+                dp[i][w] = Math.max(
+                    values[i - 1] + dp[i - 1][w - weights[i - 1]],
+                    dp[i - 1][w]
+                );
+            } else {
+                dp[i][w] = dp[i - 1][w];
+            }
+        }
+    }
+    
+    return dp[n][capacity];
+}
+
+// Time: O(n * capacity), Space: O(capacity) or O(n * capacity)</code></pre>
+                    </div>
+                </article>
+
+                <!-- LIS -->
+                <article class="c-algo-section">
+                    <h2>Longest Increasing Subsequence (LIS)</h2>
+                    <p class="c-card__description">A classic O(n²) or O(n log n) pattern</p>
+                    
+                    <div class="c-code-block">
+                        <pre><code>// LIS - O(n²) Dynamic Programming approach
+function lengthOfLIS_DP(nums) {
+    const n = nums.length;
+    const dp = Array(n).fill(1);
+    
+    for (let i = 1; i < n; i++) {
+        for (let j = 0; j < i; j++) {
+            if (nums[j] < nums[i]) {
+                dp[i] = Math.max(dp[i], dp[j] + 1);
+            }
+        }
+    }
+    
+    return Math.max(...dp);
+}
+
+// LIS - O(n log n) Binary Search approach
+function lengthOfLIS(nums) {
+    const tails = [];
+    
+    for (let num of nums) {
+        let left = 0, right = tails.length;
+        while (left < right) {
+            const mid = Math.floor((left + right) / 2);
+            tails[mid] < num ? left = mid + 1 : right = mid;
+        }
+        tails[left] = num;
+    }
+    
+    return tails.length;
+}
+
+// Time: O(n²) or O(n log n), Space: O(n)</code></pre>
+                    </div>
+                </article>
+
+                <!-- LCS -->
+                <article class="c-algo-section">
+                    <h2>Longest Common Subsequence (LCS)</h2>
+                    <p class="c-card__description">For comparing two strings or sequences</p>
+                    
+                    <div class="c-code-block">
+                        <pre><code>// LCS - Longest Common Subsequence via DP
+function longestCommonSubsequence(text1, text2) {
+    const m = text1.length, n = text2.length;
+    const dp = Array.from({length: m + 1}, () => Array(n + 1).fill(0));
+    
+    for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
+            if (text1[i - 1] === text2[j - 1]) {
+                dp[i][j] = dp[i - 1][j - 1] + 1;
+            } else {
+                dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+            }
+        }
+    }
+    
+    return dp[m][n];
+}
+
+// Reconstruct LCS string
+function lcsString(text1, text2) {
+    const m = text1.length, n = text2.length;
+    const dp = Array.from({length: m + 1}, () => Array(n + 1).fill(0));
+    
+    for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
+            if (text1[i - 1] === text2[j - 1]) {
+                dp[i][j] = dp[i - 1][j - 1] + 1;
+            } else {
+                dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+            }
+        }
+    }
+    
+    // Backtrack to reconstruct
+    let lcs = '';
+    let i = m, j = n;
+    while (i > 0 && j > 0) {
+        if (text1[i - 1] === text2[j - 1]) {
+            lcs = text1[i - 1] + lcs;
+            i--; j--;
+        } else {
+            dp[i - 1][j] > dp[i][j - 1] ? i-- : j--;
+        }
+    }
+    
+    return lcs;
+}
+
+// Time: O(m * n), Space: O(m * n)</code></pre>
+                    </div>
+                </article>
+
+                <!-- KADANE'S ALGORITHM -->
+                <article class="c-algo-section">
+                    <h2>Kadane's Algorithm</h2>
+                    <p class="c-card__description">Finding the maximum subarray sum in O(n) time</p>
+                    
+                    <div class="c-code-block">
+                        <pre><code>// Kadane's Algorithm - Maximum Subarray Sum
+function maxSubArray(nums) {
+    let maxSum = nums[0];
+    let currentSum = nums[0];
+    
+    for (let i = 1; i < nums.length; i++) {
+        currentSum = Math.max(nums[i], currentSum + nums[i]);
+        maxSum = Math.max(maxSum, currentSum);
+    }
+    
+    return maxSum;
+}
+
+// With index tracking
+function maxSubArrayWithIndices(nums) {
+    let maxSum = nums[0];
+    let currentSum = nums[0];
+    let start = 0, end = 0, tempStart = 0;
+    
+    for (let i = 1; i < nums.length; i++) {
+        if (nums[i] > currentSum + nums[i]) {
+            currentSum = nums[i];
+            tempStart = i;
+        } else {
+            currentSum += nums[i];
+        }
+        
+        if (currentSum > maxSum) {
+            maxSum = currentSum;
+            start = tempStart;
+            end = i;
+        }
+    }
+    
+    return {maxSum, start, end, subarray: nums.slice(start, end + 1)};
+}
+
+// Time: O(n), Space: O(1)</code></pre>
+                    </div>
+                </article>
+
+                <!-- MONOTONIC STACK -->
+                <article class="c-algo-section">
+                    <h2>Monotonic Stack</h2>
+                    <p class="c-card__description">Finding the "Next Greater Element" in O(n) time</p>
+                    
+                    <div class="c-code-block">
+                        <pre><code>// Monotonic Stack - Next Greater Element
+function nextGreaterElement(nums) {
+    const result = Array(nums.length).fill(-1);
+    const stack = [];
+    
+    for (let i = nums.length - 1; i >= 0; i--) {
+        while (stack.length > 0 && stack[stack.length - 1] <= nums[i]) {
+            stack.pop();
+        }
+        if (stack.length > 0) {
+            result[i] = stack[stack.length - 1];
+        }
+        stack.push(nums[i]);
+    }
+    
+    return result;
+}
+
+// Monotonic Stack - Largest Rectangle in Histogram
+function largestRectangleArea(heights) {
+    const stack = [];
+    let maxArea = 0;
+    let index = 0;
+    
+    while (index < heights.length) {
+        if (stack.length === 0 || heights[index] >= heights[stack[stack.length - 1]]) {
+            stack.push(index);
+            index++;
+        } else {
+            const h = heights[stack.pop()];
+            const w = stack.length === 0 ? index : index - stack[stack.length - 1] - 1;
+            maxArea = Math.max(maxArea, h * w);
+        }
+    }
+    
+    while (stack.length > 0) {
+        const h = heights[stack.pop()];
+        const w = stack.length === 0 ? index : index - stack[stack.length - 1] - 1;
+        maxArea = Math.max(maxArea, h * w);
+    }
+    
+    return maxArea;
+}
+
+// Time: O(n), Space: O(n)</code></pre>
+                    </div>
+                </article>
+
+                <!-- HEAP / PRIORITY QUEUE -->
+                <article class="c-algo-section">
+                    <h2>Heap (Priority Queue)</h2>
+                    <p class="c-card__description">Managing "Top K" elements or merging sorted streams</p>
+                    
+                    <div class="c-code-block">
+                        <pre><code>// Min Heap implementation
+class MinHeap {
+    constructor() {
+        this.heap = [];
+    }
+    
+    parent(i) { return Math.floor((i - 1) / 2); }
+    left(i) { return 2 * i + 1; }
+    right(i) { return 2 * i + 2; }
+    
+    swap(i, j) {
+        [this.heap[i], this.heap[j]] = [this.heap[j], this.heap[i]];
+    }
+    
+    push(val) {
+        this.heap.push(val);
+        this.bubbleUp(this.heap.length - 1);
+    }
+    
+    pop() {
+        const root = this.heap[0];
+        const last = this.heap.pop();
+        if (this.heap.length > 0) {
+            this.heap[0] = last;
+            this.bubbleDown(0);
+        }
+        return root;
+    }
+    
+    bubbleUp(i) {
+        while (i > 0 && this.heap[this.parent(i)] > this.heap[i]) {
+            this.swap(i, this.parent(i));
+            i = this.parent(i);
+        }
+    }
+    
+    bubbleDown(i) {
+        while (true) {
+            let smallest = i;
+            if (this.left(i) < this.heap.length && this.heap[this.left(i)] < this.heap[smallest]) {
+                smallest = this.left(i);
+            }
+            if (this.right(i) < this.heap.length && this.heap[this.right(i)] < this.heap[smallest]) {
+                smallest = this.right(i);
+            }
+            if (smallest === i) break;
+            this.swap(i, smallest);
+            i = smallest;
+        }
+    }
+}
+
+// Time: O(log n) for push/pop, Space: O(n)</code></pre>
+                    </div>
+                </article>
+
+                <!-- FAST & SLOW POINTERS -->
+                <article class="c-algo-section">
+                    <h2>Fast & Slow Pointers</h2>
+                    <p class="c-card__description">Detecting cycles in Linked Lists (Floyd's Cycle-Finding)</p>
+                    
+                    <div class="c-code-block">
+                        <pre><code>// Floyd's Cycle Detection - Fast & Slow Pointers
+function hasCycle(head) {
+    if (!head || !head.next) return false;
+    
+    let slow = head, fast = head;
+    while (fast && fast.next) {
+        slow = slow.next;
+        fast = fast.next.next;
+        if (slow === fast) return true;
+    }
+    
+    return false;
+}
+
+// Find cycle start node
+function findCycleStart(head) {
+    if (!head || !head.next) return null;
+    
+    let slow = head, fast = head;
+    while (fast && fast.next) {
+        slow = slow.next;
+        fast = fast.next.next;
+        if (slow === fast) break;
+    }
+    
+    if (!fast || !fast.next) return null; // No cycle
+    
+    slow = head;
+    while (slow !== fast) {
+        slow = slow.next;
+        fast = fast.next;
+    }
+    
+    return slow;
+}
+
+// Find middle of linked list
+function findMiddle(head) {
+    let slow = head, fast = head;
+    while (fast && fast.next) {
+        slow = slow.next;
+        fast = fast.next.next;
+    }
+    return slow;
+}
+
+// Time: O(n), Space: O(1)</code></pre>
+                    </div>
+                </article>
+
+                <!-- XOR OPERATIONS -->
+                <article class="c-algo-section">
+                    <h2>XOR Operations</h2>
+                    <p class="c-card__description">Finding the single non-duplicate number in O(n) time</p>
+                    
+                    <div class="c-code-block">
+                        <pre><code>// XOR - Find single number (all others appear twice)
+function singleNumber(nums) {
+    let result = 0;
+    for (let num of nums) {
+        result ^= num;  // XOR property: a ^ a = 0, a ^ 0 = a
+    }
+    return result;
+}
+
+// Example: [4, 1, 2, 1, 2] → 4
+// 4 ^ 1 ^ 2 ^ 1 ^ 2 = (1^1) ^ (2^2) ^ 4 = 0 ^ 0 ^ 4 = 4
+
+// Find two single numbers (all others appear twice)
+function singleNumber2(nums) {
+    let xor = 0;
+    for (let num of nums) xor ^= num;
+    
+    // Find rightmost set bit
+    const bit = xor & (-xor);
+    
+    let num1 = 0, num2 = 0;
+    for (let num of nums) {
+        if (num & bit) {
+            num1 ^= num;
+        } else {
+            num2 ^= num;
+        }
+    }
+    
+    return [num1, num2];
+}
+
+// Useful XOR properties:
+// a ^ a = 0
+// a ^ 0 = a
+// a ^ b = b ^ a (commutative)
+// (a ^ b) ^ c = a ^ (b ^ c) (associative)
+
+// Time: O(n), Space: O(1)</code></pre>
+                    </div>
+                </article>
+
+                <!-- BIT MASKING -->
+                <article class="c-algo-section">
+                    <h2>Bit Masking</h2>
+                    <p class="c-card__description">Representing subsets as integers and efficient boolean tracking</p>
+                    
+                    <div class="c-code-block">
+                        <pre><code>// Bit Masking - Represent subset as integer
+function powerSet(nums) {
+    const n = nums.length;
+    const result = [];
+    
+    for (let mask = 0; mask < (1 << n); mask++) {
+        const subset = [];
+        for (let i = 0; i < n; i++) {
+            if (mask & (1 << i)) {
+                subset.push(nums[i]);
+            }
+        }
+        result.push(subset);
+    }
+    
+    return result;
+}
+
+// Traveling Salesman Problem - DP with bitmask
+function tsp(graph) {
+    const n = graph.length;
+    const dp = Array(1 << n).fill(null).map(() => Array(n).fill(Infinity));
+    
+    dp[1][0] = 0;
+    
+    for (let mask = 1; mask < (1 << n); mask++) {
+        for (let u = 0; u < n; u++) {
+            if (!(mask & (1 << u))) continue;
+            for (let v = 0; v < n; v++) {
+                if (mask & (1 << v)) continue;
+                const newMask = mask | (1 << v);
+                dp[newMask][v] = Math.min(dp[newMask][v], dp[mask][u] + graph[u][v]);
+            }
+        }
+    }
+    
+    const fullMask = (1 << n) - 1;
+    return Math.min(...dp[fullMask]);
+}
+
+// Bit operations:
+// Set bit i: mask | (1 << i)
+// Unset bit i: mask & ~(1 << i)
+// Check bit i: mask & (1 << i)
+// Toggle bit i: mask ^ (1 << i)
+
+// Time: O(2^n) for subset generation, Space: O(2^n)</code></pre>
+                    </div>
+                </article>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">🌌 All code examples displayed in limegreen • Neon-Noir Design System</p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll highlighting for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({behavior: 'smooth'});
+                }
+            });
+        });
+    </script>
+</body>
+</html>

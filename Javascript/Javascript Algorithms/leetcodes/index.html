@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="LeetCode Explorer - Neon-Noir Algorithm Practice Hub">
+  <title>LeetCode Explorer | Neon-Noir</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Orbitron:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body class="js-body">
+  <div class="l-page">
+    <header class="c-header" role="banner">
+      <div class="c-header__container">
+        <a href="index.html" class="c-header__logo">
+          <span class="c-header__logo-icon">◈</span>
+          <span class="c-header__logo-text">LeetCode<span class="c-header__logo-accent">Explorer</span></span>
+        </a>
+        <nav class="c-nav" aria-label="Main navigation">
+          <ul class="c-nav__list">
+            <li class="c-nav__item">
+              <a href="index.html" class="c-nav__link is-active" aria-current="page">Problems</a>
+            </li>
+            <li class="c-nav__item">
+              <a href="#about" class="c-nav__link js-nav-link">About</a>
+            </li>
+          </ul>
+        </nav>
+        <button class="c-theme-toggle js-theme-toggle" aria-label="Toggle theme" type="button">
+          <span class="c-theme-toggle__icon">☀</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="l-main" role="main" id="main-content">
+      <section class="c-hero">
+        <div class="c-hero__content">
+          <h1 class="c-hero__title">
+            <span class="c-hero__title-glow">Algorithm</span>
+            <span class="c-hero__title-accent">Mastery</span>
+          </h1>
+          <p class="c-hero__subtitle">50 Essential Problems • Neon-Noir Learning Path</p>
+          <div class="c-hero__stats">
+            <div class="c-stat">
+              <span class="c-stat__value" data-count="50">50</span>
+              <span class="c-stat__label">Problems</span>
+            </div>
+            <div class="c-stat">
+              <span class="c-stat__value">Easy</span>
+              <span class="c-stat__label">15</span>
+            </div>
+            <div class="c-stat">
+              <span class="c-stat__value">Medium</span>
+              <span class="c-stat__label">25</span>
+            </div>
+            <div class="c-stat">
+              <span class="c-stat__value">Hard</span>
+              <span class="c-stat__label">10</span>
+            </div>
+          </div>
+        </div>
+        <div class="c-hero__scanlines"></div>
+      </section>
+
+      <section class="c-problems" aria-labelledby="problems-heading">
+        <h2 id="problems-heading" class="u-visually-hidden">LeetCode Problems List</h2>
+        
+        <div class="c-problems__filters">
+          <div class="c-search">
+            <label for="search-input" class="u-visually-hidden">Search problems</label>
+            <input 
+              type="search" 
+              id="search-input" 
+              class="c-search__input js-search-input" 
+              placeholder="Search problems..."
+              autocomplete="off"
+            >
+            <span class="c-search__icon">🔍</span>
+          </div>
+          <div class="c-filter-group">
+            <button class="c-filter-btn is-active" data-difficulty="all" type="button">All</button>
+            <button class="c-filter-btn" data-difficulty="easy" type="button">Easy</button>
+            <button class="c-filter-btn" data-difficulty="medium" type="button">Medium</button>
+            <button class="c-filter-btn" data-difficulty="hard" type="button">Hard</button>
+          </div>
+        </div>
+
+        <div class="c-problems__grid js-problems-grid">
+          <!-- Problems will be dynamically inserted here -->
+        </div>
+
+        <div class="c-problems__empty js-problems-empty" hidden>
+          <span class="c-problems__empty-icon">◷</span>
+          <p class="c-problems__empty-text">No problems match your search</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="c-footer" role="contentinfo">
+      <div class="c-footer__content">
+        <p class="c-footer__text">
+          <span class="c-footer__accent">◈</span>
+          LeetCode Explorer • Built with Neon-Noir Design System
+        </p>
+        <p class="c-footer__text c-footer__text--small">
+          Algorithm Practice Hub • ES6+ Vanilla JavaScript
+        </p>
+      </div>
+    </footer>
+  </div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

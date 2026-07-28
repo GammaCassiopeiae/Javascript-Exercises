@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dijkstra's Algorithm - LeetCode</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Home</a>
+            <h1 class="c-title">🛤️ Dijkstra's Algorithm</h1>
+            <p class="c-subtitle">Shortest Path in Weighted Graphs</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <div class="c-code-block">
+                <pre><code>// Dijkstra's Algorithm
+function dijkstra(graph, start) {
+    const distances = {};
+    const pq = [[0, start]];
+    const visited = new Set();
+    
+    for (let node in graph) distances[node] = Infinity;
+    distances[start] = 0;
+    
+    while (pq.length > 0) {
+        pq.sort((a, b) => a[0] - b[0]);
+        const [dist, node] = pq.shift();
+        
+        if (visited.has(node)) continue;
+        visited.add(node);
+        
+        for (let [neighbor, weight] of graph[node]) {
+            const newDist = dist + weight;
+            if (newDist < distances[neighbor]) {
+                distances[neighbor] = newDist;
+                pq.push([newDist, neighbor]);
+            }
+        }
+    }
+    
+    return distances;
+}
+
+// Time: O((V + E) log V)
+// Space: O(V)</code></pre>
+            </div>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">🌌 Shortest Path - Greedy Algorithm</p>
+        </div>
+    </footer>
+</body>
+</html>

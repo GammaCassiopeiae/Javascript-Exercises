@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="DFS Algorithm - LeetCode Tutorial">
+    <title>DFS - Depth-First Search</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Back to Home</a>
+            <h1 class="c-title">📍 DFS</h1>
+            <p class="c-subtitle">Depth-First Search & Tree Traversals</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <div class="c-algo-content">
+                <aside class="c-algo-aside">
+                    <h3>Quick Facts</h3>
+                    <ul>
+                        <li><strong>Time:</strong> O(V + E)</li>
+                        <li><strong>Space:</strong> O(h)</li>
+                        <li><strong>Best For:</strong> All paths, topological sort</li>
+                        <li><strong>Data Structure:</strong> Stack/Recursion</li>
+                        <li><strong>Traversals:</strong> Pre, In, Post-order</li>
+                    </ul>
+                    <h3>Key Use Cases</h3>
+                    <ul>
+                        <li>All Paths</li>
+                        <li>Topological Sort</li>
+                        <li>Connected Components</li>
+                        <li>Cycle Detection</li>
+                        <li>Tree Traversals</li>
+                    </ul>
+                </aside>
+
+                <div class="c-algo-details">
+                    <div class="c-algo-description">
+                        <h2>Overview</h2>
+                        <p>DFS explores as far as possible along each branch before backtracking. Uses stack or recursion. Useful for exploring all paths and topological ordering.</p>
+                    </div>
+
+                    <div class="c-code-block">
+                        <pre><code>// DFS - Recursive Graph Traversal
+function dfs(graph, node, visited = new Set()) {
+    visited.add(node);
+    console.log(node);
+    
+    for (let neighbor of graph[node] || []) {
+        if (!visited.has(neighbor)) {
+            dfs(graph, neighbor, visited);
+        }
+    }
+}
+
+// In-order Traversal (Left-Root-Right)
+function inorderTraversal(root, result = []) {
+    if (!root) return result;
+    inorderTraversal(root.left, result);
+    result.push(root.val);
+    inorderTraversal(root.right, result);
+    return result;
+}
+
+// Post-order Traversal (Left-Right-Root)
+function postorderTraversal(root, result = []) {
+    if (!root) return result;
+    postorderTraversal(root.left, result);
+    postorderTraversal(root.right, result);
+    result.push(root.val);
+    return result;
+}</code></pre>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Problem: All Paths From Root to Leaf</h2>
+                    </div>
+
+                    <div class="c-code-block">
+                        <pre><code>// DFS - All Paths from Root to Leaf
+function allPathsSourceTarget(graph) {
+    const n = graph.length;
+    const result = [];
+    
+    function dfs(node, path) {
+        if (node === n - 1) {
+            result.push([...path]);
+            return;
+        }
+        
+        for (let neighbor of graph[node]) {
+            path.push(neighbor);
+            dfs(neighbor, path);
+            path.pop();
+        }
+    }
+    
+    dfs(0, [0]);
+    return result;
+}
+
+// Time: O(2^n), Space: O(n)</code></pre>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Key Insights</h2>
+                        <ul style="color: var(--text-secondary);">
+                            <li><strong>Recursion:</strong> Natural for tree structures</li>
+                            <li><strong>Backtracking:</strong> Explore and undo choices</li>
+                            <li><strong>Stack Order:</strong> Different than BFS for traversal</li>
+                        </ul>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Time Complexity: O(V + E)</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <nav class="c-nav">
+                <ul class="c-nav__list">
+                    <li class="c-nav__item"><a href="algorithms.html" class="c-link c-link--small">← All Algorithms</a></li>
+                </ul>
+            </nav>
+            <p class="u-text-center">🌌 Neon-Noir Design System</p>
+        </div>
+    </footer>
+</body>
+</html>

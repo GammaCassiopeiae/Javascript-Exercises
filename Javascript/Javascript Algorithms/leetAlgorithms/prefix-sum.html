@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Prefix Sum Algorithm - LeetCode Tutorial">
+    <title>Prefix Sum - LeetCode Algorithms</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Back to Home</a>
+            <h1 class="c-title">⚡ Prefix Sum</h1>
+            <p class="c-subtitle">O(1) Range Queries with O(n) Preprocessing</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <div class="c-algo-content">
+                <aside class="c-algo-aside">
+                    <h3>Quick Facts</h3>
+                    <ul>
+                        <li><strong>Category:</strong> Linear Data Structures</li>
+                        <li><strong>Build:</strong> O(n)</li>
+                        <li><strong>Query:</strong> O(1)</li>
+                        <li><strong>Space:</strong> O(n)</li>
+                        <li><strong>Best For:</strong> Range sum queries</li>
+                    </ul>
+                    <h3>Key Use Cases</h3>
+                    <ul>
+                        <li>Range Sum Query</li>
+                        <li>Subarray Sum</li>
+                        <li>2D Matrix Sum</li>
+                        <li>Continuous Subarray Sum</li>
+                        <li>Subarrays with Sum K</li>
+                    </ul>
+                </aside>
+
+                <div class="c-algo-details">
+                    <div class="c-algo-description">
+                        <h2>Overview</h2>
+                        <p>Prefix sum stores cumulative sums up to each index. Instead of calculating sum from index i to j by iterating, you can answer in O(1) using: sum(i, j) = prefix[j+1] - prefix[i].</p>
+                        <p><strong>Trade-off:</strong> O(n) space and preprocessing time for O(1) query time.</p>
+                    </div>
+
+                    <div class="c-code-block">
+                        <pre><code>// Basic Prefix Sum
+function buildPrefixSum(arr) {
+    const prefix = [0];
+    
+    for (let num of arr) {
+        prefix.push(prefix[prefix.length - 1] + num);
+    }
+    
+    return prefix;
+}
+
+function rangeSum(prefix, left, right) {
+    // Sum of elements from index left to right (inclusive)
+    return prefix[right + 1] - prefix[left];
+}
+
+// Example
+const arr = [1, 2, 3, 4, 5];
+const prefix = buildPrefixSum(arr);
+// prefix = [0, 1, 3, 6, 10, 15]
+
+console.log(rangeSum(prefix, 1, 3));  // 2+3+4 = 9
+console.log(rangeSum(prefix, 0, 4));  // 1+2+3+4+5 = 15</code></pre>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Problem: Range Sum Query - Immutable</h2>
+                        <p>Design a class that supports sum of subarrays for multiple queries.</p>
+                    </div>
+
+                    <div class="c-code-block">
+                        <pre><code>// NumArray Class with Prefix Sum
+class NumArray {
+    constructor(nums) {
+        this.prefix = [0];
+        
+        for (let num of nums) {
+            this.prefix.push(this.prefix[this.prefix.length - 1] + num);
+        }
+    }
+    
+    sumRange(left, right) {
+        return this.prefix[right + 1] - this.prefix[left];
+    }
+}
+
+// Usage
+const na = new NumArray([-2, 0, 3, -5, 2, -1]);
+console.log(na.sumRange(0, 2));   // -2+0+3 = 1
+console.log(na.sumRange(2, 5));   // 3+(-5)+2+(-1) = -1
+console.log(na.sumRange(0, 5));   // -2+0+3+(-5)+2+(-1) = -3</code></pre>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Problem: Subarray Sum Equals K</h2>
+                        <p>Count number of subarrays with sum equal to k.</p>
+                    </div>
+
+                    <div class="c-code-block">
+                        <pre><code>// Subarrays with Sum = K using Prefix Sum + HashMap
+function subarraySum(nums, k) {
+    const prefixCount = {0: 1};  // Start with prefix 0
+    let currentSum = 0;
+    let count = 0;
+    
+    for (let num of nums) {
+        currentSum += num;
+        
+        // If (currentSum - k) exists, we found valid subarrays
+        if (prefixCount[currentSum - k] !== undefined) {
+            count += prefixCount[currentSum - k];
+        }
+        
+        // Add current prefix sum to map
+        prefixCount[currentSum] = (prefixCount[currentSum] || 0) + 1;
+    }
+    
+    return count;
+}
+
+// Example
+console.log(subarraySum([1, 1, 1], 2));  // 2 (subarrays [1,1])
+console.log(subarraySum([1, 2, 3], 3));  // 2 (subarrays [3] and [1,2])</code></pre>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>2D Prefix Sum</h2>
+                        <p>Extension for 2D arrays to answer rectangular region sum queries.</p>
+                    </div>
+
+                    <div class="c-code-block">
+                        <pre><code>// 2D Prefix Sum for Matrix Range Queries
+class NumMatrix {
+    constructor(matrix) {
+        const rows = matrix.length;
+        const cols = matrix[0]?.length || 0;
+        
+        // Build 2D prefix sum: prefix[i][j] = sum of matrix[0..i-1][0..j-1]
+        this.prefix = Array(rows + 1).fill(0).map(() => Array(cols + 1).fill(0));
+        
+        for (let i = 1; i <= rows; i++) {
+            for (let j = 1; j <= cols; j++) {
+                this.prefix[i][j] = 
+                    matrix[i-1][j-1] + 
+                    this.prefix[i-1][j] + 
+                    this.prefix[i][j-1] - 
+                    this.prefix[i-1][j-1];
+            }
+        }
+    }
+    
+    sumRegion(row1, col1, row2, col2) {
+        // Sum of rectangle from (row1,col1) to (row2,col2)
+        return this.prefix[row2+1][col2+1]
+             - this.prefix[row1][col2+1]
+             - this.prefix[row2+1][col1]
+             + this.prefix[row1][col1];
+    }
+}
+
+// Example
+const matrix = [[3, 0, 1, 4, 2], [5, 6, 3, 2, 1], [1, 2, 0, 1, 5], [4, 1, 0, 1, 7], [1, 0, 3, 0, 5]];
+const nm = new NumMatrix(matrix);
+console.log(nm.sumRegion(2, 1, 4, 3));  // 8</code></pre>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Key Insights</h2>
+                        <ul style="color: var(--text-secondary);">
+                            <li><strong>Index Offset:</strong> Prefix[i] represents sum of arr[0..i-1]</li>
+                            <li><strong>Range Query:</strong> sum(i, j) = prefix[j+1] - prefix[i]</li>
+                            <li><strong>Prefix + HashMap:</strong> Solve "sum equals k" problems</li>
+                            <li><strong>2D Extension:</strong> Use inclusion-exclusion principle</li>
+                        </ul>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Time & Space Complexity</h2>
+                        <ul style="color: var(--text-secondary);">
+                            <li><strong>Build:</strong> O(n) for 1D, O(n*m) for 2D</li>
+                            <li><strong>Query:</strong> O(1) for both 1D and 2D</li>
+                            <li><strong>Space:</strong> O(n) for 1D, O(n*m) for 2D</li>
+                        </ul>
+                    </div>
+
+                    <div class="c-algo-description">
+                        <h2>Practice Problems</h2>
+                        <ul style="color: var(--text-secondary);">
+                            <li><strong>Easy:</strong> Range Sum Query, Running Sum</li>
+                            <li><strong>Medium:</strong> Subarray Sum Equals K, 2D Sum Query</li>
+                            <li><strong>Hard:</strong> Continuous Subarray Sum, Matrix Block Sum</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <nav class="c-nav">
+                <ul class="c-nav__list">
+                    <li class="c-nav__item"><a href="algorithms.html" class="c-link c-link--small">← Back to All Algorithms</a></li>
+                    <li class="c-nav__item"><a href="binary-search.html" class="c-link c-link--small">Binary Search →</a></li>
+                </ul>
+            </nav>
+            <p class="u-text-center">🌌 Neon-Noir Design System</p>
+        </div>
+    </footer>
+</body>
+</html>

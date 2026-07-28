@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Lime Shapes - Fullscreen Click</title>
+    <style>
+        /* Osnovni stil */
+        body {
+            margin: 0;
+            background-color: black;
+            color: #32CD32;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 { margin: 20px; text-shadow: 0 0 10px #32CD32; }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+            width: 95vw;
+            padding: 20px;
+        }
+
+        .shape-card {
+            border: 1px solid #32CD32;
+            padding: 10px;
+            background: #050505;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .shape-card:hover {
+            background: #0a200a;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px #32CD32;
+        }
+
+        canvas { background: transparent; }
+
+        .label {
+            font-size: 10px;
+            text-align: center;
+            margin-top: 8px;
+            color: #adff2f;
+        }
+
+        /* MODAL STIL ZA POVEČAVO */
+        #fullscreen-overlay {
+            display: none; /* Skrito po privzetem */
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            cursor: zoom-out;
+        }
+
+        #big-canvas {
+            border: 2px solid #32CD32;
+            box-shadow: 0 0 50px #32CD32;
+        }
+
+        #big-label {
+            margin-top: 20px;
+            font-size: 2rem;
+            color: #32CD32;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Geometric Lime Matrix</h1>
+    <div class="grid-container" id="matrix"></div>
+
+    <!-- Overlay za povečavo -->
+    <div id="fullscreen-overlay" onclick="closeFullscreen()">
+        <canvas id="big-canvas"></canvas>
+        <div id="big-label"></div>
+        <p style="color: #666; margin-top: 10px;">Klikni kjerkoli za zapiranje</p>
+    </div>
+
+    <script>
+        const container = document.getElementById('matrix');
+        const overlay = document.getElementById('fullscreen-overlay');
+        const bigCanvas = document.getElementById('big-canvas');
+        const bigLabel = document.getElementById('big-label');
+        
+        const shapeNames = [
+            "Equilateral triangle", "Isosceles triangle", "Scalene triangle", "Right triangle", "Acute triangle", "Obtuse triangle", "Square", "Perfect square", "Rhombus", "Diamond", "Rhomboid", "Parallelogram", "Rectangle", "Trapezoid", "Trapezium", "Pentagon", "Hexagon", "Heptagon", "Octagon", "Nonagon", "Decagon", "Hendecagon", "Dodecagon", "Circle", "Ellipse", "Oval", "Semicircle", "Sector", "Segment", "Crescent", "Star (5-pointed)", "Star (6-pointed)", "Star (8-pointed)", "Polygon", "Regular polygon", "Irregular polygon", "Convex polygon", "Concave polygon", "Kite", "Arrowhead", "Deltoid", "Lozenge", "Annulus", "Heart shape", "Cross", "Plus sign", "Asterisk", "Bowtie", "Hourglass", "Butterfly shape", "Leaf shape", "Teardrop", "Spiral", "Sine wave", "Zigzag", "Chevron", "Herringbone", "Checkerboard", "Grid", "Honeycomb", "Cube", "Cuboid", "Sphere", "Hemisphere", "Cone", "Cylinder", "Pyramid", "Triangular pyramid", "Pentagonal pyramid", "Hexagonal pyramid", "Triangular prism", "Pentagonal prism", "Hexagonal prism", "Octahedron", "Dodecahedron", "Icosahedron", "Torus", "Ellipsoid", "Paraboloid", "Hyperboloid", "Frustum", "Wedge", "Tetrahedron", "Pentahedron", "Hexahedron", "Heptahedron", "Polyhedron", "Platonic solid", "Archimedean solid", "Fractal", "Mandelbrot set", "Koch snowflake", "Sierpinski triangle", "Möbius strip", "Klein bottle", "Torus knot", "Blob", "Amoeba shape", "Irregular blob", "Star pattern 100"
+        ];
+
+        // Generiranje mreže (2 loops)
+        for (let i = 0; i < 100; i++) {
+            const card = document.createElement('div');
+            card.className = 'shape-card';
+            card.onclick = () => openFullscreen(i); // Funkcija za povečavo
+            
+            const canvas = document.createElement('canvas');
+            canvas.width = 100; canvas.height = 100;
+            drawShape(canvas.getContext('2d'), i, 50, 50, 35);
+
+            const label = document.createElement('div');
+            label.className = 'label';
+            label.textContent = shapeNames[i] || `Shape ${i+1}`;
+
+            card.appendChild(canvas);
+            card.appendChild(label);
+            container.appendChild(card);
+        }
+
+        // Tretji gnezdeni loop je znotraj te funkcije za risanje geometrije
+        function drawShape(ctx, index, cx, cy, size) {
+            ctx.beginPath();
+            ctx.strokeStyle = '#32CD32';
+            ctx.lineWidth = 2;
+
+            if (index < 23) { // Poligoni
+                let sides = (index % 10) + 3;
+                for (let j = 0; j <= sides; j++) {
+                    let x = cx + size * Math.cos(j * 2 * Math.PI / sides);
+                    let y = cy + size * Math.sin(j * 2 * Math.PI / sides);
+                    j === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+                }
+            } else if (index >= 30 && index <= 32) { // Zvezde
+                let pts = index === 30 ? 5 : (index === 31 ? 6 : 8);
+                for (let j = 0; j < pts * 2; j++) {
+                    let r = (j % 2 === 0) ? size : size/2;
+                    let x = cx + r * Math.cos(j * Math.PI / pts);
+                    let y = cy + r * Math.sin(j * Math.PI / pts);
+                    j === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+                }
+            } else { // Abstraktno / Spirale
+                for (let j = 0; j < 100; j++) {
+                    let r = (size * j) / 100;
+                    let x = cx + r * Math.cos(j * 0.3);
+                    let y = cy + r * Math.sin(j * 0.3);
+                    ctx.lineTo(x, y);
+                }
+            }
+            ctx.stroke();
+        }
+
+        // Logika za Fullscreen
+        function openFullscreen(index) {
+            overlay.style.display = 'flex';
+            bigCanvas.width = 400;
+            bigCanvas.height = 400;
+            bigLabel.textContent = shapeNames[index];
+            
+            const ctx = bigCanvas.getContext('2d');
+            ctx.clearRect(0, 0, 400, 400);
+            drawShape(ctx, index, 200, 200, 150); // Večje mere za povečavo
+        }
+
+        function closeFullscreen() {
+            overlay.style.display = 'none';
+        }
+    </script>
+</body>
+</html>

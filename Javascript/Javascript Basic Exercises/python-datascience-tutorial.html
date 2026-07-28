@@ -1,0 +1,2979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta description="Python for Data Science — NumPy, Pandas, scikit-learn, Matplotlib code examples with neon-noir styling">
+    <title>// Python Data Science Vault — NumPy · Pandas · scikit-learn · Matplotlib</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        /* =========================================================
+           Design tokens (neon.md §2.1)
+           ========================================================= */
+        :root {
+            /* Surfaces */
+            --bg-dark:        #050505;
+            --bg-secondary:   #0a0b10;
+            --bg-card:        rgba(255, 255, 255, 0.03);
+            --bg-code:        #0a0a0a;
+
+            /* Neon palette */
+            --neon-lime:      #00ff66;
+            --neon-lime-soft: rgba(0, 255, 102, 0.30);
+            --neon-lime-dim:  rgba(0, 255, 102, 0.55);
+            --neon-cyan:      #00f3ff;
+            --neon-cyan-soft: rgba(0, 243, 255, 0.30);
+
+            /* Glows */
+            --glow-lime: 0 0 5px rgba(0, 255, 102, 0.55), 0 0 20px rgba(0, 255, 102, 0.18);
+            --glow-cyan: 0 0 5px rgba(0, 243, 255, 0.45), 0 0 20px rgba(0, 243, 255, 0.15);
+
+            /* Type */
+            --font-heading: 'Rajdhani', system-ui, sans-serif;
+            --font-mono:    'Fira Code', ui-monospace, monospace;
+            --font-body:    system-ui, -apple-system, sans-serif;
+
+            --text-sm:   clamp(0.80rem, 0.75rem + 0.25vw, 0.875rem);
+            --text-base: clamp(0.90rem, 0.85rem + 0.25vw, 1.00rem);
+            --text-lg:   clamp(1.10rem, 1.00rem + 0.50vw, 1.25rem);
+            --text-xl:   clamp(1.25rem, 1.15rem + 0.50vw, 1.50rem);
+            --text-2xl:  clamp(1.50rem, 1.35rem + 0.75vw, 2.00rem);
+
+            --z-sticky: 100;
+            --z-modal:  1000;
+        }
+
+        /* =========================================================
+           Reset (neon.md §1.1 #5)
+           ========================================================= */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { font-size: 100%; }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-dark);
+            color: var(--neon-lime);
+            min-height: 100vh;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a { color: var(--neon-cyan); text-decoration: none; }
+
+        /* Skip link (neon.md §6.1 #356) */
+        .u-skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--neon-lime);
+            color: var(--bg-dark);
+            padding: 0.5rem 1rem;
+            font-family: var(--font-heading);
+            font-weight: 600;
+            z-index: var(--z-modal);
+            transition: top 0.2s;
+        }
+        .u-skip-link:focus { top: 0; }
+
+        /* =========================================================
+           Layout (neon.md §1.1 #8, §3.3)
+           ========================================================= */
+        .l-wrapper {
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            min-height: 100vh;
+        }
+
+        /* =========================================================
+           Topbar (neon.md §3.3)
+           ========================================================= */
+        .c-topbar {
+            position: sticky;
+            top: 0;
+            z-index: var(--z-sticky);
+            background: rgba(5, 5, 5, 0.85);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--neon-lime-soft);
+            padding: 1rem;
+        }
+
+        .c-topbar__inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+        }
+
+        .c-topbar__title {
+            font-family: var(--font-heading);
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--neon-lime);
+            text-shadow: var(--glow-lime);
+            line-height: 1.1;
+        }
+
+        .c-topbar__subtitle {
+            font-family: var(--font-mono);
+            font-size: var(--text-sm);
+            color: var(--neon-cyan);
+            text-shadow: var(--glow-cyan);
+            opacity: 0.9;
+            margin-top: 0.15rem;
+        }
+
+        /* =========================================================
+           Search (DOM API target)
+           ========================================================= */
+        .c-search { display: flex; flex-direction: column; gap: 0.35rem; }
+
+        .c-search__label {
+            font-family: var(--font-heading);
+            font-size: var(--text-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--neon-cyan);
+            text-shadow: var(--glow-cyan);
+        }
+
+        .c-search__input {
+            font-family: var(--font-mono);
+            font-size: var(--text-base);
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--neon-lime);
+            border: 1px solid var(--neon-lime-soft);
+            border-radius: 4px;
+            padding: 0.8rem 1.2rem;
+            caret-color: var(--neon-lime);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .c-search__input::placeholder { color: rgba(0, 255, 102, 0.35); }
+        .c-search__input:focus {
+            outline: none;
+            border-color: var(--neon-lime);
+            box-shadow: var(--glow-lime);
+        }
+
+        .c-search__hint {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--neon-lime-dim);
+        }
+        .c-search__hint kbd {
+            background: rgba(0, 255, 102, 0.10);
+            border: 1px solid var(--neon-lime-soft);
+            padding: 0.10em 0.45em;
+            border-radius: 3px;
+            font-family: inherit;
+        }
+
+        /* =========================================================
+           Main / Grid
+           ========================================================= */
+        .l-main {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem 1rem 3rem;
+        }
+
+        .c-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* =========================================================
+           Card (neon.md §4.3)
+           ========================================================= */
+        .c-card {
+            background: var(--bg-card);
+            border: 1px solid var(--neon-lime-soft);
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                        box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                        border-color 0.3s;
+            contain: layout style;
+        }
+
+        .c-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--glow-lime);
+            border-color: var(--neon-lime);
+        }
+
+        .c-card.is-hidden { display: none; }
+
+        .c-card__header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--neon-lime-soft);
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .c-card__title {
+            font-family: var(--font-heading);
+            font-size: var(--text-lg);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--neon-lime);
+            text-shadow: var(--glow-lime);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .c-card__num {
+            font-family: var(--font-mono);
+            color: var(--neon-cyan);
+            text-shadow: var(--glow-cyan);
+            font-size: 0.85em;
+        }
+
+        .c-card__tag {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.70rem;
+            text-transform: uppercase;
+            color: var(--neon-cyan);
+            background: rgba(0, 243, 255, 0.10);
+            border: 1px solid var(--neon-cyan-soft);
+            padding: 0.15rem 0.55rem;
+            border-radius: 3px;
+            margin-top: 0.5rem;
+        }
+
+        .c-card__body { flex: 1; }
+
+        .c-card__code {
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            line-height: 1.65;
+            color: var(--neon-lime);
+            background: var(--bg-code);
+            padding: 1.25rem;
+            margin: 0;
+            overflow-x: auto;
+            text-shadow: 0 0 3px rgba(0, 255, 102, 0.45);
+            white-space: pre;
+        }
+        .c-card__code code { font-family: inherit; color: inherit; background: none; }
+
+        /* Empty state */
+        .c-empty {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 3rem 1rem;
+            font-family: var(--font-mono);
+            color: var(--neon-cyan);
+            text-shadow: var(--glow-cyan);
+            display: none;
+        }
+        .c-empty.is-visible { display: block; }
+
+        /* =========================================================
+           Footer
+           ========================================================= */
+        .c-footer {
+            padding: 1.25rem 1rem;
+            text-align: center;
+            border-top: 1px solid var(--neon-lime-soft);
+            background: var(--bg-secondary);
+            font-family: var(--font-mono);
+            font-size: var(--text-sm);
+            color: var(--neon-lime-dim);
+        }
+
+        /* =========================================================
+           Focus / Reduced motion (neon.md §6.1, §6.2)
+           ========================================================= */
+        *:focus-visible {
+            outline: 2px solid var(--neon-cyan);
+            outline-offset: 2px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+            .c-card:hover { transform: none; }
+        }
+
+        /* Custom scrollbar (neon.md §2.2 #70) */
+        .c-card__code::-webkit-scrollbar { height: 8px; }
+        .c-card__code::-webkit-scrollbar-track { background: var(--bg-dark); }
+        .c-card__code::-webkit-scrollbar-thumb {
+            background: var(--neon-lime-soft);
+            border-radius: 4px;
+        }
+        .c-card__code::-webkit-scrollbar-thumb:hover { background: var(--neon-lime); }
+
+        /* Selection (neon.md §2.2 #69) */
+        ::selection { background: var(--neon-lime); color: var(--bg-dark); }
+
+        /* =========================================================
+           Responsive (mobile-first → min-width)
+           ========================================================= */
+        @media (min-width: 720px) {
+            .c-topbar__inner {
+                flex-direction: row;
+                align-items: center;
+                gap: 2rem;
+            }
+            .c-topbar__title-block { flex: 1; }
+            .c-search { min-width: 320px; }
+        }
+    </style>
+</head>
+<body class="l-body">
+    <a href="#main" class="u-skip-link">Skip to content</a>
+
+    <div class="l-wrapper">
+        <!-- =====================================================
+             Topbar
+             ===================================================== -->
+        <header class="c-topbar" role="banner">
+            <div class="c-topbar__inner">
+                <div class="c-topbar__title-block">
+                    <h1 class="c-topbar__title">// Python Data Science Vault</h1>
+                    <p class="c-topbar__subtitle">NumPy · Pandas · scikit-learn · Matplotlib — 50 starter cases</p>
+                </div>
+
+                <form class="c-search" role="search" onsubmit="return false;">
+                    <label for="search" class="c-search__label">Filter</label>
+                    <input
+                        type="search"
+                        id="search"
+                        class="c-search__input"
+                        placeholder="type to filter (e.g. pandas, numpy, sklearn, ml)..."
+                        autocomplete="off"
+                        spellcheck="false"
+                        data-search-input
+                        aria-describedby="search-hint">
+                    <span id="search-hint" class="c-search__hint">
+                        Press <kbd>/</kbd> to focus · <kbd>Esc</kbd> to clear
+                    </span>
+                </form>
+            </div>
+        </header>
+
+        <!-- =====================================================
+             Code grid
+             ===================================================== -->
+        <main id="main" class="l-main">
+            <section class="c-grid" data-grid aria-label="Python data science code library">
+
+                <p class="c-empty" data-empty role="status" aria-live="polite">
+                    // no matches — try a different query
+                </p>
+
+                <!-- 01 — NumPy array basics -->
+                <article class="c-card" data-card data-name="numpy array basics creation reshape">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">01</span> NumPy Array Basics
+                        </h2>
+                        <span class="c-card__tag">NumPy · foundations</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import numpy as np
+
+# Create arrays
+a = np.array([1, 2, 3, 4, 5])
+zeros = np.zeros((2, 3))
+ones = np.ones((3, 3))
+rng = np.arange(0, 10, 2)        # [0, 2, 4, 6, 8]
+linspace = np.linspace(0, 1, 5)   # 5 evenly spaced points in [0, 1]
+
+# Reshape & inspect
+m = np.arange(12).reshape(3, 4)
+print(m.shape, m.dtype, m.ndim)
+
+# Vectorized math
+prices = np.array([10, 20, 30, 40])
+taxes = prices * 0.20             # element-wise
+totals = prices + taxes
+
+# Boolean masking
+scores = np.array([55, 82, 91, 47, 73])
+passed = scores[scores >= 60]     # [82, 91, 73]</code></pre>
+                    </div>
+                </article>
+
+                <!-- 02 — NumPy indexing and broadcasting -->
+                <article class="c-card" data-card data-name="numpy indexing broadcasting slicing">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">02</span> NumPy Indexing &amp; Broadcasting
+                        </h2>
+                        <span class="c-card__tag">NumPy · vectorization</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import numpy as np
+
+# 2D array indexing
+grid = np.arange(1, 13).reshape(3, 4)
+# [[ 1  2  3  4]
+#  [ 5  6  7  8]
+#  [ 9 10 11 12]]
+print(grid[1, 2])         # 7
+print(grid[:, 0])         # first column: [1 5 9]
+print(grid[1:, 2:])       # bottom-right 2x2 block
+
+# Fancy indexing
+row_idx = np.array([0, 2])
+col_idx = np.array([1, 3])
+print(grid[row_idx, col_idx])  # diagonal-ish: [2, 12]
+
+# Broadcasting — operate on mismatched shapes
+matrix = np.ones((3, 3))
+row_vec = np.array([10, 20, 30])
+result = matrix + row_vec       # row_vec broadcast across rows
+
+# Axis reductions
+data = np.array([[1, 2], [3, 4], [5, 6]])
+print(data.sum(axis=0))         # column sums: [9, 12]
+print(data.mean(axis=1))        # row means:   [1.5, 3.5, 5.5]</code></pre>
+                    </div>
+                </article>
+
+                <!-- 03 — Pandas Series & DataFrame -->
+                <article class="c-card" data-card data-name="pandas series dataframe basics">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">03</span> Pandas Series &amp; DataFrame
+                        </h2>
+                        <span class="c-card__tag">Pandas · foundations</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import pandas as pd
+
+# Series — labeled 1D array
+s = pd.Series([10, 20, 30], index=['a', 'b', 'c'])
+print(s['b'])              # 20
+
+# DataFrame — labeled 2D table
+df = pd.DataFrame({
+    'name':  ['Ana', 'Ben', 'Cleo'],
+    'age':   [28, 34, 41],
+    'city':  ['NY', 'LA', 'CHI']
+})
+
+# Quick exploration
+print(df.head())
+print(df.info())
+print(df.describe(include='all'))
+
+# Column access & filtering
+print(df['age'])
+adults = df[df['age'] >= 30]
+
+# New column from existing ones
+df['age_in_10'] = df['age'] + 10</code></pre>
+                    </div>
+                </article>
+
+                <!-- 04 — Pandas data cleaning -->
+                <article class="c-card" data-card data-name="pandas cleaning missing data dropna fillna">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">04</span> Pandas: Cleaning Missing Data
+                        </h2>
+                        <span class="c-card__tag">Pandas · wrangling</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import pandas as pd
+import numpy as np
+
+df = pd.DataFrame({
+    'name': ['Ana', 'Ben', None, 'Dee'],
+    'age':  [28, np.nan, 41, 35],
+    'sal':  [50000, 60000, 55000, None]
+})
+
+# Detect missing values
+print(df.isna().sum())
+
+# Drop rows with any NA
+clean = df.dropna()
+
+# Fill missing values
+df['age'] = df['age'].fillna(df['age'].mean())
+df['sal'] = df['sal'].fillna(df['sal'].median())
+df['name'] = df['name'].fillna('UNKNOWN')
+
+# Drop duplicates
+df = df.drop_duplicates()
+
+# Rename columns
+df = df.rename(columns={'sal': 'salary'})</code></pre>
+                    </div>
+                </article>
+
+                <!-- 05 — Pandas groupby & aggregation -->
+                <article class="c-card" data-card data-name="pandas groupby aggregation agg pivot">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">05</span> Pandas: GroupBy &amp; Aggregations
+                        </h2>
+                        <span class="c-card__tag">Pandas · wrangling</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import pandas as pd
+
+sales = pd.DataFrame({
+    'region':  ['N', 'N', 'S', 'S', 'E', 'E'],
+    'product': ['A', 'B', 'A', 'B', 'A', 'B'],
+    'units':   [10, 15, 8, 12, 20, 5],
+    'price':   [9.99, 14.99, 9.99, 14.99, 9.99, 14.99]
+})
+sales['revenue'] = sales['units'] * sales['price']
+
+# Single aggregation
+by_region = sales.groupby('region')['revenue'].sum()
+
+# Multiple aggregations
+summary = (sales
+    .groupby('region')
+    .agg(total_revenue=('revenue', 'sum'),
+         avg_units=('units', 'mean'),
+         orders=('product', 'count')))
+
+# Pivot table
+pivot = sales.pivot_table(
+    index='region',
+    columns='product',
+    values='revenue',
+    aggfunc='sum',
+    fill_value=0
+)</code></pre>
+                    </div>
+                </article>
+
+                <!-- 06 — Pandas merge & join -->
+                <article class="c-card" data-card data-name="pandas merge join concat combine">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">06</span> Pandas: Merge, Join, Concat
+                        </h2>
+                        <span class="c-card__tag">Pandas · wrangling</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import pandas as pd
+
+users = pd.DataFrame({
+    'user_id': [1, 2, 3, 4],
+    'name':    ['Ana', 'Ben', 'Cleo', 'Dee']
+})
+
+orders = pd.DataFrame({
+    'order_id': [101, 102, 103, 104],
+    'user_id':  [1, 2, 2, 5],
+    'amount':   [50, 30, 20, 80]
+})
+
+# Inner join — only matching rows
+inner = users.merge(orders, on='user_id', how='inner')
+
+# Left join — keep all users, fill missing orders
+left = users.merge(orders, on='user_id', how='left')
+
+# Right / outer joins also available
+outer = users.merge(orders, on='user_id', how='outer')
+
+# Concat — stack DataFrames vertically
+a = pd.DataFrame({'x': [1, 2]})
+b = pd.DataFrame({'x': [3, 4]})
+stacked = pd.concat([a, b], ignore_index=True)</code></pre>
+                    </div>
+                </article>
+
+                <!-- 07 — Matplotlib essentials -->
+                <article class="c-card" data-card data-name="matplotlib plot line bar scatter hist">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">07</span> Matplotlib Essentials
+                        </h2>
+                        <span class="c-card__tag">Matplotlib · visualization</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import matplotlib.pyplot as plt
+import numpy as np
+
+x = np.linspace(0, 10, 100)
+y = np.sin(x)
+
+# Line plot
+fig, ax = plt.subplots(figsize=(6, 4))
+ax.plot(x, y, label='sin(x)')
+ax.plot(x, np.cos(x), label='cos(x)', linestyle='--')
+ax.set_title('Trig functions')
+ax.set_xlabel('x'); ax.set_ylabel('y')
+ax.legend(); ax.grid(True)
+plt.show()
+
+# Bar chart
+fig, ax = plt.subplots()
+ax.bar(['A', 'B', 'C'], [3, 7, 5], color='teal')
+ax.set_title('Categories')
+plt.show()
+
+# Scatter with color mapping
+rng = np.random.default_rng(0)
+pts = rng.normal(size=(200, 2))
+fig, ax = plt.subplots()
+ax.scatter(pts[:, 0], pts[:, 1], c=pts[:, 0], cmap='viridis', s=20)
+plt.show()</code></pre>
+                    </div>
+                </article>
+
+                <!-- 08 — scikit-learn: train/test split + linear regression -->
+                <article class="c-card" data-card data-name="sklearn scikit-learn linear regression train test split">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">08</span> scikit-learn: Linear Regression
+                        </h2>
+                        <span class="c-card__tag">scikit-learn · regression · ml</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+
+# Synthetic data: y = 3x + noise
+rng = np.random.default_rng(42)
+X = rng.uniform(0, 10, size=(100, 1))
+y = 3 * X.squeeze() + rng.normal(0, 2, size=100)
+
+# Train / test split
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Fit model
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Predict & evaluate
+y_pred = model.predict(X_test)
+print('coefficient:', model.coef_[0])     # ~3
+print('intercept  :', model.intercept_)
+print('MSE        :', mean_squared_error(y_test, y_pred))
+print('R^2        :', r2_score(y_test, y_pred))</code></pre>
+                    </div>
+                </article>
+
+                <!-- 09 — scikit-learn: classification with logistic regression -->
+                <article class="c-card" data-card data-name="sklearn scikit-learn classification logistic regression iris">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">09</span> scikit-learn: Classification
+                        </h2>
+                        <span class="c-card__tag">scikit-learn · classification · ml</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, classification_report
+
+# Built-in dataset
+X, y = load_iris(return_X_y=True)
+
+# Scale features (important for many models)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=0, stratify=y
+)
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test  = scaler.transform(X_test)
+
+# Train classifier
+clf = LogisticRegression(max_iter=200)
+clf.fit(X_train, y_train)
+
+# Predict & evaluate
+y_pred = clf.predict(X_test)
+print('accuracy:', accuracy_score(y_test, y_pred))
+print(classification_report(y_test, y_pred,
+      target_names=['setosa', 'versicolor', 'virginica']))</code></pre>
+                    </div>
+                </article>
+
+                <!-- 10 — scikit-learn: end-to-end pipeline -->
+                <article class="c-card" data-card data-name="sklearn scikit-learn pipeline random forest cross validation">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">10</span> scikit-learn: End-to-End Pipeline
+                        </h2>
+                        <span class="c-card__tag">scikit-learn · pipeline · ml</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import pandas as pd
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
+# Toy dataset with numeric + categorical columns
+df = pd.DataFrame({
+    'age':    [22, 35, 58, 41, 27, 49, 33, 60],
+    'salary': [40, 80, 60, 95, 50, 70, 55, 90],
+    'dept':   ['eng', 'mkt', 'eng', 'mkt', 'hr',  'eng', 'hr',  'mkt'],
+    'bought': [0, 1, 1, 1, 0, 1, 0, 1]
+})
+
+X = df.drop('bought', axis=1)
+y = df['bought']
+
+numeric = ['age', 'salary']
+categorical = ['dept']
+
+# Preprocess: scale numerics, one-hot categoricals
+preprocess = ColumnTransformer([
+    ('num', StandardScaler(), numeric),
+    ('cat', OneHotEncoder(), categorical),
+])
+
+# Full pipeline = preprocess + model
+pipe = Pipeline([
+    ('prep', preprocess),
+    ('clf',  RandomForestClassifier(n_estimators=100, random_state=0))
+])
+
+# Cross-validation
+scores = cross_val_score(pipe, X, y, cv=3)
+print('CV accuracy:', scores.mean().round(3))
+
+# Final fit & score
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
+pipe.fit(X_train, y_train)
+print('test acc  :', accuracy_score(y_test, pipe.predict(X_test)))</code></pre>
+                    </div>
+                </article>
+
+                <!-- 11 — Pandas time series -->
+                <article class="c-card" data-card data-name="pandas time series datetime resample rolling">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">11</span> Pandas Time Series
+                        </h2>
+                        <span class="c-card__tag">Pandas · time series</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import pandas as pd
+import numpy as np
+
+# Daily dates for 30 days
+dates = pd.date_range('2025-01-01', periods=30, freq='D')
+ts = pd.Series(np.random.default_rng(0).normal(0, 1, 30), index=dates)
+
+# Resample to weekly means
+weekly = ts.resample('W').mean()
+
+# Rolling window statistics (7-day moving average & std)
+rolling = pd.DataFrame({
+    'value':   ts,
+    'ma_7':    ts.rolling(window=7).mean(),
+    'std_7':   ts.rolling(window=7).std()
+})
+
+# Shift for lag features
+lagged = pd.DataFrame({
+    'y':     ts,
+    'y_lag1': ts.shift(1),
+    'y_diff': ts.diff()
+})
+
+# Indexing by date — fast
+print(ts['2025-01-10':'2025-01-15'])
+print(ts.index.day_name().value_counts())</code></pre>
+                    </div>
+                </article>
+
+                <!-- 12 — MultiIndex & reshaping -->
+                <article class="c-card" data-card data-name="pandas multiindex stack unstack melt pivot">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">12</span> MultiIndex &amp; Reshaping
+                        </h2>
+                        <span class="c-card__tag">Pandas · advanced</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import pandas as pd
+
+# Build a MultiIndex from two keys
+df = pd.DataFrame({
+    'region':  ['N','N','S','S','E','E'],
+    'quarter': ['Q1','Q2','Q1','Q2','Q1','Q2'],
+    'sales':   [100, 120, 90, 110, 80, 95]
+}).set_index(['region', 'quarter'])
+
+# Index slicing
+print(df.loc['N'])
+print(df.loc[('S', 'Q2')])
+
+# stack / unstack — pivot index levels
+wide = df.unstack(level='quarter')   # quarters as columns
+long = wide.stack()                  # back to long form
+
+# melt — wide to long
+wide2 = pd.DataFrame({
+    'name':  ['Ana', 'Ben'],
+    'math':  [85, 72],
+    'eng':   [90, 68]
+})
+long2 = wide2.melt(id_vars='name',
+                   var_name='subject',
+                   value_name='score')
+
+# pivot — long to wide
+back_wide = long2.pivot(index='name',
+                        columns='subject',
+                        values='score')</code></pre>
+                    </div>
+                </article>
+
+                <!-- 13 — Vectorized NumPy tricks -->
+                <article class="c-card" data-card data-name="numpy vectorization einsum performance">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">13</span> NumPy: Vectorized Tricks
+                        </h2>
+                        <span class="c-card__tag">NumPy · performance</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import numpy as np
+import time
+
+rng = np.random.default_rng(0)
+N = 1_000_000
+a = rng.normal(size=N)
+b = rng.normal(size=N)
+
+# 1) Vectorized dot product vs Python loop
+t0 = time.perf_counter()
+dot_py = sum(x*y for x, y in zip(a, b))
+t_loop = time.perf_counter() - t0
+
+t0 = time.perf_counter()
+dot_np = np.dot(a, b)
+t_np = time.perf_counter() - t0
+print(f'loop: {t_loop*1000:.1f}ms   numpy: {t_np*1000:.2f}ms')
+
+# 2) np.where for conditional logic
+x = np.linspace(-3, 3, 7)
+y = np.where(x < 0, 0, x)            # relu-like
+
+# 3) np.einsum for tensor ops
+A = rng.normal(size=(50, 30))
+B = rng.normal(size=(30, 40))
+C = np.einsum('ij,jk->ik', A, B)     # equivalent to A @ B
+
+# 4) np.unique with counts & reverse-lookup
+vals = np.array(['a','b','a','c','b','a'])
+uniques, counts = np.unique(vals, return_counts=True)
+lookup = {v: i for i, v in enumerate(uniques)}
+idx = np.array([lookup[v] for v in vals])</code></pre>
+                    </div>
+                </article>
+
+                <!-- 14 — Feature engineering & scaling -->
+                <article class="c-card" data-card data-name="sklearn feature engineering scaling polynomial encoding">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">14</span> Feature Engineering &amp; Scaling
+                        </h2>
+                        <span class="c-card__tag">scikit-learn · features</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import numpy as np
+import pandas as pd
+from sklearn.preprocessing import (
+    StandardScaler, MinMaxScaler, PolynomialFeatures
+)
+from sklearn.model_selection import train_test_split
+
+# Toy regression dataset
+rng = np.random.default_rng(1)
+X = rng.uniform(-3, 3, size=(200, 2))
+y = 0.5 * X[:, 0]**2 - X[:, 1] + rng.normal(0, 0.3, 200)
+
+# Standardize (mean=0, std=1)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, random_state=0
+)
+std = StandardScaler()
+X_train_std = std.fit_transform(X_train)
+X_test_std  = std.transform(X_test)
+
+# Normalize to [0, 1]
+mm = MinMaxScaler()
+X_train_mm = mm.fit_transform(X_train)
+
+# Polynomial features — capture non-linearity
+poly = PolynomialFeatures(degree=3, include_bias=False)
+X_poly = poly.fit_transform(X_train_std)
+print('orig cols:', X_train.shape[1],
+      '-> poly cols:', X_poly.shape[1])
+
+# Log-transform a skewed feature
+df = pd.DataFrame({'income': rng.lognormal(10, 1, 1000)})
+df['log_income'] = np.log1p(df['income'])</code></pre>
+                    </div>
+                </article>
+
+                <!-- 15 — Clustering with KMeans -->
+                <article class="c-card" data-card data-name="sklearn kmeans clustering elbow silhouette">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">15</span> Clustering with K-Means
+                        </h2>
+                        <span class="c-card__tag">scikit-learn · unsupervised</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import numpy as np
+from sklearn.datasets import make_blobs
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
+import matplotlib.pyplot as plt
+
+# Synthetic blobs
+X, y_true = make_blobs(n_samples=300, centers=4,
+                       cluster_std=0.7, random_state=0)
+
+# Elbow method — pick k
+inertias = []
+for k in range(2, 8):
+    km = KMeans(n_clusters=k, n_init=10, random_state=0)
+    km.fit(X)
+    inertias.append(km.inertia_)
+
+# Silhouette — quality of clustering
+best_k, best_score = 2, -1
+for k in range(2, 8):
+    labels = KMeans(n_clusters=k, n_init=10,
+                    random_state=0).fit_predict(X)
+    score = silhouette_score(X, labels)
+    if score > best_score:
+        best_k, best_score = k, score
+print(f'best k = {best_k}  (silhouette = {best_score:.3f})')
+
+# Final model
+km = KMeans(n_clusters=best_k, n_init=10, random_state=0)
+labels = km.fit_predict(X)
+centers = km.cluster_centers_
+
+plt.scatter(X[:, 0], X[:, 1], c=labels, cmap='viridis', s=20)
+plt.scatter(centers[:, 0], centers[:, 1], c='red', marker='X', s=200)
+plt.title(f'K-Means (k={best_k})')
+plt.show()</code></pre>
+                    </div>
+                </article>
+
+                <!-- 16 — Decision tree & random forest -->
+                <article class="c-card" data-card data-name="sklearn decision tree random forest feature importance">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">16</span> Decision Trees &amp; Random Forests
+                        </h2>
+                        <span class="c-card__tag">scikit-learn · trees · ensemble</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
+X, y = load_breast_cancer(return_X_y=True)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=0, stratify=y
+)
+
+# Single decision tree
+dt = DecisionTreeClassifier(max_depth=4, random_state=0)
+dt.fit(X_train, y_train)
+print('dt test acc:', accuracy_score(y_test, dt.predict(X_test)))
+
+# Random forest — bagging ensemble
+rf = RandomForestClassifier(
+    n_estimators=200, max_depth=8,
+    n_jobs=-1, random_state=0
+)
+rf.fit(X_train, y_train)
+print('rf test acc:', accuracy_score(y_test, rf.predict(X_test)))
+
+# Feature importances
+imp = sorted(
+    zip(load_breast_cancer().feature_names, rf.feature_importances_),
+    key=lambda t: t[1], reverse=True
+)
+print('top 5 features:')
+for name, score in imp[:5]:
+    print(f'  {name:30s} {score:.4f}')</code></pre>
+                    </div>
+                </article>
+
+                <!-- 17 — K-fold cross validation -->
+                <article class="c-card" data-card data-name="sklearn cross validation kfold stratified gridsearchcv">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">17</span> Cross-Validation &amp; Tuning
+                        </h2>
+                        <span class="c-card__tag">scikit-learn · evaluation</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.model_selection import (
+    StratifiedKFold, cross_val_score, GridSearchCV
+)
+from sklearn.svm import SVC
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
+
+X, y = load_digits(return_X_y=True)
+
+# Stratified K-Fold — preserves class ratios
+skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=0)
+pipe = Pipeline([
+    ('scaler', StandardScaler()),
+    ('clf', SVC(kernel='rbf'))
+])
+
+# Manual CV scoring
+scores = cross_val_score(pipe, X, y,
+                         cv=skf, scoring='accuracy', n_jobs=-1)
+print(f'baseline: {scores.mean():.3f} +/- {scores.std():.3f}')
+
+# Grid search over hyperparameters
+param_grid = {
+    'clf__C':     [0.1, 1, 10],
+    'clf__gamma': ['scale', 0.01, 0.001]
+}
+gs = GridSearchCV(pipe, param_grid, cv=skf,
+                  scoring='accuracy', n_jobs=-1)
+gs.fit(X, y)
+print('best params :', gs.best_params_)
+print('best CV acc :', gs.best_score_.round(3))</code></pre>
+                    </div>
+                </article>
+
+                <!-- 18 — Classification metrics -->
+                <article class="c-card" data-card data-name="sklearn metrics confusion matrix roc auc precision recall f1">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">18</span> Classification Metrics Deep-Dive
+                        </h2>
+                        <span class="c-card__tag">scikit-learn · evaluation</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import (confusion_matrix, classification_report,
+                             roc_auc_score, roc_curve, precision_recall_curve)
+import matplotlib.pyplot as plt
+
+X, y = load_breast_cancer(return_X_y=True)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=0, stratify=y
+)
+X_train = StandardScaler().fit_transform(X_train)
+X_test  = StandardScaler().fit(X_train).transform(X_test)
+
+clf = LogisticRegression(max_iter=500)
+clf.fit(X_train, y_train)
+
+# Hard predictions
+y_pred = clf.predict(X_test)
+print(confusion_matrix(y_test, y_pred))
+print(classification_report(y_test, y_pred,
+      target_names=['malignant', 'benign']))
+
+# Soft predictions — needed for AUC / curves
+y_score = clf.predict_proba(X_test)[:, 1]
+print('ROC AUC:', roc_auc_score(y_test, y_score).round(3))
+
+# Plot ROC and PR curves
+fpr, tpr, _ = roc_curve(y_test, y_score)
+prec, rec, _ = precision_recall_curve(y_test, y_score)
+fig, ax = plt.subplots(1, 2, figsize=(10, 4))
+ax[0].plot(fpr, tpr); ax[0].plot([0,1],[0,1],'--')
+ax[0].set_title('ROC'); ax[0].set_xlabel('FPR'); ax[0].set_ylabel('TPR')
+ax[1].plot(rec, prec)
+ax[1].set_title('Precision-Recall'); ax[1].set_xlabel('Recall')
+plt.show()</code></pre>
+                    </div>
+                </article>
+
+                <!-- 19 — Matplotlib subplots & styling -->
+                <article class="c-card" data-card data-name="matplotlib subplots style annotate savefig">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">19</span> Matplotlib: Subplots &amp; Styling
+                        </h2>
+                        <span class="c-card__tag">Matplotlib · visualization</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import numpy as np
+import matplotlib.pyplot as plt
+
+rng = np.random.default_rng(0)
+x = np.linspace(0, 2*np.pi, 200)
+y = np.sin(x)
+
+# 2x2 subplot grid
+fig, axes = plt.subplots(2, 2, figsize=(10, 7))
+(ax1, ax2), (ax3, ax4) = axes
+
+ax1.plot(x, y);           ax1.set_title('sin(x)')
+ax2.scatter(x, y + rng.normal(0, 0.1, 200), s=5)
+                          ax2.set_title('noisy sin')
+ax3.bar(['A','B','C','D'], [3, 7, 5, 9],
+        color='teal');     ax3.set_title('bar')
+ax4.hist(rng.normal(size=1000), bins=30,
+        color='orchid', edgecolor='black')
+                          ax4.set_title('histogram')
+
+fig.suptitle('Panel overview', fontsize=14, fontweight='bold')
+fig.tight_layout()
+
+# Annotate a point
+ax1.annotate('peak', xy=(np.pi/2, 1),
+             xytext=(2, 1.2),
+             arrowprops=dict(arrowstyle='->'))
+
+# Save to disk
+fig.savefig('panel.png', dpi=150, bbox_inches='tight')
+plt.show()</code></pre>
+                    </div>
+                </article>
+
+                <!-- 20 — Saving & loading models + .apply -->
+                <article class="c-card" data-card data-name="sklearn joblib pickle save load model deployment">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">20</span> Saving &amp; Loading Models
+                        </h2>
+                        <span class="c-card__tag">scikit-learn · deployment</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import numpy as np
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+import joblib
+import time
+
+X, y = load_iris(return_X_y=True)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=0, stratify=y
+)
+
+# Train a pipeline (preprocess + model)
+pipe = Pipeline([
+    ('scaler', StandardScaler()),
+    ('clf', RandomForestClassifier(n_estimators=200, random_state=0))
+])
+pipe.fit(X_train, y_train)
+print('test acc:', accuracy_score(y_test, pipe.predict(X_test)))
+
+# Save the full pipeline (scaler + model together)
+joblib.dump(pipe, 'iris_pipeline.joblib')
+
+# Load & use — no need to refit the scaler
+t0 = time.perf_counter()
+loaded = joblib.load('iris_pipeline.joblib')
+print('load time :', round((time.perf_counter() - t0) * 1000, 1), 'ms')
+print('reload acc:', accuracy_score(y_test, loaded.predict(X_test)))
+
+# Predict on a single new sample
+sample = np.array([[5.1, 3.5, 1.4, 0.2]])   # one flower
+pred_class = loaded.predict(sample)[0]
+print('predicted class index:', pred_class)
+
+# (Alternative: pickle works too, but joblib is faster on big numpy arrays)
+import pickle
+with open('iris_pipeline.pkl', 'wb') as f:
+    pickle.dump(pipe, f)</code></pre>
+                    </div>
+                </article>
+
+                <!-- 21 — NumPy linear algebra -->
+                <article class="c-card" data-card data-name="numpy linalg linear algebra matrix solve eigendecomposition">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">21</span> NumPy: Linear Algebra
+                        </h2>
+                        <span class="c-card__tag">NumPy · linalg</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import numpy as np
+
+# Solve A x = b
+A = np.array([[3., 1., 0.],
+              [1., 2., 1.],
+              [0., 1., 3.]])
+b = np.array([4., 5., 6.])
+x = np.linalg.solve(A, b)
+print('x =', x)
+print('check A@x ~', A @ x)
+
+# Matrix decompositions
+B = np.array([[4., 2.], [2., 3.]])
+eigvals, eigvecs = np.linalg.eigh(B)   # symmetric matrix
+print('eigenvalues:', eigvals)
+
+U, s, Vt = np.linalg.svd(B)             # singular value decomp
+print('singular values:', s)
+
+# Norms & distances
+v1 = np.array([1., 2., 2.])
+v2 = np.array([3., 0., 4.])
+print('L2 distance :', np.linalg.norm(v1 - v2))
+print('cosine sim  :',
+      v1 @ v2 / (np.linalg.norm(v1) * np.linalg.norm(v2)))
+
+# Least squares fit (linear regression the hard way)
+xs = np.linspace(0, 5, 20)
+ys = 2.5 * xs + 0.5 + np.random.default_rng(0).normal(0, 0.4, 20)
+A_fit = np.vstack([xs, np.ones_like(xs)]).T
+m, c = np.linalg.lstsq(A_fit, ys, rcond=None)[0]
+print(f'fit: y = {m:.3f}x + {c:.3f}')</code></pre>
+                    </div>
+                </article>
+
+                <!-- 22 — NumPy random & FFT -->
+                <article class="c-card" data-card data-name="numpy random fft fourier signal processing">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">22</span> NumPy: Random &amp; FFT
+                        </h2>
+                        <span class="c-card__tag">NumPy · random · signal</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import numpy as np
+import matplotlib.pyplot as plt
+
+# Modern random API — Generator (preferred over np.random.*)
+rng = np.random.default_rng(seed=42)
+
+uniform = rng.uniform(-1, 1, size=5)
+normal  = rng.normal(loc=0, scale=1, size=5)
+choice  = rng.choice(['A', 'B', 'C'], size=10, p=[0.5, 0.3, 0.2])
+shuffled = rng.permutation(np.arange(10))
+ints = rng.integers(low=0, high=100, size=(3, 4))
+
+# FFT — find dominant frequencies in a noisy signal
+N = 1024
+t = np.linspace(0, 1, N, endpoint=False)
+# 50 Hz + 120 Hz sine plus noise
+signal = (np.sin(2*np.pi*50*t) + 0.5*np.sin(2*np.pi*120*t)
+          + 0.3*rng.normal(size=N))
+
+freqs = np.fft.rfftfreq(N, d=1/N)
+power = np.abs(np.fft.rfft(signal))
+top3 = np.argsort(power)[-3:][::-1]
+print('top 3 freq bins:', freqs[top3])
+
+# Inverse FFT — reconstruct denoised signal
+keep = power > np.percentile(power, 90)   # keep top 10%
+filtered = np.fft.irfft(np.where(keep, power, 0), n=N)
+
+fig, ax = plt.subplots(2, 1, figsize=(8, 5))
+ax[0].plot(t, signal);         ax[0].set_title('noisy')
+ax[1].plot(t, filtered);       ax[1].set_title('filtered (FFT)')
+plt.tight_layout(); plt.show()</code></pre>
+                    </div>
+                </article>
+
+                <!-- 23 — Pandas eval, query, categorical -->
+                <article class="c-card" data-card data-name="pandas eval query categorical dtype memory">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">23</span> Pandas: eval, query, Categorical
+                        </h2>
+                        <span class="c-card__tag">Pandas · performance · memory</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import pandas as pd
+import numpy as np
+
+# Big frame to make perf wins visible
+N = 1_000_000
+df = pd.DataFrame({
+    'a': rng := np.random.default_rng(0).uniform(0, 10, N),
+    'b': np.random.default_rng(1).normal(0, 1, N),
+    'c': np.random.default_rng(2).choice(['x','y','z'], N),
+    'd': np.random.default_rng(3).integers(0, 100, N),
+})
+
+# query() — readable filtering (often faster on big frames)
+filt = df.query('a > 5 and d < 50')
+
+# eval() — create new columns without intermediate copies
+df.eval('e = a * b - d', inplace=True)
+df.eval('f = (a + d) / 2', inplace=True)
+
+# Categorical dtype — huge memory win for low-cardinality strings
+before = df['c'].memory_usage(deep=True)
+df['c'] = df['c'].astype('category')
+after = df['c'].memory_usage(deep=True)
+print(f'c memory: {before/1024:.0f} KB -> {after/1024:.0f} KB')
+
+# Use .cat accessor
+print(df['c'].cat.categories)
+df['c'] = df['c'].cat.reorder_categories(['x','y','z'], ordered=True)
+
+# Group on a categorical column (fast)
+print(df.groupby('c', observed=True)['a'].mean())</code></pre>
+                    </div>
+                </article>
+
+                <!-- 24 — Pandas merge_asof & nearest joins -->
+                <article class="c-card" data-card data-name="pandas merge_asof nearest join time series alignment">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">24</span> Pandas: merge_asof &amp; Time Joins
+                        </h2>
+                        <span class="c-card__tag">Pandas · time series</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import pandas as pd
+
+# Trades — irregular timestamps
+trades = pd.DataFrame({
+    'time':   pd.to_datetime([
+        '2025-01-01 09:00:01', '09:00:04',
+        '09:00:10', '09:00:15', '09:00:23'
+    ]),
+    'price':  [100.1, 100.3, 100.8, 100.5, 101.0],
+    'qty':    [10, 5, 20, 15, 8]
+}).sort_values('time')
+
+# Quotes — must be matched to most recent prior quote
+quotes = pd.DataFrame({
+    'time':   pd.to_datetime([
+        '2025-01-01 09:00:00', '09:00:05',
+        '09:00:12', '09:00:20'
+    ]),
+    'bid':    [100.0, 100.2, 100.6, 100.4],
+    'ask':    [100.1, 100.3, 100.8, 100.5]
+}).sort_values('time')
+
+# Backward asof — match trade to most recent quote AT OR BEFORE trade
+merged = pd.merge_asof(
+    trades, quotes, on='time',
+    direction='backward', tolerance=pd.Timedelta('3s')
+)
+
+# Nearest asof — closest quote within 5s
+merged_near = pd.merge_asof(
+    trades, quotes, on='time',
+    direction='nearest', tolerance=pd.Timedelta('5s')
+)
+
+# Forward asof — for forecast / next-known value
+merged_fwd = pd.merge_asof(
+    trades, quotes, on='time',
+    direction='forward', tolerance=pd.Timedelta('4s')
+)
+print(merged[['time', 'price', 'bid', 'ask']])</code></pre>
+                    </div>
+                </article>
+
+                <!-- 25 — Pandas .plot() quick viz -->
+                <article class="c-card" data-card data-name="pandas plot visualization dataframe line bar histogram">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">25</span> Pandas: Quick Plotting (.plot)
+                        </h2>
+                        <span class="c-card__tag">Pandas · visualization</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Build a tidy DataFrame
+dates = pd.date_range('2025-01-01', periods=12, freq='MS')
+df = pd.DataFrame({
+    'date':   dates,
+    'sales':  [10, 12, 15, 14, 18, 22, 25, 27, 26, 30, 33, 35],
+    'profit': [ 2,  3,  4,  3,  5,  6,  7,  7,  6,  8,  9, 10]
+}).set_index('date')
+
+# 1) Line plot (default for time series)
+ax = df.plot.line(figsize=(8, 4), title='Monthly sales vs profit')
+ax.set_ylabel('USD (k)')
+
+# 2) Bar plot
+df['sales'].plot.bar(figsize=(8, 4),
+    color='teal', title='Monthly sales')
+
+# 3) Histogram
+df[['sales', 'profit']].plot.hist(
+    bins=6, alpha=0.6, figsize=(7, 4))
+
+# 4) Scatter (one column vs another)
+df.plot.scatter(x='sales', y='profit', s=60,
+                figsize=(6, 4), title='sales vs profit')
+
+# 5) Box plot grouped by category
+df2 = pd.DataFrame({
+    'score': np.random.default_rng(0).normal(70, 10, 200),
+    'group': np.random.default_rng(1).choice(['A','B','C'], 200)
+})
+df2.boxplot(column='score', by='group', figsize=(6, 4))
+plt.suptitle(''); plt.title('Score by group')
+
+plt.tight_layout(); plt.show()</code></pre>
+                    </div>
+                </article>
+
+                <!-- 26 — Text classification with TF-IDF + Naive Bayes -->
+                <article class="c-card" data-card data-name="sklearn text classification tfidf naive bayes pipeline">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">26</span> Text Classification: TF-IDF + NB
+                        </h2>
+                        <span class="c-card__tag">scikit-learn · nlp · pipeline</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>from sklearn.datasets import fetch_20newsgroups
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import classification_report
+
+# 4 categories only — keep the example small
+cats = ['rec.sport.baseball', 'sci.med',
+        'comp.graphics', 'talk.politics.misc']
+data = fetch_20newsgroups(subset='train', categories=cats,
+                          remove=('headers', 'footers', 'quotes'))
+X_train, X_test, y_train, y_test = train_test_split(
+    data.data, data.target, test_size=0.25,
+    random_state=0, stratify=data.target
+)
+
+# TF-IDF + Naive Bayes in one pipeline
+pipe = Pipeline([
+    ('tfidf', TfidfVectorizer(
+        lowercase=True,
+        stop_words='english',
+        ngram_range=(1, 2),     # unigrams + bigrams
+        max_df=0.95,
+        min_df=2,
+        max_features=20000
+    )),
+    ('clf', MultinomialNB(alpha=0.1))
+])
+
+pipe.fit(X_train, y_train)
+y_pred = pipe.predict(X_test)
+
+target_names = [data.target_names[i] for i in sorted(set(y_test))]
+print(classification_report(y_test, y_pred,
+      target_names=target_names))
+
+# Inspect top features per class
+import numpy as np
+fnames = pipe['tfidf'].get_feature_names_out()
+for ci, cname in enumerate(target_names):
+    top = np.argsort(pipe['clf'].feature_log_prob_[ci])[-10:][::-1]
+    print(f'{cname}:', ', '.join(fnames[i] for i in top))</code></pre>
+                    </div>
+                </article>
+
+                <!-- 27 — Regression metrics & residual analysis -->
+                <article class="c-card" data-card data-name="sklearn regression metrics residual mae rmse r2 learning curve">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">27</span> Regression Metrics &amp; Residuals
+                        </h2>
+                        <span class="c-card__tag">scikit-learn · evaluation</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import fetch_california_housing
+from sklearn.model_selection import train_test_split, learning_curve
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+
+X, y = fetch_california_housing(return_X_y=True)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=0
+)
+
+model = RandomForestRegressor(n_estimators=200, n_jobs=-1, random_state=0)
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+
+mae  = mean_absolute_error(y_test, y_pred)
+rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+r2   = r2_score(y_test, y_pred)
+print(f'MAE : {mae:.3f}')
+print(f'RMSE: {rmse:.3f}')
+print(f'R^2 : {r2:.3f}')
+
+# Residual analysis — diagnose model fit
+resid = y_test - y_pred
+fig, ax = plt.subplots(1, 2, figsize=(10, 4))
+ax[0].scatter(y_pred, resid, alpha=0.3, s=10)
+ax[0].axhline(0, color='red', linestyle='--')
+ax[0].set_xlabel('predicted'); ax[0].set_ylabel('residual')
+ax[0].set_title('Residuals vs predicted')
+ax[1].hist(resid, bins=40, edgecolor='black')
+ax[1].set_title('Residual distribution')
+plt.tight_layout(); plt.show()
+
+# Learning curve — bias vs variance
+sizes, train_s, val_s = learning_curve(
+    model, X, y, cv=5, scoring='r2',
+    train_sizes=np.linspace(0.1, 1.0, 5), n_jobs=-1
+)
+print('train R^2 by size:', dict(zip(sizes, train_s.mean(axis=1).round(3))))
+print('val   R^2 by size:', dict(zip(sizes, val_s.mean(axis=1).round(3))))</code></pre>
+                    </div>
+                </article>
+
+                <!-- 28 — Time-series forecasting with lag features -->
+                <article class="c-card" data-card data-name="sklearn time series forecasting lag features walk forward">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">28</span> Time-Series Forecasting
+                        </h2>
+                        <span class="c-card__tag">scikit-learn · forecasting</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.metrics import mean_absolute_error
+
+# Synthetic monthly series with trend + seasonality + noise
+idx = pd.date_range('2018-01-01', periods=72, freq='MS')
+rng = np.random.default_rng(0)
+y = (0.5 * np.arange(72)             # trend
+     + 10 * np.sin(2*np.pi*np.arange(72)/12)  # yearly cycle
+     + rng.normal(0, 2, 72))         # noise
+df = pd.DataFrame({'y': y}, index=idx)
+
+# Build lag features
+def make_features(frame, lags=(1, 2, 3, 12), roll=(3, 12)):
+    out = frame.copy()
+    for L in lags:
+        out[f'lag_{L}'] = frame['y'].shift(L)
+    for W in roll:
+        out[f'roll_mean_{W}'] = frame['y'].shift(1).rolling(W).mean()
+    out['month'] = frame.index.month
+    return out.dropna()
+
+feats = make_features(df)
+
+X = feats.drop(columns='y')
+y_target = feats['y']
+
+# Walk-forward validation: train on past, predict next 12 months
+train_size = len(feats) - 12
+X_tr, X_te = X.iloc[:train_size], X.iloc[train_size:]
+y_tr, y_te = y_target.iloc[:train_size], y_target.iloc[train_size:]
+
+model = GradientBoostingRegressor(n_estimators=300, max_depth=3,
+                                  learning_rate=0.05, random_state=0)
+model.fit(X_tr, y_tr)
+pred = model.predict(X_te)
+print('MAE:', mean_absolute_error(y_te, pred).round(3))
+
+plt.plot(y_tr.index, y_tr, label='train')
+plt.plot(y_te.index, y_te, label='actual')
+plt.plot(y_te.index, pred, label='forecast', linestyle='--')
+plt.legend(); plt.title('Walk-forward forecast')
+plt.show()</code></pre>
+                    </div>
+                </article>
+
+                <!-- 29 — Dimensionality reduction (PCA) -->
+                <article class="c-card" data-card data-name="sklearn pca dimensionality reduction scree explained variance">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">29</span> PCA: Dimensionality Reduction
+                        </h2>
+                        <span class="c-card__tag">scikit-learn · unsupervised</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_digits
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+X, y = load_digits(return_X_y=True)   # 64 features per digit
+X = StandardScaler().fit_transform(X)
+
+# Fit PCA — keep enough components for 95% variance
+pca = PCA(n_components=0.95, random_state=0)
+X_pca = pca.fit_transform(X)
+print(f'{X.shape[1]} features -> {X_pca.shape[1]} components '
+      f'(95% variance retained)')
+
+# Scree plot — explained variance per component
+plt.plot(np.cumsum(pca.explained_variance_ratio_), marker='o')
+plt.xlabel('# components'); plt.ylabel('cumulative variance')
+plt.title('PCA scree'); plt.grid(True); plt.show()
+
+# 2D projection for visualization
+pca2 = PCA(n_components=2, random_state=0)
+X2 = pca2.fit_transform(X)
+plt.figure(figsize=(7, 5))
+plt.scatter(X2[:, 0], X2[:, 1], c=y, cmap='tab10', s=10, alpha=0.7)
+plt.title('Digits in 2 PCA components'); plt.colorbar()
+plt.show()
+
+# Use reduced features for classification
+X_tr, X_te, y_tr, y_te = train_test_split(
+    X_pca, y, test_size=0.25, random_state=0, stratify=y
+)
+clf = LogisticRegression(max_iter=1000)
+clf.fit(X_tr, y_tr)
+print('PCA-clf acc :', accuracy_score(y_te, clf.predict(X_te)).round(3))</code></pre>
+                    </div>
+                </article>
+
+                <!-- 30 — Handling imbalanced classes -->
+                <article class="c-card" data-card data-name="sklearn imbalanced class weight smote stratified resampling">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">30</span> Imbalanced Classes
+                        </h2>
+                        <span class="c-card__tag">scikit-learn · imbalanced</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import numpy as np
+from sklearn.datasets import make_classification
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import (classification_report,
+                              balanced_accuracy_score,
+                              confusion_matrix)
+
+# 1% positive class
+X, y = make_classification(
+    n_samples=10_000, n_features=20, n_informative=5,
+    weights=[0.99, 0.01], random_state=0
+)
+X_tr, X_te, y_tr, y_te = train_test_split(
+    X, y, test_size=0.25, random_state=0, stratify=y
+)
+
+# Baseline — accuracy is misleading
+base = LogisticRegression(max_iter=1000).fit(X_tr, y_tr)
+print('baseline balanced acc:',
+      balanced_accuracy_score(y_te, base.predict(X_te)).round(3))
+
+# Fix 1 — class_weight='balanced'
+bal = LogisticRegression(class_weight='balanced',
+                         max_iter=1000).fit(X_tr, y_tr)
+print('balanced LR  acc    :',
+      balanced_accuracy_score(y_te, bal.predict(X_te)).round(3))
+
+# Fix 2 — sample_weight in tree ensembles
+rf = RandomForestClassifier(
+    n_estimators=300, class_weight='balanced_subsample',
+    n_jobs=-1, random_state=0
+).fit(X_tr, y_tr)
+y_pred = rf.predict(X_te)
+print('balanced RF  acc    :',
+      balanced_accuracy_score(y_te, y_pred).round(3))
+print(confusion_matrix(y_te, y_pred))
+print(classification_report(y_te, y_pred,
+      target_names=['neg', 'pos']))
+
+# Fix 3 — adjust decision threshold
+proba = rf.predict_proba(X_te)[:, 1]
+for thr in [0.5, 0.3, 0.1, 0.05]:
+    y_thr = (proba >= thr).astype(int)
+    print(f'threshold {thr:.2f} -> '
+          f'positives {y_thr.sum():4d}, '
+          f'balanced acc '
+          f'{balanced_accuracy_score(y_te, y_thr):.3f}')</code></pre>
+                    </div>
+                </article>
+
+                <!-- 31 — SciPy: hypothesis testing -->
+                <article class="c-card" data-card data-name="scipy stats hypothesis testing ttest chi2 anova">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">31</span> SciPy: Hypothesis Testing
+                        </h2>
+                        <span class="c-card__tag">SciPy · statistics</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import numpy as np
+from scipy import stats
+
+rng = np.random.default_rng(0)
+
+# 1) One-sample t-test: is the mean of x different from mu=0?
+x = rng.normal(loc=0.3, scale=1, size=200)
+t, p = stats.ttest_1samp(x, popmean=0)
+print(f'one-sample t={t:.3f}, p={p:.4f}')
+
+# 2) Independent two-sample t-test: A vs B
+A = rng.normal(5, 1, 200)
+B = rng.normal(5.4, 1, 200)
+t, p = stats.ttest_ind(A, B, equal_var=False)
+print(f'two-sample t={t:.3f}, p={p:.4f}')
+
+# 3) Paired t-test: before vs after
+before = rng.normal(10, 2, 50)
+after  = before - rng.normal(0.5, 0.5, 50)
+t, p = stats.ttest_rel(before, after)
+print(f'paired     t={t:.3f}, p={p:.4f}')
+
+# 4) Chi-square test of independence
+observed = np.array([[30, 10], [20, 40]])
+chi2, p, dof, exp = stats.chi2_contingency(observed)
+print(f'chi2={chi2:.2f}, dof={dof}, p={p:.4f}')
+
+# 5) One-way ANOVA across 4 groups
+groups = [rng.normal(0, 1, 100) for _ in range(4)]
+f, p = stats.f_oneway(*groups)
+print(f'ANOVA  f={f:.3f}, p={p:.4f}')
+
+# 6) Non-parametric alternative: Mann-Whitney U
+u, p = stats.mannwhitneyu(A, B, alternative='two-sided')
+print(f'Mann-Whitney U={u:.1f}, p={p:.4f}')</code></pre>
+                    </div>
+                </article>
+
+                <!-- 32 — SciPy: distributions & sampling -->
+                <article class="c-card" data-card data-name="scipy distributions sampling pdf cdf bootstrap">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">32</span> SciPy: Distributions &amp; Bootstrap
+                        </h2>
+                        <span class="c-card__tag">SciPy · statistics</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import numpy as np
+from scipy import stats
+
+rng = np.random.default_rng(0)
+
+# Fit a distribution to data
+data = rng.normal(loc=5, scale=2, size=500)
+mu, sigma = stats.norm.fit(data)
+print(f'fit: N({mu:.2f}, {sigma:.2f})')
+
+# PDF / CDF / SF
+x = np.linspace(data.min(), data.max(), 200)
+pdf = stats.norm.pdf(x, mu, sigma)
+cdf = stats.norm.cdf(x, mu, sigma)
+print('P(X > 7) =', 1 - stats.norm.cdf(7, mu, sigma).round(4))
+
+# Sample from a fitted distribution
+samples = stats.norm.rvs(mu, sigma, size=1000, random_state=0)
+
+# Bootstrap — confidence interval for the mean
+def bootstrap_ci(values, fn=np.mean, n_boot=2000, ci=95):
+    n = len(values)
+    boots = np.array([
+        fn(rng.choice(values, size=n, replace=True))
+        for _ in range(n_boot)
+    ])
+    lo = np.percentile(boots, (100 - ci) / 2)
+    hi = np.percentile(boots, 100 - (100 - ci) / 2)
+    return lo, hi
+
+lo, hi = bootstrap_ci(data)
+print(f'bootstrap 95% CI for mean: ({lo:.3f}, {hi:.3f})')
+
+# Kolmogorov-Smirnov test: are these samples normal?
+ks_stat, ks_p = stats.kstest(data, 'norm', args=(mu, sigma))
+print(f'KS stat={ks_stat:.3f}, p={ks_p:.4f}')</code></pre>
+                    </div>
+                </article>
+
+                <!-- 33 — Outlier detection -->
+                <article class="c-card" data-card data-name="sklearn outlier isolation forest local outlier factor">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">33</span> Outlier Detection
+                        </h2>
+                        <span class="c-card__tag">scikit-learn · anomaly</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import make_blobs
+from sklearn.ensemble import IsolationForest
+from sklearn.neighbors import LocalOutlierFactor
+from sklearn.svm import OneClassSVM
+
+# 2D blobs with some random outliers
+X, _ = make_blobs(n_samples=500, centers=3, random_state=0)
+outliers = np.random.default_rng(0).uniform(-8, 8, size=(40, 2))
+X_all = np.vstack([X, outliers])
+
+# 1) Isolation Forest
+iso = IsolationForest(contamination=0.07,
+                      random_state=0, n_estimators=200)
+labels_iso = iso.fit_predict(X_all)         # -1 = outlier
+
+# 2) Local Outlier Factor (unsupervised novelty)
+lof = LocalOutlierFactor(n_neighbors=20, contamination=0.07)
+labels_lof = lof.fit_predict(X_all)
+
+# 3) One-Class SVM
+ocs = OneClassSVM(gamma='auto', nu=0.07).fit(X)
+labels_svm = ocs.predict(X_all)
+
+# Compare
+for name, lbl in [('IsolationForest', labels_iso),
+                  ('LOF',            labels_lof),
+                  ('OneClassSVM',    labels_svm)]:
+    n_out = (lbl == -1).sum()
+    print(f'{name:15s} -> {n_out} outliers detected')
+
+# Visualize one model
+mask = labels_iso == -1
+fig, ax = plt.subplots(figsize=(6, 5))
+ax.scatter(X_all[~mask, 0], X_all[~mask, 1], s=10, label='inlier')
+ax.scatter(X_all[mask, 0],  X_all[mask, 1],  s=30,
+           color='red', label='outlier')
+ax.set_title('IsolationForest')
+ax.legend(); plt.show()</code></pre>
+                    </div>
+                </article>
+
+                <!-- 34 — Multi-output / multi-label models -->
+                <article class="c-card" data-card data-name="sklearn multi-output multi-label classifier chain">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">34</span> Multi-Label &amp; Multi-Output
+                        </h2>
+                        <span class="c-card__tag">scikit-learn · multi-output</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import numpy as np
+from sklearn.datasets import make_multilabel_classification
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.multioutput import (
+    MultiOutputClassifier, ClassifierChain
+)
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import f1_score, accuracy_score
+
+# Each sample has 3 binary labels
+X, Y = make_multilabel_classification(
+    n_samples=2000, n_classes=3, n_features=20,
+    random_state=0
+)
+X_tr, X_te, Y_tr, Y_te = train_test_split(
+    X, Y, test_size=0.25, random_state=0
+)
+
+# 1) Independent classifiers per label
+mo = MultiOutputClassifier(
+    LogisticRegression(max_iter=1000, class_weight='balanced')
+).fit(X_tr, Y_tr)
+pred_mo = mo.predict(X_te)
+print('MultiOutput f1-macro :',
+      f1_score(Y_te, pred_mo, average='macro').round(3))
+
+# 2) Classifier chain — uses label correlations
+chain = ClassifierChain(
+    RandomForestClassifier(n_estimators=200, random_state=0),
+    order='random', cv=3
+).fit(X_tr, Y_tr)
+pred_ch = chain.predict(X_te)
+print('ClassifierChain acc :',
+      accuracy_score(Y_te, pred_ch).round(3))
+
+# 3) Multi-output regression example
+from sklearn.datasets import make_regression
+from sklearn.multioutput import MultiOutputRegressor
+from sklearn.ensemble import GradientBoostingRegressor
+
+Xr, Yr = make_regression(
+    n_samples=1000, n_features=10, n_targets=4, random_state=0
+)
+mor = MultiOutputRegressor(
+    GradientBoostingRegressor(n_estimators=100, random_state=0)
+).fit(Xr, Yr)
+print('MultiOutputReg shape:', mor.predict(Xr[:3]).shape)</code></pre>
+                    </div>
+                </article>
+
+                <!-- 35 — Custom transformer in a pipeline -->
+                <article class="c-card" data-card data-name="sklearn custom transformer baseestimator transformerMixin pipeline">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">35</span> Custom Transformer in a Pipeline
+                        </h2>
+                        <span class="c-card__tag">scikit-learn · custom · ml</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import numpy as np
+import pandas as pd
+from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+# A custom transformer that adds ratio features
+class RatioAdder(BaseEstimator, TransformerMixin):
+    def __init__(self, num_cols=('height', 'weight')):
+        self.num_cols = num_cols
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        X = pd.DataFrame(X, columns=self.num_cols)
+        out = X.copy()
+        out['bmi'] = X['weight'] / (X['height'] / 100) ** 2
+        return out.values
+
+df = pd.DataFrame({
+    'height':   rng := np.random.default_rng(0).normal(170, 10, 500),
+    'weight':   np.random.default_rng(1).normal(70, 15, 500),
+    'city':     np.random.default_rng(2).choice(['NY','LA','CHI'], 500),
+    'bought':   np.random.default_rng(3).integers(0, 2, 500)
+})
+X = df.drop('bought', axis=1)
+y = df['bought']
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, random_state=0)
+
+pipe = Pipeline([
+    ('prep', ColumnTransformer([
+        ('num', Pipeline([
+            ('ratio', RatioAdder(('height','weight'))),
+            ('scale', StandardScaler())
+        ]), ['height', 'weight']),
+        ('cat', OneHotEncoder(), ['city'])
+    ])),
+    ('clf', LogisticRegression(max_iter=1000))
+])
+
+pipe.fit(X_tr, y_tr)
+print('test acc:', accuracy_score(y_te, pipe.predict(X_te)).round(3))
+
+# Custom transformer is picklable with the rest of the pipeline
+from joblib import dump, load
+dump(pipe, 'pipe_with_custom.joblib')
+reloaded = load('pipe_with_custom.joblib')
+print('reloaded acc:',
+      accuracy_score(y_te, reloaded.predict(X_te)).round(3))</code></pre>
+                    </div>
+                </article>
+
+                <!-- 36 — Gradient boosting-style ensemble workflow -->
+                <article class="c-card" data-card data-name="sklearn gradient boosting ensemble histogram early stopping">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">36</span> Gradient Boosting Workflow
+                        </h2>
+                        <span class="c-card__tag">scikit-learn · ensemble</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import fetch_california_housing
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import (GradientBoostingRegressor,
+                              HistGradientBoostingRegressor)
+from sklearn.metrics import mean_absolute_error
+
+X, y = fetch_california_housing(return_X_y=True)
+X_tr, X_te, y_tr, y_te = train_test_split(
+    X, y, test_size=0.25, random_state=0
+)
+
+# 1) Classic Gradient Boosting (slower, exact splits)
+gbr = GradientBoostingRegressor(
+    n_estimators=500, max_depth=4,
+    learning_rate=0.05, subsample=0.8,
+    random_state=0
+).fit(X_tr, y_tr)
+print('GBR     MAE:', mean_absolute_error(y_te, gbr.predict(X_te)).round(3))
+
+# 2) Histogram-based GBR — much faster on bigger data
+hgb = HistGradientBoostingRegressor(
+    max_iter=500, max_depth=8, learning_rate=0.05,
+    early_stopping=True, validation_fraction=0.15,
+    n_iter_no_change=20, random_state=0
+).fit(X_tr, y_tr)
+print('HistGBR MAE:', mean_absolute_error(y_te, hgb.predict(X_te)).round(3))
+print('best iter:', hgb.n_iter_)
+
+# 3) Track deviance to see overfitting
+test_score = np.zeros((gbr.n_estimators,), dtype=np.float64)
+for i, y_pred in enumerate(gbr.staged_predict(X_te)):
+    test_score[i] = mean_absolute_error(y_te, y_pred)
+
+best = np.argmin(test_score) + 1
+print('best n_estimators (by val MAE):', best)
+
+plt.plot(test_score, label='test MAE')
+plt.axvline(best, color='red', linestyle='--', label='best')
+plt.xlabel('n_estimators'); plt.ylabel('MAE'); plt.legend()
+plt.title('Early stopping point'); plt.show()</code></pre>
+                    </div>
+                </article>
+
+                <!-- 37 — Time-series CV (gap-aware, expanding) -->
+                <article class="c-card" data-card data-name="sklearn timeseriessplit gap time series cross validation">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">37</span> Time-Series Cross-Validation
+                        </h2>
+                        <span class="c-card__tag">scikit-learn · cv · forecasting</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import TimeSeriesSplit
+from sklearn.linear_model import Ridge
+from sklearn.metrics import mean_absolute_error
+
+# 500 time-ordered samples
+n = 500
+X = np.random.default_rng(0).normal(size=(n, 5))
+y = X @ np.array([1, -2, 3, 0, 1]) + np.random.default_rng(1).normal(0, 0.5, n)
+
+# TimeSeriesSplit: expanding train, fixed-size test, in order
+tscv = TimeSeriesSplit(n_splits=5, gap=5, test_size=50)
+model = Ridge(alpha=1.0)
+fold_maes = []
+
+for fold, (tr, te) in enumerate(tscv.split(X), start=1):
+    model.fit(X[tr], y[tr])
+    pred = model.predict(X[te])
+    mae = mean_absolute_error(y[te], pred)
+    fold_maes.append(mae)
+    print(f'fold {fold}: train {tr.size:3d}, '
+          f'gap {te[0]-tr[-1]-1:2d}, test {te.size:3d}, MAE {mae:.3f}')
+
+print(f'mean MAE: {np.mean(fold_maes):.3f}')
+
+# Visualize the splits
+fig, ax = plt.subplots(figsize=(8, 3))
+for fold, (tr, te) in enumerate(tscv.split(X), start=1):
+    ax.scatter(tr, [fold]*len(tr), s=4, color='teal',   label='train' if fold == 1 else None)
+    ax.scatter(te, [fold]*len(te), s=4, color='orange', label='test'  if fold == 1 else None)
+ax.set_xlabel('sample index'); ax.set_ylabel('fold')
+ax.set_title('TimeSeriesSplit (gap=5)'); ax.legend()
+plt.tight_layout(); plt.show()</code></pre>
+                    </div>
+                </article>
+
+                <!-- 38 — Recommender: item-item similarity -->
+                <article class="c-card" data-card data-name="sklearn recommender cosine similarity item item collaborative">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">38</span> Recommender: Item-Item Similarity
+                        </h2>
+                        <span class="c-card__tag">scikit-learn · recommender</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import numpy as np
+import pandas as pd
+from sklearn.metrics.pairwise import cosine_similarity
+
+# user x item rating matrix (0 = not rated)
+ratings = pd.DataFrame({
+    'u1': [5, 4, 0, 0, 3],
+    'u2': [4, 0, 0, 2, 1],
+    'u3': [0, 5, 4, 0, 2],
+    'u4': [0, 0, 5, 4, 0],
+    'u5': [1, 0, 4, 3, 0],
+}, index=['i1','i2','i3','i4','i5'])
+
+# Item-item cosine similarity
+item_sim = pd.DataFrame(
+    cosine_similarity(ratings.values),
+    index=ratings.index, columns=ratings.index
+)
+print('item-item similarity:')
+print(item_sim.round(2))
+
+# Recommend top-k items for a user
+def recommend(user_col, k=3):
+    u = ratings[user_col].values                # (n_items,)
+    sim = item_sim.values                       # (n_items, n_items)
+    seen = np.where(u > 0)[0]
+    scores = (sim * u).sum(axis=1)
+    # zero out already-rated items
+    scores[seen] = -np.inf
+    top = np.argsort(scores)[::-1][:k]
+    return ratings.index[top].tolist(), scores[top].round(2)
+
+for u in ratings.columns:
+    items, sc = recommend(u, k=2)
+    print(f'{u} -> {items} (scores {sc})')
+
+# New user with a few ratings (cold start)
+new_user = {'i1': 5, 'i2': 0, 'i3': 0, 'i4': 0, 'i5': 4}
+vector = pd.Series(new_user).reindex(ratings.index).values
+scores = (item_sim.values * vector).sum(axis=1)
+print('new user scores:', dict(zip(ratings.index, scores.round(2))))</code></pre>
+                    </div>
+                </article>
+
+                <!-- 39 — Permutation importance & explainability -->
+                <article class="c-card" data-card data-name="sklearn permutation importance feature explainability">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">39</span> Permutation Importance
+                        </h2>
+                        <span class="c-card__tag">scikit-learn · explainability</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.inspection import permutation_importance
+import matplotlib.pyplot as plt
+
+X, y = load_breast_cancer(return_X_y=True)
+feat_names = load_breast_cancer().feature_names
+X_tr, X_te, y_tr, y_te = train_test_split(
+    X, y, test_size=0.25, random_state=0, stratify=y
+)
+
+rf = RandomForestClassifier(n_estimators=300, random_state=0, n_jobs=-1)
+rf.fit(X_tr, y_tr)
+
+# 1) Built-in (impurity-based) — fast but biased
+imp_built = rf.feature_importances_
+
+# 2) Permutation importance on the held-out set — honest
+result = permutation_importance(
+    rf, X_te, y_te, n_repeats=30, random_state=0, n_jobs=-1
+)
+imp_perm = result.importances_mean
+imp_std  = result.importances_std
+
+# Top 10
+order = np.argsort(imp_perm)[::-1][:10]
+print('top 10 features (permutation importance):')
+for i in order:
+    print(f'  {feat_names[i]:28s} '
+          f'{imp_perm[i]:.4f} +/- {imp_std[i]:.4f}')
+
+# Plot
+fig, ax = plt.subplots(figsize=(8, 4))
+top_names = feat_names[order][::-1]
+top_vals  = imp_perm[order][::-1]
+top_errs  = imp_std[order][::-1]
+ax.barh(top_names, top_vals, xerr=top_errs, color='teal')
+ax.set_xlabel('mean accuracy drop on permutation')
+ax.set_title('Permutation importance (top 10)')
+plt.tight_layout(); plt.show()</code></pre>
+                    </div>
+                </article>
+
+                <!-- 40 — SHAP-style local explanation with surrogates -->
+                <article class="c-card" data-card data-name="sklearn lime shap explainability surrogate local">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">40</span> Surrogate Local Explanations
+                        </h2>
+                        <span class="c-card__tag">scikit-learn · explainability</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier, export_text
+
+X, y = load_breast_cancer(return_X_y=True)
+feat_names = load_breast_cancer().feature_names
+X_tr, X_te, y_tr, y_te = train_test_split(
+    X, y, test_size=0.25, random_state=0, stratify=y
+)
+
+# A black-box model
+blackbox = RandomForestClassifier(n_estimators=200, random_state=0)
+blackbox.fit(X_tr, y_tr)
+print('black-box test acc:', blackbox.score(X_te, y_te).round(3))
+
+# Pick one test instance to explain
+i = 0
+x = X_te[i:i+1]
+print('true label     :', y_te[i])
+print('black-box pred :', blackbox.predict(x)[0],
+      '(proba', blackbox.predict_proba(x)[0, 1].round(3), ')')
+
+# Local surrogate: train a small tree on perturbations of x
+def perturb(point, n=500, scale=0.05, rng=np.random.default_rng(0)):
+    nbrs = point + rng.normal(0, scale, size=(n, point.shape[1]))
+    return np.vstack([point, nbrs])
+
+X_local = perturb(x, n=2000)
+y_local = blackbox.predict(X_local)
+print('local dataset  :', X_local.shape, y_local.shape)
+
+surrogate = DecisionTreeClassifier(max_depth=3, random_state=0)
+surrogate.fit(X_local, y_local)
+print('surrogate acc on local data :',
+      surrogate.score(X_local, y_local).round(3))
+
+# Top features for THIS prediction
+local_imp = sorted(
+    zip(feat_names, surrogate.feature_importances_),
+    key=lambda t: t[1], reverse=True
+)[:5]
+print('top 5 features for this prediction:')
+for name, imp in local_imp:
+    if imp > 0:
+        print(f'  {name:28s} {imp:.3f}')</code></pre>
+                    </div>
+                </article>
+
+                <!-- 41 — Stacking & voting ensembles -->
+                <article class="c-card" data-card data-name="sklearn stacking voting ensemble blender">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">41</span> Stacking &amp; Voting Ensembles
+                        </h2>
+                        <span class="c-card__tag">scikit-learn · ensemble</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import (RandomForestClassifier,
+                              GradientBoostingClassifier,
+                              StackingClassifier, VotingClassifier)
+from sklearn.svm import SVC
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import accuracy_score
+
+X, y = load_breast_cancer(return_X_y=True)
+X_tr, X_te, y_tr, y_te = train_test_split(
+    X, y, test_size=0.25, random_state=0, stratify=y
+)
+
+# Base learners (each in its own pipeline because SVC needs scaling)
+def pipe(clf):
+    return Pipeline([('s', StandardScaler()), ('c', clf)])
+
+logreg = pipe(LogisticRegression(max_iter=1000))
+svm    = pipe(SVC(probability=True, random_state=0))
+rf     = RandomForestClassifier(n_estimators=200, random_state=0, n_jobs=-1)
+gbr    = GradientBoostingClassifier(random_state=0)
+
+# Hard voting — majority class
+vote_hard = VotingClassifier(
+    estimators=[('lr', logreg), ('svm', svm), ('rf', rf), ('gbr', gbr)],
+    voting='hard', n_jobs=-1
+).fit(X_tr, y_tr)
+print('hard voting  :', accuracy_score(y_te, vote_hard.predict(X_te)).round(3))
+
+# Soft voting — average predicted probabilities
+vote_soft = VotingClassifier(
+    estimators=[('lr', logreg), ('svm', svm), ('rf', rf), ('gbr', gbr)],
+    voting='soft', n_jobs=-1
+).fit(X_tr, y_tr)
+print('soft voting  :', accuracy_score(y_te, vote_soft.predict(X_te)).round(3))
+
+# Stacking — meta-learner over base predictions
+stack = StackingClassifier(
+    estimators=[('lr', logreg), ('svm', svm), ('rf', rf), ('gbr', gbr)],
+    final_estimator=LogisticRegression(max_iter=1000),
+    cv=5, n_jobs=-1
+).fit(X_tr, y_tr)
+print('stacking     :', accuracy_score(y_te, stack.predict(X_te)).round(3))
+
+# CV stability check
+for name, est in [('hard', vote_hard), ('soft', vote_soft), ('stack', stack)]:
+    cv = cross_val_score(est, X, y, cv=5, scoring='accuracy', n_jobs=-1)
+    print(f'{name:5s} CV acc: {cv.mean():.3f} +/- {cv.std():.3f}')</code></pre>
+                    </div>
+                </article>
+
+                <!-- 42 — Robust scaling & outlier-resistant regression -->
+                <article class="c-card" data-card data-name="sklearn robust scaler ransac huber outlier resistant">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">42</span> Robust Scaling &amp; Regression
+                        </h2>
+                        <span class="c-card__tag">scikit-learn · robust</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import (LinearRegression, HuberRegressor,
+                                  RANSACRegressor)
+from sklearn.preprocessing import StandardScaler, RobustScaler
+from sklearn.metrics import mean_absolute_error
+from sklearn.pipeline import Pipeline
+
+rng = np.random.default_rng(0)
+X = np.linspace(0, 10, 200).reshape(-1, 1)
+y = 2 * X.squeeze() + 1 + rng.normal(0, 1, 200)
+# Add 5% extreme outliers
+out_idx = rng.choice(200, size=10, replace=False)
+y[out_idx] += rng.normal(0, 30, 10)
+
+# 1) Standard scaling + plain LinearRegression — sensitive
+pipe_std = Pipeline([
+    ('s', StandardScaler()),
+    ('m', LinearRegression())
+])
+pipe_std.fit(X, y)
+print('OLS  MAE:', mean_absolute_error(y, pipe_std.predict(X)).round(3))
+
+# 2) Robust scaling (median / IQR) + HuberRegressor
+pipe_h = Pipeline([
+    ('s', RobustScaler()),
+    ('m', HuberRegressor(epsilon=1.5, max_iter=200))
+])
+pipe_h.fit(X, y)
+print('Huber MAE:', mean_absolute_error(y, pipe_h.predict(X)).round(3))
+
+# 3) RANSAC — fits only the inliers
+ransac = RANSACRegressor(
+    LinearRegression(),
+    min_samples=0.5, residual_threshold=None,
+    random_state=0
+).fit(X, y)
+print('RANSAC MAE :', mean_absolute_error(y, ransac.predict(X)).round(3))
+print('RANSAC inliers:', ransac.inlier_mask_.sum(), '/', len(y))
+
+# Visualize
+order = X[:, 0].argsort()
+fig, ax = plt.subplots(figsize=(7, 4))
+ax.scatter(X, y, color='gray', alpha=0.4, label='data')
+ax.plot(X[order], pipe_std.predict(X)[order], label='OLS')
+ax.plot(X[order], pipe_h.predict(X)[order],   label='Huber')
+ax.plot(X[order], ransac.predict(X)[order],   label='RANSAC')
+ax.legend(); ax.set_title('Robust regression comparison')
+plt.show()</code></pre>
+                    </div>
+                </article>
+
+                <!-- 43 — Working with text columns (string pipeline) -->
+                <article class="c-card" data-card data-name="sklearn text string regex cleaning pipeline">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">43</span> String Cleaning in a Pipeline
+                        </h2>
+                        <span class="c-card__tag">scikit-learn · text · nlp</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import re
+import pandas as pd
+import numpy as np
+from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.pipeline import Pipeline
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+# Custom text cleaner
+class TextCleaner(BaseEstimator, TransformerMixin):
+    def __init__(self, lower=True, strip_html=True, min_len=2):
+        self.lower = lower
+        self.strip_html = strip_html
+        self.min_len = min_len
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        out = []
+        for s in X:
+            if not isinstance(s, str):
+                s = '' if pd.isna(s) else str(s)
+            if self.lower:
+                s = s.lower()
+            if self.strip_html:
+                s = re.sub(r'<[^>]+>', ' ', s)
+            s = re.sub(r'http\S+|www\.\S+', ' ', s)      # URLs
+            s = re.sub(r'[^a-z0-9\s]+', ' ', s)         # punctuation
+            s = re.sub(r'\s+', ' ', s).strip()
+            tokens = [t for t in s.split() if len(t) >= self.min_len]
+            out.append(' '.join(tokens))
+        return out
+
+# Toy data
+texts = [
+    '<p>Free iPhone! Click http://spam.example now</p>',
+    'Loved the new movie, great acting',
+    'WIN $$$ 100% guaranteed, click www.scam.io',
+    'The book was informative and well-written',
+    'Buy now limited offer http://deal.x',
+    'Excellent customer service, will return'
+]
+labels = [1, 0, 1, 0, 1, 0]   # 1 = spam-ish, 0 = legit
+
+X_tr, X_te, y_tr, y_te = train_test_split(
+    texts, labels, test_size=0.34, random_state=0, stratify=labels
+)
+
+pipe = Pipeline([
+    ('clean', TextCleaner()),
+    ('tfidf', TfidfVectorizer(ngram_range=(1, 2),
+                              stop_words='english',
+                              min_df=1, max_df=1.0)),
+    ('clf', LogisticRegression(max_iter=1000))
+])
+pipe.fit(X_tr, y_tr)
+print('acc:', accuracy_score(y_te, pipe.predict(X_te)).round(3))
+print('cleaned samples:')
+for c in pipe['clean'].transform(X_te):
+    print(' -', c)</code></pre>
+                    </div>
+                </article>
+
+                <!-- 44 — Calibration of probabilities -->
+                <article class="c-card" data-card data-name="sklearn calibration probability sigmoid isotonic reliability">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">44</span> Probability Calibration
+                        </h2>
+                        <span class="c-card__tag">scikit-learn · calibration</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.calibration import (CalibratedClassifierCV,
+                                 calibration_curve)
+from sklearn.metrics import brier_score_loss
+
+X, y = load_breast_cancer(return_X_y=True)
+X_tr, X_te, y_tr, y_te = train_test_split(
+    X, y, test_size=0.25, random_state=0, stratify=y
+)
+
+# Uncalibrated RF (probabilities tend to be skewed)
+rf = RandomForestClassifier(n_estimators=300, random_state=0, n_jobs=-1)
+rf.fit(X_tr, y_tr)
+proba_rf = rf.predict_proba(X_te)[:, 1]
+print('RF    Brier:', brier_score_loss(y_te, proba_rf).round(4))
+
+# Calibrated with sigmoid (Platt scaling) and isotonic
+cal_sig = CalibratedClassifierCV(rf, method='sigmoid', cv=5)
+cal_sig.fit(X_tr, y_tr)
+proba_sig = cal_sig.predict_proba(X_te)[:, 1]
+print('Sigmoid   Brier:', brier_score_loss(y_te, proba_sig).round(4))
+
+cal_iso = CalibratedClassifierCV(rf, method='isotonic', cv=5)
+cal_iso.fit(X_tr, y_tr)
+proba_iso = cal_iso.predict_proba(X_te)[:, 1]
+print('Isotonic  Brier:', brier_score_loss(y_te, proba_iso).round(4))
+
+# Reliability (calibration) plot
+fig, ax = plt.subplots(figsize=(6, 5))
+for name, p in [('RF',      proba_rf),
+                ('sigmoid', proba_sig),
+                ('isotonic',proba_iso)]:
+    frac, mean = calibration_curve(y_te, p, n_bins=10, strategy='quantile')
+    ax.plot(mean, frac, marker='o', label=name)
+ax.plot([0, 1], [0, 1], 'k--', label='perfect')
+ax.set_xlabel('predicted prob'); ax.set_ylabel('observed freq')
+ax.set_title('Reliability diagram'); ax.legend()
+plt.tight_layout(); plt.show()</code></pre>
+                    </div>
+                </article>
+
+                <!-- 45 — Data validation with Pandera-lite / assertions -->
+                <article class="c-card" data-card data-name="pandas data validation assertions schema production">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">45</span> Data Validation Patterns
+                        </h2>
+                        <span class="c-card__tag">Pandas · production</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import pandas as pd
+import numpy as np
+
+# Lightweight schema checks — no extra deps
+def validate_orders(df: pd.DataFrame) -> None:
+    errors = []
+
+    # Column presence
+    required = {'order_id', 'user_id', 'amount', 'created_at'}
+    missing = required - set(df.columns)
+    if missing:
+        raise ValueError(f'missing columns: {missing}')
+
+    # Dtypes
+    if not pd.api.types.is_integer_dtype(df['user_id']):
+        errors.append('user_id must be integer')
+    if not pd.api.types.is_numeric_dtype(df['amount']):
+        errors.append('amount must be numeric')
+
+    # Range constraints
+    if (df['amount'] <= 0).any():
+        errors.append(f'amount must be > 0 '
+                      f'(found {(df["amount"] <= 0).sum()} bad rows)')
+
+    # Uniqueness
+    if df['order_id'].duplicated().any():
+        errors.append('order_id must be unique')
+
+    # Not-null
+    nulls = df[list(required)].isna().sum()
+    if nulls.any():
+        errors.append(f'nulls found: {nulls[nulls > 0].to_dict()}')
+
+    if errors:
+        raise ValueError('validation failed:\n  - ' + '\n  - '.join(errors))
+
+# Demo: valid frame passes
+good = pd.DataFrame({
+    'order_id':   [1, 2, 3],
+    'user_id':    [10, 20, 30],
+    'amount':     [9.99, 49.50, 120.00],
+    'created_at': pd.to_datetime(['2025-01-01', '2025-01-02', '2025-01-03'])
+})
+validate_orders(good)
+print('good frame passed')
+
+# Demo: bad frame fails with a clear message
+bad = good.copy()
+bad.loc[0, 'amount'] = -5
+bad.loc[1, 'user_id'] = None
+try:
+    validate_orders(bad)
+except ValueError as e:
+    print('caught:', e)</code></pre>
+                    </div>
+                </article>
+
+                <!-- 46 — Memoization & caching heavy computations -->
+                <article class="c-card" data-card data-name="joblib caching parallel memoize expensive compute">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">46</span> Caching &amp; Parallelism
+                        </h2>
+                        <span class="c-card__tag">joblib · performance</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import time
+import numpy as np
+from joblib import Memory, Parallel, delayed
+
+# 1) Disk cache — avoid recomputing expensive results
+location = './cache_dir'
+memory = Memory(location, verbose=0)
+
+@memory.cache
+def heavy_compute(x):
+    """Pretend this is slow."""
+    time.sleep(0.5)
+    return x ** 2
+
+t0 = time.perf_counter(); r1 = heavy_compute(5); t1 = time.perf_counter()
+t0 = time.perf_counter(); r2 = heavy_compute(5); t2 = time.perf_counter()
+print(f'first call : {(t1-t0)*1000:.0f} ms  (cached after)')
+print(f'second call: {(t2-t0)*1000:.0f} ms  (no recompute)')
+memory.clear()    # clean up
+
+# 2) Parallel loop over independent tasks
+def slow_square(x):
+    time.sleep(0.1)
+    return x * x
+
+inputs = list(range(20))
+
+t0 = time.perf_counter()
+seq = [slow_square(x) for x in inputs]
+t_seq = time.perf_counter() - t0
+
+t0 = time.perf_counter()
+par = Parallel(n_jobs=4)(
+    delayed(slow_square)(x) for x in inputs
+)
+t_par = time.perf_counter() - t0
+
+print(f'sequential : {t_seq:.2f}s')
+print(f'parallel(4): {t_par:.2f}s   speedup {t_seq/t_par:.1f}x')
+print('same results:', seq == par)
+
+# 3) Parallel grid search
+from sklearn.model_selection import GridSearchCV
+from sklearn.linear_model import Ridge
+from sklearn.datasets import make_regression
+X, y = make_regression(n_samples=2000, n_features=50, random_state=0)
+gs = GridSearchCV(Ridge(), {'alpha':[0.1, 1, 10, 100]},
+                  n_jobs=4, cv=5)
+gs.fit(X, y)
+print('best alpha:', gs.best_params_, 'R^2:', gs.best_score_.round(3))</code></pre>
+                    </div>
+                </article>
+
+                <!-- 47 — EDA one-pager -->
+                <article class="c-card" data-card data-name="pandas eda exploratory data analysis describe profile">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">47</span> EDA One-Pager
+                        </h2>
+                        <span class="c-card__tag">Pandas · eda</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+# A quick "show me everything" report
+def eda_report(df: pd.DataFrame) -> pd.DataFrame:
+    rows = []
+    for col in df.columns:
+        s = df[col]
+        rows.append({
+            'column':  col,
+            'dtype':   str(s.dtype),
+            'n':       s.notna().sum(),
+            'na':      s.isna().sum(),
+            'na_pct':  (s.isna().mean() * 100).round(2),
+            'unique':  s.nunique(dropna=True),
+            'min':     s.min() if pd.api.types.is_numeric_dtype(s) else None,
+            'max':     s.max() if pd.api.types.is_numeric_dtype(s) else None,
+            'mean':    s.mean() if pd.api.types.is_numeric_dtype(s) else None,
+            'std':     s.std()  if pd.api.types.is_numeric_dtype(s) else None,
+            'top':     (s.mode().iat[0] if not s.mode().empty else None),
+        })
+    return pd.DataFrame(rows)
+
+df = pd.DataFrame({
+    'age':      [22, 35, None, 41, 27, 49, 33, 60, 28, 31],
+    'salary':   [40, 80, 60, 95, 50, 70, 55, 90, 45, 65],
+    'dept':     ['eng','mkt','eng','mkt','hr','eng','hr','mkt','eng','hr'],
+    'tenure':   [1, 5, 2, 8, 1, 7, 3, 9, 2, 4]
+})
+print(eda_report(df).to_string(index=False))
+
+# Correlation heatmap (numeric columns only)
+nums = df.select_dtypes(include='number')
+fig, ax = plt.subplots(figsize=(5, 4))
+im = ax.imshow(nums.corr(), cmap='coolwarm', vmin=-1, vmax=1)
+ax.set_xticks(range(len(nums.columns))); ax.set_xticklabels(nums.columns, rotation=45)
+ax.set_yticks(range(len(nums.columns))); ax.set_yticklabels(nums.columns)
+for i in range(len(nums.columns)):
+    for j in range(len(nums.columns)):
+        ax.text(j, i, f'{nums.corr().iloc[i, j]:.2f}',
+                ha='center', va='center', color='white')
+ax.set_title('Correlation matrix')
+fig.colorbar(im, ax=ax, shrink=0.8)
+plt.tight_layout(); plt.show()</code></pre>
+                    </div>
+                </article>
+
+                <!-- 48 — Image data: flatten + PCA + classifier -->
+                <article class="c-card" data-card data-name="sklearn image classification digits pca flatten pixel">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">48</span> Image Data: Digits Classifier
+                        </h2>
+                        <span class="c-card__tag">scikit-learn · images</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import accuracy_score, confusion_matrix
+
+digits = load_digits()
+X, y = digits.data, digits.target          # X is (n, 64)
+X_tr, X_te, y_tr, y_te = train_test_split(
+    X, y, test_size=0.25, random_state=0, stratify=y
+)
+
+# Pipeline: scale -> PCA (40 comps) -> logistic regression
+pipe = Pipeline([
+    ('scale', StandardScaler()),
+    ('pca',   PCA(n_components=40, random_state=0)),
+    ('clf',   LogisticRegression(max_iter=2000))
+])
+pipe.fit(X_tr, y_tr)
+y_pred = pipe.predict(X_te)
+print('test acc:', accuracy_score(y_te, y_pred).round(3))
+print('confusion matrix:')
+print(confusion_matrix(y_te, y_pred))
+
+# Visualize the first 10 test predictions
+fig, axes = plt.subplots(2, 5, figsize=(10, 4))
+for ax, img, true, pred in zip(axes.ravel(), X_te[:10], y_te[:10], y_pred[:10]):
+    ax.imshow(img.reshape(8, 8), cmap='gray_r')
+    ax.set_title(f'true {true} / pred {pred}',
+                 color=('limegreen' if true == pred else 'red'))
+    ax.axis('off')
+fig.suptitle('First 10 test predictions'); plt.tight_layout()
+plt.show()
+
+# PCA components are themselves 8x8 — visualize a few
+fig, axes = plt.subplots(2, 5, figsize=(10, 4))
+pca = pipe.named_steps['pca']
+for ax, comp in zip(axes.ravel(), pca.components_[:10]):
+    ax.imshow(comp.reshape(8, 8), cmap='RdBu_r')
+    ax.axis('off')
+fig.suptitle('Top 10 PCA components (eigen-digits)')
+plt.tight_layout(); plt.show()</code></pre>
+                    </div>
+                </article>
+
+                <!-- 49 — Mini project: churn-style end-to-end -->
+                <article class="c-card" data-card data-name="sklearn end to end churn pipeline classification">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">49</span> Mini-Project: Churn Pipeline
+                        </h2>
+                        <span class="c-card__tag">scikit-learn · end-to-end</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import numpy as np
+import pandas as pd
+from sklearn.model_selection import (train_test_split,
+                                     StratifiedKFold, cross_val_score)
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.metrics import (roc_auc_score, classification_report,
+                             confusion_matrix)
+
+# 1) Synthesize a churn dataset
+rng = np.random.default_rng(0)
+N = 5000
+df = pd.DataFrame({
+    'tenure_mo': rng.integers(1, 60, N),
+    'monthly':   rng.normal(65, 20, N).round(2),
+    'support_calls': rng.integers(0, 8, N),
+    'plan':      rng.choice(['basic','plus','pro'], N, p=[.5,.3,.2]),
+    'churn':     rng.choice([0,1], N, p=[.78,.22])
+})
+# Make churn correlated with support_calls & plan
+df.loc[df['support_calls'] >= 5, 'churn'] = (
+    rng.choice([0,1], size=(df['support_calls'] >= 5).sum(), p=[.3,.7])
+)
+df.loc[df['plan'] == 'basic', 'churn'] = (
+    rng.choice([0,1], size=(df['plan'] == 'basic').sum(), p=[.6,.4])
+)
+
+# 2) Split
+X = df.drop('churn', axis=1); y = df['churn']
+X_tr, X_te, y_tr, y_te = train_test_split(
+    X, y, test_size=0.2, random_state=0, stratify=y
+)
+
+# 3) Pipeline
+num = ['tenure_mo', 'monthly', 'support_calls']
+cat = ['plan']
+preprocess = ColumnTransformer([
+    ('num', StandardScaler(), num),
+    ('cat', OneHotEncoder(), cat)
+])
+pipe = Pipeline([
+    ('prep', preprocess),
+    ('clf',  GradientBoostingClassifier(
+        n_estimators=300, max_depth=3,
+        learning_rate=0.05, random_state=0))
+])
+
+# 4) CV
+cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=0)
+cv_auc = cross_val_score(pipe, X_tr, y_tr, cv=cv,
+                         scoring='roc_auc', n_jobs=-1)
+print(f'CV ROC-AUC: {cv_auc.mean():.3f} +/- {cv_auc.std():.3f}')
+
+# 5) Final fit & test
+pipe.fit(X_tr, y_tr)
+proba = pipe.predict_proba(X_te)[:, 1]
+pred  = (proba >= 0.5).astype(int)
+print('test ROC-AUC:', roc_auc_score(y_te, proba).round(3))
+print(confusion_matrix(y_te, pred))
+print(classification_report(y_te, pred))
+
+# 6) Save the whole pipeline
+from joblib import dump
+dump(pipe, 'churn_pipeline.joblib')</code></pre>
+                    </div>
+                </article>
+
+                <!-- 50 — Reading & writing efficiently -->
+                <article class="c-card" data-card data-name="pandas parquet feather csv chunks read write performance">
+                    <header class="c-card__header">
+                        <h2 class="c-card__title">
+                            <span class="c-card__num">50</span> Fast I/O: Parquet, Feather, Chunks
+                        </h2>
+                        <span class="c-card__tag">Pandas · performance</span>
+                    </header>
+                    <div class="c-card__body">
+<pre class="c-card__code"><code>import pandas as pd
+import numpy as np
+import time, os
+
+# Build a sizeable frame
+N = 1_000_000
+df = pd.DataFrame({
+    'id':     np.arange(N),
+    'value':  np.random.default_rng(0).normal(0, 1, N),
+    'bucket': np.random.default_rng(1).choice(list('abcde'), N),
+    'flag':   np.random.default_rng(2).integers(0, 2, N)
+})
+print('frame:', df.shape, df.memory_usage(deep=True).sum() / 1e6, 'MB')
+
+def bench(label, fn):
+    t0 = time.perf_counter(); fn(); dt = time.perf_counter() - t0
+    print(f'{label:35s} {dt*1000:7.1f} ms')
+
+# 1) CSV round-trip
+csv_path = 'big.csv'
+bench('csv write', lambda: df.to_csv(csv_path, index=False))
+bench('csv read ', lambda: pd.read_csv(csv_path))
+print('  csv size :', os.path.getsize(csv_path) / 1e6, 'MB')
+os.remove(csv_path)
+
+# 2) Parquet (columnar, compressed) — best for analytics
+parq = 'big.parquet'
+bench('parquet write', lambda: df.to_parquet(parq, index=False))
+bench('parquet read ', lambda: pd.read_parquet(parq))
+print('  parq size :', os.path.getsize(parq) / 1e6, 'MB')
+os.remove(parq)
+
+# 3) Feather (fast binary, cross-language)
+fea = 'big.feather'
+bench('feather write', lambda: df.to_feather(fea))
+bench('feather read ', lambda: pd.read_feather(fea))
+print('  fea size  :', os.path.getsize(fea) / 1e6, 'MB')
+os.remove(fea)
+
+# 4) Read in chunks (when the file is too big for RAM)
+big = pd.concat([df] * 5, ignore_index=True)   # 5M rows
+big.to_csv('huge.csv', index=False)
+total = 0
+for chunk in pd.read_csv('huge.csv', chunksize=200_000):
+    total += (chunk['value'] > 0).sum()
+print('chunked sum :', total)
+os.remove('huge.csv')
+
+# 5) Pickle — fastest, but Python-only
+pk = 'big.pkl'
+bench('pickle write', lambda: df.to_pickle(pk))
+bench('pickle read ', lambda: pd.read_pickle(pk))
+os.remove(pk)</code></pre>
+                    </div>
+                </article>
+
+            </section>
+        </main>
+
+        <!-- =====================================================
+             Footer
+             ===================================================== -->
+        <footer class="c-footer" role="contentinfo">
+            <p>// 50 starter cases · numpy · pandas · sklearn · matplotlib · neon-noir · vanilla html/css/dom</p>
+        </footer>
+    </div>
+
+    <script>
+        /* =========================================================
+           DOM API: live filter + keyboard shortcuts
+           ========================================================= */
+        (function () {
+            'use strict';
+
+            var input = document.querySelector('[data-search-input]');
+            var grid  = document.querySelector('[data-grid]');
+            var cards = Array.prototype.slice.call(
+                document.querySelectorAll('[data-card]')
+            );
+            var empty = document.querySelector('[data-empty]');
+
+            if (!input || !grid || !empty) return;
+
+            function applyFilter(rawQuery) {
+                var q = (rawQuery || '').trim().toLowerCase();
+                var visible = 0;
+
+                cards.forEach(function (card) {
+                    var name = (card.getAttribute('data-name') || '').toLowerCase();
+                    var match = q === '' || name.indexOf(q) !== -1;
+                    card.classList.toggle('is-hidden', !match);
+                    if (match) visible++;
+                });
+
+                empty.classList.toggle('is-visible', visible === 0);
+            }
+
+            // Live filter on input
+            input.addEventListener('input', function (e) {
+                applyFilter(e.target.value);
+            });
+
+            // Keyboard: "/" focuses search, "Esc" clears & blurs
+            document.addEventListener('keydown', function (e) {
+                var isTyping = e.target.matches('input, textarea, [contenteditable]');
+
+                if (e.key === '/' && !isTyping) {
+                    e.preventDefault();
+                    input.focus();
+                    input.select();
+                }
+
+                if (e.key === 'Escape' && document.activeElement === input) {
+                    input.value = '';
+                    applyFilter('');
+                    input.blur();
+                }
+            });
+        })();
+    </script>
+</body>
+</html>

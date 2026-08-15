@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Neon-Noir Sieve of Eratosthenes — animated DOM + Canvas visualization.">
+<title>NEON SIEVE // Eratosthenes</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* =========================================================
+   NEON SIEVE — Sieve of Eratosthenes visualization
+   neon.md directives: BEM, CSS vars, mobile-first, glassmorphism,
+   reduced-motion guard.
+   ========================================================= */
+
+:root {
+    --bg-dark: #050505;
+    --bg-secondary: #0a0b10;
+    --bg-card: rgba(255, 255, 255, 0.03);
+
+    --neon-primary: #00f3ff;
+    --neon-secondary: #ff00ff;
+    --neon-success: #1cc88a;
+    --neon-warning: #f6c23e;
+    --neon-danger: #e74a3b;
+    --neon-purple: #a855f7;
+
+    --glow-primary: 0 0 5px rgba(0, 243, 255, 0.6), 0 0 20px rgba(0, 243, 255, 0.2);
+    --glow-secondary: 0 0 5px rgba(255, 0, 255, 0.6), 0 0 20px rgba(255, 0, 255, 0.2);
+    --glow-success: 0 0 5px rgba(28, 200, 138, 0.6), 0 0 20px rgba(28, 200, 138, 0.2);
+    --glow-warning: 0 0 5px rgba(246, 194, 62, 0.6), 0 0 20px rgba(246, 194, 62, 0.2);
+    --glow-danger: 0 0 5px rgba(231, 74, 59, 0.6), 0 0 20px rgba(231, 74, 59, 0.2);
+
+    --font-heading: 'Rajdhani', system-ui, sans-serif;
+    --font-mono: 'Fira Code', monospace;
+    --font-body: system-ui, -apple-system, sans-serif;
+
+    --text-xs: clamp(0.7rem, 0.65rem + 0.25vw, 0.75rem);
+    --text-sm: clamp(0.8rem, 0.75rem + 0.25vw, 0.875rem);
+    --text-base: clamp(0.9rem, 0.85rem + 0.25vw, 1rem);
+    --text-lg: clamp(1.1rem, 1rem + 0.5vw, 1.25rem);
+    --text-xl: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
+    --text-2xl: clamp(1.5rem, 1.35rem + 0.75vw, 2rem);
+
+    --tracking-wide: 0.05em;
+    --tracking-wider: 0.1em;
+
+    --z-sticky: 100;
+    --z-overlay: 500;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg-dark);
+    color: var(--neon-primary);
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    user-select: none;
+}
+
+body {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    min-height: 100vh;
+}
+
+.u-skip-link {
+    position: absolute;
+    top: -100px;
+    left: 0;
+    padding: 0.5rem 1rem;
+    background: var(--bg-secondary);
+    color: var(--neon-primary);
+    text-decoration: none;
+    z-index: 1000;
+    border: 1px solid var(--neon-primary);
+}
+.u-skip-link:focus { top: 0; }
+
+/* =========================================================
+   TOPBAR
+   ========================================================= */
+
+.c-topbar {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-sticky);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    background: rgba(10, 11, 16, 0.7);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+}
+
+.c-topbar__brand {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    letter-spacing: var(--tracking-wider);
+    color: var(--neon-primary);
+    text-shadow: var(--glow-primary);
+    font-size: var(--text-lg);
+}
+.c-topbar__brand--accent { color: var(--neon-secondary); text-shadow: var(--glow-secondary); }
+
+.c-stats {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.c-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-family: var(--font-mono);
+}
+.c-stat__label {
+    font-size: var(--text-xs);
+    color: var(--neon-primary);
+    opacity: 0.6;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+}
+.c-stat__value {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: var(--neon-primary);
+    text-shadow: var(--glow-primary);
+    line-height: 1;
+}
+.c-stat--secondary .c-stat__value { color: var(--neon-secondary); text-shadow: var(--glow-secondary); }
+.c-stat--success .c-stat__value { color: var(--neon-success); text-shadow: var(--glow-success); }
+.c-stat--warning .c-stat__value { color: var(--neon-warning); text-shadow: var(--glow-warning); }
+
+/* =========================================================
+   STAGE — split into two visualizations
+   ========================================================= */
+
+.l-stage {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+    overflow: hidden;
+}
+
+@media (min-width: 900px) {
+    .l-stage {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr;
+    }
+}
+
+.c-panel {
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 30% 30%, rgba(0, 243, 255, 0.05) 0%, transparent 60%),
+        var(--bg-dark);
+    border: 1px solid rgba(0, 243, 255, 0.12);
+}
+
+.c-panel + .c-panel { border-top: 1px solid rgba(0, 243, 255, 0.12); }
+@media (min-width: 900px) {
+    .c-panel + .c-panel { border-top: none; border-left: 1px solid rgba(0, 243, 255, 0.12); }
+}
+
+.c-panel__header {
+    position: absolute;
+    top: 8px;
+    left: 12px;
+    z-index: 5;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: var(--text-base);
+    letter-spacing: var(--tracking-wider);
+    color: var(--neon-primary);
+    text-shadow: var(--glow-primary);
+    text-transform: uppercase;
+}
+
+.c-panel__hint {
+    position: absolute;
+    bottom: 8px;
+    right: 12px;
+    z-index: 5;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--neon-primary);
+    opacity: 0.5;
+    letter-spacing: var(--tracking-wide);
+}
+
+.c-panel__canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* =========================================================
+   CONTROLS
+   ========================================================= */
+
+.l-controls {
+    position: sticky;
+    bottom: 0;
+    z-index: var(--z-sticky);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 1rem;
+    background: rgba(10, 11, 16, 0.85);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(0, 243, 255, 0.2);
+}
+
+.c-controls__group {
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+}
+
+.c-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1rem;
+    min-height: 36px;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: var(--text-sm);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--neon-primary);
+    border: 2px solid var(--neon-primary);
+    border-radius: 0;
+    cursor: pointer;
+    box-shadow: var(--glow-primary);
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s;
+}
+.c-btn:hover { transform: translateY(-2px); background: rgba(0, 243, 255, 0.1); }
+.c-btn:active { transform: scale(0.97); }
+.c-btn:focus-visible { outline: 2px solid var(--neon-secondary); outline-offset: 3px; }
+.c-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.c-btn--secondary {
+    color: var(--neon-secondary);
+    border-color: var(--neon-secondary);
+    box-shadow: var(--glow-secondary);
+}
+.c-btn--secondary:hover { background: rgba(255, 0, 255, 0.1); }
+.c-btn--warning {
+    color: var(--neon-warning);
+    border-color: var(--neon-warning);
+    box-shadow: var(--glow-warning);
+}
+
+.c-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 160px;
+    height: 4px;
+    background: rgba(0, 243, 255, 0.2);
+    border-radius: 2px;
+    outline: none;
+}
+.c-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--neon-primary);
+    box-shadow: var(--glow-primary);
+    cursor: pointer;
+}
+.c-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--neon-primary);
+    box-shadow: var(--glow-primary);
+    cursor: pointer;
+    border: none;
+}
+
+.c-slider__label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--neon-primary);
+    opacity: 0.7;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+}
+
+.c-n-display {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--neon-secondary);
+    text-shadow: var(--glow-secondary);
+    letter-spacing: var(--tracking-wide);
+    margin-left: 0.5rem;
+}
+
+/* =========================================================
+   FOOTER + overlays
+   ========================================================= */
+
+.c-footer {
+    padding: 0.5rem 1rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--neon-primary);
+    opacity: 0.5;
+    text-align: center;
+    border-top: 1px solid rgba(0, 243, 255, 0.15);
+    grid-column: 1 / -1;
+}
+
+.c-overlay {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    z-index: var(--z-overlay);
+    background: rgba(5, 5, 5, 0.85);
+    backdrop-filter: blur(6px);
+}
+
+.c-overlay__panel {
+    background: var(--bg-card);
+    border: 1px solid rgba(0, 243, 255, 0.3);
+    box-shadow: var(--glow-primary), inset 0 0 40px rgba(0,243,255,0.05);
+    padding: 2rem 2.5rem;
+    text-align: center;
+    max-width: 460px;
+    backdrop-filter: blur(10px);
+}
+
+.c-overlay__title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: var(--text-2xl);
+    letter-spacing: var(--tracking-wider);
+    color: var(--neon-primary);
+    text-shadow: var(--glow-primary);
+    margin-bottom: 0.5rem;
+}
+.c-overlay__title--accent { color: var(--neon-secondary); text-shadow: var(--glow-secondary); }
+
+.c-overlay__sub {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--neon-primary);
+    opacity: 0.7;
+    margin-bottom: 1.2rem;
+}
+
+.c-overlay__list {
+    list-style: none;
+    text-align: left;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    margin-bottom: 1.5rem;
+}
+.c-overlay__list li {
+    padding: 0.3rem 0;
+    border-bottom: 1px dashed rgba(0,243,255,0.15);
+}
+.c-overlay__list li::before {
+    content: "▸ ";
+    color: var(--neon-secondary);
+    text-shadow: var(--glow-secondary);
+}
+
+.u-hidden { display: none !important; }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .c-btn { transition: none; }
+}
+</style>
+</head>
+
+<body>
+
+<a href="#stage" class="u-skip-link">Skip to visualization</a>
+
+<header class="c-topbar" role="banner">
+    <h1 class="c-topbar__brand">
+        NEON <span class="c-topbar__brand--accent">SIEVE</span> //
+    </h1>
+    <div class="c-stats" aria-live="polite">
+        <div class="c-stat c-stat--warning">
+            <span class="c-stat__label">Current i</span>
+            <span class="c-stat__value" id="stat-i">—</span>
+        </div>
+        <div class="c-stat c-stat--success">
+            <span class="c-stat__label">Primes</span>
+            <span class="c-stat__value" id="stat-primes">0</span>
+        </div>
+        <div class="c-stat c-stat--secondary">
+            <span class="c-stat__label">Crossed</span>
+            <span class="c-stat__value" id="stat-crossed">0</span>
+        </div>
+        <div class="c-stat">
+            <span class="c-stat__label">Progress</span>
+            <span class="c-stat__value" id="stat-progress">0%</span>
+        </div>
+    </div>
+</header>
+
+<main id="stage" class="l-stage" role="main">
+
+    <section class="c-panel" aria-labelledby="panel-bar-title">
+        <h2 class="c-panel__header" id="panel-bar-title">// bar chart — primality</h2>
+        <canvas class="c-panel__canvas" id="canvas-bar"></canvas>
+        <span class="c-panel__hint">height ∝ √n · cyan = prime · red = crossed out</span>
+    </section>
+
+    <section class="c-panel" aria-labelledby="panel-graph-title">
+        <h2 class="c-panel__header" id="panel-graph-title">// graph — multiples</h2>
+        <canvas class="c-panel__canvas" id="canvas-graph"></canvas>
+        <span class="c-panel__hint">edge: i ↔ multiple(i) · composites dissolve</span>
+    </section>
+</main>
+
+<nav class="l-controls" aria-label="Sieve controls">
+    <div class="c-controls__group">
+        <button class="c-btn" id="btn-play" type="button">▶ Play</button>
+        <button class="c-btn c-btn--secondary" id="btn-step" type="button">Step</button>
+        <button class="c-btn c-btn--warning" id="btn-reset" type="button">Reset</button>
+    </div>
+    <div class="c-controls__group">
+        <label class="c-slider__label" for="speed">Speed</label>
+        <input class="c-slider" type="range" id="speed" min="1" max="20" value="6" aria-label="Animation speed">
+        <span class="c-slider__label" id="speed-readout">1.0×</span>
+    </div>
+    <div class="c-controls__group">
+        <label class="c-slider__label" for="n-input">N</label>
+        <input class="c-slider" type="range" id="n-input" min="20" max="120" value="60" aria-label="Upper bound N">
+        <span class="c-n-display" id="n-readout">N = 60</span>
+    </div>
+</nav>
+
+<footer class="c-footer">
+    Sieve of Eratosthenes · N = 2..N · vanilla DOM + Canvas · step / play / speed
+</footer>
+
+<!-- Start overlay -->
+<div class="c-overlay" id="overlay-start" role="dialog" aria-labelledby="start-title">
+    <div class="c-overlay__panel">
+        <h2 class="c-overlay__title" id="start-title">NEON <span class="c-overlay__title--accent">SIEVE</span></h2>
+        <p class="c-overlay__sub">// Eratosthenes visualization //</p>
+        <ul class="c-overlay__list">
+            <li>Algorithm: cross out every multiple of i starting at i²</li>
+            <li>Left panel: bar chart, height = √n, color by state</li>
+            <li>Right panel: graph, i ↔ multiples(i), composites fade out</li>
+            <li>Controls: Play / Step (one i) / Reset / Speed / N</li>
+        </ul>
+        <button class="c-btn" id="btn-start" type="button">Start</button>
+    </div>
+</div>
+
+<script>
+'use strict';
+
+/* =========================================================
+   NEON SIEVE — Sieve of Eratosthenes
+   Two coordinated Canvas visualizations:
+     1. Bar chart  (left): one bar per integer 2..N
+     2. Graph      (right): node per integer, edge i ↔ multiples(i)
+   ========================================================= */
+
+(function () {
+
+    /* ---------- DOM Cache ---------- */
+    const DOM = {
+        barCanvas:   document.getElementById('canvas-bar'),
+        graphCanvas: document.getElementById('canvas-graph'),
+        barPanel:    document.getElementById('canvas-bar').parentElement,
+        graphPanel:  document.getElementById('canvas-graph').parentElement,
+        statI:       document.getElementById('stat-i'),
+        statPrimes:  document.getElementById('stat-primes'),
+        statCrossed: document.getElementById('stat-crossed'),
+        statProgress:document.getElementById('stat-progress'),
+        btnPlay:     document.getElementById('btn-play'),
+        btnStep:     document.getElementById('btn-step'),
+        btnReset:    document.getElementById('btn-reset'),
+        btnStart:    document.getElementById('btn-start'),
+        speed:       document.getElementById('speed'),
+        speedRO:     document.getElementById('speed-readout'),
+        nInput:      document.getElementById('n-input'),
+        nReadout:    document.getElementById('n-readout'),
+        overlayStart:document.getElementById('overlay-start'),
+    };
+
+    /* ---------- Canvases + DPR scaling ---------- */
+    const barCtx   = DOM.barCanvas.getContext('2d');
+    const graphCtx = DOM.graphCanvas.getContext('2d');
+
+    function fitCanvas(canvas) {
+        const dpr = window.devicePixelRatio || 1;
+        const w = canvas.clientWidth;
+        const h = canvas.clientHeight;
+        if (canvas.width !== Math.floor(w * dpr) || canvas.height !== Math.floor(h * dpr)) {
+            canvas.width  = Math.floor(w * dpr);
+            canvas.height = Math.floor(h * dpr);
+        }
+        const c = canvas.getContext('2d');
+        c.setTransform(dpr, 0, 0, dpr, 0, 0);
+        return { w, h, c };
+    }
+
+    function fitAll() {
+        bar   = fitCanvas(DOM.barCanvas);
+        graph = fitCanvas(DOM.graphCanvas);
+    }
+
+    let bar   = fitCanvas(DOM.barCanvas);
+    let graph = fitCanvas(DOM.graphCanvas);
+
+    /* ---------- State ---------- */
+    const State = {
+        N: 60,
+        // For each n in [2..N]: { alive, crossed, currentI, prime }
+        // alive=true means still on the chart (crossed or prime)
+        // crossed=true means eliminated by the sieve
+        // currentI marks n as the current i value
+        nums: [],
+        i: 0,              // current sieve index (0 = not started)
+        nextMultiple: 0,   // next j = i*k to mark (k starts at i, then increments)
+        playing: false,
+        speed: 6,          // tick multiplier
+        done: false,
+        lastTick: 0,
+        // Visual state for cross-out animation
+        crossAnim: null,   // {n, t0, dur}
+    };
+
+    function reset(N) {
+        State.N = N;
+        State.nums = [];
+        for (let n = 0; n <= N; n++) {
+            State.nums.push({ alive: true, crossed: false, currentI: false, isPrime: false });
+        }
+        // 0 and 1 are not prime nor considered
+        State.nums[0].alive = false;
+        State.nums[1].alive = false;
+        State.i = 0;
+        State.nextMultiple = 0;
+        State.done = false;
+        State.crossAnim = null;
+    }
+
+    /* ---------- Colors (Neon-Noir palette) ---------- */
+    const COLORS = {
+        prime:     '#00f3ff',
+        primeGlow: 'rgba(0, 243, 255, 0.45)',
+        crossed:   '#e74a3b',
+        crossedGlow:'rgba(231, 74, 59, 0.5)',
+        currentI:  '#ff00ff',
+        currentIGlow:'rgba(255, 0, 255, 0.7)',
+        pending:   '#a855f7',
+        pendingGlow:'rgba(168, 85, 247, 0.35)',
+        grid:      'rgba(0, 243, 255, 0.08)',
+        axis:      'rgba(0, 243, 255, 0.3)',
+        text:      '#00f3ff',
+        textDim:   'rgba(0, 243, 255, 0.6)',
+    };
+
+    /* ---------- Sieve logic (one step at a time) ---------- */
+
+    // Returns true when a new "round" begins (new i).
+    function tickSieve() {
+        if (State.done) return false;
+
+        // If no i yet, find next uncrossed number
+        if (State.i === 0 || State.nextMultiple > State.N) {
+            // Promote the next uncrossed number to current i
+            let nextI = State.i === 0 ? 2 : State.i + 1;
+            while (nextI <= State.N && (State.nums[nextI].crossed || !State.nums[nextI].alive)) {
+                nextI++;
+            }
+            if (nextI > State.N) {
+                State.done = true;
+                // Mark remaining alive as primes
+                for (let n = 2; n <= State.N; n++) {
+                    if (State.nums[n].alive && !State.nums[n].crossed) {
+                        State.nums[n].isPrime = true;
+                        State.nums[n].currentI = false;
+                    }
+                }
+                return false;
+            }
+            State.i = nextI;
+            State.nums[State.i].currentI = true;
+            State.nums[State.i].isPrime = true;  // uncrossed numbers are prime
+            State.nextMultiple = State.i * State.i;  // start crossing at i²
+            return true;
+        }
+
+        // Cross out nextMultiple
+        if (State.nextMultiple <= State.N && State.nums[State.nextMultiple].alive) {
+            const target = State.nextMultiple;
+            State.nums[target].alive = false;
+            State.nums[target].crossed = true;
+            State.crossAnim = { n: target, t0: performance.now(), dur: 380 };
+            State.nextMultiple += State.i;
+            return true;
+        } else {
+            State.nextMultiple += State.i;
+            // If we went past N for this i, advance to next i on next tick
+            if (State.nextMultiple > State.N) {
+                // Clear currentI on old i, next tick will pick new i
+                State.nums[State.i].currentI = false;
+                // Force re-pick on next call
+                State.i = State.i; // unchanged, nextMultiple>N will trigger re-pick
+            }
+            return true;
+        }
+    }
+
+    /* ---------- HUD ---------- */
+
+    function updateHud() {
+        DOM.statI.textContent = State.i > 0 ? State.i : '—';
+        let primes = 0, crossed = 0;
+        for (let n = 2; n <= State.N; n++) {
+            if (State.nums[n].alive && !State.nums[n].crossed) primes++;
+            if (State.nums[n].crossed) crossed++;
+        }
+        DOM.statPrimes.textContent  = primes;
+        DOM.statCrossed.textContent = crossed;
+        const progress = Math.min(100, Math.floor((State.i / State.N) * 100));
+        DOM.statProgress.textContent = progress + '%';
+    }
+
+    /* ---------- Bar chart renderer ---------- */
+
+    function drawBars(now) {
+        const { w, h, c } = bar;
+        c.clearRect(0, 0, w, h);
+
+        // Grid
+        c.strokeStyle = COLORS.grid;
+        c.lineWidth = 1;
+        const rows = 5;
+        for (let r = 1; r < rows; r++) {
+            const y = (h - 40) * (r / rows) + 20;
+            c.beginPath();
+            c.moveTo(20, y);
+            c.lineTo(w - 10, y);
+            c.stroke();
+        }
+
+        // Compute layout
+        const nCount = State.N - 1; // n from 2 to N inclusive
+        const margin = { left: 28, right: 12, top: 24, bottom: 28 };
+        const chartW = w - margin.left - margin.right;
+        const chartH = h - margin.top - margin.bottom;
+        const barW = Math.max(2, chartW / nCount - 1);
+        const sqrtMax = Math.sqrt(State.N);
+
+        // Bars
+        for (let n = 2; n <= State.N; n++) {
+            const info = State.nums[n];
+            if (!info.alive && !info.crossed) continue; // nothing to draw
+
+            const x = margin.left + (n - 2) * (chartW / nCount);
+            const barH = (Math.sqrt(n) / sqrtMax) * chartH;
+            const y = margin.top + chartH - barH;
+
+            let color = COLORS.pending;
+            let glow = COLORS.pendingGlow;
+            if (info.crossed) {
+                color = COLORS.crossed;
+                glow  = COLORS.crossedGlow;
+            } else if (info.isPrime) {
+                color = COLORS.prime;
+                glow  = COLORS.primeGlow;
+            }
+            if (info.currentI) {
+                color = COLORS.currentI;
+                glow  = COLORS.currentIGlow;
+            }
+
+            // Cross-out animation scale-in
+            let scaleY = 1, alpha = 1;
+            if (info.crossed && State.crossAnim && State.crossAnim.n === n) {
+                const t = (now - State.crossAnim.t0) / State.crossAnim.dur;
+                if (t < 1) {
+                    scaleY = 1 + Math.sin(t * Math.PI) * 0.18;
+                    alpha = 0.4 + 0.6 * t;
+                }
+            }
+
+            // Bar with glow
+            c.save();
+            c.shadowColor = glow;
+            c.shadowBlur  = info.currentI ? 18 : 8;
+            c.fillStyle   = color;
+            c.globalAlpha = alpha;
+
+            const yTop = y + (barH * (1 - scaleY));
+            c.fillRect(x, yTop, barW, barH * scaleY);
+
+            // Cross-out X for crossed
+            if (info.crossed) {
+                c.globalAlpha = 1;
+                c.shadowBlur  = 0;
+                c.strokeStyle = '#000';
+                c.lineWidth = 1.5;
+                c.beginPath();
+                c.moveTo(x,                yTop);
+                c.lineTo(x + barW,         yTop + barH * scaleY);
+                c.moveTo(x + barW,         yTop);
+                c.lineTo(x,                yTop + barH * scaleY);
+                c.stroke();
+            }
+            c.restore();
+
+            // Number label every 10
+            if (n % 10 === 0 || n === State.N) {
+                c.fillStyle = COLORS.textDim;
+                c.font = '9px "Fira Code", monospace';
+                c.textAlign = 'center';
+                c.fillText(String(n), x + barW / 2, margin.top + chartH + 12);
+            }
+        }
+
+        // Baseline
+        c.strokeStyle = COLORS.axis;
+        c.lineWidth = 1;
+        c.beginPath();
+        c.moveTo(margin.left, margin.top + chartH);
+        c.lineTo(w - margin.right, margin.top + chartH);
+        c.stroke();
+
+        // Y axis label
+        c.fillStyle = COLORS.textDim;
+        c.font = '10px "Fira Code", monospace';
+        c.textAlign = 'left';
+        c.fillText('√n', margin.left - 22, margin.top + 8);
+
+        // Highlight ring around current i bar
+        if (State.i > 0) {
+            const idx = State.i - 2;
+            const x = margin.left + idx * (chartW / nCount);
+            const y = margin.top + chartH - (Math.sqrt(State.i) / sqrtMax) * chartH;
+            const barH = (Math.sqrt(State.i) / sqrtMax) * chartH;
+            c.save();
+            c.shadowColor = COLORS.currentIGlow;
+            c.shadowBlur = 16;
+            c.strokeStyle = COLORS.currentI;
+            c.lineWidth = 1.5;
+            c.strokeRect(x - 1, y - 1, barW + 2, barH + 2);
+            c.restore();
+        }
+    }
+
+    /* ---------- Graph renderer ---------- */
+
+    // Layout: nodes in a circle around canvas center, ordered by number.
+    function nodePos(n) {
+        const angle = ((n - 2) / (State.N - 1)) * Math.PI * 2 - Math.PI / 2;
+        const cx = graph.w / 2;
+        const cy = graph.h / 2;
+        const R = Math.min(graph.w, graph.h) * 0.38;
+        return { x: cx + Math.cos(angle) * R, y: cy + Math.sin(angle) * R, angle };
+    }
+
+    function drawGraph(now) {
+        const { w, h, c } = graph;
+        c.clearRect(0, 0, w, h);
+
+        // Background ring
+        c.strokeStyle = COLORS.grid;
+        c.lineWidth = 1;
+        const cx = w / 2, cy = h / 2;
+        const R = Math.min(w, h) * 0.38;
+        c.beginPath();
+        c.arc(cx, cy, R, 0, Math.PI * 2);
+        c.stroke();
+
+        // Compute positions
+        const pos = {};
+        for (let n = 2; n <= State.N; n++) pos[n] = nodePos(n);
+
+        // Edges: i ↔ k*i for each i in [2..sqrt(N)]
+        c.lineWidth = 1;
+        for (let i = 2; i <= Math.sqrt(State.N); i++) {
+            for (let k = 2; k * i <= State.N; k++) {
+                const a = pos[i];
+                const b = pos[k * i];
+                const info = State.nums[k * i];
+                const infoI = State.nums[i];
+                if (info.crossed) {
+                    c.strokeStyle = 'rgba(231, 74, 59, 0.18)';
+                } else if (infoI.currentI) {
+                    c.strokeStyle = COLORS.currentIGlow;
+                    c.lineWidth = 1.5;
+                } else {
+                    c.strokeStyle = 'rgba(0, 243, 255, 0.12)';
+                }
+                c.beginPath();
+                c.moveTo(a.x, a.y);
+                c.lineTo(b.x, b.y);
+                c.stroke();
+                c.lineWidth = 1;
+            }
+        }
+
+        // Nodes
+        for (let n = 2; n <= State.N; n++) {
+            const info = State.nums[n];
+            const p = pos[n];
+            let color = COLORS.pending;
+            let glow  = COLORS.pendingGlow;
+            let r = 7;
+            if (info.crossed) {
+                color = COLORS.crossed;
+                glow  = COLORS.crossedGlow;
+                r = 5;
+            } else if (info.isPrime) {
+                color = COLORS.prime;
+                glow  = COLORS.primeGlow;
+                r = 9;
+            }
+            if (info.currentI) {
+                color = COLORS.currentI;
+                glow  = COLORS.currentIGlow;
+                r = 12;
+            }
+
+            // Cross-out anim flash
+            let scale = 1;
+            if (info.crossed && State.crossAnim && State.crossAnim.n === n) {
+                const t = (now - State.crossAnim.t0) / State.crossAnim.dur;
+                if (t < 1) scale = 1 + Math.sin(t * Math.PI) * 0.5;
+            }
+
+            c.save();
+            c.shadowColor = glow;
+            c.shadowBlur = info.currentI ? 22 : 12;
+            c.fillStyle = color;
+            c.beginPath();
+            c.arc(p.x, p.y, r * scale, 0, Math.PI * 2);
+            c.fill();
+            c.restore();
+
+            // Label small numbers near node
+            if (State.N <= 60 || n % 5 === 0 || info.currentI || info.isPrime) {
+                c.fillStyle = info.crossed ? 'rgba(231, 74, 59, 0.6)' :
+                              info.currentI ? '#ff00ff' : COLORS.textDim;
+                c.font = (info.currentI ? 'bold ' : '') + '10px "Fira Code", monospace';
+                c.textAlign = 'center';
+                c.fillText(String(n), p.x, p.y + r + 12);
+            }
+        }
+
+        // Pulse ring around current i node
+        if (State.i > 0 && State.nums[State.i].alive) {
+            const p = pos[State.i];
+            const pulse = 1 + Math.sin(now / 250) * 0.18;
+            c.save();
+            c.strokeStyle = COLORS.currentI;
+            c.lineWidth = 2;
+            c.shadowColor = COLORS.currentIGlow;
+            c.shadowBlur = 14;
+            c.beginPath();
+            c.arc(p.x, p.y, 18 * pulse, 0, Math.PI * 2);
+            c.stroke();
+            c.restore();
+        }
+    }
+
+    /* ---------- Main loop ---------- */
+
+    function loop(now) {
+        requestAnimationFrame(loop);
+        if (State.playing && !State.done) {
+            // Tick at speed-dependent cadence
+            const interval = Math.max(60, 600 - State.speed * 28);
+            if (!State.lastTick || (now - State.lastTick) >= interval) {
+                tickSieve();
+                State.lastTick = now;
+                updateHud();
+            }
+        }
+        drawBars(now);
+        drawGraph(now);
+    }
+
+    /* ---------- Controls ---------- */
+
+    DOM.btnPlay.addEventListener('click', () => {
+        if (State.done) reset(State.N);
+        State.playing = !State.playing;
+        DOM.btnPlay.textContent = State.playing ? '❚❚ Pause' : '▶ Play';
+    });
+
+    DOM.btnStep.addEventListener('click', () => {
+        State.playing = false;
+        DOM.btnPlay.textContent = '▶ Play';
+        if (!State.done) {
+            tickSieve();
+            updateHud();
+        }
+    });
+
+    DOM.btnReset.addEventListener('click', () => {
+        reset(State.N);
+        State.playing = false;
+        DOM.btnPlay.textContent = '▶ Play';
+        updateHud();
+    });
+
+    DOM.btnStart.addEventListener('click', () => {
+        DOM.overlayStart.classList.add('u-hidden');
+        State.playing = true;
+        DOM.btnPlay.textContent = '❚� Pause';
+        updateHud();
+    });
+
+    DOM.speed.addEventListener('input', (e) => {
+        State.speed = parseInt(e.target.value, 10);
+        DOM.speedRO.textContent = (State.speed / 6).toFixed(2) + '×';
+    });
+
+    DOM.nInput.addEventListener('input', (e) => {
+        const n = parseInt(e.target.value, 10);
+        DOM.nReadout.textContent = 'N = ' + n;
+        reset(n);
+        updateHud();
+    });
+
+    window.addEventListener('resize', () => {
+        fitAll();
+    });
+
+    /* ---------- Boot ---------- */
+    reset(State.N);
+    updateHud();
+    requestAnimationFrame(loop);
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Neon-Noir Target Shooter — DOM API arcade game.">
+<title>NEON TARGET // Shooter</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* =========================================================
+   NEON-NOIR TARGET SHOOTER
+   Follows neon.md directives: BEM, CSS vars, mobile-first,
+   semantic structure, glassmorphism, reduced-motion guard.
+   ========================================================= */
+
+:root {
+    /* Palette (Directive 51-60) */
+    --bg-dark: #050505;
+    --bg-secondary: #0a0b10;
+    --bg-card: rgba(255, 255, 255, 0.03);
+
+    --neon-primary: #00f3ff;
+    --neon-secondary: #ff00ff;
+    --neon-success: #1cc88a;
+    --neon-warning: #f6c23e;
+    --neon-danger: #e74a3b;
+    --neon-purple: #a855f7;
+
+    --glow-primary: 0 0 5px rgba(0, 243, 255, 0.6), 0 0 20px rgba(0, 243, 255, 0.2);
+    --glow-secondary: 0 0 5px rgba(255, 0, 255, 0.6), 0 0 20px rgba(255, 0, 255, 0.2);
+    --glow-danger: 0 0 5px rgba(231, 74, 59, 0.6), 0 0 20px rgba(231, 74, 59, 0.2);
+
+    /* Typography (Directive 153-160) */
+    --font-heading: 'Rajdhani', system-ui, sans-serif;
+    --font-mono: 'Fira Code', monospace;
+    --font-body: system-ui, -apple-system, sans-serif;
+
+    --text-xs: clamp(0.7rem, 0.65rem + 0.25vw, 0.75rem);
+    --text-sm: clamp(0.8rem, 0.75rem + 0.25vw, 0.875rem);
+    --text-base: clamp(0.9rem, 0.85rem + 0.25vw, 1rem);
+    --text-lg: clamp(1.1rem, 1rem + 0.5vw, 1.25rem);
+    --text-xl: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
+    --text-2xl: clamp(1.5rem, 1.35rem + 0.75vw, 2rem);
+
+    --tracking-wide: 0.05em;
+    --tracking-wider: 0.1em;
+
+    /* Z-index (Directive 10) */
+    --z-sticky: 100;
+    --z-overlay: 500;
+    --z-modal: 1000;
+    --z-crosshair: 2000;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg-dark);
+    color: var(--neon-primary);
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    cursor: none;
+    user-select: none;
+}
+
+body {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    min-height: 100vh;
+}
+
+/* Skip link (Directive 356) */
+.u-skip-link {
+    position: absolute;
+    top: -100px;
+    left: 0;
+    padding: 0.5rem 1rem;
+    background: var(--bg-secondary);
+    color: var(--neon-primary);
+    text-decoration: none;
+    z-index: var(--z-modal);
+    border: 1px solid var(--neon-primary);
+}
+.u-skip-link:focus { top: 0; }
+
+/* =========================================================
+   TOPBAR (Directive 8 — holy trinity; here used as a thin bar)
+   ========================================================= */
+
+.c-topbar {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-sticky);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    background: rgba(10, 11, 16, 0.6);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+}
+
+.c-topbar__brand {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    letter-spacing: var(--tracking-wider);
+    color: var(--neon-primary);
+    text-shadow: var(--glow-primary);
+    font-size: var(--text-lg);
+}
+
+.c-topbar__brand--accent { color: var(--neon-secondary); text-shadow: var(--glow-secondary); }
+
+.c-stats {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.c-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-family: var(--font-mono);
+}
+
+.c-stat__label {
+    font-size: var(--text-xs);
+    color: var(--neon-primary);
+    opacity: 0.6;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+}
+
+.c-stat__value {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: var(--neon-primary);
+    text-shadow: var(--glow-primary);
+    line-height: 1;
+}
+
+.c-stat--danger .c-stat__value { color: var(--neon-danger); text-shadow: var(--glow-danger); }
+.c-stat--secondary .c-stat__value { color: var(--neon-secondary); text-shadow: var(--glow-secondary); }
+
+/* =========================================================
+   PLAYFIELD
+   ========================================================= */
+
+.l-playfield {
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 50% 50%, rgba(0,243,255,0.05) 0%, transparent 60%),
+        var(--bg-dark);
+    border-top: 1px solid rgba(255, 0, 255, 0.15);
+}
+
+.c-playfield__grid {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+        linear-gradient(rgba(0, 243, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 243, 255, 0.06) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(circle at center, black 0%, transparent 80%);
+}
+
+/* Targets (Directive 4 — never use ID for styling) */
+.c-target {
+    position: absolute;
+    width: 56px;
+    height: 56px;
+    transform: translate(-50%, -50%);
+    pointer-events: auto;
+    cursor: none;
+    will-change: transform, opacity;
+}
+
+.c-target__ring {
+    position: absolute;
+    inset: 0;
+    border: 2px solid var(--neon-primary);
+    border-radius: 50%;
+    box-shadow: var(--glow-primary);
+    animation: c-target__pulse 1.4s ease-in-out infinite;
+}
+
+.c-target__ring--inner {
+    inset: 12px;
+    border-color: var(--neon-secondary);
+    box-shadow: var(--glow-secondary);
+    animation-duration: 0.9s;
+}
+
+.c-target__dot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    transform: translate(-50%, -50%);
+    background: var(--neon-danger);
+    border-radius: 50%;
+    box-shadow: var(--glow-danger);
+}
+
+@keyframes c-target__pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.08); opacity: 0.85; }
+}
+
+.c-target--fast .c-target__ring { border-color: var(--neon-warning); box-shadow: 0 0 5px rgba(246,194,62,0.6), 0 0 20px rgba(246,194,62,0.2); }
+.c-target--fast .c-target__ring--inner { border-color: var(--neon-warning); box-shadow: 0 0 5px rgba(246,194,62,0.6), 0 0 20px rgba(246,194,62,0.2); }
+.c-target--fast .c-target__dot { background: var(--neon-warning); }
+
+.c-target--tank .c-target__ring {
+    width: 80px; height: 80px;
+    border-color: var(--neon-purple);
+    box-shadow: 0 0 5px rgba(168,85,247,0.6), 0 0 20px rgba(168,85,247,0.2);
+}
+.c-target--tank .c-target__dot { background: var(--neon-purple); }
+
+.c-target__hp {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    overflow: hidden;
+}
+.c-target__hp-fill {
+    height: 100%;
+    background: var(--neon-success);
+    box-shadow: 0 0 4px var(--neon-success);
+    transition: width 0.15s ease;
+}
+
+/* Bullets */
+.c-bullet {
+    position: absolute;
+    width: 4px;
+    height: 18px;
+    background: var(--neon-primary);
+    border-radius: 2px;
+    box-shadow: var(--glow-primary);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    animation: c-bullet__fly 0.18s linear forwards;
+}
+@keyframes c-bullet__fly {
+    from { opacity: 1; }
+    to   { opacity: 0; transform: translate(-50%, -50%) translateY(-40px); }
+}
+
+/* Muzzle flash */
+.c-muzzle {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, var(--neon-primary) 0%, transparent 60%);
+    opacity: 0.6;
+    animation: c-muzzle__fade 0.12s ease-out forwards;
+}
+@keyframes c-muzzle__fade {
+    from { opacity: 0.6; transform: translate(-50%, -50%) scale(0.6); }
+    to   { opacity: 0;   transform: translate(-50%, -50%) scale(1.4); }
+}
+
+/* Hit particles */
+.c-particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    pointer-events: none;
+    background: var(--neon-primary);
+    box-shadow: var(--glow-primary);
+}
+
+/* Floating combo text */
+.c-float {
+    position: absolute;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: var(--text-xl);
+    letter-spacing: var(--tracking-wider);
+    pointer-events: none;
+    color: var(--neon-secondary);
+    text-shadow: var(--glow-secondary);
+    animation: c-float__rise 0.8s ease-out forwards;
+    transform: translate(-50%, -50%);
+}
+@keyframes c-float__rise {
+    from { opacity: 1; transform: translate(-50%, -50%); }
+    to   { opacity: 0; transform: translate(-50%, -150%); }
+}
+
+/* =========================================================
+   CROSSHAIR (follows mouse, custom cursor)
+   ========================================================= */
+
+.c-crosshair {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 40px;
+    height: 40px;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    z-index: var(--z-crosshair);
+    mix-blend-mode: screen;
+}
+
+.c-crosshair__line {
+    position: absolute;
+    background: var(--neon-primary);
+    box-shadow: var(--glow-primary);
+}
+.c-crosshair__line--h {
+    top: 50%; left: 0; right: 0;
+    height: 2px;
+    transform: translateY(-50%);
+}
+.c-crosshair__line--v {
+    left: 50%; top: 0; bottom: 0;
+    width: 2px;
+    transform: translateX(-50%);
+}
+.c-crosshair__dot {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 6px; height: 6px;
+    transform: translate(-50%, -50%);
+    background: var(--neon-danger);
+    border-radius: 50%;
+    box-shadow: var(--glow-danger);
+}
+
+.c-crosshair--fire .c-crosshair__dot {
+    background: var(--neon-secondary);
+    box-shadow: var(--glow-secondary);
+}
+
+/* =========================================================
+   OVERLAYS (start, pause, game over)
+   ========================================================= */
+
+.c-overlay {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    z-index: var(--z-overlay);
+    background: rgba(5, 5, 5, 0.85);
+    backdrop-filter: blur(6px);
+}
+
+.c-overlay__panel {
+    background: var(--bg-card);
+    border: 1px solid rgba(0, 243, 255, 0.3);
+    box-shadow: var(--glow-primary), inset 0 0 40px rgba(0,243,255,0.05);
+    padding: 2rem 2.5rem;
+    text-align: center;
+    max-width: 420px;
+    backdrop-filter: blur(10px);
+}
+
+.c-overlay__title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: var(--text-2xl);
+    letter-spacing: var(--tracking-wider);
+    color: var(--neon-primary);
+    text-shadow: var(--glow-primary);
+    margin-bottom: 0.5rem;
+}
+
+.c-overlay__title--accent { color: var(--neon-secondary); text-shadow: var(--glow-secondary); }
+
+.c-overlay__sub {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--neon-primary);
+    opacity: 0.7;
+    margin-bottom: 1.2rem;
+}
+
+.c-overlay__list {
+    list-style: none;
+    text-align: left;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    margin-bottom: 1.5rem;
+    padding: 0;
+}
+.c-overlay__list li {
+    padding: 0.3rem 0;
+    border-bottom: 1px dashed rgba(0,243,255,0.15);
+}
+.c-overlay__list li::before {
+    content: "▸ ";
+    color: var(--neon-secondary);
+    text-shadow: var(--glow-secondary);
+}
+
+.c-overlay__score {
+    font-family: var(--font-mono);
+    color: var(--neon-primary);
+    margin: 0.8rem 0;
+    font-size: var(--text-base);
+}
+.c-overlay__score strong { color: var(--neon-secondary); text-shadow: var(--glow-secondary); }
+
+.u-hidden { display: none !important; }
+
+/* =========================================================
+   BUTTONS (Directive 75-76, 184)
+   ========================================================= */
+
+.c-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.6rem;
+    min-height: 44px;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: var(--text-base);
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--neon-primary);
+    border: 2px solid var(--neon-primary);
+    border-radius: 0;
+    cursor: pointer;
+    box-shadow: var(--glow-primary);
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s;
+}
+.c-btn:hover {
+    transform: translateY(-3px);
+    background: rgba(0, 243, 255, 0.1);
+}
+.c-btn:active {
+    transform: scale(0.98);
+}
+.c-btn:focus-visible {
+    outline: 2px solid var(--neon-secondary);
+    outline-offset: 4px;
+}
+.c-btn--secondary {
+    color: var(--neon-secondary);
+    border-color: var(--neon-secondary);
+    box-shadow: var(--glow-secondary);
+}
+.c-btn--secondary:hover {
+    background: rgba(255, 0, 255, 0.1);
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.c-footer {
+    padding: 0.5rem 1rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--neon-primary);
+    opacity: 0.5;
+    text-align: center;
+    border-top: 1px solid rgba(0, 243, 255, 0.15);
+}
+
+/* =========================================================
+   RESPONSIVE (Directive 1, 7)
+   ========================================================= */
+
+@media (min-width: 768px) {
+    .c-stat__value { font-size: var(--text-xl); }
+    .c-target { width: 64px; height: 64px; }
+}
+
+@media (max-width: 480px) {
+    .c-topbar { padding: 0.5rem 0.8rem; }
+    .c-stats { gap: 0.5rem; }
+    .c-overlay__panel { padding: 1.4rem 1.2rem; max-width: 92vw; }
+}
+
+/* =========================================================
+   A11Y: reduced-motion (Directive 74, 360)
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .c-target__ring,
+    .c-target__ring--inner,
+    .c-bullet,
+    .c-muzzle,
+    .c-float { animation: none; }
+    .c-btn { transition: none; }
+}
+</style>
+</head>
+
+<body>
+
+<a href="#playfield" class="u-skip-link">Skip to playfield</a>
+
+<header class="c-topbar" role="banner">
+    <h1 class="c-topbar__brand">
+        NEON <span class="c-topbar__brand--accent">TARGET</span> //
+    </h1>
+    <div class="c-stats" aria-live="polite">
+        <div class="c-stat">
+            <span class="c-stat__label">Score</span>
+            <span class="c-stat__value" id="stat-score">0</span>
+        </div>
+        <div class="c-stat c-stat--secondary">
+            <span class="c-stat__label">Combo</span>
+            <span class="c-stat__value" id="stat-combo">x1</span>
+        </div>
+        <div class="c-stat">
+            <span class="c-stat__label">Wave</span>
+            <span class="c-stat__value" id="stat-wave">1</span>
+        </div>
+        <div class="c-stat c-stat--danger">
+            <span class="c-stat__label">Lives</span>
+            <span class="c-stat__value" id="stat-lives">3</span>
+        </div>
+    </div>
+</header>
+
+<main id="playfield" class="l-playfield" role="main" aria-label="Target shooter playfield">
+    <div class="c-playfield__grid" aria-hidden="true"></div>
+
+    <!-- Targets & bullets & fx injected via DOM API (Directive 251-262) -->
+
+    <!-- Start overlay -->
+    <div class="c-overlay" id="overlay-start" role="dialog" aria-labelledby="start-title">
+        <div class="c-overlay__panel">
+            <h2 class="c-overlay__title" id="start-title">NEON <span class="c-overlay__title--accent">TARGET</span></h2>
+            <p class="c-overlay__sub">// DOM API shooter // endless arcade //</p>
+            <ul class="c-overlay__list">
+                <li>Move mouse to aim crosshair</li>
+                <li>Left-click to fire</li>
+                <li>Hit cyan targets for points</li>
+                <li>Combo multiplies score (resets on miss)</li>
+                <li>Lose a life when a target escapes</li>
+                <li>Survive as long as possible</li>
+            </ul>
+            <button class="c-btn" id="btn-start" type="button">Start</button>
+        </div>
+    </div>
+
+    <!-- Pause overlay -->
+    <div class="c-overlay u-hidden" id="overlay-pause" role="dialog" aria-labelledby="pause-title">
+        <div class="c-overlay__panel">
+            <h2 class="c-overlay__title" id="pause-title">PAUSED</h2>
+            <p class="c-overlay__sub">// press P or click resume //</p>
+            <button class="c-btn" id="btn-resume" type="button">Resume</button>
+            <button class="c-btn c-btn--secondary" id="btn-quit" type="button">Quit</button>
+        </div>
+    </div>
+
+    <!-- Game over overlay -->
+    <div class="c-overlay u-hidden" id="overlay-over" role="dialog" aria-labelledby="over-title">
+        <div class="c-overlay__panel">
+            <h2 class="c-overlay__title c-overlay__title--accent" id="over-title">SYSTEM // OFFLINE</h2>
+            <p class="c-overlay__sub">// game over //</p>
+            <p class="c-overlay__score">Final score: <strong id="final-score">0</strong></p>
+            <p class="c-overlay__score">Wave reached: <strong id="final-wave">1</strong></p>
+            <button class="c-btn" id="btn-restart" type="button">Restart</button>
+        </div>
+    </div>
+</main>
+
+<footer class="c-footer">
+    <p>left-click fire · move mouse to aim · P to pause · built with vanilla DOM API</p>
+</footer>
+
+<!-- Custom crosshair (replaces default cursor per html cursor:none) -->
+<div class="c-crosshair" id="crosshair" aria-hidden="true">
+    <div class="c-crosshair__line c-crosshair__line--h"></div>
+    <div class="c-crosshair__line c-crosshair__line--v"></div>
+    <div class="c-crosshair__dot"></div>
+</div>
+
+<script>
+'use strict';
+
+/* =========================================================
+   NEON TARGET SHOOTER — pure DOM API, no canvas.
+   - Targets fly across the playfield (linear paths from edges).
+   - Left-click fires a bullet (collision = hit, miss = combo break).
+   - Endless arcade; difficulty ramps every 15s.
+   ========================================================= */
+
+(function () {
+
+    /* ---------- DOM Cache (Directive 251-254) ---------- */
+    const DOM = {
+        playfield:   document.getElementById('playfield'),
+        grid:        document.querySelector('.c-playfield__grid'),
+        crosshair:   document.getElementById('crosshair'),
+        statScore:   document.getElementById('stat-score'),
+        statCombo:   document.getElementById('stat-combo'),
+        statWave:    document.getElementById('stat-wave'),
+        statLives:   document.getElementById('stat-lives'),
+        overlayStart:document.getElementById('overlay-start'),
+        overlayPause:document.getElementById('overlay-pause'),
+        overlayOver: document.getElementById('overlay-over'),
+        btnStart:    document.getElementById('btn-start'),
+        btnResume:   document.getElementById('btn-resume'),
+        btnQuit:     document.getElementById('btn-quit'),
+        btnRestart:  document.getElementById('btn-restart'),
+        finalScore:  document.getElementById('final-score'),
+        finalWave:   document.getElementById('final-wave'),
+    };
+
+    /* ---------- State ---------- */
+    const State = {
+        running: false,
+        paused:  false,
+        score:   0,
+        combo:   1,
+        comboTimer: 0,        // ms since last hit
+        wave:    1,
+        lives:   3,
+        mouseX:  window.innerWidth / 2,
+        mouseY:  window.innerHeight / 2,
+        targets: [],
+        spawnTimer: 0,
+        waveTimer: 0,
+        lastFrame: 0,
+        flashTimer: 0,
+        difficulty: 1,        // ramps over time
+    };
+
+    const SETTINGS = {
+        targetBaseSpeed: 90,      // px/sec
+        targetHp: 1,
+        targetRadius: 28,         // hit radius
+        spawnBaseMs: 1100,        // ms between spawns at start
+        spawnMinMs: 320,          // fastest spawn
+        waveEveryMs: 15000,       // difficulty bump
+        comboWindowMs: 1500,      // combo persists this long after a hit
+        comboStep: 1,             // combo gain per hit
+        comboMax: 10,
+        pointBase: 10,
+    };
+
+    /* ---------- Utility ---------- */
+
+    function rand(min, max) { return Math.random() * (max - min) + min; }
+    function randInt(min, max) { return Math.floor(rand(min, max + 1)); }
+    function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+    function el(tag, className, parent) {
+        const node = document.createElement(tag);
+        if (className) node.className = className;
+        if (parent) parent.appendChild(node);
+        return node;
+    }
+
+    /* ---------- Spawn targets ---------- */
+
+    function spawnTarget() {
+        const pf = DOM.playfield.getBoundingClientRect();
+        const w = pf.width, h = pf.height;
+
+        // Pick edge: 0=top, 1=right, 2=bottom, 3=left
+        const edge = randInt(0, 3);
+        let x, y, vx, vy;
+
+        const speed = SETTINGS.targetBaseSpeed * State.difficulty * rand(0.85, 1.25);
+
+        switch (edge) {
+            case 0: // top → move down
+                x = rand(40, w - 40); y = -40;
+                vx = rand(-30, 30) * State.difficulty; vy = speed;
+                break;
+            case 1: // right → move left
+                x = w + 40; y = rand(40, h - 40);
+                vx = -speed; vy = rand(-30, 30) * State.difficulty;
+                break;
+            case 2: // bottom → move up
+                x = rand(40, w - 40); y = h + 40;
+                vx = rand(-30, 30) * State.difficulty; vy = -speed;
+                break;
+            default: // left → move right
+                x = -40; y = rand(40, h - 40);
+                vx = speed; vy = rand(-30, 30) * State.difficulty;
+        }
+
+        // Type selection based on wave
+        let type = 'normal';
+        const r = Math.random();
+        if (State.wave >= 4 && r < 0.20) type = 'tank';
+        else if (State.wave >= 2 && r < 0.45) type = 'fast';
+
+        const hp = type === 'tank' ? 3 : 1;
+
+        // Build target (Directive 252 — fragments for perf would be overkill for single elements)
+        const node = el('div', `c-target c-target--${type}`);
+        node.style.left = x + 'px';
+        node.style.top  = y + 'px';
+
+        if (type === 'tank') {
+            const hpBg = el('div', 'c-target__hp', node);
+            const hpFill = el('div', 'c-target__hp-fill', hpBg);
+            hpFill.style.width = '100%';
+            node._hpFill = hpFill;
+        }
+
+        el('div', 'c-target__ring', node);
+        el('div', 'c-target__ring c-target__ring--inner', node);
+        el('div', 'c-target__dot', node);
+
+        // Bind click handler (alternative to collision math: direct hit)
+        node.addEventListener('mousedown', (e) => {
+            if (e.button !== 0) return;     // left-click only
+            if (!State.running || State.paused) return;
+            fireBullet(x, y, true, node);   // direct hit (no bullet travel)
+            e.stopPropagation();
+        });
+
+        DOM.playfield.appendChild(node);
+
+        const target = {
+            node, x, y, vx, vy, hp, type, alive: true, radius: type === 'tank' ? 40 : 28
+        };
+        State.targets.push(target);
+    }
+
+    /* ---------- Bullets / Fire ---------- */
+
+    function fireBullet(fromX, fromY, directHit, hitNode) {
+        // Visual bullet flies from crosshair to target point
+        const muzzleX = State.mouseX;
+        const muzzleY = State.mouseY;
+
+        const muzzle = el('div', 'c-muzzle', DOM.playfield);
+        muzzle.style.left = muzzleX + 'px';
+        muzzle.style.top  = muzzleY + 'px';
+        setTimeout(() => muzzle.remove(), 140);
+
+        // Crosshair flash (Directive 75)
+        DOM.crosshair.classList.add('c-crosshair--fire');
+        State.flashTimer = 100;
+
+        if (directHit && hitNode) {
+            const t = State.targets.find(t => t.node === hitNode);
+            if (t && t.alive) damageTarget(t, muzzleX, muzzleY);
+        }
+        // No bullet-travel shot (we trust the direct hit model — accurate + cheap)
+    }
+
+    function damageTarget(target, fx, fy) {
+        target.hp -= 1;
+        if (target.hp <= 0) {
+            killTarget(target, fx, fy);
+        } else {
+            // partial hit feedback
+            if (target.node._hpFill) {
+                target.node._hpFill.style.width = ((target.hp / 3) * 100) + '%';
+            }
+            target.node.style.opacity = '0.5';
+            setTimeout(() => { if (target.node) target.node.style.opacity = '1'; }, 60);
+        }
+    }
+
+    function killTarget(target, fx, fy) {
+        if (!target.alive) return;
+        target.alive = false;
+
+        // Score + combo
+        const base = SETTINGS.pointBase * (target.type === 'tank' ? 3 : target.type === 'fast' ? 2 : 1);
+        const gained = base * State.combo;
+        State.score += gained;
+        State.combo = clamp(State.combo + SETTINGS.comboStep, 1, SETTINGS.comboMax);
+        State.comboTimer = 0;
+
+        // Particles
+        spawnParticles(fx, fy, target.type === 'tank' ? 18 : 10,
+            target.type === 'tank' ? 'var(--neon-purple)' :
+            target.type === 'fast' ? 'var(--neon-warning)' : 'var(--neon-primary)');
+
+        // Floating score
+        const float = el('div', 'c-float', DOM.playfield);
+        float.textContent = '+' + gained + (State.combo > 2 ? ' x' + State.combo : '');
+        float.style.left = fx + 'px';
+        float.style.top  = fy + 'px';
+        setTimeout(() => float.remove(), 800);
+
+        // Remove node
+        target.node.remove();
+    }
+
+    function missCombo() {
+        State.combo = 1;
+        State.comboTimer = 0;
+    }
+
+    function spawnParticles(x, y, count, color) {
+        for (let i = 0; i < count; i++) {
+            const p = el('div', 'c-particle', DOM.playfield);
+            p.style.left = x + 'px';
+            p.style.top  = y + 'px';
+            p.style.background = color;
+            p.style.boxShadow = '0 0 6px ' + color;
+            const angle = (Math.PI * 2 * i) / count + rand(-0.3, 0.3);
+            const speed = rand(80, 220);
+            const vx = Math.cos(angle) * speed;
+            const vy = Math.sin(angle) * speed;
+            p.animate(
+                [
+                    { transform: 'translate(-50%, -50%)', opacity: 1 },
+                    { transform: `translate(calc(-50% + ${vx}px), calc(-50% + ${vy}px))`, opacity: 0 }
+                ],
+                { duration: rand(400, 700), easing: 'cubic-bezier(0.2, 0.6, 0.4, 1)' }
+            ).onfinish = () => p.remove();
+        }
+    }
+
+    /* ---------- Target miss (escaped the playfield) ---------- */
+
+    function checkEscapes() {
+        const pf = DOM.playfield.getBoundingClientRect();
+        const w = pf.width, h = pf.height;
+        for (let i = State.targets.length - 1; i >= 0; i--) {
+            const t = State.targets[i];
+            if (!t.alive) { State.targets.splice(i, 1); continue; }
+            if (
+                t.x < -80 || t.x > w + 80 ||
+                t.y < -80 || t.y > h + 80
+            ) {
+                // Escaped
+                t.alive = false;
+                t.node.remove();
+                State.targets.splice(i, 1);
+                State.lives -= 1;
+                missCombo();
+                flashScreen();
+                if (State.lives <= 0) endGame();
+            }
+        }
+    }
+
+    function flashScreen() {
+        DOM.playfield.animate(
+            [
+                { boxShadow: 'inset 0 0 0 0 rgba(231,74,59,0)' },
+                { boxShadow: 'inset 0 0 80px 20px rgba(231,74,59,0.45)' },
+                { boxShadow: 'inset 0 0 0 0 rgba(231,74,59,0)' }
+            ],
+            { duration: 280, easing: 'ease-out' }
+        );
+    }
+
+    /* ---------- HUD update ---------- */
+
+    function updateHud() {
+        DOM.statScore.textContent = State.score.toLocaleString();
+        DOM.statCombo.textContent = 'x' + State.combo;
+        DOM.statWave.textContent  = State.wave;
+        DOM.statLives.textContent = State.lives;
+    }
+
+    /* ---------- Main loop ---------- */
+
+    function loop(now) {
+        if (!State.running) return;
+        requestAnimationFrame(loop);
+
+        if (!State.lastFrame) State.lastFrame = now;
+        const dt = Math.min(50, now - State.lastFrame);  // cap dt to avoid huge jumps
+        State.lastFrame = now;
+
+        if (!State.paused) {
+            tick(dt);
+        }
+    }
+
+    function tick(dt) {
+        const dtSec = dt / 1000;
+
+        // Move targets
+        for (const t of State.targets) {
+            if (!t.alive) continue;
+            t.x += t.vx * dtSec;
+            t.y += t.vy * dtSec;
+            t.node.style.left = t.x + 'px';
+            t.node.style.top  = t.y + 'px';
+        }
+
+        // Spawn targets (interval shrinks with difficulty)
+        State.spawnTimer += dt;
+        const spawnInterval = Math.max(SETTINGS.spawnMinMs,
+            SETTINGS.spawnBaseMs - (State.difficulty - 1) * 120);
+        if (State.spawnTimer >= spawnInterval) {
+            State.spawnTimer = 0;
+            spawnTarget();
+        }
+
+        // Wave ramp
+        State.waveTimer += dt;
+        if (State.waveTimer >= SETTINGS.waveEveryMs) {
+            State.waveTimer = 0;
+            State.wave += 1;
+            State.difficulty = 1 + (State.wave - 1) * 0.18;
+        }
+
+        // Combo decay (reset if too long without hit)
+        State.comboTimer += dt;
+        if (State.combo > 1 && State.comboTimer > SETTINGS.comboWindowMs) {
+            State.combo = 1;
+        }
+
+        // Crosshair flash decay
+        if (State.flashTimer > 0) {
+            State.flashTimer -= dt;
+            if (State.flashTimer <= 0) DOM.crosshair.classList.remove('c-crosshair--fire');
+        }
+
+        checkEscapes();
+        updateHud();
+    }
+
+    /* ---------- Input handlers (Directive 255, 263) ---------- */
+
+    document.addEventListener('mousemove', (e) => {
+        State.mouseX = e.clientX;
+        State.mouseY = e.clientY;
+        DOM.crosshair.style.transform =
+            `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+    });
+
+    // Click anywhere on playfield that isn't a target = miss (combo break)
+    DOM.playfield.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return;       // left only
+        if (!State.running || State.paused) return;
+        if (e.target.closest('.c-target')) return;     // handled by target
+        // Miss: fire visual bullet but no hit
+        fireBullet(State.mouseX, State.mouseY, false, null);
+        missCombo();
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'p' || e.key === 'P') {
+            if (!State.running) return;
+            togglePause();
+        }
+    });
+
+    /* ---------- Pause / Resume / Quit / Restart ---------- */
+
+    function togglePause() {
+        State.paused = !State.paused;
+        DOM.overlayPause.classList.toggle('u-hidden', !State.paused);
+    }
+
+    function endGame() {
+        State.running = false;
+        DOM.finalScore.textContent = State.score.toLocaleString();
+        DOM.finalWave.textContent  = State.wave;
+        DOM.overlayOver.classList.remove('u-hidden');
+    }
+
+    function startGame() {
+        // Reset state
+        State.score = 0; State.combo = 1; State.comboTimer = 0;
+        State.wave = 1; State.lives = 3; State.difficulty = 1;
+        State.spawnTimer = 0; State.waveTimer = 0; State.lastFrame = 0;
+        State.paused = false; State.running = true;
+
+        // Wipe existing targets
+        State.targets.forEach(t => t.node && t.node.remove());
+        State.targets.length = 0;
+
+        DOM.overlayStart.classList.add('u-hidden');
+        DOM.overlayOver.classList.add('u-hidden');
+        DOM.overlayPause.classList.add('u-hidden');
+
+        updateHud();
+        requestAnimationFrame(loop);
+    }
+
+    DOM.btnStart.addEventListener('click', startGame);
+    DOM.btnRestart.addEventListener('click', startGame);
+    DOM.btnResume.addEventListener('click', togglePause);
+    DOM.btnQuit.addEventListener('click', () => {
+        State.running = false;
+        State.paused = false;
+        DOM.overlayPause.classList.add('u-hidden');
+        DOM.overlayOver.classList.add('u-hidden');
+        DOM.overlayStart.classList.remove('u-hidden');
+    });
+
+    /* ---------- Initial render ---------- */
+    updateHud();
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Neon Zombies - arcade survival shooter with neon-noir aesthetic">
+  <title>Neon Zombies · Arcade Survival Shooter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Fira+Code:wght@500&display=swap" rel="stylesheet">
+  <style>
+    /* === RESET === */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* === DESIGN TOKENS === */
+    :root {
+      --bg-dark: #050505;
+      --bg-secondary: #0a0b10;
+      --neon-cyan: #00f3ff;
+      --neon-magenta: #ff00ff;
+      --neon-green: #1cc88a;
+      --neon-danger: #e74a3b;
+      --neon-warning: #f6c23e;
+      --bg-card: rgba(255, 255, 255, 0.03);
+      --glow-cyan: 0 0 8px rgba(0, 243, 255, 0.6), 0 0 24px rgba(0, 243, 255, 0.25);
+      --glow-magenta: 0 0 8px rgba(255, 0, 255, 0.6), 0 0 24px rgba(255, 0, 255, 0.25);
+      --glow-green: 0 0 8px rgba(28, 200, 138, 0.6), 0 0 24px rgba(28, 200, 138, 0.25);
+      --glow-danger: 0 0 8px rgba(231, 74, 59, 0.6), 0 0 24px rgba(231, 74, 59, 0.3);
+      --font-heading: 'Rajdhani', system-ui, sans-serif;
+      --font-mono: 'Fira Code', ui-monospace, monospace;
+      --font-body: system-ui, -apple-system, sans-serif;
+      --text-sm: clamp(0.8rem, 0.75rem + 0.25vw, 0.875rem);
+      --text-base: clamp(0.9rem, 0.85rem + 0.25vw, 1rem);
+      --text-lg: clamp(1.1rem, 1rem + 0.5vw, 1.25rem);
+      --text-2xl: clamp(1.5rem, 1.35rem + 0.75vw, 2rem);
+      --text-3xl: clamp(1.75rem, 1.55rem + 1vw, 2.5rem);
+      --text-4xl: clamp(2.2rem, 1.9rem + 1.5vw, 3.25rem);
+    }
+
+    /* === BASE === */
+    html, body { height: 100%; }
+    body {
+      font-family: var(--font-body);
+      color: var(--neon-cyan);
+      background: radial-gradient(ellipse at center, var(--bg-secondary) 0%, var(--bg-dark) 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: clamp(0.5rem, 1.5vw, 1.5rem);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* CRT grid + scanlines */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.015) 0px,
+        rgba(255, 255, 255, 0.015) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* === SKIP LINK === */
+    .u-skip-link {
+      position: absolute;
+      top: -100px; left: 8px;
+      padding: 0.5rem 1rem;
+      background: var(--neon-cyan);
+      color: var(--bg-dark);
+      font-family: var(--font-heading);
+      font-weight: 700;
+      text-decoration: none;
+      border-radius: 4px;
+      transition: top 0.2s;
+      z-index: 100;
+    }
+    .u-skip-link:focus { top: 8px; }
+
+    /* === LAYOUT === */
+    .l-app {
+      position: relative;
+      z-index: 2;
+      width: min(1000px, 100%);
+      display: grid;
+      gap: 1rem;
+    }
+
+    /* === HEADER === */
+    .c-header { text-align: center; }
+    .c-header__title {
+      font-family: var(--font-heading);
+      font-size: var(--text-4xl);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--neon-cyan);
+      text-shadow: var(--glow-cyan);
+      margin-bottom: 0.25rem;
+    }
+    .c-header__title em {
+      font-style: normal;
+      color: var(--neon-magenta);
+      text-shadow: var(--glow-magenta);
+    }
+    .c-header__sub {
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      color: rgba(0, 243, 255, 0.6);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    /* === SCOREBOARD === */
+    .c-hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      padding: 0.75rem 1.25rem;
+      background: var(--bg-card);
+      border: 1px solid rgba(0, 243, 255, 0.2);
+      border-radius: 8px;
+      box-shadow: var(--glow-cyan);
+    }
+    .c-hud__stat {
+      font-family: var(--font-mono);
+      font-size: var(--text-base);
+      color: var(--neon-cyan);
+      text-shadow: var(--glow-cyan);
+    }
+    .c-hud__stat--alt { color: var(--neon-magenta); text-shadow: var(--glow-magenta); }
+    .c-hud__label {
+      color: rgba(0, 243, 255, 0.6);
+      margin-right: 0.4rem;
+      font-size: var(--text-sm);
+    }
+    .c-hud__value { font-weight: 700; }
+
+    /* === HEALTH BAR === */
+    .c-health {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      min-width: 180px;
+    }
+    .c-health__bar {
+      flex: 1;
+      height: 14px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(231, 74, 59, 0.4);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .c-health__fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, var(--neon-danger), var(--neon-magenta));
+      box-shadow: var(--glow-danger);
+      transition: width 0.2s ease;
+    }
+    .c-health__text {
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      color: var(--neon-danger);
+      text-shadow: var(--glow-danger);
+    }
+
+    /* === GAME CANVAS WRAPPER === */
+    .l-arena {
+      position: relative;
+      border: 2px solid rgba(0, 243, 255, 0.35);
+      border-radius: 8px;
+      box-shadow: var(--glow-cyan);
+      overflow: hidden;
+      background: #000;
+    }
+    #game {
+      display: block;
+      width: 100%;
+      height: auto;
+      touch-action: none;
+      cursor: crosshair;
+      background: #000;
+    }
+
+    /* === OVERLAY SCREENS (menu, game over, pause) === */
+    .c-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 1rem;
+      padding: 1.5rem;
+      background: rgba(5, 5, 5, 0.82);
+      backdrop-filter: blur(6px);
+      z-index: 10;
+    }
+    .c-overlay[hidden] { display: none; }
+    .c-overlay__title {
+      font-family: var(--font-heading);
+      font-size: var(--text-3xl);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--neon-cyan);
+      text-shadow: var(--glow-cyan);
+    }
+    .c-overlay__title--red { color: var(--neon-danger); text-shadow: var(--glow-danger); }
+    .c-overlay__text {
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      color: rgba(0, 243, 255, 0.7);
+      line-height: 1.8;
+      max-width: 46ch;
+    }
+    .c-overlay__highlight {
+      color: var(--neon-magenta);
+      text-shadow: var(--glow-magenta);
+      font-weight: 700;
+    }
+
+    /* === BUTTONS === */
+    .c-btn {
+      font-family: var(--font-heading);
+      font-size: var(--text-lg);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.8rem 2rem;
+      color: var(--bg-dark);
+      background: var(--neon-cyan);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s;
+    }
+    .c-btn:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: var(--glow-cyan);
+    }
+    .c-btn:active { transform: scale(0.98); }
+    .c-btn:focus-visible {
+      outline: 2px solid var(--neon-magenta);
+      outline-offset: 3px;
+    }
+    .c-btn--accent { background: var(--neon-magenta); }
+    .c-btn--accent:hover { box-shadow: var(--glow-magenta); }
+    .c-btn--ghost {
+      background: transparent;
+      color: var(--neon-cyan);
+      border: 1px solid var(--neon-cyan);
+    }
+    .c-btn--ghost:hover { box-shadow: var(--glow-cyan); background: rgba(0, 243, 255, 0.1); }
+
+    /* === FOOTER === */
+    .c-footer {
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      color: rgba(0, 243, 255, 0.4);
+    }
+    .c-footer kbd {
+      font-family: inherit;
+      color: var(--neon-magenta);
+      border: 1px solid rgba(255, 0, 255, 0.4);
+      border-radius: 3px;
+      padding: 0 0.35rem;
+      text-shadow: var(--glow-magenta);
+    }
+
+    /* === DAMAGE / MESSAGE FEEDBACK === */
+    .u-flash {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle, rgba(231, 74, 59, 0.35) 0%, transparent 70%);
+      pointer-events: none;
+      opacity: 0;
+      z-index: 50;
+      transition: opacity 0.15s;
+    }
+    .u-flash.is-active { opacity: 1; }
+
+    /* === MOTION REDUCTION === */
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+    }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 480px) {
+      .c-hud { justify-content: center; }
+      .c-hud__stat { width: 45%; text-align: center; }
+      .c-health { width: 100%; order: 3; }
+    }
+  </style>
+</head>
+<body class="l-body">
+  <a href="#game" class="u-skip-link">Skip to game</a>
+
+  <div class="l-app">
+    <header class="c-header">
+      <h1 class="c-header__title">NEON <em>ZOMBIES</em></h1>
+      <p class="c-header__sub">// arcade survival protocol</p>
+    </header>
+
+    <!-- HUD -->
+    <section class="c-hud" aria-label="Game stats">
+      <span class="c-hud__stat"><span class="c-hud__label">WAVE</span><span id="waveVal" class="c-hud__value">1</span></span>
+      <span class="c-hud__stat c-hud__stat--alt"><span class="c-hud__label">SCORE</span><span id="scoreVal" class="c-hud__value">0</span></span>
+      <div class="c-health" aria-label="Health">
+        <div class="c-health__bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" id="healthBar" tabindex="-1">
+          <div class="c-health__fill" id="healthFill"></div>
+        </div>
+        <span class="c-health__text" id="healthText">100</span>
+      </div>
+      <span class="c-hud__stat"><span class="c-hud__label">AMMO</span><span id="ammoVal" class="c-hud__value">∞</span></span>
+    </section>
+
+    <!-- ARENA -->
+    <main id="main" class="l-arena">
+      <canvas id="game" width="900" height="560" tabindex="0" aria-label="Zombie shooter game. Click to fire, WASD or arrow keys to move."></canvas>
+
+      <!-- START MENU -->
+      <div class="c-overlay" id="menuOverlay">
+        <h2 class="c-overlay__title">NEON ZOMBIES</h2>
+        <p class="c-overlay__text">
+          Survive the horde. Shoot the <span class="c-overlay__highlight">green</span> glowing zombies.
+          Different colored zombies move faster and take more hits.<br>
+          <kbd>WASD</kbd> / <kbd>Arrows</kbd> to move · <kbd>Mouse</kbd> to aim &amp; shoot · <kbd>P</kbd> pause
+        </p>
+        <button type="button" class="c-btn" id="startBtn">Deploy</button>
+      </div>
+
+      <!-- PAUSE -->
+      <div class="c-overlay" id="pauseOverlay" hidden>
+        <h2 class="c-overlay__title">PAUSED</h2>
+        <p class="c-overlay__text">Take a breath. The horde waits.</p>
+        <button type="button" class="c-btn c-btn--accent" id="resumeBtn">Resume</button>
+      </div>
+
+      <!-- GAME OVER -->
+      <div class="c-overlay" id="overOverlay" hidden>
+        <h2 class="c-overlay__title c-overlay__title--red">GAME OVER</h2>
+        <p class="c-overlay__text">
+          Final score: <span class="c-overlay__highlight" id="finalScore">0</span><br>
+          Wave reached: <span class="c-overlay__highlight" id="finalWave">1</span>
+        </p>
+        <button type="button" class="c-btn" id="restartBtn">Re-deploy</button>
+      </div>
+    </main>
+
+    <footer class="c-footer">
+      <p>MOVE <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> · SHOOT <kbd>CLICK</kbd> · RELOAD <kbd>R</kbd> · PAUSE <kbd>P</kbd></p>
+    </footer>
+  </div>
+
+  <!-- damage flash overlay -->
+  <div class="u-flash" id="damageFlash" aria-hidden="true"></div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      /* ============ DOM CACHE ============ */
+      const canvas = document.getElementById('game');
+      const ctx = canvas.getContext('2d');
+      const scoreEl = document.getElementById('scoreVal');
+      const waveEl = document.getElementById('waveVal');
+      const ammoEl = document.getElementById('ammoVal');
+      const healthText = document.getElementById('healthText');
+      const healthFill = document.getElementById('healthFill');
+      const healthBar = document.getElementById('healthBar');
+      const menuOverlay = document.getElementById('menuOverlay');
+      const pauseOverlay = document.getElementById('pauseOverlay');
+      const overOverlay = document.getElementById('overOverlay');
+      const finalScoreEl = document.getElementById('finalScore');
+      const finalWaveEl = document.getElementById('finalWave');
+      const damageFlash = document.getElementById('damageFlash');
+
+      /* ============ GAME STATE ============ */
+      const W = 900, H = 560; // logical canvas size
+      let state = 'menu'; // menu | playing | paused | over
+      let score = 0;
+      let wave = 1;
+      let waveTimer = 0;
+      let spawnQueue = [];
+      let spawnTotal = 0;
+      let waveActive = false;
+
+      // Player
+      const player = {
+        x: W / 2, y: H / 2,
+        r: 16,
+        speed: 3.4,
+        health: 100,
+        maxHealth: 100,
+        angle: 0,
+        // reload mechanic
+        magSize: 6,
+        mag: 6,
+        reserve: 48,
+        reloading: false,
+        reloadT: 0,
+        reloadTime: 90, // frames
+        shootCooldown: 0,
+        invuln: 0
+      };
+
+      // Projectiles / enemies / particles
+      let bullets = [];
+      let zombies = [];
+      let particles = [];
+
+      // Input
+      const keys = {};
+      let mouse = { x: W / 2, y: H / 2, down: false };
+
+      /* ============ ZOMBIE TYPES ============ */
+      const ZOMBIE_TYPES = [
+        { name: 'walker', speed: 0.55, r: 14, hp: 3, score: 10, color: '#1cc88a', touch: 8 },
+        { name: 'runner', speed: 1.05, r: 12, hp: 2, score: 25, color: '#f6c23e', touch: 12 },
+        { name: 'brute',  speed: 0.4,  r: 22, hp: 9, score: 40, color: '#ff00ff', touch: 20 },
+        { name: 'tank',   speed: 0.28, r: 30, hp: 22, score: 100, color: '#e74a3b', touch: 30 }
+      ];
+
+      function zombieTypeForWave(w) {
+        // progressively unlock tougher types
+        const unlocked = Math.min(1 + Math.floor(w / 2), ZOMBIE_TYPES.length);
+        const pool = ZOMBIE_TYPES.slice(0, unlocked);
+        // weight: earlier types more common
+        const weights = pool.map((_, i) => (pool.length - i) * (i === 0 ? 2 : 1));
+        const total = weights.reduce((a, b) => a + b, 0);
+        let roll = Math.random() * total;
+        for (let i = 0; i < pool.length; i++) {
+          roll -= weights[i];
+          if (roll <= 0) return pool[i];
+        }
+        return pool[0];
+      }
+
+      /* ============ WAVE MANAGEMENT ============ */
+      function startWave() {
+        const spawnCount = 6 + wave * 3;
+        spawnTotal = spawnCount;
+        spawnQueue = [];
+        for (let i = 0; i < spawnCount; i++) {
+          const type = zombieTypeForWave(wave);
+          spawnQueue.push({ t: i * (60 + wave * 8), type });
+        }
+        waveTimer = 0;
+        waveActive = true;
+        waveEl.textContent = wave;
+      }
+
+      /* ============ SPAWN UTIL ============ */
+      function spawnZombie(type) {
+        // spawn at edge, at least 120px from player
+        let x, y;
+        do {
+          const edge = Math.floor(Math.random() * 4);
+          if (edge === 0) { x = 0; y = Math.random() * H; }
+          else if (edge === 1) { x = W; y = Math.random() * H; }
+          else if (edge === 2) { x = Math.random() * W; y = 0; }
+          else { x = Math.random() * W; y = H; }
+        } while (Math.hypot(x - player.x, y - player.y) < 130);
+        zombies.push({ x, y, type, wobble: Math.random() * Math.PI * 2 });
+      }
+
+      /* ============ PROJECTILES ============ */
+      function fireBullet() {
+        if (player.reloading) return;
+        if (player.mag <= 0) {
+          startReload();
+          return;
+        }
+        const muzzleR = player.r + 6;
+        const mx = player.x + Math.cos(player.angle) * muzzleR;
+        const my = player.y + Math.sin(player.angle) * muzzleR;
+        const spread = (Math.random() - 0.5) * 0.06;
+        const a = player.angle + spread;
+        bullets.push({ x: mx, y: my, vx: Math.cos(a) * 9, vy: Math.sin(a) * 9, life: 90 });
+        player.mag--;
+        updateAmmo();
+        spawnMuzzle(mx, my, player.angle);
+      }
+
+      function startReload() {
+        if (player.reloading || player.mag === player.magSize || player.reserve <= 0) return;
+        player.reloading = true;
+        player.reloadT = 0;
+      }
+
+      function updateAmmo() {
+        ammoEl.textContent = player.reloading ? 'RELOAD' : (player.mag + '/' + player.reserve);
+      }
+
+      /* ============ PARTICLES ============ */
+      function spawnMuzzle(x, y, angle) {
+        for (let i = 0; i < 3; i++) {
+          particles.push({
+            x, y,
+            vx: Math.cos(angle) * (2 + Math.random() * 2) + (Math.random() - 0.5) * 1.5,
+            vy: Math.sin(angle) * (2 + Math.random() * 2) + (Math.random() - 0.5) * 1.5,
+            life: 12, max: 12, color: '#f6c23e', r: 2
+          });
+        }
+      }
+
+      function spawnBlood(x, y, color) {
+        for (let i = 0; i < 14; i++) {
+          const a = Math.random() * Math.PI * 2;
+          const sp = 1 + Math.random() * 2.5;
+          particles.push({
+            x, y,
+            vx: Math.cos(a) * sp,
+            vy: Math.sin(a) * sp,
+            life: 30 + Math.random() * 20, max: 50, color, r: 1.5 + Math.random() * 2
+          });
+        }
+      }
+
+      /* ============ RESET ============ */
+      function resetGame() {
+        score = 0;
+        wave = 1;
+        bullets = [];
+        zombies = [];
+        particles = [];
+        player.health = player.maxHealth;
+        player.mag = player.magSize;
+        player.reserve = 48;
+        player.reloading = false;
+        player.invuln = 0;
+        player.x = W / 2;
+        player.y = H / 2;
+        updateAmmo();
+        updateHud();
+        startWave();
+      }
+
+      function updateHud() {
+        scoreEl.textContent = score;
+        const pct = Math.max(0, Math.round(player.health / player.maxHealth * 100));
+        healthFill.style.width = pct + '%';
+        healthText.textContent = pct;
+        healthBar.setAttribute('aria-valuenow', pct);
+      }
+
+      /* ============ INPUT ============ */
+      function canvasPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = W / rect.width;
+        const scaleY = H / rect.height;
+        return {
+          x: (e.clientX - rect.left) * scaleX,
+          y: (e.clientY - rect.top) * scaleY
+        };
+      }
+
+      document.addEventListener('keydown', (e) => {
+        keys[e.code] = true;
+        if (e.code === 'KeyP') {
+          if (state === 'playing') {
+            setState('paused');
+          } else if (state === 'paused') {
+            setState('playing');
+          }
+        }
+        if (e.code === 'KeyR' && state === 'playing') startReload();
+      });
+
+      document.addEventListener('keyup', (e) => { keys[e.code] = false; });
+
+      function setState(s) {
+        state = s;
+        menuOverlay.hidden = s !== 'menu';
+        pauseOverlay.hidden = s !== 'paused';
+        overOverlay.hidden = s !== 'over';
+        if (s === 'playing') { canvas.focus(); }
+      }
+
+      // Prevent default scrolling for arrows/space
+      document.addEventListener('keydown', (e) => {
+        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) {
+          e.preventDefault();
+        }
+      });
+
+      canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+
+      canvas.addEventListener('mousemove', (e) => {
+        const p = canvasPos(e);
+        mouse.x = p.x; mouse.y = p.y;
+      });
+
+      canvas.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return;
+        mouse.down = true;
+        const p = canvasPos(e);
+        mouse.x = p.x; mouse.y = p.y;
+      });
+
+      window.addEventListener('mouseup', () => { mouse.down = false; });
+      window.addEventListener('mouseout', () => { mouse.down = false; });
+
+      // Pause when tab hidden
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden && state === 'playing') setState('paused');
+      });
+
+      /* ============ BUTTONS ============ */
+      document.getElementById('startBtn').addEventListener('click', () => {
+        resetGame();
+        setState('playing');
+      });
+      document.getElementById('resumeBtn').addEventListener('click', () => setState('playing'));
+      document.getElementById('restartBtn').addEventListener('click', () => {
+        resetGame();
+        setState('playing');
+      });
+
+      // Allow clicking canvas background areas to start/restart from overlays is disabled; use buttons.
+      // Keyboard enter triggers focused button (default). Also allow space to start when menu:
+      document.addEventListener('keydown', (e) => {
+        if (state === 'menu' && (e.code === 'Space' || e.code === 'Enter' || e.code === 'KeyD')) {
+          e.preventDefault();
+          resetGame();
+          setState('playing');
+        }
+      });
+
+      /* ============ UPDATE ============ */
+      function update() {
+        // --- player movement ---
+        let dx = 0, dy = 0;
+        if (keys['KeyW'] || keys['ArrowUp']) dy -= 1;
+        if (keys['KeyS'] || keys['ArrowDown']) dy += 1;
+        if (keys['KeyA'] || keys['ArrowLeft']) dx -= 1;
+        if (keys['KeyD'] || keys['ArrowRight']) dx += 1;
+        if (dx !== 0 || dy !== 0) {
+          const len = Math.hypot(dx, dy);
+          dx /= len; dy /= len;
+          const nx = player.x + dx * player.speed;
+          const ny = player.y + dy * player.speed;
+          player.x = Math.max(player.r, Math.min(W - player.r, nx));
+          player.y = Math.max(player.r, Math.min(H - player.r, ny));
+        }
+
+        // aim at mouse
+        player.angle = Math.atan2(mouse.y - player.y, mouse.x - player.x);
+
+        // firing
+        if (player.shootCooldown > 0) player.shootCooldown--;
+        if (mouse.down && state === 'playing' && player.shootCooldown <= 0) {
+          fireBullet();
+          player.shootCooldown = 8;
+        }
+
+        // reload cycle
+        if (player.reloading) {
+          player.reloadT++;
+          if (player.reloadT >= player.reloadTime) {
+            player.reloading = false;
+            const need = player.magSize - player.mag;
+            const take = Math.min(need, player.reserve);
+            player.mag += take;
+            player.reserve -= take;
+          }
+          updateAmmo();
+        }
+
+        // invulnerability timer
+        if (player.invuln > 0) player.invuln--;
+
+        // --- bullets ---
+        for (let i = bullets.length - 1; i >= 0; i--) {
+          const b = bullets[i];
+          b.x += b.vx;
+          b.y += b.vy;
+          b.life--;
+          let dead = b.life <= 0 || b.x < 0 || b.x > W || b.y < 0 || b.y > H;
+
+          // bullet vs zombie
+          if (!dead) {
+            for (let j = zombies.length - 1; j >= 0; j--) {
+              const z = zombies[j];
+              if (Math.hypot(b.x - z.x, b.y - z.y) < z.type.r + 3) {
+                z.hp -= 1;
+                spawnBlood(b.x, b.y, z.type.color);
+                if (z.hp <= 0) {
+                  score += z.type.score;
+                  spawnBlood(z.x, z.y, z.type.color);
+                  zombies.splice(j, 1);
+                }
+                dead = true;
+                break;
+              }
+            }
+          }
+          if (dead) bullets.splice(i, 1);
+        }
+
+        // --- zombies ---
+        for (let i = zombies.length - 1; i >= 0; i--) {
+          const z = zombies[i];
+          z.wobble += 0.04;
+          const wob = Math.sin(z.wobble) * 0.25;
+          const a = Math.atan2(player.y - z.y, player.x - z.x);
+          z.x += Math.cos(a + wob) * z.type.speed;
+          z.y += Math.sin(a + wob) * z.type.speed;
+
+          // zombie vs player
+          if (Math.hypot(z.x - player.x, z.y - player.y) < z.type.r + player.r) {
+            if (player.invuln <= 0) {
+              player.health -= z.type.touch;
+              player.invuln = 25;
+              damageFlash.classList.add('is-active');
+              setTimeout(() => damageFlash.classList.remove('is-active'), 130);
+              if (player.health <= 0) {
+                player.health = 0;
+                gameOver();
+                return;
+              }
+              updateHud();
+            }
+          }
+        }
+
+        // --- particles ---
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vx *= 0.92;
+          p.vy *= 0.92;
+          p.life--;
+          if (p.life <= 0) particles.splice(i, 1);
+        }
+
+        // --- wave spawning ---
+        if (waveActive) {
+          waveTimer++;
+          for (let i = spawnQueue.length - 1; i >= 0; i--) {
+            const s = spawnQueue[i];
+            if (waveTimer >= s.t) {
+              spawnZombie(s.type);
+              spawnQueue.splice(i, 1);
+            }
+          }
+          // wave complete when queue empty and all dead
+          if (spawnQueue.length === 0 && zombies.length === 0) {
+            waveActive = false;
+            // health regen between waves
+            player.health = Math.min(player.maxHealth, player.health + 15);
+            updateHud();
+            wave++;
+            startWave();
+          }
+        }
+
+        // pass time
+        updateHud();
+      }
+
+      function gameOver() {
+        state = 'over';
+        finalScoreEl.textContent = score;
+        finalWaveEl.textContent = wave;
+        mouse.down = false;
+        setState('over');
+      }
+
+      /* ============ RENDER ============ */
+      function render() {
+        ctx.clearRect(0, 0, W, H);
+
+        // ground grid (pseudo 3D floor vibe)
+        ctx.strokeStyle = 'rgba(0, 243, 255, 0.05)';
+        ctx.lineWidth = 1;
+        const grid = 40;
+        ctx.beginPath();
+        for (let x = 0; x <= W; x += grid) {
+          ctx.moveTo(x, 0); ctx.lineTo(x, H);
+        }
+        for (let y = 0; y <= H; y += grid) {
+          ctx.moveTo(0, y); ctx.lineTo(W, y);
+        }
+        ctx.stroke();
+
+        // --- zombies (behind player) ---
+        for (const z of zombies) {
+          const t = z.type;
+          const bob = Math.sin(z.wobble * 2) * 1.5;
+          // glow body
+          ctx.save();
+          ctx.shadowColor = t.color;
+          ctx.shadowBlur = 14;
+          ctx.fillStyle = t.color;
+          ctx.beginPath();
+          ctx.arc(z.x, z.y + bob, t.r, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+
+          // dark core
+          ctx.fillStyle = 'rgba(5,5,5,0.85)';
+          ctx.beginPath();
+          ctx.arc(z.x, z.y + bob, t.r * 0.6, 0, Math.PI * 2);
+          ctx.fill();
+
+          // two glowing eyes
+          ctx.save();
+          ctx.shadowColor = '#00f3ff';
+          ctx.shadowBlur = 8;
+          ctx.fillStyle = '#00f3ff';
+          const eyeA = player.angle || 0;
+          const eyeOff = t.r * 0.3;
+          ctx.fillRect(z.x + Math.cos(eyeA - 0.4) * eyeOff - 2, z.y + bob + Math.sin(eyeA - 0.4) * eyeOff - 2, 3, 3);
+          ctx.fillRect(z.x + Math.cos(eyeA + 0.4) * eyeOff - 2, z.y + bob + Math.sin(eyeA + 0.4) * eyeOff - 2, 3, 3);
+          ctx.restore();
+        }
+
+        // --- player ---
+        if (state === 'playing' || state === 'paused') {
+          const flash = player.invuln > 0 && Math.floor(player.invuln / 3) % 2 === 0;
+          ctx.save();
+          ctx.shadowColor = '#00f3ff';
+          ctx.shadowBlur = 18;
+          ctx.fillStyle = flash ? '#ffffff' : '#00f3ff';
+          ctx.beginPath();
+          ctx.arc(player.x, player.y, player.r, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+
+          // gun barrel pointing at angle
+          ctx.save();
+          ctx.translate(player.x, player.y);
+          ctx.rotate(player.angle);
+          ctx.fillStyle = '#e0e0e0';
+          ctx.fillRect(10, -3, 18, 6);
+          ctx.fillStyle = 'rgba(0,0,0,0.3)';
+          ctx.fillRect(14, -3, 6, 6);
+          ctx.restore();
+
+          // core
+          ctx.fillStyle = 'rgba(5,5,5,0.85)';
+          ctx.beginPath();
+          ctx.arc(player.x, player.y, player.r * 0.55, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // --- bullets (tracers) ---
+        for (const b of bullets) {
+          ctx.save();
+          ctx.shadowColor = '#f6c23e';
+          ctx.shadowBlur = 8;
+          ctx.strokeStyle = '#f6c23e';
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.moveTo(b.x - b.vx * 3, b.y - b.vy * 3);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        // --- particles ---
+        for (const p of particles) {
+          ctx.globalAlpha = Math.max(0, p.life / p.max);
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+      }
+
+      /* ============ GAME LOOP ============ */
+      const loop = () => {
+        if (state === 'playing') update();
+        render();
+        requestAnimationFrame(loop);
+      };
+
+      /* ============ INIT ============ */
+      setState('menu');
+      updateAmmo();
+      requestAnimationFrame(loop);
+    })();
+  </script>
+</body>
+</html>

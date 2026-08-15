@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Neon Pong - a single-player arcade tennis game with mouse controls">
+  <title>Neon Pong · Single Player Tennis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Fira+Code:wght@500&display=swap" rel="stylesheet">
+  <style>
+    /* === RESET === */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* === DESIGN TOKENS === */
+    :root {
+      --bg-dark: #050505;
+      --bg-secondary: #0a0b10;
+      --neon-cyan: #00f3ff;
+      --neon-magenta: #ff00ff;
+      --neon-purple: #a855f7;
+      --glow-cyan: 0 0 8px rgba(0, 243, 255, 0.6), 0 0 24px rgba(0, 243, 255, 0.25);
+      --glow-magenta: 0 0 8px rgba(255, 0, 255, 0.6), 0 0 24px rgba(255, 0, 255, 0.25);
+      --font-heading: 'Rajdhani', system-ui, sans-serif;
+      --font-mono: 'Fira Code', ui-monospace, monospace;
+      --font-body: system-ui, -apple-system, sans-serif;
+      --text-base: clamp(0.9rem, 0.85rem + 0.25vw, 1rem);
+      --text-lg: clamp(1.1rem, 1rem + 0.5vw, 1.25rem);
+      --text-2xl: clamp(1.5rem, 1.35rem + 0.75vw, 2rem);
+      --text-3xl: clamp(1.75rem, 1.55rem + 1vw, 2.5rem);
+    }
+
+    /* === BASE === */
+    html, body { height: 100%; }
+    body {
+      font-family: var(--font-body);
+      color: var(--neon-cyan);
+      background: radial-gradient(ellipse at center, var(--bg-secondary) 0%, var(--bg-dark) 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: clamp(1rem, 2vw, 2rem);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* CRT grid + scanlines */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(0, 243, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 243, 255, 0.06) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.015) 0px,
+        rgba(255, 255, 255, 0.015) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* === SKIP LINK === */
+    .u-skip-link {
+      position: absolute;
+      top: -100px; left: 8px;
+      padding: 0.5rem 1rem;
+      background: var(--neon-cyan);
+      color: var(--bg-dark);
+      font-family: var(--font-heading);
+      font-weight: 700;
+      text-decoration: none;
+      border-radius: 4px;
+      transition: top 0.2s;
+      z-index: 100;
+    }
+    .u-skip-link:focus { top: 8px; }
+
+    /* === LAYOUT === */
+    .l-app {
+      position: relative;
+      z-index: 2;
+      width: min(900px, 100%);
+      display: grid;
+      gap: 1.25rem;
+    }
+
+    /* === HEADER === */
+    .c-header { text-align: center; }
+    .c-header__title {
+      font-family: var(--font-heading);
+      font-size: var(--text-3xl);
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--neon-cyan);
+      text-shadow: var(--glow-cyan);
+      margin: 0;
+    }
+    .c-header__subtitle {
+      font-family: var(--font-mono);
+      font-size: var(--text-base);
+      color: rgba(0, 243, 255, 0.6);
+      letter-spacing: 0.05em;
+      margin-top: 0.25rem;
+    }
+
+    /* === GAME === */
+    .c-game {
+      display: grid;
+      gap: 1rem;
+      padding: clamp(1rem, 2vw, 1.5rem);
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(0, 243, 255, 0.25);
+      border-radius: 8px;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 0 30px rgba(0, 243, 255, 0.08), inset 0 0 30px rgba(0, 243, 255, 0.04);
+    }
+
+    /* === SCOREBOARD === */
+    .c-scoreboard {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 1rem;
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      border-radius: 4px;
+      background: rgba(168, 85, 247, 0.04);
+    }
+    .c-score {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    .c-score__label {
+      font-family: var(--font-heading);
+      font-size: 0.85rem;
+      letter-spacing: 0.2em;
+      color: rgba(255, 255, 255, 0.5);
+    }
+    .c-score__value {
+      font-family: var(--font-mono);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 500;
+      line-height: 1;
+      transition: transform 0.2s, color 0.2s;
+    }
+    .c-score--player .c-score__value { color: var(--neon-cyan); text-shadow: var(--glow-cyan); }
+    .c-score--ai .c-score__value { color: var(--neon-magenta); text-shadow: var(--glow-magenta); }
+    .c-score.is-scored .c-score__value {
+      animation: scorePulse 0.4s ease;
+    }
+    @keyframes scorePulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.4); }
+    }
+
+    /* === CANVAS === */
+    .c-game__canvas-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 8 / 5;
+      border: 1px solid rgba(0, 243, 255, 0.4);
+      border-radius: 4px;
+      overflow: hidden;
+      background: var(--bg-dark);
+      box-shadow: var(--glow-cyan), inset 0 0 60px rgba(0, 243, 255, 0.05);
+    }
+    .c-game__canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      cursor: none;
+    }
+
+    /* === STATUS / WIN MESSAGE === */
+    .c-status {
+      text-align: center;
+      min-height: 2.5rem;
+      display: grid;
+      place-items: center;
+      font-family: var(--font-heading);
+      font-size: var(--text-lg);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--neon-magenta);
+      text-shadow: var(--glow-magenta);
+    }
+    .c-status:empty { display: none; }
+
+    /* === CONTROLS === */
+    .c-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+      align-items: center;
+    }
+    .c-btn {
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.75rem 2rem;
+      min-height: 48px;
+      min-width: 120px;
+      background: transparent;
+      color: var(--neon-cyan);
+      border: 1px solid var(--neon-cyan);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+    .c-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      background: rgba(0, 243, 255, 0.08);
+      box-shadow: var(--glow-cyan);
+    }
+    .c-btn:active:not(:disabled) { transform: scale(0.97); }
+    .c-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .c-btn:focus-visible {
+      outline: 2px solid var(--neon-magenta);
+      outline-offset: 3px;
+    }
+
+    .c-game__hint {
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: rgba(0, 243, 255, 0.55);
+      letter-spacing: 0.05em;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main" class="u-skip-link">Skip to game</a>
+  <main id="main" class="l-app">
+    <header class="c-header">
+      <h1 class="c-header__title">Neon Pong</h1>
+      <p class="c-header__subtitle">// single-player arcade tennis</p>
+    </header>
+
+    <section class="c-game" aria-label="Game area">
+      <div class="c-scoreboard" role="status" aria-live="polite" aria-atomic="true">
+        <div class="c-score c-score--player" data-score-side="player">
+          <span class="c-score__label">You</span>
+          <span class="c-score__value" data-score="player">0</span>
+        </div>
+        <div class="c-score c-score--ai" data-score-side="ai">
+          <span class="c-score__label">CPU</span>
+          <span class="c-score__value" data-score="ai">0</span>
+        </div>
+      </div>
+
+      <div class="c-game__canvas-wrap">
+        <canvas class="c-game__canvas" id="game" width="800" height="500"
+                aria-label="Tennis playing field"></canvas>
+      </div>
+
+      <div class="c-status" data-status aria-live="polite"></div>
+
+      <div class="c-controls">
+        <button class="c-btn" id="startBtn" type="button">Start</button>
+        <button class="c-btn" id="resetBtn" type="button">Reset</button>
+      </div>
+
+      <p class="c-game__hint">Move mouse up/down to control the left paddle. First to 7 wins.</p>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // === CONFIG ===
+      const CONFIG = {
+        WIN_SCORE: 7,
+        PADDLE_W: 12,
+        PADDLE_H: 90,
+        PADDLE_OFFSET: 24,
+        BALL_SIZE: 10,
+        BALL_START_SPEED: 5,
+        BALL_MAX_SPEED: 14,
+        SPEED_INCREMENT: 1.05,
+        AI_FOLLOW: 0.08
+      };
+
+      // === DOM ===
+      const canvas = document.getElementById('game');
+      const ctx = canvas.getContext('2d');
+      const startBtn = document.getElementById('startBtn');
+      const resetBtn = document.getElementById('resetBtn');
+      const statusEl = document.querySelector('[data-status]');
+      const scoreEls = {
+        player: document.querySelector('[data-score="player"]'),
+        ai: document.querySelector('[data-score="ai"]')
+      };
+      const scoreSideEls = {
+        player: document.querySelector('[data-score-side="player"]'),
+        ai: document.querySelector('[data-score-side="ai"]')
+      };
+
+      // === STATE ===
+      const state = {
+        ball: { x: 0, y: 0, vx: 0, vy: 0, speed: CONFIG.BALL_START_SPEED },
+        player: { x: 0, y: 0 },
+        ai: { x: 0, y: 0, targetY: 0 },
+        scores: { player: 0, ai: 0 },
+        running: false,
+        over: false,
+        winner: null,
+        rafId: 0,
+        lastTs: 0,
+        serveToPlayer: true
+      };
+
+      // === HELPERS ===
+      const clamp = (v, lo, hi) => v < lo ? lo : v > hi ? hi : v;
+      const randAngle = () => (Math.random() * 0.6 - 0.3) * Math.PI;
+
+      function serve(direction) {
+        state.ball.x = canvas.width / 2;
+        state.ball.y = canvas.height / 2;
+        state.ball.speed = CONFIG.BALL_START_SPEED;
+        const angle = randAngle();
+        state.ball.vx = direction * state.ball.speed * Math.cos(angle);
+        state.ball.vy = state.ball.speed * Math.sin(angle);
+        state.ai.targetY = state.ball.y - CONFIG.PADDLE_H / 2;
+      }
+
+      function resetPositions() {
+        state.player.x = CONFIG.PADDLE_OFFSET;
+        state.player.y = (canvas.height - CONFIG.PADDLE_H) / 2;
+        state.ai.x = canvas.width - CONFIG.PADDLE_OFFSET - CONFIG.PADDLE_W;
+        state.ai.y = (canvas.height - CONFIG.PADDLE_H) / 2;
+        state.ai.targetY = state.ai.y;
+      }
+
+      function resetGame() {
+        state.scores.player = 0;
+        state.scores.ai = 0;
+        state.over = false;
+        state.winner = null;
+        state.serveToPlayer = true;
+        resetPositions();
+        serve(1);
+        renderScores();
+        statusEl.textContent = '';
+        startBtn.disabled = false;
+        startBtn.textContent = 'Start';
+      }
+
+      function renderScores() {
+        scoreEls.player.textContent = state.scores.player;
+        scoreEls.ai.textContent = state.scores.ai;
+      }
+
+      function pulseScore(side) {
+        const el = scoreSideEls[side];
+        el.classList.remove('is-scored');
+        void el.offsetWidth; // force reflow to restart animation
+        el.classList.add('is-scored');
+      }
+
+      // === COLLISION ===
+      function reflectOffPaddle(paddle, direction) {
+        const b = state.ball;
+        if (direction === -1) {
+          b.x = paddle.x + CONFIG.PADDLE_W + CONFIG.BALL_SIZE + 0.1;
+        } else {
+          b.x = paddle.x - CONFIG.BALL_SIZE - 0.1;
+        }
+        b.speed = Math.min(b.speed * CONFIG.SPEED_INCREMENT, CONFIG.BALL_MAX_SPEED);
+        const hit = (b.y - (paddle.y + CONFIG.PADDLE_H / 2)) / (CONFIG.PADDLE_H / 2);
+        b.vx = -b.vx;
+        b.vy = hit * b.speed * 0.85;
+        const mag = Math.hypot(b.vx, b.vy);
+        if (mag > 0) {
+          b.vx = (b.vx / mag) * b.speed;
+          b.vy = (b.vy / mag) * b.speed;
+        }
+      }
+
+      function checkPaddleCollision() {
+        const b = state.ball;
+        const p = state.player;
+        if (b.vx < 0 &&
+            b.x - CONFIG.BALL_SIZE <= p.x + CONFIG.PADDLE_W &&
+            b.x + CONFIG.BALL_SIZE >= p.x &&
+            b.y >= p.y && b.y <= p.y + CONFIG.PADDLE_H) {
+          reflectOffPaddle(p, -1);
+        }
+        const a = state.ai;
+        if (b.vx > 0 &&
+            b.x + CONFIG.BALL_SIZE >= a.x &&
+            b.x - CONFIG.BALL_SIZE <= a.x + CONFIG.PADDLE_W &&
+            b.y >= a.y && b.y <= a.y + CONFIG.PADDLE_H) {
+          reflectOffPaddle(a, 1);
+        }
+      }
+
+      function handleScoring() {
+        const b = state.ball;
+        if (b.x < -CONFIG.BALL_SIZE) {
+          state.scores.ai++;
+          pulseScore('ai');
+          renderScores();
+          if (state.scores.ai >= CONFIG.WIN_SCORE) {
+            endGame('ai');
+            return;
+          }
+          state.serveToPlayer = true;
+          serve(1);
+          return;
+        }
+        if (b.x > canvas.width + CONFIG.BALL_SIZE) {
+          state.scores.player++;
+          pulseScore('player');
+          renderScores();
+          if (state.scores.player >= CONFIG.WIN_SCORE) {
+            endGame('player');
+            return;
+          }
+          state.serveToPlayer = false;
+          serve(-1);
+        }
+      }
+
+      function endGame(winner) {
+        state.running = false;
+        state.over = true;
+        state.winner = winner;
+        statusEl.textContent = winner === 'player'
+          ? 'You win. Reset to play again.'
+          : 'CPU wins. Reset to play again.';
+        startBtn.disabled = true;
+      }
+
+      // === UPDATE ===
+      function update() {
+        if (!state.running) return;
+        const b = state.ball;
+        b.x += b.vx;
+        b.y += b.vy;
+
+        if (b.y < CONFIG.BALL_SIZE) {
+          b.y = CONFIG.BALL_SIZE;
+          b.vy = Math.abs(b.vy);
+        } else if (b.y > canvas.height - CONFIG.BALL_SIZE) {
+          b.y = canvas.height - CONFIG.BALL_SIZE;
+          b.vy = -Math.abs(b.vy);
+        }
+
+        checkPaddleCollision();
+        handleScoring();
+        if (!state.running) return;
+
+        // AI tracking
+        state.ai.targetY = b.y - CONFIG.PADDLE_H / 2;
+        const diff = state.ai.targetY - state.ai.y;
+        state.ai.y += diff * CONFIG.AI_FOLLOW;
+        state.ai.y = clamp(state.ai.y, 0, canvas.height - CONFIG.PADDLE_H);
+      }
+
+      // === DRAW ===
+      function draw() {
+        ctx.fillStyle = state.running ? 'rgba(5,5,5,0.35)' : '#050505';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.strokeStyle = 'rgba(168, 85, 247, 0.35)';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([12, 12]);
+        ctx.beginPath();
+        ctx.moveTo(canvas.width / 2, 8);
+        ctx.lineTo(canvas.width / 2, canvas.height - 8);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        drawPaddle(state.player.x, state.player.y, CONFIG.PADDLE_W, CONFIG.PADDLE_H, '#00f3ff');
+        drawPaddle(state.ai.x, state.ai.y, CONFIG.PADDLE_W, CONFIG.PADDLE_H, '#ff00ff');
+
+        ctx.shadowBlur = 24;
+        ctx.shadowColor = '#ffffff';
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(state.ball.x, state.ball.y, CONFIG.BALL_SIZE, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+
+      function drawPaddle(x, y, w, h, color) {
+        ctx.shadowBlur = 18;
+        ctx.shadowColor = color;
+        ctx.fillStyle = color;
+        ctx.fillRect(x, y, w, h);
+        ctx.shadowBlur = 0;
+      }
+
+      // === LOOP ===
+      function loop(ts) {
+        if (state.lastTs === 0) state.lastTs = ts;
+        const dt = ts - state.lastTs;
+        state.lastTs = ts;
+        update(dt);
+        draw();
+        state.rafId = requestAnimationFrame(loop);
+      }
+
+      // === INPUT ===
+      function pointerHandler(evt) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleY = canvas.height / rect.height;
+        const y = (evt.clientY - rect.top) * scaleY;
+        state.player.y = clamp(y - CONFIG.PADDLE_H / 2, 0, canvas.height - CONFIG.PADDLE_H);
+      }
+      canvas.addEventListener('mousemove', pointerHandler);
+      canvas.addEventListener('touchmove', function (e) {
+        if (e.touches[0]) pointerHandler(e.touches[0]);
+        e.preventDefault();
+      }, { passive: false });
+
+      startBtn.addEventListener('click', function () {
+        if (state.over || state.running) return;
+        state.running = true;
+        startBtn.disabled = true;
+        statusEl.textContent = '';
+        state.lastTs = 0;
+        state.rafId = requestAnimationFrame(loop);
+      });
+
+      resetBtn.addEventListener('click', function () {
+        cancelAnimationFrame(state.rafId);
+        state.running = false;
+        resetGame();
+        draw();
+      });
+
+      document.addEventListener('visibilitychange', function () {
+        if (document.hidden) {
+          state.running = false;
+        } else if (!state.over && state.lastTs > 0) {
+          state.running = true;
+        }
+      });
+
+      // === INIT ===
+      resetGame();
+      draw();
+    })();
+  </script>
+</body>
+</html>

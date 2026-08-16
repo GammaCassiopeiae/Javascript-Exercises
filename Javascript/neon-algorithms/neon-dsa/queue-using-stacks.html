@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Implement Queue using Stacks - JavaScript algorithm in neon - Neon DSA">
+    <title>Implement Queue using Stacks - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Implement Queue using Stacks</h1>
+            <p class="c-subtitle">A FIFO queue built on top of two LIFO stacks</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Easy</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">Amortized O(1)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Stack → Queue</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Implement a first-in-first-out (FIFO) queue using only two stacks. Support <code>push</code>, <code>pop</code>, <code>peek</code>, and <code>empty</code>.</p>
+                <p>Dump the input stack into the output stack when an output is needed, reversing the order to simulate a queue.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>class MyQueue {
+    constructor() {
+        this.input = [];
+        this.output = [];
+    }
+
+    push(x) {
+        this.input.push(x);
+    }
+
+    transfer() {
+        if (this.output.length === 0) {
+            while (this.input.length) {
+                this.output.push(this.input.pop());
+            }
+        }
+    }
+
+    pop() {
+        this.transfer();
+        return this.output.pop();
+    }
+
+    peek() {
+        this.transfer();
+        return this.output[this.output.length - 1];
+    }
+
+    empty() {
+        return this.input.length === 0 &amp;&amp; this.output.length === 0;
+    }
+}
+
+// Example
+const q = new MyQueue();
+q.push(1);
+q.push(2);
+q.peek();   // → 1  (front of the queue)
+q.pop();    // → 1  (removes the front)
+q.empty();  // → false</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; q.peek() → 1</p>
+                <p>&gt; q.pop() → 1</p>
+                <p>&gt; q.empty() → false</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Queue using Stacks · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

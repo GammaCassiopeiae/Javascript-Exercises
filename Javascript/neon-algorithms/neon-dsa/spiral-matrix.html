@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Spiral Matrix - JavaScript algorithm in neon - Neon DSA">
+    <title>Spiral Matrix - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Spiral Matrix</h1>
+            <p class="c-subtitle">Read a matrix in clockwise spiral order</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Medium</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(m · n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(1)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Simulation · Boundaries</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Given an <code>m × n</code> matrix, return all elements in clockwise spiral order (right, down, left, up) shrinking the bounds inward.</p>
+                <p>Keep four boundaries (<code>top</code>, <code>right</code>, <code>bottom</code>, <code>left</code>) and walk each edge, checking for overlap after every pass.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function spiralOrder(matrix) {
+    const result = [];
+    let top = 0;
+    let bottom = matrix.length - 1;
+    let left = 0;
+    let right = matrix[0].length - 1;
+
+    while (top &lt;= bottom &amp;&amp; left &lt;= right) {
+        // move right
+        for (let c = left; c &lt;= right; c++) result.push(matrix[top][c]);
+        top++;
+
+        // move down
+        for (let r = top; r &lt;= bottom; r++) result.push(matrix[r][right]);
+        right--;
+
+        if (top &gt; bottom || left &gt; right) break;
+
+        // move left
+        for (let c = right; c &gt;= left; c--) result.push(matrix[bottom][c]);
+        bottom--;
+
+        // move up
+        for (let r = bottom; r &gt;= top; r--) result.push(matrix[r][left]);
+        left++;
+    }
+
+    return result;
+}
+
+// Example
+const matrix = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+];
+console.log(spiralOrder(matrix));
+// → [1, 2, 3, 6, 9, 8, 7, 4, 5]</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; spiralOrder([[1,2,3],[4,5,6],[7,8,9]]) → [1,2,3,6,9,8,7,4,5]</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Spiral Matrix · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

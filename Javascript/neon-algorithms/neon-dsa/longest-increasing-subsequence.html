@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Longest Increasing Subsequence - JavaScript algorithm in neon - Neon DSA">
+    <title>Longest Increasing Subsequence - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Longest Increasing Subsequence</h1>
+            <p class="c-subtitle">Longest strictly increasing subsequence length</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Medium</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n²)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Dynamic Programming</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Given an integer array <code>nums</code>, return the length of the longest strictly increasing subsequence (elements stay in order but need not be contiguous).</p>
+                <p><code>dp[i]</code> = 1 + best <code>dp[j]</code> among elements before <code>i</code> that are smaller than <code>nums[i]</code>. O(n log n) is possible with binary search + patience sorting.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function lengthOfLIS(nums) {
+    const dp = new Array(nums.length).fill(1);
+    let maxLen = 1;
+
+    for (let i = 1; i &lt; nums.length; i++) {
+        for (let j = 0; j &lt; i; j++) {
+            if (nums[j] &lt; nums[i]) {
+                dp[i] = Math.max(dp[i], dp[j] + 1);
+            }
+        }
+        maxLen = Math.max(maxLen, dp[i]);
+    }
+
+    return maxLen;
+}
+
+// Example
+console.log(lengthOfLIS([10, 9, 2, 5, 3, 7, 101, 18]));
+// → 4  ([2, 3, 7, 101])
+
+console.log(lengthOfLIS([0, 1, 0, 3, 2, 3])); // 4
+console.log(lengthOfLIS([7, 7, 7, 7]));       // 1 (strict)</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; lengthOfLIS([10,9,2,5,3,7,101,18]) → 4</p>
+                <p>&gt; lengthOfLIS([7,7,7,7]) → 1</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Longest Increasing Subsequence · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

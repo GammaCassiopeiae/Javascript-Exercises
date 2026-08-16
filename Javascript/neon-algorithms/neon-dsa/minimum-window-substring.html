@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Minimum Window Substring - JavaScript algorithm in neon - Neon DSA">
+    <title>Minimum Window Substring - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Minimum Window Substring</h1>
+            <p class="c-subtitle">Smallest window containing all characters of t</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Hard</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(m)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Sliding Window</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Given strings <code>s</code> and <code>t</code>, return the smallest substring of <code>s</code> that contains every character of <code>t</code> (with counts) or <code>""</code>.</p>
+                <p>Expand the right edge until all requirements are met, then shrink the left edge while keeping the window valid, tracking the shortest.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function minWindow(s, t) {
+    const need = new Map();
+    for (const char of t) {
+        need.set(char, (need.get(char) || 0) + 1);
+    }
+
+    let required = need.size;      // distinct chars still unmet
+    let left = 0;
+    let minLen = Infinity;
+    let start = 0;
+
+    for (let right = 0; right &lt; s.length; right++) {
+        const char = s[right];
+
+        if (need.has(char)) {
+            need.set(char, need.get(char) - 1);
+            if (need.get(char) === 0) required--;
+        }
+
+        while (required === 0) {
+            if (right - left + 1 &lt; minLen) {
+                minLen = right - left + 1;
+                start = left;
+            }
+
+            const outChar = s[left];
+            if (need.has(outChar)) {
+                need.set(outChar, need.get(outChar) + 1);
+                if (need.get(outChar) &gt; 0) required++;
+            }
+            left++;
+        }
+    }
+
+    return minLen === Infinity ? "" : s.slice(start, start + minLen);
+}
+
+// Example
+console.log(minWindow("ADOBECODEBANC", "ABC")); // "BANC"
+console.log(minWindow("a", "a"));               // "a"
+console.log(minWindow("a", "aa"));              // ""</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; minWindow("ADOBECODEBANC", "ABC") → "BANC"</p>
+                <p>&gt; minWindow("a", "aa") → ""</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Minimum Window Substring · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

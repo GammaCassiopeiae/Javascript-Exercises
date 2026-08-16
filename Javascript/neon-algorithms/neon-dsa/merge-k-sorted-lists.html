@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Merge k Sorted Lists - JavaScript algorithm in neon - Neon DSA">
+    <title>Merge k Sorted Lists - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Merge k Sorted Lists</h1>
+            <p class="c-subtitle">Merge k sorted linked lists into one</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Hard</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n log k)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(k)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Merge Sort / Heap</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Given an array of <code>k</code> sorted linked lists, merge them into one sorted list.</p>
+                <p>Repeatedly pairwise-merge using the standard two-list merge, halving the number of lists each round — divide and conquer.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function mergeTwoLists(list1, list2) {
+    const dummy = new ListNode();
+    let tail = dummy;
+
+    while (list1 !== null &amp;&amp; list2 !== null) {
+        if (list1.val &lt; list2.val) {
+            tail.next = list1;
+            list1 = list1.next;
+        } else {
+            tail.next = list2;
+            list2 = list2.next;
+        }
+        tail = tail.next;
+    }
+
+    tail.next = list1 === null ? list2 : list1;
+    return dummy.next;
+}
+
+function mergeKLists(lists) {
+    if (lists.length === 0) {
+        return null;
+    }
+
+    while (lists.length &gt; 1) {
+        const next = [];
+        for (let i = 0; i &lt; lists.length; i += 2) {
+            const a = lists[i];
+            const b = i + 1 &lt; lists.length ? lists[i + 1] : null;
+            next.push(mergeTwoLists(a, b));
+        }
+        lists = next;
+    }
+
+    return lists[0];
+}
+
+// ListNode class assumed:
+// function ListNode(val, next) { ... }
+
+// Example: merge [[1,4,5],[1,3,4],[2,6]]
+// → 1 → 1 → 2 → 3 → 4 → 4 → 5 → 6</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; mergeKLists([[1,4,5],[1,3,4],[2,6]]) → 1→1→2→3→4→4→5→6</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Merge k Sorted Lists · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

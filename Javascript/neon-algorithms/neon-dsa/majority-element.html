@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Majority Element - JavaScript algorithm in neon - Neon DSA">
+    <title>Majority Element - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Majority Element</h1>
+            <p class="c-subtitle">Find the element appearing more than n/2 times</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Easy</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(1)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Boyer-Moore Vote</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Given an array <code>nums</code> of size <code>n</code>, return the majority element that appears more than <code>n / 2</code> times.</p>
+                <p>Boyer-Moore voting tracks a candidate and a counter: matching votes increment, non-matching decrement; when the counter hits zero, pick a new candidate.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function majorityElement(nums) {
+    let candidate = null;
+    let count = 0;
+
+    for (const num of nums) {
+        if (count === 0) {
+            candidate = num;
+        }
+        count += (num === candidate) ? 1 : -1;
+    }
+
+    return candidate;
+}
+
+// Example
+const nums = [2, 2, 1, 1, 1, 2, 2];
+console.log(majorityElement(nums)); // 2</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; majorityElement([2,2,1,1,1,2,2]) → 2</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Majority Element · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

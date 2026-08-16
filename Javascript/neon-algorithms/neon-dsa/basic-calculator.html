@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Basic Calculator - JavaScript algorithm in neon - Neon DSA">
+    <title>Basic Calculator - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Basic Calculator</h1>
+            <p class="c-subtitle">Evaluate a string with +, -, and parentheses</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Hard</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Stack</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Evaluate an expression string containing digits, <code>+</code>, <code>-</code>, parentheses, and spaces (unary minus allowed).</p>
+                <p>Track a running sign; when a parenthesis opens, push the accumulated result and sign, reset, and restore on <code>)</code>.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function calculate(s) {
+    const stack = [];
+    let result = 0;
+    let sign = 1;
+    let num = 0;
+
+    for (let i = 0; i &lt; s.length; i++) {
+        const char = s[i];
+
+        if (char &gt;= '0' &amp;&amp; char &lt;= '9') {
+            num = num * 10 + (char.charCodeAt(0) - 48);
+        } else if (char === '+') {
+            result += sign * num;
+            num = 0;
+            sign = 1;
+        } else if (char === '-') {
+            result += sign * num;
+            num = 0;
+            sign = -1;
+        } else if (char === '(') {
+            stack.push(result);
+            stack.push(sign);
+            result = 0;
+            sign = 1;
+        } else if (char === ')') {
+            result += sign * num;
+            num = 0;
+            result *= stack.pop();   // restore sign
+            result += stack.pop();   // restore result
+        }
+    }
+
+    return result + sign * num;
+}
+
+// Example
+console.log(calculate("1 + 1"));             // 2
+console.log(calculate(" 2-1 + 2 "));          // 3
+console.log(calculate("(1+(4+5+2)-3)+(6+8)")); // 23</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; calculate("1 + 1") → 2</p>
+                <p>&gt; calculate("(1+(4+5+2)-3)+(6+8)") → 23</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Basic Calculator · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

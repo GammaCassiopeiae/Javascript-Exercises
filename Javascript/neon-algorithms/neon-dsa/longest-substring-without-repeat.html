@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Longest Substring Without Repeating Characters - JavaScript algorithm in neon - Neon DSA">
+    <title>Longest Substring Without Repeating - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Longest Substring Without Repeating Characters</h1>
+            <p class="c-subtitle">Find the longest substring with all unique characters</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Medium</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(min(n, m))</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Sliding Window</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Given a string <code>s</code>, return the length of the longest substring that contains no repeating characters.</p>
+                <p>Slide a window with two pointers, tracking the last seen index of each character to jump the left pointer past duplicates.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function lengthOfLongestSubstring(s) {
+    const lastIndex = {};
+    let left = 0;
+    let maxLen = 0;
+
+    for (let right = 0; right &lt; s.length; right++) {
+        const char = s[right];
+
+        if (char in lastIndex &amp;&amp; lastIndex[char] &gt;= left) {
+            left = lastIndex[char] + 1;
+        }
+
+        lastIndex[char] = right;
+        maxLen = Math.max(maxLen, right - left + 1);
+    }
+
+    return maxLen;
+}
+
+// Example
+console.log(lengthOfLongestSubstring("abcabcbb")); // 3 ("abc")
+console.log(lengthOfLongestSubstring("bbbbb"));    // 1 ("b")
+console.log(lengthOfLongestSubstring("pwwkew"));   // 3 ("wke")</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; lengthOfLongestSubstring("abcabcbb") → 3</p>
+                <p>&gt; lengthOfLongestSubstring("bbbbb") → 1</p>
+                <p>&gt; lengthOfLongestSubstring("pwwkew") → 3</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Longest Substring Without Repeating · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

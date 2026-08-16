@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Top K Frequent Elements - JavaScript algorithm in neon - Neon DSA">
+    <title>Top K Frequent Elements - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Top K Frequent Elements</h1>
+            <p class="c-subtitle">The k most frequent elements in an array</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Medium</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n log k)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Heap / Bucket Sort</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Given an integer array <code>nums</code> and an integer <code>k</code>, return the <code>k</code> most frequent elements (any order).</p>
+                <p>Count frequencies, then bucket elements by frequency and read the highest buckets first.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function topKFrequent(nums, k) {
+    const count = new Map();
+    for (const num of nums) {
+        count.set(num, (count.get(num) || 0) + 1);
+    }
+
+    // bucket[i] = elements appearing i times
+    const buckets = new Array(nums.length + 1).fill(null);
+    for (const [num, freq] of count) {
+        (buckets[freq] = buckets[freq] || []).push(num);
+    }
+
+    const result = [];
+    for (let freq = buckets.length - 1; freq &gt;= 0; freq--) {
+        if (!buckets[freq]) continue;
+
+        for (const num of buckets[freq]) {
+            result.push(num);
+            if (result.length === k) return result;
+        }
+    }
+
+    return result;
+}
+
+// Example
+console.log(topKFrequent([1, 1, 1, 2, 2, 3], 2));
+// → [1, 2]</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; topKFrequent([1,1,1,2,2,3], 2) → [1, 2]</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Top K Frequent Elements · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

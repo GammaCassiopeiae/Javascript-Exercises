@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Expression Add Operators - JavaScript algorithm in neon - Neon DSA">
+    <title>Expression Add Operators - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Expression Add Operators</h1>
+            <p class="c-subtitle">Insert +, -, * to reach the target</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Hard</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(4ⁿ)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Backtracking</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Insert <code>+</code>, <code>-</code>, or <code>*</code> between digits of <code>num</code> (no leading zeros on operands) so the expression equals <code>target</code>. Return all strings.</p>
+                <p>Backtrack while tracking the running total and the last operand; multiplication must undo the previous add before applying the product.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function addOperators(num, target) {
+    const result = [];
+
+    function backtrack(index, path, value, prev) {
+        if (index === num.length) {
+            if (value === target) result.push(path);
+            return;
+        }
+
+        for (let i = index; i &lt; num.length; i++) {
+            const substr = num.slice(index, i + 1);
+            if (substr.length &gt; 1 &amp;&amp; substr[0] === '0') break;  // no leading zero
+
+            const current = Number(substr);
+
+            if (index === 0) {
+                backtrack(i + 1, substr, current, current);
+            } else {
+                backtrack(i + 1, `${path}+${substr}`, value + current, current);
+                backtrack(i + 1, `${path}-${substr}`, value - current, -current);
+                // undo the previous operand, then multiply
+                backtrack(i + 1, `${path}*${substr}`,
+                           value - prev + prev * current, prev * current);
+            }
+        }
+    }
+
+    backtrack(0, "", 0, 0);
+    return result;
+}
+
+// Example
+console.log(addOperators("123", 6));
+// → ["1*2*3", "1+2+3"]</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; addOperators("123", 6) → ["1*2*3", "1+2+3"]</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Expression Add Operators · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

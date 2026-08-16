@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Unique Paths - JavaScript algorithm in neon - Neon DSA">
+    <title>Unique Paths - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Unique Paths</h1>
+            <p class="c-subtitle">Count paths from top-left to bottom-right</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Medium</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(m · n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Dynamic Programming</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>A robot moves only right or down from a grid's top-left corner. Count the distinct paths to the bottom-right of an <code>m × n</code> grid.</p>
+                <p>Each cell's path count is the sum of the cell above and the cell to the left — collapse to one row for O(n) space.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function uniquePaths(m, n) {
+    const dp = new Array(n).fill(1);  // first row is all 1s
+
+    for (let row = 1; row &lt; m; row++) {
+        for (let col = 1; col &lt; n; col++) {
+            dp[col] += dp[col - 1];
+        }
+    }
+
+    return dp[n - 1];
+}
+
+// Example
+console.log(uniquePaths(3, 7)); // 28
+console.log(uniquePaths(3, 2)); // 3</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; uniquePaths(3, 7) → 28</p>
+                <p>&gt; uniquePaths(3, 2) → 3</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Unique Paths · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

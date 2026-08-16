@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Product of Array Except Self - JavaScript algorithm in neon - Neon DSA">
+    <title>Product of Array Except Self - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Product of Array Except Self</h1>
+            <p class="c-subtitle">Product of all elements except the current one</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Medium</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(1) extra</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Prefix × Suffix</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Return an array where each element is the product of all input elements except itself, without using division and in O(n).</p>
+                <p>Two passes — accumulate the running product from the left, then multiply by the running product from the right — into the same answer array.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function productExceptSelf(nums) {
+    const n = nums.length;
+    const answer = new Array(n).fill(1);
+
+    // Left pass: product of everything to the left
+    let left = 1;
+    for (let i = 0; i &lt; n; i++) {
+        answer[i] = left;
+        left *= nums[i];
+    }
+
+    // Right pass: multiply by product to the right
+    let right = 1;
+    for (let i = n - 1; i &gt;= 0; i--) {
+        answer[i] *= right;
+        right *= nums[i];
+    }
+
+    return answer;
+}
+
+// Example
+console.log(productExceptSelf([1, 2, 3, 4]));
+// → [24, 12, 8, 6]</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; productExceptSelf([1,2,3,4]) → [24,12,8,6]</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Product of Array Except Self · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

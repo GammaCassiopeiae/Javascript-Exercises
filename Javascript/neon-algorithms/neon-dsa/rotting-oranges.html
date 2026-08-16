@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Rotting Oranges - JavaScript algorithm in neon - Neon DSA">
+    <title>Rotting Oranges - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Rotting Oranges</h1>
+            <p class="c-subtitle">Minutes until all oranges rot</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Medium</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(m · n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(m · n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Multi-Source BFS</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>In a grid, <code>0</code> = empty, <code>1</code> = fresh orange, <code>2</code> = rotten. Each minute, rotten oranges rot adjacent fresh ones (4 directions). Return minutes until none are fresh, or <code>-1</code>.</p>
+                <p>Seed all rotten oranges in the queue and count BFS "minutes" as each ring of oranges decays.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function orangesRotting(grid) {
+    const rows = grid.length;
+    const cols = grid[0].length;
+    const queue = [];
+    let fresh = 0;
+
+    for (let r = 0; r &lt; rows; r++) {
+        for (let c = 0; c &lt; cols; c++) {
+            if (grid[r][c] === 2) queue.push([r, c, 0]);
+            if (grid[r][c] === 1) fresh++;
+        }
+    }
+
+    const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+    let minutes = 0;
+
+    for (let i = 0; i &lt; queue.length; i++) {
+        const [r, c, time] = queue[i];
+        minutes = Math.max(minutes, time);
+
+        for (const [dr, dc] of dirs) {
+            const nr = r + dr;
+            const nc = c + dc;
+            if (nr &lt; 0 || nr &gt;= rows || nc &lt; 0 || nc &gt;= cols) continue;
+            if (grid[nr][nc] !== 1) continue;
+
+            grid[nr][nc] = 2;
+            fresh--;
+            queue.push([nr, nc, time + 1]);
+        }
+    }
+
+    return fresh === 0 ? minutes : -1;
+}
+
+// Example
+console.log(orangesRotting([[2, 1, 1], [1, 1, 0], [0, 1, 1]])); // 4
+console.log(orangesRotting([[2, 1, 1], [0, 1, 1], [1, 0, 1]])); // -1</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; orangesRotting([[2,1,1],[1,1,0],[0,1,1]]) → 4</p>
+                <p>&gt; orangesRotting([[2,1,1],[0,1,1],[1,0,1]]) → -1</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Rotting Oranges · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

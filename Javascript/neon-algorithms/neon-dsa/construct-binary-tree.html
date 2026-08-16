@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Construct Binary Tree from Preorder and Inorder Traversal - JavaScript algorithm in neon - Neon DSA">
+    <title>Construct Binary Tree from Preorder/Inorder - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Construct Binary Tree from Preorder and Inorder</h1>
+            <p class="c-subtitle">Rebuild a unique tree from two traversals</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Medium</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">DFS · Recursion</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Given the preorder and inorder traversals of a unique binary tree, reconstruct it.</p>
+                <p>Preorder's first value is the root; its position in inorder separates the left and right subtrees; recurse with index ranges.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function buildTree(preorder, inorder) {
+    const inIndex = new Map();
+    for (let i = 0; i &lt; inorder.length; i++) {
+        inIndex.set(inorder[i], i);
+    }
+
+    let preIdx = 0;
+
+    function build(inLeft, inRight) {
+        if (inLeft &gt; inRight) {
+            return null;
+        }
+
+        const val = preorder[preIdx++];
+        const node = new TreeNode(val);
+        const split = inIndex.get(val);
+
+        node.left = build(inLeft, split - 1);
+        node.right = build(split + 1, inRight);
+
+        return node;
+    }
+
+    return build(0, inorder.length - 1);
+}
+
+// TreeNode class assumed:
+// function TreeNode(val) { this.val = val; }
+
+// Example
+// preorder  = [3, 9, 20, 15, 7]
+// inorder   = [9, 3, 15, 20, 7]
+// →
+//       3
+//      / \
+//     9  20
+//       /  \
+//      15   7</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; buildTree([3,9,20,15,7], [9,3,15,20,7]) → root of rebuilt tree</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Construct Binary Tree · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

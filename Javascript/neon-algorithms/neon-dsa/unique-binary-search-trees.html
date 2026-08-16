@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Unique Binary Search Trees - JavaScript algorithm in neon - Neon DSA">
+    <title>Unique Binary Search Trees - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Unique Binary Search Trees</h1>
+            <p class="c-subtitle">Count BSTs formed from 1…n</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Medium</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n²)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Dynamic Programming · Catalan</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Given an integer <code>n</code>, return the number of structurally unique BSTs that store the values <code>1 … n</code>.</p>
+                <p>For each possible root <code>i</code>, multiply the count of left BSTs (<code>i-1</code> nodes) by right BSTs (<code>n-i</code> nodes). These are the Catalan numbers.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function numTrees(n) {
+    const dp = new Array(n + 1).fill(0);
+    dp[0] = 1;   // empty tree
+    dp[1] = 1;   // single node
+
+    for (let nodes = 2; nodes &lt;= n; nodes++) {
+        for (let root = 1; root &lt;= nodes; root++) {
+            const left = root - 1;
+            const right = nodes - root;
+            dp[nodes] += dp[left] * dp[right];
+        }
+    }
+
+    return dp[n];
+}
+
+// Example
+console.log(numTrees(1)); // 1
+console.log(numTrees(2)); // 2
+console.log(numTrees(3)); // 5
+console.log(numTrees(4)); // 14</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; numTrees(3) → 5</p>
+                <p>&gt; numTrees(4) → 14</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Unique Binary Search Trees · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

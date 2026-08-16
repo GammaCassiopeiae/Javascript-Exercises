@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Subset Sum - JavaScript algorithm in neon - Neon DSA">
+    <title>Subset Sum - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Subset Sum</h1>
+            <p class="c-subtitle">Can any subset sum to the target?</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Medium</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n · sum)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(sum)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Dynamic Programming</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Given a set of non-negative integers, determine whether a subset adds up to exactly a given <code>target</code>.</p>
+                <p><code>dp[s]</code> tracks which sums are reachable; build the reachable set by adding each number to every existing reachable sum.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function subsetSum(nums, target) {
+    const dp = new Array(target + 1).fill(false);
+    dp[0] = true;
+
+    for (const num of nums) {
+        for (let s = target; s &gt;= num; s--) {
+            if (dp[s - num]) {
+                dp[s] = true;
+            }
+        }
+    }
+
+    return dp[target];
+}
+
+// Example
+console.log(subsetSum([3, 34, 4, 12, 5, 2], 9));  // true (4 + 5)
+console.log(subsetSum([3, 34, 4, 12, 5, 2], 30)); // false</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; subsetSum([3,34,4,12,5,2], 9) → true</p>
+                <p>&gt; subsetSum([3,34,4,12,5,2], 30) → false</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Subset Sum · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

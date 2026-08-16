@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="LRU Cache - JavaScript algorithm in neon - Neon DSA">
+    <title>LRU Cache - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">LRU Cache</h1>
+            <p class="c-subtitle">Least recently used cache in O(1)</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Medium</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Get</span>
+                    <span class="c-fact__value">O(1)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Put</span>
+                    <span class="c-fact__value">O(1)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Map + Doubly Linked List</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Design an LRU cache with <code>get(key)</code> and <code>put(key, value)</code>, both O(1), evicting the least recently used key when capacity is exceeded.</p>
+                <p>A hash map of nodes plus a doubly linked list keeps recency order; every access moves the node to the tail (most recent).</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>class LRUCache {
+    constructor(capacity) {
+        this.capacity = capacity;
+        this.map = new Map();
+    }
+
+    get(key) {
+        if (!this.map.has(key)) {
+            return -1;
+        }
+        // refresh recency by re-inserting
+        const value = this.map.get(key);
+        this.map.delete(key);
+        this.map.set(key, value);
+        return value;
+    }
+
+    put(key, value) {
+        if (this.map.has(key)) {
+            this.map.delete(key);
+        }
+        this.map.set(key, value);
+
+        if (this.map.size &gt; this.capacity) {
+            // evict the least recently used (first inserted)
+            const oldest = this.map.keys().next().value;
+            this.map.delete(oldest);
+        }
+    }
+}
+
+// Map preserves insertion order, so a Map is a
+// clean O(1) implementation for JS.
+// Example
+const cache = new LRUCache(2);
+cache.put(1, 1);
+cache.put(2, 2);
+cache.get(1);       // 1 (key 1 becomes most recent)
+cache.put(3, 3);    // evicts key 2
+cache.get(2);       // -1</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; LRU(2): put(1,1), put(2,2) → get(1) = 1</p>
+                <p>&gt; put(3,3) evicts 2 → get(2) = -1</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ LRU Cache · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

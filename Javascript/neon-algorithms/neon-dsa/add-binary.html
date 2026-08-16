@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Add Binary - JavaScript algorithm in neon - Neon DSA">
+    <title>Add Binary - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Add Binary</h1>
+            <p class="c-subtitle">Add two binary strings bit by bit</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Easy</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">String · Carry</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Given two binary strings <code>a</code> and <code>b</code>, return their sum as a binary string.</p>
+                <p>Walk both strings from right to left adding digits plus a carry, exactly like grade-school addition in base 2.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function addBinary(a, b) {
+    let i = a.length - 1;
+    let j = b.length - 1;
+    let carry = 0;
+    let result = '';
+
+    while (i &gt;= 0 || j &gt;= 0 || carry) {
+        const bitA = i &gt;= 0 ? Number(a[i]) : 0;
+        const bitB = j &gt;= 0 ? Number(b[j]) : 0;
+
+        const sum = bitA + bitB + carry;
+        result = (sum % 2) + result;
+        carry = Math.floor(sum / 2);
+
+        i--;
+        j--;
+    }
+
+    return result;
+}
+
+// Example
+console.log(addBinary("11", "1"));  // "100"
+console.log(addBinary("1010", "1011")); // "10101"</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; addBinary("11", "1") → "100"</p>
+                <p>&gt; addBinary("1010", "1011") → "10101"</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Add Binary · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

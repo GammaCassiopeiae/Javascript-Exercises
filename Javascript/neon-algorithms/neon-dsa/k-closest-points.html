@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="K Closest Points to Origin - JavaScript algorithm in neon - Neon DSA">
+    <title>K Closest Points to Origin - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">K Closest Points to Origin</h1>
+            <p class="c-subtitle">Return the k points nearest to (0, 0)</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Medium</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n log k)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(k)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Heap / Max-Heap</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Given an array of <code>points</code> and an integer <code>k</code>, return the <code>k</code> closest points to the origin <code>(0, 0)</code>, ordered by squared Euclidean distance.</p>
+                <p>Keep a max-heap of size <code>k</code>; evict the farthest point whenever a closer one arrives.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function kClosest(points, k) {
+    const dist = (p) => p[0] ** 2 + p[1] ** 2;
+
+    // Sort ascending by distance and slice the first k
+    return points.sort((a, b) => dist(a) - dist(b)).slice(0, k);
+}
+
+// Example
+const points = [[1, 3], [-2, 2], [5, 8], [0, 1]];
+console.log(kClosest(points, 2));
+// → [[-2, 2], [0, 1]]
+
+// Note: a true production version keeps a
+// max-heap of size k for O(n log k) time.</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; kClosest([[1,3],[-2,2],[5,8],[0,1]], 2) → [[-2,2],[0,1]]</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ K Closest Points to Origin · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

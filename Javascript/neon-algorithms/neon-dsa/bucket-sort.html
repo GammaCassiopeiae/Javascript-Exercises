@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Bucket Sort - JavaScript algorithm in neon - Neon DSA">
+    <title>Bucket Sort - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Bucket Sort</h1>
+            <p class="c-subtitle">Distribute items into buckets, sort, concatenate</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Category</span>
+                    <span class="c-fact__value">Sorting</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n + k) best</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Distribution Sort</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Sort evenly distributed data by scattering elements into ordered buckets, sorting each bucket (here with insertion sort), then concatenating buckets in order.</p>
+                <p>Places values in a known range; the example below maps 0–1 floats to <code>n</code> buckets.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function insertionSort(arr) {
+    for (let i = 1; i &lt; arr.length; i++) {
+        const key = arr[i];
+        let j = i - 1;
+        while (j &gt;= 0 &amp;&amp; arr[j] &gt; key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+    return arr;
+}
+
+// For floating point values in [0, 1)
+function bucketSort(arr, bucketCount = arr.length) {
+    const buckets = Array.from({ length: bucketCount }, () => []);
+
+    for (const value of arr) {
+        const index = Math.floor(value * bucketCount);
+        buckets[index].push(value);
+    }
+
+    const result = [];
+    for (const bucket of buckets) {
+        result.push(...insertionSort(bucket));
+    }
+
+    return result;
+}
+
+// Example
+console.log(bucketSort([0.42, 0.32, 0.33, 0.52, 0.37, 0.47]));
+// → [0.32, 0.33, 0.37, 0.42, 0.47, 0.52]</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; bucketSort([0.42,0.32,0.33,0.52,0.37,0.47]) → [0.32,0.33,0.37,0.42,0.47,0.52]</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Bucket Sort · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

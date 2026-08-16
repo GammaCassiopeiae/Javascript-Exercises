@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sliding Window Maximum - JavaScript algorithm in neon - Neon DSA">
+    <title>Sliding Window Maximum - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Sliding Window Maximum</h1>
+            <p class="c-subtitle">Max of every window of size k</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Hard</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(k)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Monotonic Deque</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Given an array and window size <code>k</code>, return the maximum in every contiguous window.</p>
+                <p>A monotonic decreasing deque stores candidate indices; the front is the window's max, and stale indexes fall off the left.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function maxSlidingWindow(nums, k) {
+    const result = [];
+    const deque = [];  // indices, values decreasing
+
+    for (let i = 0; i &lt; nums.length; i++) {
+        // evict indexes outside the window
+        while (deque.length &amp;&amp; deque[0] &lt;= i - k) {
+            deque.shift();
+        }
+
+        // keep the deque decreasing
+        while (deque.length &amp;&amp; nums[deque[deque.length - 1]] &lt;= nums[i]) {
+            deque.pop();
+        }
+
+        deque.push(i);
+
+        // front is the max once the first window fills
+        if (i &gt;= k - 1) {
+            result.push(nums[deque[0]]);
+        }
+    }
+
+    return result;
+}
+
+// Example
+console.log(maxSlidingWindow([1, 3, -1, -3, 5, 3, 6, 7], 3));
+// → [3, 3, 5, 5, 6, 7]</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; maxSlidingWindow([1,3,-1,-3,5,3,6,7], 3) → [3,3,5,5,6,7]</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Sliding Window Maximum · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Gas Station - JavaScript algorithm in neon - Neon DSA">
+    <title>Gas Station - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Gas Station</h1>
+            <p class="c-subtitle">Find the start station for a full circuit</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Medium</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(1)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Greedy</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>There are gas stations around a circular route with <code>gas[i]</code> available and <code>cost[i]</code> to reach the next station. Return the starting index that completes a full loop, or <code>-1</code>.</p>
+                <p>If the total gas is less than the total cost it's impossible. A single pass restarts the candidate whenever the tank drops negative.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function canCompleteCircuit(gas, cost) {
+    let total = 0;
+    let current = 0;
+    let start = 0;
+
+    for (let i = 0; i &lt; gas.length; i++) {
+        total += gas[i] - cost[i];
+        current += gas[i] - cost[i];
+
+        // can't reach i+1 from start — restart after i
+        if (current &lt; 0) {
+            start = i + 1;
+            current = 0;
+        }
+    }
+
+    return total &lt; 0 ? -1 : start;
+}
+
+// Example
+console.log(canCompleteCircuit([1, 2, 3, 4, 5], [3, 4, 5, 1, 2])); // 3
+console.log(canCompleteCircuit([2, 3, 4], [3, 4, 3]));             // -1</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; canCompleteCircuit([1,2,3,4,5], [3,4,5,1,2]) → 3</p>
+                <p>&gt; canCompleteCircuit([2,3,4], [3,4,3]) → -1</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Gas Station · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

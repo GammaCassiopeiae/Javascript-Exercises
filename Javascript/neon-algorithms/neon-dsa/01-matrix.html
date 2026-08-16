@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="01 Matrix - JavaScript algorithm in neon - Neon DSA">
+    <title>01 Matrix - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">01 Matrix</h1>
+            <p class="c-subtitle">Distance from each cell to the nearest zero</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Medium</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(m · n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(m · n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Multi-Source BFS</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Given an <code>m × n</code> binary matrix, return the distance — number of 4-direction steps — from each cell to the nearest <code>0</code>.</p>
+                <p>Seed a BFS queue with every zero cell and expand outward, writing the step count as you go.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function updateMatrix(mat) {
+    const rows = mat.length;
+    const cols = mat[0].length;
+    const queue = [];
+    const INF = rows * cols;
+
+    // Seed zeros, mark ones as "infinity"
+    for (let r = 0; r &lt; rows; r++) {
+        for (let c = 0; c &lt; cols; c++) {
+            if (mat[r][c] === 0) {
+                queue.push([r, c]);
+            } else {
+                mat[r][c] = INF;
+            }
+        }
+    }
+
+    const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+
+    // Multi-source BFS
+    for (let i = 0; i &lt; queue.length; i++) {
+        const [r, c] = queue[i];
+        for (const [dr, dc] of dirs) {
+            const nr = r + dr;
+            const nc = c + dc;
+            if (nr &lt; 0 || nr &gt;= rows || nc &lt; 0 || nc &gt;= cols) continue;
+
+            if (mat[nr][nc] &gt; mat[r][c] + 1) {
+                mat[nr][nc] = mat[r][c] + 1;
+                queue.push([nr, nc]);
+            }
+        }
+    }
+
+    return mat;
+}
+
+// Example
+console.log(updateMatrix([[0, 0, 0], [0, 1, 0], [1, 1, 1]]));
+// → [[0,0,0],[0,1,0],[1,2,1]]</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; updateMatrix([[0,0,0],[0,1,0],[1,1,1]]) → [[0,0,0],[0,1,0],[1,2,1]]</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ 01 Matrix · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Maximal Square - JavaScript algorithm in neon - Neon DSA">
+    <title>Maximal Square - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Maximal Square</h1>
+            <p class="c-subtitle">Largest square of 1s in a binary matrix</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Medium</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(m · n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(m · n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Dynamic Programming</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Given an <code>m × n</code> binary matrix of <code>'0'</code>s and <code>'1'</code>s, return the area of the largest square containing only <code>'1'</code>s.</p>
+                <p><code>dp[r][c]</code> holds the side length of the largest all-1 square ending at that cell: <code>1 + min(up, left, diagonal)</code>.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function maximalSquare(matrix) {
+    const rows = matrix.length;
+    const cols = matrix[0].length;
+    const dp = Array.from({ length: rows + 1 },
+                          () => new Array(cols + 1).fill(0));
+    let maxSide = 0;
+
+    for (let r = 1; r &lt;= rows; r++) {
+        for (let c = 1; c &lt;= cols; c++) {
+            if (matrix[r - 1][c - 1] === '1') {
+                dp[r][c] = Math.min(
+                    dp[r - 1][c],       // up
+                    dp[r][c - 1],       // left
+                    dp[r - 1][c - 1]    // diagonal
+                ) + 1;
+                maxSide = Math.max(maxSide, dp[r][c]);
+            }
+        }
+    }
+
+    return maxSide * maxSide;
+}
+
+// Example
+const matrix = [
+    ['1', '0', '1', '0', '0'],
+    ['1', '0', '1', '1', '1'],
+    ['1', '1', '1', '1', '1'],
+    ['1', '0', '0', '1', '0']
+];
+console.log(maximalSquare(matrix)); // 4</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; maximalSquare(matrix) → 4</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Maximal Square · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

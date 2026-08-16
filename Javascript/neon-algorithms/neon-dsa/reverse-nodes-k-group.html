@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Reverse Nodes in k-Group - JavaScript algorithm in neon - Neon DSA">
+    <title>Reverse Nodes in k-Group - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Reverse Nodes in k-Group</h1>
+            <p class="c-subtitle">Reverse the list in chunks of size k</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Hard</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(n/k)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Linked List · Recursion</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Given the <code>head</code> of a linked list and an integer <code>k</code>, reverse the nodes in groups of <code>k</code>; leftover nodes at the end stay as they are.</p>
+                <p>Verify <code>k</code> nodes remain, reverse that section with three pointers, then recurse on the tail and reconnect.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function reverseKGroup(head, k) {
+    // check we have at least k nodes
+    let probe = head;
+    let count = 0;
+    while (probe !== null &amp;&amp; count &lt; k) {
+        probe = probe.next;
+        count++;
+    }
+    if (count &lt; k) {
+        return head;
+    }
+
+    // reverse the first k nodes
+    let prev = null;
+    let curr = head;
+    for (let i = 0; i &lt; k; i++) {
+        const next = curr.next;
+        curr.next = prev;
+        prev = curr;
+        curr = next;
+    }
+
+    // head is now the tail; attach the rest
+    head.next = reverseKGroup(curr, k);
+
+    return prev;  // new head of this group
+}
+
+// Example: head = 1→2→3→4→5, k = 2
+// → 2 → 1 → 4 → 3 → 5
+
+// Example: head = 1→2→3→4→5, k = 3
+// → 3 → 2 → 1 → 4 → 5</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; reverseKGroup(1→2→3→4→5, 2) → 2→1→4→3→5</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Reverse Nodes in k-Group · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

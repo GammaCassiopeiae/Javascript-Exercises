@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Maximum Subarray - JavaScript algorithm in neon - Neon DSA">
+    <title>Maximum Subarray - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Maximum Subarray</h1>
+            <p class="c-subtitle">Largest sum of a contiguous subarray</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Medium</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(1)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Kadane's Algorithm</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Given an integer array <code>nums</code>, find the contiguous subarray with the largest sum and return that sum.</p>
+                <p>Kadane's algorithm rolls a running total; if the total ever drops below the current element, restart the window at it, and track the best sum seen.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function maxSubArray(nums) {
+    let best = nums[0];
+    let current = nums[0];
+
+    for (let i = 1; i &lt; nums.length; i++) {
+        // restart the subarray here if the old total hurt us
+        current = Math.max(nums[i], current + nums[i]);
+        best = Math.max(best, current);
+    }
+
+    return best;
+}
+
+// Example
+console.log(maxSubArray([-2, 1, -3, 4, -1, 2, 1, -5, 4]));
+// → 6  (subarray [4, -1, 2, 1])
+
+console.log(maxSubArray([1]));            // 1
+console.log(maxSubArray([5, 4, -1, 7, 8])); // 23</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; maxSubArray([-2,1,-3,4,-1,2,1,-5,4]) → 6</p>
+                <p>&gt; maxSubArray([5,4,-1,7,8]) → 23</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Maximum Subarray · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Valid Parentheses - JavaScript algorithm in neon - Neon DSA">
+    <title>Valid Parentheses - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Valid Parentheses</h1>
+            <p class="c-subtitle">Check that brackets close in the right order</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Easy</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Stack</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Given a string <code>s</code> containing just the characters <code>()[]{}</code>, determine if the input string is valid.</p>
+                <p>Push opening brackets onto a stack; pop and match when a closing bracket appears. The stack must be empty at the end.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function isValid(s) {
+    const stack = [];
+    const pairs = {
+        ')': '(',
+        ']': '[',
+        '}': '{'
+    };
+
+    for (const char of s) {
+        if (char in pairs) {
+            const top = stack[stack.length - 1];
+            if (top === pairs[char]) {
+                stack.pop();
+            } else {
+                return false;
+            }
+        } else {
+            stack.push(char);
+        }
+    }
+
+    return stack.length === 0;
+}
+
+// Example
+console.log(isValid("()[]{}")); // true
+console.log(isValid("(]"));     // false</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; isValid("()[]{}") → true</p>
+                <p>&gt; isValid("(]") → false</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Valid Parentheses · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Time Based Key-Value Store - JavaScript algorithm in neon - Neon DSA">
+    <title>Time Based Key-Value Store - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Time Based Key-Value Store</h1>
+            <p class="c-subtitle">Set values with timestamps, get by time</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Medium</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Set Time</span>
+                    <span class="c-fact__value">O(1)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Get Time</span>
+                    <span class="c-fact__value">O(log n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Map + Binary Search</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Design a store with <code>set(key, value, timestamp)</code> and <code>get(key, timestamp)</code> which returns the value set at the largest timestamp ≤ the given one (or <code>""</code>).</p>
+                <p>Store <code>(timestamp, value)</code> pairs per key in sorted order and binary-search for the newest pair not newer than the query time.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>class TimeMap {
+    constructor() {
+        this.store = new Map(); // key → [[timestamp, value], ...]
+    }
+
+    set(key, value, timestamp) {
+        if (!this.store.has(key)) {
+            this.store.set(key, []);
+        }
+        this.store.get(key).push([timestamp, value]);
+    }
+
+    get(key, timestamp) {
+        const pairs = this.store.get(key);
+        if (!pairs || pairs.length === 0) {
+            return "";
+        }
+
+        let left = 0;
+        let right = pairs.length - 1;
+        let best = "";
+
+        while (left &lt;= right) {
+            const mid = Math.floor((left + right) / 2);
+
+            if (pairs[mid][0] &lt;= timestamp) {
+                best = pairs[mid][1];
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+
+        return best;
+    }
+}
+
+// Example
+const tmap = new TimeMap();
+tmap.set("foo", "bar", 1);
+tmap.get("foo", 1);   // "bar"
+tmap.get("foo", 3);   // "bar"  (newest ≤ 3)
+tmap.set("foo", "bar2", 4);
+tmap.get("foo", 4);   // "bar2"
+tmap.get("foo", 5);   // "bar2"</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; get("foo", 1) → "bar"</p>
+                <p>&gt; get("foo", 4) → "bar2"</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Time Based Key-Value Store · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

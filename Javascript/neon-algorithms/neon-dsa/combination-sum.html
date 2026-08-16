@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Combination Sum - JavaScript algorithm in neon - Neon DSA">
+    <title>Combination Sum - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Combination Sum</h1>
+            <p class="c-subtitle">Unique combos of candidates summing to a target</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Medium</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(2^n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(target)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Backtracking</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Given distinct <code>candidates</code> and a <code>target</code>, return all unique combinations where candidates sum to the target. The same candidate may be reused unlimited times.</p>
+                <p>Backtrack — choose a candidate, recurse, then undo — and let the start index keep combinations from repeating.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function combinationSum(candidates, target) {
+    const result = [];
+
+    function backtrack(start, path, remaining) {
+        if (remaining === 0) {
+            result.push([...path]);
+            return;
+        }
+        if (remaining &lt; 0) {
+            return;
+        }
+
+        for (let i = start; i &lt; candidates.length; i++) {
+            path.push(candidates[i]);
+            backtrack(i, path, remaining - candidates[i]); // reuse allowed
+            path.pop();
+        }
+    }
+
+    backtrack(0, [], target);
+    return result;
+}
+
+// Example
+console.log(combinationSum([2, 3, 6, 7], 7));
+// → [[2, 2, 3], [7]]</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; combinationSum([2,3,6,7], 7) → [[2,2,3],[7]]</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Combination Sum · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

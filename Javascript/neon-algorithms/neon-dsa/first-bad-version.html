@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="First Bad Version - JavaScript algorithm in neon - Neon DSA">
+    <title>First Bad Version - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">First Bad Version</h1>
+            <p class="c-subtitle">Find the first bad version using a given API</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Easy</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(log n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(1)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Binary Search</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Versions <code>1</code> through <code>n</code>; <code>isBadVersion(version)</code> tells if a version is bad. Once a version is bad, all later ones are bad.</p>
+                <p>Binary search for the boundary where "good" becomes "bad" — the first <code>true</code>.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>// isBadVersion is provided by the API
+// function isBadVersion(version) { ... }
+
+function firstBadVersion(n) {
+    let left = 1;
+    let right = n;
+
+    while (left &lt; right) {
+        const mid = Math.floor(left + (right - left) / 2);
+
+        if (isBadVersion(mid)) {
+            right = mid;    // still may be earlier bad versions
+        } else {
+            left = mid + 1; // check the right half
+        }
+    }
+
+    return left;
+}
+
+// Example: n = 5, first bad = 4
+// versions: 1 = good, 2 = good, 3 = good,
+//           4 = BAD,   5 = BAD
+console.log(firstBadVersion(5)); // 4</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; firstBadVersion(5) → 4</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ First Bad Version · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

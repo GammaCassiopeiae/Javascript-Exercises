@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Min Stack - JavaScript algorithm in neon - Neon DSA">
+    <title>Min Stack - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Min Stack</h1>
+            <p class="c-subtitle">A stack that returns the minimum in O(1)</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Medium</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(1) each</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Stack · Aux Stack</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Design a stack supporting <code>push</code>, <code>pop</code>, <code>top</code>, and <code>getMin</code> — all in constant time.</p>
+                <p>Keep a second "min stack" that mirrors the current minimum; popping both keeps the values in sync.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>class MinStack {
+    constructor() {
+        this.stack = [];
+        this.minStack = [];
+    }
+
+    push(val) {
+        this.stack.push(val);
+
+        if (this.minStack.length === 0 ||
+            val &lt;= this.minStack[this.minStack.length - 1]) {
+            this.minStack.push(val);
+        }
+    }
+
+    pop() {
+        const popped = this.stack.pop();
+        if (popped === this.minStack[this.minStack.length - 1]) {
+            this.minStack.pop();
+        }
+        return popped;
+    }
+
+    top() {
+        return this.stack[this.stack.length - 1];
+    }
+
+    getMin() {
+        return this.minStack[this.minStack.length - 1];
+    }
+}
+
+// Example
+const ms = new MinStack();
+ms.push(-2);
+ms.push(0);
+ms.push(-3);
+ms.getMin();   // -3
+ms.pop();
+ms.top();      // 0
+ms.getMin();   // -2</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; push(-2), push(0), push(-3) → getMin() = -3</p>
+                <p>&gt; pop() → top() = 0 → getMin() = -2</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Min Stack · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

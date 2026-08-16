@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Lowest Common Ancestor of a Binary Search Tree - JavaScript algorithm in neon - Neon DSA">
+    <title>Lowest Common Ancestor of BST - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Lowest Common Ancestor of BST</h1>
+            <p class="c-subtitle">Find the lowest common ancestor in a binary search tree</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Easy</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(log n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(1)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">BST Property</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Given a BST and two node values <code>p</code> and <code>q</code>, return the lowest node that is an ancestor of both.</p>
+                <p>Walk down the tree: if both values are smaller, go left; if both are larger, go right; otherwise the current node is the LCA.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function lowestCommonAncestor(root, p, q) {
+    let current = root;
+
+    while (current !== null) {
+        // Both on the left side
+        if (p.val &lt; current.val &amp;&amp; q.val &lt; current.val) {
+            current = current.left;
+        }
+        // Both on the right side
+        else if (p.val &gt; current.val &amp;&amp; q.val &gt; current.val) {
+            current = current.right;
+        }
+        // Split point — current is the LCA
+        else {
+            return current;
+        }
+    }
+
+    return null;
+}
+
+// Example BST with values 6, 2, 8, 0, 4, 7, 9
+// LCA of 2 and 8 → 6
+// LCA of 2 and 4 → 2</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; LCA(root, node(2), node(8)) → node(6)</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ LCA of BST · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

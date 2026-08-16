@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Decode Ways - JavaScript algorithm in neon - Neon DSA">
+    <title>Decode Ways - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Decode Ways</h1>
+            <p class="c-subtitle">Count ways to decode a digit string into letters</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Medium</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(1)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Dynamic Programming</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>A message maps <code>'A'→1 … 'Z'→26</code>. Given a digit string, count the number of ways to decode it.</p>
+                <p>At each position, add the ways from decoding one digit (1–9) and, when valid, two digits (10–26).</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function numDecodings(s) {
+    if (s.length === 0 || s[0] === '0') {
+        return 0;
+    }
+
+    let prev = 1;  // ways before previous char
+    let curr = 1;  // ways up to current char
+
+    for (let i = 1; i &lt; s.length; i++) {
+        let next = 0;
+        const one = Number(s[i]);
+        const two = Number(s.slice(i - 1, i + 1));
+
+        if (one &gt;= 1 &amp;&amp; one &lt;= 9) {
+            next += curr;
+        }
+        if (two &gt;= 10 &amp;&amp; two &lt;= 26) {
+            next += prev;
+        }
+
+        prev = curr;
+        curr = next;
+    }
+
+    return curr;
+}
+
+// Example
+console.log(numDecodings("12"));   // 2  ("AB" or "L")
+console.log(numDecodings("226"));  // 3  ("BZ", "VF", "BBF")
+console.log(numDecodings("06"));   // 0</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; numDecodings("12") → 2</p>
+                <p>&gt; numDecodings("226") → 3</p>
+                <p>&gt; numDecodings("06") → 0</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Decode Ways · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

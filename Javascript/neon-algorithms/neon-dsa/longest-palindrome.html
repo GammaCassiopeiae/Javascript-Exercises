@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Longest Palindrome - JavaScript algorithm in neon - Neon DSA">
+    <title>Longest Palindrome - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Longest Palindrome</h1>
+            <p class="c-subtitle">Longest palindrome length that can be built from a string</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Easy</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(1)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Hash Map</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Given a string <code>s</code>, return the length of the longest palindrome that can be built from its letters. Letters can be rearranged.</p>
+                <p>Every even-frequency letter can be used in full; odd frequencies contribute <code>count - 1</code>, and at most one odd letter can sit in the center.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function longestPalindrome(s) {
+    const count = {};
+    let length = 0;
+    let hasOdd = false;
+
+    for (const char of s) {
+        count[char] = (count[char] || 0) + 1;
+    }
+
+    for (const char in count) {
+        if (count[char] % 2 === 0) {
+            length += count[char];
+        } else {
+            length += count[char] - 1;
+            hasOdd = true;
+        }
+    }
+
+    return hasOdd ? length + 1 : length;
+}
+
+// Example
+console.log(longestPalindrome("abccccdd")); // 7 ("dccaccd")
+console.log(longestPalindrome("a"));        // 1
+console.log(longestPalindrome("bb"));       // 2</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; longestPalindrome("abccccdd") → 7</p>
+                <p>&gt; longestPalindrome("a") → 1</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Longest Palindrome · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="House Robber II - JavaScript algorithm in neon - Neon DSA">
+    <title>House Robber II - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">House Robber II</h1>
+            <p class="c-subtitle">Rob a circular arrangement of houses</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Medium</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(1)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Dynamic Programming</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Houses form a circle (first and last are adjacent). Max loot without robbing adjacent houses.</p>
+                <p>The first and last houses can't both be robbed — solve the line twice: once excluding house 0, once excluding house n−1, and take the better result.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function robber(nums) {  // line robber (from House Robber)
+    let prev = 0;
+    let curr = 0;
+
+    for (const num of nums) {
+        const next = Math.max(curr, prev + num);
+        prev = curr;
+        curr = next;
+    }
+
+    return curr;
+}
+
+function rob(nums) {
+    if (nums.length === 1) {
+        return nums[0];
+    }
+
+    const skipFirst = robber(nums.slice(1));        // exclude house 0
+    const skipLast = robber(nums.slice(0, -1));     // exclude last house
+
+    return Math.max(skipFirst, skipLast);
+}
+
+// Example
+console.log(rob([2, 3, 2]));    // 3 (can't take both 2s)
+console.log(rob([1, 2, 3, 1])); // 4 (1 + 3)</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; rob([2,3,2]) → 3</p>
+                <p>&gt; rob([1,2,3,1]) → 4</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ House Robber II · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

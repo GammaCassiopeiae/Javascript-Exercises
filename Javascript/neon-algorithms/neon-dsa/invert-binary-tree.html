@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Invert Binary Tree - JavaScript algorithm in neon - Neon DSA">
+    <title>Invert Binary Tree - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Invert Binary Tree</h1>
+            <p class="c-subtitle">Mirror a binary tree left to right</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Easy</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">DFS</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Given the <code>root</code> of a binary tree, invert the tree by swapping the left and right child of every node.</p>
+                <p>Recursively swap children with a depth-first traversal. The return value is the new root.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function invertTree(root) {
+    if (root === null) {
+        return null;
+    }
+
+    // Swap the children
+    const temp = root.left;
+    root.left = invertTree(root.right);
+    root.right = invertTree(temp);
+
+    return root;
+}
+
+// Example
+//      4           4
+//    /   \       /   \
+//   2     7  →  7     2
+//  / \   / \   / \   / \
+// 1   3 6   9 9   6 3   1</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; invertTree(root) → mirrored tree with left/right swapped at every level</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Invert Binary Tree · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

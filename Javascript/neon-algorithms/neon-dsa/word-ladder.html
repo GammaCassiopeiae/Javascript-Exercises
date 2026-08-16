@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Word Ladder - JavaScript algorithm in neon - Neon DSA">
+    <title>Word Ladder - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Word Ladder</h1>
+            <p class="c-subtitle">Shortest transformation from beginWord to endWord</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Hard</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n · L²)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">BFS</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Transform <code>beginWord</code> into <code>endWord</code>, changing one letter at a time, where every intermediate word must exist in <code>wordList</code>. Return the shortest sequence length (or <code>0</code>).</p>
+                <p>BFS over words — each step, try every single-letter mutation of the current word and expand through unvisited dictionary words.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function ladderLength(beginWord, endWord, wordList) {
+    const words = new Set(wordList);
+    if (!words.has(endWord)) {
+        return 0;
+    }
+
+    const queue = [beginWord];
+    let level = 1;
+
+    while (queue.length) {
+        const size = queue.length;
+
+        for (let i = 0; i &lt; size; i++) {
+            const current = queue.shift();
+
+            if (current === endWord) {
+                return level;
+            }
+
+            // try every single-letter change
+            for (let j = 0; j &lt; current.length; j++) {
+                for (let ch = 97; ch &lt;= 122; ch++) {  // a..z
+                    const next = current.slice(0, j) +
+                                 String.fromCharCode(ch) +
+                                 current.slice(j + 1);
+
+                    if (words.has(next)) {
+                        queue.push(next);
+                        words.delete(next);  // visited
+                    }
+                }
+            }
+        }
+
+        level++;
+    }
+
+    return 0;
+}
+
+// Example
+console.log(ladderLength("hit", "cog",
+    ["hot", "dot", "dog", "lot", "log", "cog"])); // 5
+console.log(ladderLength("hit", "cog",
+    ["hot", "dot", "dog", "lot", "log"]));         // 0</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; ladderLength("hit", "cog", [...]) → 5  ("hit → hot → dot → dog → cog")</p>
+                <p>&gt; ladderLength("hit", "cog", [...]) → 0  (no path)</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Word Ladder · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Accounts Merge - JavaScript algorithm in neon - Neon DSA">
+    <title>Accounts Merge - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Accounts Merge</h1>
+            <p class="c-subtitle">Merge accounts sharing a common email</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Medium</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(A · log A)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(A · E)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Union-Find / DFS</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Each account is <code>[name, email1, ...]</code>. Merge accounts that share at least one email, returning each merged account's name followed by its sorted unique emails.</p>
+                <p>Union accounts by shared emails (or DFS over email adjacency), then collect each component's email set.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>// Union-Find over account indices
+class DSU {
+    constructor(n) {
+        this.parent = Array.from({ length: n }, (_, i) => i);
+    }
+    find(x) {
+        if (this.parent[x] !== x) {
+            this.parent[x] = this.find(this.parent[x]);
+        }
+        return this.parent[x];
+    }
+    union(a, b) {
+        this.parent[this.find(a)] = this.find(b);
+    }
+}
+
+function accountsMerge(accounts) {
+    const dsu = new DSU(accounts.length);
+    const emailToIndex = new Map();
+
+    // Union accounts that share an email
+    for (let i = 0; i &lt; accounts.length; i++) {
+        for (let j = 1; j &lt; accounts[i].length; j++) {
+            const email = accounts[i][j];
+            if (emailToIndex.has(email)) {
+                dsu.union(i, emailToIndex.get(email));
+            } else {
+                emailToIndex.set(email, i);
+            }
+        }
+    }
+
+    // Group emails by root account
+    const groups = new Map();
+    for (const [email, index] of emailToIndex) {
+        const root = dsu.find(index);
+        if (!groups.has(root)) {
+            groups.set(root, new Set());
+        }
+        groups.get(root).add(email);
+    }
+
+    const result = [];
+    for (const [index, emails] of groups) {
+        const sorted = [...emails].sort();
+        result.push([accounts[index][0], ...sorted]);
+    }
+
+    return result;
+}
+
+// Example
+const accounts = [
+    ["John", "j1@mail.com", "j2@mail.com"],
+    ["John", "j2@mail.com", "j3@mail.com"],
+    ["Mary", "m@mail.com"]
+];
+console.log(accountsMerge(accounts));
+// → [["John", "j1@mail.com", "j2@mail.com", "j3@mail.com"], ["Mary", "m@mail.com"]]</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; accountsMerge(accounts) → merged accounts with unique sorted emails</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Accounts Merge · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Container With Most Water - JavaScript algorithm in neon - Neon DSA">
+    <title>Container With Most Water - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Container With Most Water</h1>
+            <p class="c-subtitle">Max area between two vertical lines</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Medium</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(1)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Two Pointers</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Given an array of heights, choose two lines that together with the x-axis form a container holding the most water: <code>area = width × min(left, right)</code>.</p>
+                <p>Start pointers at both ends and always move the shorter side inward — the width shrinks, so only a taller barrier can improve the area.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function maxArea(heights) {
+    let left = 0;
+    let right = heights.length - 1;
+    let maxWater = 0;
+
+    while (left &lt; right) {
+        const width = right - left;
+        const area = width * Math.min(heights[left], heights[right]);
+        maxWater = Math.max(maxWater, area);
+
+        // Move the shorter line inward
+        if (heights[left] &lt; heights[right]) {
+            left++;
+        } else {
+            right--;
+        }
+    }
+
+    return maxWater;
+}
+
+// Example
+console.log(maxArea([1, 8, 6, 2, 5, 4, 8, 3, 7])); // 49</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; maxArea([1,8,6,2,5,4,8,3,7]) → 49</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Container With Most Water · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

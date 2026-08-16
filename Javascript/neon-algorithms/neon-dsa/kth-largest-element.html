@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Kth Largest Element in an Array - JavaScript algorithm in neon - Neon DSA">
+    <title>Kth Largest Element in an Array - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Kth Largest Element in an Array</h1>
+            <p class="c-subtitle">The k-th largest value, not the k-th distinct</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Medium</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n) avg</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(1)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Quickselect</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Given an integer array <code>nums</code> and integer <code>k</code>, return the <code>k</code>-th largest element (1-indexed, duplicates counted).</p>
+                <p>Quickselect partitions around a pivot and recurses only into the side containing the answer — average O(n).</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function findKthLargest(nums, k) {
+    return quickselect(nums, 0, nums.length - 1, nums.length - k);
+}
+
+// find the element at targetIndex in sorted order
+function quickselect(arr, left, right, targetIndex) {
+    const pivot = arr[right];
+    let store = left;
+
+    for (let i = left; i &lt; right; i++) {
+        if (arr[i] &lt; pivot) {
+            [arr[i], arr[store]] = [arr[store], arr[i]];
+            store++;
+        }
+    }
+    [arr[store], arr[right]] = [arr[right], arr[store]];
+
+    if (store === targetIndex) return arr[store];
+    if (store &lt; targetIndex) return quickselect(arr, store + 1, right, targetIndex);
+    return quickselect(arr, left, store - 1, targetIndex);
+}
+
+// Example
+console.log(findKthLargest([3, 2, 1, 5, 6, 4], 2)); // 5
+console.log(findKthLargest([3, 2, 3, 1, 2, 4, 5, 5, 6], 4)); // 4</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; findKthLargest([3,2,1,5,6,4], 2) → 5</p>
+                <p>&gt; findKthLargest([3,2,3,1,2,4,5,5,6], 4) → 4</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Kth Largest Element · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

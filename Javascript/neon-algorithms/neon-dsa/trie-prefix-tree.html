@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Implement Trie Prefix Tree - JavaScript algorithm in neon - Neon DSA">
+    <title>Implement Trie Prefix Tree - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Implement Trie Prefix Tree</h1>
+            <p class="c-subtitle">A trie with insert, search, and startsWith</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Medium</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Insert Time</span>
+                    <span class="c-fact__value">O(L)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Search Time</span>
+                    <span class="c-fact__value">O(L)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Trie</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Implement a trie supporting <code>insert(word)</code>, <code>search(word)</code> (exact match), and <code>startsWith(prefix)</code>.</p>
+                <p>Each node holds a map of children keyed by character and an <code>isEnd</code> flag marking a complete word.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>class TrieNode {
+    constructor() {
+        this.children = new Map();
+        this.isEnd = false;
+    }
+}
+
+class Trie {
+    constructor() {
+        this.root = new TrieNode();
+    }
+
+    insert(word) {
+        let node = this.root;
+        for (const char of word) {
+            if (!node.children.has(char)) {
+                node.children.set(char, new TrieNode());
+            }
+            node = node.children.get(char);
+        }
+        node.isEnd = true;
+    }
+
+    search(word) {
+        const node = this.traverse(word);
+        return node !== null &amp;&amp; node.isEnd;
+    }
+
+    startsWith(prefix) {
+        return this.traverse(prefix) !== null;
+    }
+
+    traverse(word) {
+        let node = this.root;
+        for (const char of word) {
+            if (!node.children.has(char)) {
+                return null;
+            }
+            node = node.children.get(char);
+        }
+        return node;
+    }
+}
+
+// Example
+const trie = new Trie();
+trie.insert("apple");
+trie.search("apple");   // true
+trie.search("app");     // false
+trie.startsWith("app"); // true</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; insert("apple"); search("apple") → true</p>
+                <p>&gt; search("app") → false</p>
+                <p>&gt; startsWith("app") → true</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Trie Prefix Tree · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

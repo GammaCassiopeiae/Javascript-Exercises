@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Merge Sort - JavaScript algorithm in neon - Neon DSA">
+    <title>Merge Sort - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Merge Sort</h1>
+            <p class="c-subtitle">Split, sort, and merge in O(n log n)</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Category</span>
+                    <span class="c-fact__value">Sorting</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n log n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Divide & Conquer</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Split the array into halves until single elements (trivially sorted), then merge pairs back up in sorted order.</p>
+                <p>Guaranteed O(n log n) regardless of input; the merge step runs two sorted pointers into one combined array.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function mergeSort(arr) {
+    if (arr.length &lt;= 1) {
+        return arr;
+    }
+
+    const mid = Math.floor(arr.length / 2);
+    const left = mergeSort(arr.slice(0, mid));
+    const right = mergeSort(arr.slice(mid));
+
+    return merge(left, right);
+}
+
+function merge(left, right) {
+    const result = [];
+    let i = 0;
+    let j = 0;
+
+    while (i &lt; left.length &amp;&amp; j &lt; right.length) {
+        if (left[i] &lt;= right[j]) {
+            result.push(left[i]);
+            i++;
+        } else {
+            result.push(right[j]);
+            j++;
+        }
+    }
+
+    return result
+        .concat(left.slice(i))
+        .concat(right.slice(j));
+}
+
+// Example
+console.log(mergeSort([38, 27, 43, 3, 9, 82, 10]));
+// → [3, 9, 10, 27, 38, 43, 82]</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; mergeSort([38,27,43,3,9,82,10]) → [3,9,10,27,38,43,82]</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Merge Sort · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

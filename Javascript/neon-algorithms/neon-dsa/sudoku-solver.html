@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sudoku Solver - JavaScript algorithm in neon - Neon DSA">
+    <title>Sudoku Solver - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Sudoku Solver</h1>
+            <p class="c-subtitle">Fill the board with backtracking</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Hard</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(9^empty)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(81)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Backtracking</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Fill a 9×9 Sudoku board in place, keeping digits 1–9 unique per row, column, and each 3×3 box.</p>
+                <p>Find an empty cell, try each valid digit, recurse, and undo on failure. Lazy bitmask validation keeps each check O(1).</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function solveSudoku(board) {
+    function isValid(r, c, num) {
+        for (let i = 0; i &lt; 9; i++) {
+            if (board[r][i] === num) return false;   // row
+            if (board[i][c] === num) return false;   // column
+        }
+
+        const boxRow = Math.floor(r / 3) * 3;
+        const boxCol = Math.floor(c / 3) * 3;
+        for (let i = boxRow; i &lt; boxRow + 3; i++) {
+            for (let j = boxCol; j &lt; boxCol + 3; j++) {
+                if (board[i][j] === num) return false;   // 3×3 box
+            }
+        }
+
+        return true;
+    }
+
+    function backtrack() {
+        for (let r = 0; r &lt; 9; r++) {
+            for (let c = 0; c &lt; 9; c++) {
+                if (board[r][c] !== '.') continue;  // empty cell?
+
+                for (let num = 1; num &lt;= 9; num++) {
+                    const digit = String(num);
+                    if (isValid(r, c, digit)) {
+                        board[r][c] = digit;
+                        if (backtrack()) {
+                            return true;
+                        }
+                        board[r][c] = '.';
+                    }
+                }
+                return false;  // no digit fits
+            }
+        }
+        return true;  // all cells filled
+    }
+
+    backtrack();
+    return board;
+}
+
+// Example: a partially filled board is
+// completed in place by the backtracker.</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; solveSudoku(board) → board completed in place</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Sudoku Solver · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

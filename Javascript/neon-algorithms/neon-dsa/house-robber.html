@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="House Robber - JavaScript algorithm in neon - Neon DSA">
+    <title>House Robber - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">House Robber</h1>
+            <p class="c-subtitle">Max loot without robbing adjacent houses</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Medium</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(1)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Dynamic Programming</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Houses in a line each hold <code>nums[i]</code>. Rob the maximum total without robbing two adjacent houses.</p>
+                <p>At each house, choose between skipping it (previous total) or robbing it (two houses back + this amount).</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function rob(nums) {
+    let prev = 0;  // dp[i-2]
+    let curr = 0;  // dp[i-1]
+
+    for (const num of nums) {
+        const next = Math.max(curr, prev + num);
+        prev = curr;
+        curr = next;
+    }
+
+    return curr;
+}
+
+// Example
+console.log(rob([1, 2, 3, 1])); // 4 (house 1 + house 3)
+console.log(rob([2, 7, 9, 3, 1])); // 12 (2 + 9 + 1)</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; rob([1,2,3,1]) → 4</p>
+                <p>&gt; rob([2,7,9,3,1]) → 12</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ House Robber · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

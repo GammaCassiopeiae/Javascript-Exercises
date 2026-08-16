@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Coin Change - JavaScript algorithm in neon - Neon DSA">
+    <title>Coin Change - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Coin Change</h1>
+            <p class="c-subtitle">Fewest coins needed to make an amount</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Medium</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n · amount)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(amount)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Dynamic Programming</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Given coin denominations and a target <code>amount</code>, return the fewest coins that make that amount, or <code>-1</code> if impossible.</p>
+                <p>Build a DP table where <code>dp[a]</code> is the minimum coins for amount <code>a</code>, computed from all coin choices.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function coinChange(coins, amount) {
+    const dp = new Array(amount + 1).fill(Infinity);
+    dp[0] = 0;
+
+    for (let a = 1; a &lt;= amount; a++) {
+        for (const coin of coins) {
+            if (a - coin &gt;= 0) {
+                dp[a] = Math.min(dp[a], dp[a - coin] + 1);
+            }
+        }
+    }
+
+    return dp[amount] === Infinity ? -1 : dp[amount];
+}
+
+// Example
+console.log(coinChange([1, 2, 5], 11)); // 3  (5 + 5 + 1)
+console.log(coinChange([2], 3));        // -1</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; coinChange([1,2,5], 11) → 3</p>
+                <p>&gt; coinChange([2], 3) → -1</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Coin Change · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

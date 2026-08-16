@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Clone Graph - JavaScript algorithm in neon - Neon DSA">
+    <title>Clone Graph - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Clone Graph</h1>
+            <p class="c-subtitle">Deep-copy a connected undirected graph</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Medium</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(V + E)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(V)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">DFS / BFS + Map</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Given a reference to a node in a connected undirected graph, return a deep copy of the graph — new nodes with the same values and connections.</p>
+                <p>Track cloned nodes in a map keyed by the original node so each original is cloned exactly once and neighbors link properly.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function Node(val, neighbors) {
+    this.val = val === undefined ? 0 : val;
+    this.neighbors = neighbors === undefined ? [] : neighbors;
+}
+
+function cloneGraph(node) {
+    if (node === null) {
+        return null;
+    }
+
+    const visited = new Map();
+
+    function dfs(original) {
+        if (visited.has(original)) {
+            return visited.get(original);
+        }
+
+        const clone = new Node(original.val);
+        visited.set(original, clone);
+
+        for (const neighbor of original.neighbors) {
+            clone.neighbors.push(dfs(neighbor));
+        }
+
+        return clone;
+    }
+
+    return dfs(node);
+}
+
+// Example: 1 — 2
+//          |    |
+//          4 — 3   becomes a distinct identical copy</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; cloneGraph(node1) → independent deep copy with identical structure</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Clone Graph · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="String to Integer atoi - JavaScript algorithm in neon - Neon DSA">
+    <title>String to Integer atoi - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">String to Integer atoi</h1>
+            <p class="c-subtitle">Parse a string into a 32-bit integer</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Medium</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(1)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">String Parsing</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Implement <code>atoi</code>: ignore leading whitespace, read an optional sign, then digits. Clamp to the 32-bit signed range <code>[-2³¹, 2³¹−1]</code> and ignore trailing non-digits.</p>
+                <p>One forward scan with a sign flag; stop as soon as a non-digit appears.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function myAtoi(s) {
+    let i = 0;
+    let sign = 1;
+
+    // 1. skip leading whitespace
+    while (s[i] === ' ') i++;
+
+    // 2. optional sign
+    if (s[i] === '+' || s[i] === '-') {
+        sign = s[i] === '-' ? -1 : 1;
+        i++;
+    }
+
+    // 3. build the number
+    let value = 0;
+    const MIN = -(2 ** 31);
+    const MAX = 2 ** 31 - 1;
+
+    while (i &lt; s.length &amp;&amp; s[i] &gt;= '0' &amp;&amp; s[i] &lt;= '9') {
+        value = value * 10 + (s[i].charCodeAt(0) - 48);
+        i++;
+
+        if (sign * value &gt; MAX) return MAX;
+        if (sign * value &lt; MIN) return MIN;
+    }
+
+    return sign * value;
+}
+
+// Example
+console.log(myAtoi("   -42"));      // -42
+console.log(myAtoi("4193 with words")); // 4193
+console.log(myAtoi("words and 987"));   // 0
+console.log(myAtoi("-91283472332"));    // -2147483648 (clamped)</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; myAtoi("   -42") → -42</p>
+                <p>&gt; myAtoi("-91283472332") → -2147483648 (clamped)</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ String to Integer (atoi) · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

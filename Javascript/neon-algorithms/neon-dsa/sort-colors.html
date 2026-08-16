@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sort Colors - JavaScript algorithm in neon - Neon DSA">
+    <title>Sort Colors - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Sort Colors</h1>
+            <p class="c-subtitle">Sort 0s, 1s, 2s in one pass</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Medium</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(1)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Dutch National Flag</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Given an array with only values <code>0</code>, <code>1</code>, and <code>2</code>, sort it in place in a single pass.</p>
+                <p>Three pointers partition the array: <code>0</code>s swap to the left boundary, <code>2</code>s swap to the right boundary, and <code>1</code>s stay in the middle.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function sortColors(nums) {
+    let low = 0;      // boundary of 0s
+    let mid = 0;      // current scan position
+    let high = nums.length - 1;  // boundary of 2s
+
+    while (mid &lt;= high) {
+        if (nums[mid] === 0) {
+            [nums[low], nums[mid]] = [nums[mid], nums[low]];
+            low++;
+            mid++;
+        } else if (nums[mid] === 2) {
+            [nums[mid], nums[high]] = [nums[high], nums[mid]];
+            high--;
+        } else {
+            mid++;  // it's a 1
+        }
+    }
+
+    return nums;
+}
+
+// Example
+console.log(sortColors([2, 0, 2, 1, 1, 0]));
+// → [0, 0, 1, 1, 2, 2]</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; sortColors([2,0,2,1,1,0]) → [0,0,1,1,2,2]</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Sort Colors · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

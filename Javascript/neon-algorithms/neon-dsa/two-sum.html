@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Two Sum - JavaScript algorithm in neon - Neon DSA">
+    <title>Two Sum - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Two Sum</h1>
+            <p class="c-subtitle">Find two numbers that add up to a target</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Easy</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Hash Map</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Given an array of integers <code>nums</code> and an integer <code>target</code>, return the indices of the two numbers that add up to the target.</p>
+                <p>Use a hash map storing each seen value; for each number check if its complement already exists.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function twoSum(nums, target) {
+    const seen = new Map();
+
+    for (let i = 0; i &lt; nums.length; i++) {
+        const complement = target - nums[i];
+
+        if (seen.has(complement)) {
+            return [seen.get(complement), i];
+        }
+
+        seen.set(nums[i], i);
+    }
+
+    return [];
+}
+
+// Example
+const nums = [2, 7, 11, 15];
+const target = 9;
+const result = twoSum(nums, target);
+console.log(result); // [0, 1]</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; Output: [0, 1]  (because 2 + 7 = 9)</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Two Sum · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

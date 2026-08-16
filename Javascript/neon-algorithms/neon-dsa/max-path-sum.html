@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Binary Tree Maximum Path Sum - JavaScript algorithm in neon - Neon DSA">
+    <title>Binary Tree Maximum Path Sum - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Binary Tree Maximum Path Sum</h1>
+            <p class="c-subtitle">Max sum along any root-to-node path</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Hard</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">DFS · Postorder</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>A path is any sequence of nodes where each pair has an edge; a path need not pass through the root. Return the maximum path sum (values can be negative).</p>
+                <p>Postorder: at each node, the best single branch is <code>node.val + max(leftGain, rightGain, 0)</code>, and the best path through it is <code>node.val + leftGain + rightGain</code>.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function maxPathSum(root) {
+    let best = -Infinity;
+
+    function gain(node) {
+        if (node === null) {
+            return 0;
+        }
+
+        // only embrace positive contributions
+        const leftGain = Math.max(gain(node.left), 0);
+        const rightGain = Math.max(gain(node.right), 0);
+
+        // path that bends through this node
+        const throughNode = node.val + leftGain + rightGain;
+        best = Math.max(best, throughNode);
+
+        // best single branch to offer the parent
+        return node.val + Math.max(leftGain, rightGain);
+    }
+
+    gain(root);
+    return best;
+}
+
+// Example
+//    -10
+//    /  \
+//   9   20
+//      /  \
+//     15   7
+console.log(maxPathSum(root)); // 42  (15 + 20 + 7)</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; maxPathSum([-10,9,20,null,null,15,7]) → 42</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Binary Tree Maximum Path Sum · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

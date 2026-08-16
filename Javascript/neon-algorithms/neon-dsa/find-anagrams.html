@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Find All Anagrams in a String - JavaScript algorithm in neon - Neon DSA">
+    <title>Find All Anagrams in a String - Neon DSA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="l-header">
+        <div class="l-container">
+            <a href="index.html" class="c-back-btn">← Index</a>
+            <h1 class="c-title">Find All Anagrams in a String</h1>
+            <p class="c-subtitle">Locate every start index of an anagram window</p>
+        </div>
+    </header>
+
+    <main class="l-main">
+        <div class="l-container">
+            <section class="c-facts" aria-label="Algorithm facts">
+                <div class="c-fact">
+                    <span class="c-fact__label">Difficulty</span>
+                    <span class="c-fact__value">Medium</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Time</span>
+                    <span class="c-fact__value">O(n)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Space</span>
+                    <span class="c-fact__value">O(1)</span>
+                </div>
+                <div class="c-fact">
+                    <span class="c-fact__label">Pattern</span>
+                    <span class="c-fact__value">Sliding Window</span>
+                </div>
+            </section>
+
+            <section class="c-desc" aria-label="Problem description">
+                <p>Given strings <code>s</code> and <code>p</code>, return all start indices where <code>p</code>'s anagram appears as a substring of <code>s</code>.</p>
+                <p>Slide a window of length <code>p</code> across <code>s</code> while maintaining a character-frequency difference that reaches zero at each match.</p>
+            </section>
+
+            <div class="c-banner">JAVASCRIPT SOLUTION</div>
+
+            <section class="c-code-block" aria-label="Solution code">
+                <pre><code>function findAnagrams(s, p) {
+    const result = [];
+    if (s.length &lt; p.length) return result;
+
+    const pCount = new Map();
+    const sCount = new Map();
+
+    for (const char of p) {
+        pCount.set(char, (pCount.get(char) || 0) + 1);
+    }
+
+    let matches = 0;
+
+    for (let i = 0; i &lt; s.length; i++) {
+        // add character entering the window
+        sCount.set(s[i], (sCount.get(s[i]) || 0) + 1);
+        if (sCount.get(s[i]) === pCount.get(s[i])) matches++;
+
+        // remove character leaving the window
+        const left = i - p.length;
+        if (left &gt;= 0) {
+            const outChar = s[left];
+            if (sCount.get(outChar) === pCount.get(outChar)) matches--;
+            sCount.set(outChar, sCount.get(outChar) - 1);
+        }
+
+        if (matches === pCount.size) {
+            result.push(i - p.length + 1);
+        }
+    }
+
+    return result;
+}
+
+// Example
+console.log(findAnagrams("cbaebabacd", "abc"));
+// → [0, 6]
+
+console.log(findAnagrams("abab", "ab"));
+// → [0, 1, 2]</code></pre>
+            </section>
+
+            <section class="c-output" aria-label="Example output">
+                <p>&gt; findAnagrams("cbaebabacd", "abc") → [0, 6]</p>
+                <p>&gt; findAnagrams("abab", "ab") → [0, 1, 2]</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="l-footer">
+        <div class="l-container">
+            <p class="u-text-center">⚡ Find All Anagrams in a String · Neon DSA</p>
+        </div>
+    </footer>
+</body>
+</html>

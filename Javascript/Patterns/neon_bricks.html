@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Neon Bricks Grid</title>
+<style>
+  :root{
+    --bg:#050507;
+    --pink:#ff2fa6; --cyan:#00f0f0; --blue:#58d0ff; --purple:#a68cff;
+    --mortar:#0b0b0c;
+    font-family:Inter,system-ui,Segoe UI,Roboto,Arial;
+  }
+  html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg),#07070a);color:#e6eef8}
+  .wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+  canvas{width:100%;height:100%;display:block}
+  .ui{position:fixed;left:14px;top:14px;color:#cbd5e1;padding:8px;border-radius:8px;background:rgba(255,255,255,0.02);font-weight:600}
+  .grain{pointer-events:none;position:fixed;inset:0;background-image:radial-gradient(rgba(255,255,255,0.01) 0.6px, transparent 0.6px);background-size:8px 8px;mix-blend-mode:overlay}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <canvas id="c"></canvas>
+    <div class="ui">Neon Bricks — Hover to highlight</div>
+    <div class="grain"></div>
+  </div>
+<script>
+(() => {
+  const canvas = document.getElementById('c');
+  const ctx = canvas.getContext('2d');
+  const DPR = window.devicePixelRatio || 1;
+
+  const COLORS = ['#ff2fa6','#00f0f0','#58d0ff','#a68cff'];
+  const MORTAR = '#0b0b0c';
+
+  let cols = 12, rows = 8; // default grid
+  let brickW = 120, brickH = 60, gutter = 8;
+  let hovered = null;
+
+  function setSize(){
+    const w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+    const h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+    canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+    canvas.width = Math.floor(w * DPR); canvas.height = Math.floor(h * DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+
+    // compute grid to fill screen with scaled bricks
+    const targetBrickW = Math.max(48, Math.floor(w / 10));
+    brickW = targetBrickW;
+    brickH = Math.round(targetBrickW * 0.52);
+    gutter = Math.max(6, Math.round(targetBrickW * 0.06));
+    cols = Math.floor((w - gutter) / (brickW + gutter));
+    rows = Math.floor((h - gutter) / (brickH + gutter));
+
+    // center by computing offset
+    draw();
+  }
+
+  function draw(){
+    const W = canvas.width / DPR; const H = canvas.height / DPR;
+    // background
+    const g = ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,'#030307'); g.addColorStop(1,'#07070a');
+    ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+
+    // compute offsets to center grid
+    const totalW = cols * brickW + (cols+1) * gutter;
+    const totalH = rows * brickH + (rows+1) * gutter;
+    const offsetX = Math.max(0, Math.round((W - totalW) / 2));
+    const offsetY = Math.max(0, Math.round((H - totalH) / 2));
+
+    // draw bricks
+    for(let r=0;r<rows;r++){
+      for(let c=0;c<cols;c++){
+        const x = offsetX + gutter + c * (brickW + gutter);
+        // offset every other row for brick-like staggering
+        const xo = (r % 2 === 1) ? Math.round((brickW/2)) : 0;
+        const bx = x - xo;
+        const y = offsetY + gutter + r * (brickH + gutter);
+
+        // color choice by position for pattern
+        const color = COLORS[(c + r) % COLORS.length];
+        drawBrick(bx, y, brickW, brickH, color, (hovered && hovered.r===r && hovered.c===c));
+      }
+    }
+
+    // subtle vignette
+    ctx.save();
+    const vign = ctx.createRadialGradient(W/2,H/2,Math.min(W,H)/6,W/2,H/2,Math.max(W,H)/1.2);
+    vign.addColorStop(0, 'rgba(0,0,0,0)'); vign.addColorStop(1,'rgba(0,0,0,0.45)');
+    ctx.fillStyle = vign; ctx.fillRect(0,0,W,H);
+    ctx.restore();
+  }
+
+  function drawBrick(x,y,w,h,color,highlight){
+    ctx.save();
+    // mortar (behind) - draw rounded rect as negative space by drawing mortar frame
+    // draw interior dark
+    ctx.fillStyle = 'rgba(0,0,0,0.14)'; ctx.fillRect(x, y, w, h);
+
+    // brick fill slightly tinted
+    ctx.fillStyle = hexToRgba(color, 0.08); ctx.fillRect(x+1, y+1, w-2, h-2);
+
+    // neon small pixels along edges
+    const step = Math.max(6, Math.round(6 * (w/120)));
+    const pixel = Math.max(3, Math.round(3 * (w/120)));
+    ctx.fillStyle = color;
+    for(let px = x; px <= x + w - step; px += step){ ctx.fillRect(px, y, pixel, pixel); ctx.fillRect(px, y + h - pixel, pixel, pixel); }
+    for(let py = y; py <= y + h - step; py += step){ ctx.fillRect(x, py, pixel, pixel); ctx.fillRect(x + w - pixel, py, pixel, pixel); }
+
+    // neon stroke with glow
+    ctx.shadowColor = color; ctx.shadowBlur = highlight ? 28 : 14; ctx.globalCompositeOperation = 'lighter';
+    ctx.strokeStyle = color; ctx.lineWidth = highlight ? 3 : 1.4; ctx.strokeRect(x + 2, y + 2, w - 4, h - 4);
+
+    // small inner shine
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = hexToRgba('#ffffff', highlight ? 0.06 : 0.02); ctx.fillRect(x + Math.round(w*0.06), y + Math.round(h*0.06), Math.round(w*0.35), Math.round(h*0.18));
+
+    ctx.restore();
+  }
+
+  function hexToRgba(hex,a){ const h=hex.replace('#',''); const bigint=parseInt(h,16); const r=(bigint>>16)&255; const g=(bigint>>8)&255; const b=bigint&255; return `rgba(${r},${g},${b},${a})`; }
+
+  // map mouse to brick
+  function handleMove(e){
+    const rect = canvas.getBoundingClientRect();
+    const mx = (e.clientX - rect.left);
+    const my = (e.clientY - rect.top);
+
+    const totalW = cols * brickW + (cols+1) * gutter;
+    const totalH = rows * brickH + (rows+1) * gutter;
+    const offsetX = Math.max(0, Math.round((rect.width - totalW) / 2));
+    const offsetY = Math.max(0, Math.round((rect.height - totalH) / 2));
+
+    let found = false;
+    for(let r=0;r<rows && !found;r++){
+      for(let c=0;c<cols && !found;c++){
+        const x = offsetX + gutter + c * (brickW + gutter);
+        const xo = (r % 2 === 1) ? Math.round((brickW/2)) : 0;
+        const bx = x - xo;
+        const y = offsetY + gutter + r * (brickH + gutter);
+        if(mx >= bx && mx <= bx + brickW && my >= y && my <= y + brickH){
+          // hovered
+          hovered = {r,c}; found = true; break;
+        }
+      }
+    }
+    if(!found){ hovered = null; }
+    draw();
+  }
+
+  canvas.addEventListener('mousemove', handleMove);
+  canvas.addEventListener('mouseleave', ()=>{ hovered=null; draw(); });
+
+  window.addEventListener('resize', debounce(setSize, 90));
+  setSize();
+
+  // no animation loop - static grid, responds to hover
+
+  function debounce(fn, wait){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), wait); } }
+})();
+</script>
+</body>
+</html>

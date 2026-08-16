@@ -1,0 +1,158 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Neon City — Scaled Up</title>
+<style>
+  :root{
+    --bg1:#040406; --bg2:#0b0d12;
+    --pink:#ff2fa6; --cyan:#00f0f0; --blue:#58d0ff; --purple:#a68cff;
+    --fg:#e6eef8;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  }
+  html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--fg);overflow:hidden}
+  .center{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+  canvas{display:block;width:100%;height:100%}
+  .label{position:fixed;left:20px;top:18px;color:rgba(255,255,255,0.9);font-weight:700;font-size:16px}
+  .grain{position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,0.01) 1px, transparent 1px);background-size:8px 8px;mix-blend-mode:overlay}
+</style>
+</head>
+<body>
+  <div class="center">
+    <canvas id="c"></canvas>
+    <div class="label">Neon City — Scaled Up</div>
+    <div class="grain"></div>
+  </div>
+<script>
+(function(){
+  const canvas = document.getElementById('c');
+  const ctx = canvas.getContext('2d');
+  const DPR = window.devicePixelRatio || 1;
+
+  const PINK = '#ff2fa6';
+  const CYAN = '#00f0f0';
+  const BLUE = '#58d0ff';
+  const PURPLE = '#a68cff';
+  const BG_TOP = '#030307';
+
+  function makeRng(seed){
+    let t = seed >>> 0;
+    return function(){ t += 0x6D2B79F5; let z = Math.imul(t ^ t >>> 15, 1 | t); z ^= z + Math.imul(z ^ z >>> 7, 61 | z); return ((z ^ z >>> 14) >>> 0) / 4294967296; };
+  }
+
+  function resizeAndDraw(){
+    const w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+    const h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+    canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+    canvas.width = Math.floor(w * DPR); canvas.height = Math.floor(h * DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    drawScene(w, h);
+  }
+
+  window.addEventListener('resize', debounce(resizeAndDraw, 120));
+
+  function drawScene(W, H){
+    ctx.clearRect(0,0,W,H);
+    const g = ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0, BG_TOP); g.addColorStop(0.6, '#051026'); g.addColorStop(1, '#07070a');
+    ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+
+    // scale based on screen diagonal, clamp to reasonable range
+    const diag = Math.sqrt(W*W + H*H);
+    const base = Math.max(1, Math.min(3.0, diag / 1200)); // 1..3 scale
+
+    // subtle larger glow bands
+    drawGlow(H*0.16, CYAN, 0.08 * base, W, H, base);
+    drawGlow(H*0.30, PURPLE, 0.06 * base, W, H, base);
+
+    const rng = makeRng(424242);
+    const layers = [ {baseline: H*0.68, count: Math.max(6, Math.round(6*base)), color: CYAN, scale:0.9*base},
+                     {baseline: H*0.78, count: Math.max(8, Math.round(8*base)), color: PURPLE, scale:1.1*base},
+                     {baseline: H*0.90, count: Math.max(10, Math.round(10*base)), color: PINK, scale:1.4*base} ];
+
+    layers.forEach((layer, li)=>{
+      const spacing = W / (layer.count + 1);
+      for(let i=0;i<layer.count;i++){
+        const seedVal = Math.floor(rng()*100000) + i*31 + li*97;
+        drawBuilding(i, seedVal, layer, i*spacing + spacing*0.5, W, H, base);
+      }
+    });
+
+    drawDottedConnector(W, H, CYAN, base);
+    // larger foreground
+    drawForeground(W,H, base);
+  }
+
+  function drawGlow(y, color, alpha, W, H, base){
+    const radius = Math.max(W,H) * (0.12 * base);
+    const gx = W * 0.22;
+    const grad = ctx.createRadialGradient(gx, y, 1, gx, y, radius);
+    grad.addColorStop(0, hexToRgba(color, Math.min(0.3, alpha)) ); grad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = grad; ctx.fillRect(0,y-radius, W, radius*2);
+  }
+
+  function drawBuilding(index, seedVal, layer, xCenter, W, H, base){
+    const r = makeRng(seedVal);
+    const minW = Math.round(48 * layer.scale); const maxW = Math.round(140 * layer.scale);
+    const bw = Math.round(minW + r() * (maxW - minW));
+    const maxHeight = (H * 0.26) * (1 - 0.08*index/layer.count);
+    const bh = Math.round((120 + r() * maxHeight) * layer.scale);
+    const x = Math.max(12, Math.min(W - bw - 12, xCenter - bw/2 + (r()-0.5) * 60 * base));
+    const y = Math.round(layer.baseline - bh);
+
+    drawNeonPanel(x, y, bw, bh, layer.color, base);
+    drawSimpleWindows(x + Math.round(8*base), y + Math.round(10*base), bw - Math.round(16*base), bh - Math.round(20*base), layer.color, r, base);
+  }
+
+  function drawNeonPanel(x,y,w,h,color, base){
+    ctx.save();
+    ctx.fillStyle = hexToRgba(color, 0.05); ctx.fillRect(x,y,w,h);
+    const step = Math.max(10, Math.round(10 * base)); ctx.fillStyle = color;
+    const pixel = Math.max(4, Math.round(4 * base));
+    for(let px = x; px <= x + w - step; px += step){ ctx.fillRect(px, y, pixel, pixel); ctx.fillRect(px, y + h - pixel, pixel, pixel); }
+    for(let py = y; py <= y + h - step; py += step){ ctx.fillRect(x, py, pixel, pixel); ctx.fillRect(x + w - pixel, py, pixel, pixel); }
+    ctx.shadowColor = color; ctx.shadowBlur = 12 * base; ctx.globalCompositeOperation = 'lighter';
+    ctx.strokeStyle = color; ctx.lineWidth = Math.max(1.2, 1.2 * base); ctx.strokeRect(x + 1, y + 1, w - 2, h - 2);
+    ctx.restore();
+  }
+
+  function drawSimpleWindows(x,y,w,h,color, r, base){
+    const cols = Math.max(2, Math.floor(w / (18 * base)));
+    const rows = Math.max(2, Math.floor(h / (22 * base)));
+    const cellW = Math.floor(w / cols);
+    const cellH = Math.floor(h / rows);
+    for(let row=0; row<rows; row++){
+      for(let col=0; col<cols; col++){
+        const on = r() > 0.45; if(!on) continue;
+        const wx = Math.round(x + col * cellW + Math.max(4, Math.round(3*base)));
+        const wy = Math.round(y + row * cellH + Math.max(4, Math.round(3*base)));
+        ctx.save(); ctx.fillStyle = hexToRgba(color, 0.95); ctx.fillRect(wx, wy, Math.min(12*base, cellW-6), Math.min(14*base, cellH-6)); ctx.restore();
+      }
+    }
+  }
+
+  function drawDottedConnector(W,H,color,base){
+    ctx.save(); ctx.fillStyle = color; const y = Math.round(H * 0.60);
+    const step = Math.max(24, Math.round(24 * base)); const pixel = Math.max(6, Math.round(6 * base));
+    for(let x = 20; x < W - 20; x += step){ ctx.fillRect(x, y, pixel, pixel); }
+    ctx.restore();
+  }
+
+  function drawForeground(W,H, base){
+    ctx.save(); const y = Math.round(H * 0.92);
+    ctx.fillStyle = '#040406'; ctx.fillRect(0, y, W, H - y);
+    const lampGap = Math.max(70, Math.round(70 * base)); const lampSize = Math.max(12, Math.round(12 * base));
+    for(let i = 40; i < W; i += lampGap){ const cx = i + Math.sin(i/80)*20; ctx.fillStyle = '#0b0b0c'; ctx.fillRect(cx, y - lampSize, lampSize*2, lampSize); ctx.fillStyle = PINK; ctx.shadowColor = PINK; ctx.shadowBlur = 14 * base; ctx.fillRect(cx + lampSize*0.3, y - lampSize + 2, lampSize*1.3, 3); ctx.shadowBlur = 0; }
+    ctx.restore();
+  }
+
+  function hexToRgba(hex,a){ const h=hex.replace('#',''); const bigint=parseInt(h,16); const r=(bigint>>16)&255; const g=(bigint>>8)&255; const b=bigint&255; return `rgba(${r},${g},${b},${a})`; }
+  function debounce(fn, wait){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), wait); } }
+
+  // initial draw
+  resizeAndDraw();
+})();
+</script>
+</body>
+</html>

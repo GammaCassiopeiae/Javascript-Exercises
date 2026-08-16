@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Neon Smiley</title>
+<style>
+  :root{
+    --bg1:#040406; --bg2:#0b0d12;
+    --pink:#ff2fa6; --cyan:#00f0f0; --blue:#58d0ff; --purple:#a68cff;
+  }
+  html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),var(--bg2));font-family:system-ui,Segoe UI,Roboto,Arial;color:#fff;display:flex;align-items:center;justify-content:center}
+  .stage{display:grid;place-items:center;height:100vh;width:100vw}
+  .neon-wrap{position:relative;width:min(70vmin,720px);height:min(70vmin,720px);display:grid;place-items:center}
+
+  /* Face circle */
+  .face{
+    width:80%;height:80%;border-radius:50%;background:radial-gradient(circle at 30% 25%, rgba(255,255,255,0.02), rgba(0,0,0,0) 30%), linear-gradient(180deg, rgba(88,208,255,0.03), rgba(166,140,255,0.03));
+    display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 0 40px rgba(88,208,255,0.02) inset;
+    border: 3px solid rgba(255,255,255,0.04);
+  }
+
+  /* neon ring */
+  .ring{
+    position:absolute;inset:0;border-radius:50%;
+    box-shadow:
+      0 0 18px rgba(0,240,240,0.16),
+      0 0 36px rgba(88,208,255,0.08),
+      0 0 80px rgba(255,47,166,0.06);
+    filter:blur(0.6px);
+    pointer-events:none;
+  }
+
+  /* pixel-like outer stroke */
+  .stroke{
+    position:absolute;inset:6%;border-radius:50%;
+    background:conic-gradient(from 0deg, var(--cyan) 0deg 90deg, var(--blue) 90deg 180deg, var(--purple) 180deg 270deg, var(--pink) 270deg 360deg);
+    mix-blend-mode:screen;opacity:0.9;transform:scale(1.02);filter:blur(6px);
+  }
+
+  /* Eyes */
+  .eyes{position:relative;display:flex;gap:12%;width:70%;justify-content:center;z-index:2}
+  .eye{width:12%;aspect-ratio:1/1;border-radius:50%;background:linear-gradient(180deg,var(--cyan),var(--blue));box-shadow:0 0 18px var(--cyan),0 0 40px var(--blue);display:flex;align-items:center;justify-content:center}
+  .eye::after{content:'';width:40%;height:40%;border-radius:50%;background:rgba(255,255,255,0.7);filter:blur(0.4px);opacity:0.9}
+
+  /* mouth as an arc using pseudo-element */
+  .mouth{position:absolute;bottom:21%;width:60%;height:38%;display:block;border-radius:0 0 60% 60%/0 0 100% 100%;overflow:hidden;transform:translateY(6%);}
+  .mouth .arc{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:90%;height:220%;border-radius:50%;background:transparent;border:8px solid var(--pink);border-top:0;border-left-color:var(--purple);border-right-color:var(--pink);box-shadow:0 0 30px var(--pink),0 0 18px var(--purple);}
+
+  /* small shine highlights */
+  .shine{position:absolute;left:12%;top:12%;width:12%;height:6%;background:linear-gradient(90deg, rgba(255,255,255,0.45), rgba(255,255,255,0.05));transform:rotate(-18deg);filter:blur(1px);opacity:0.8;border-radius:2px}
+
+  /* subtle breathing animation */
+  @keyframes breathe{0%{transform:scale(0.995)}50%{transform:scale(1.01)}100%{transform:scale(0.995)}}
+  .neon-wrap{animation:breathe 4s ease-in-out infinite}
+
+  /* responsive tweaks */
+  @media (max-width:520px){ .eye{width:18%} .mouth .arc{border-width:6px} }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="neon-wrap" role="img" aria-label="Neon smiley face">
+      <div class="ring"></div>
+      <div class="stroke"></div>
+      <div class="face">
+        <div class="shine"></div>
+        <div class="eyes">
+          <div class="eye" style="box-shadow:0 0 26px var(--cyan),0 0 50px var(--blue)"></div>
+          <div class="eye" style="box-shadow:0 0 26px var(--purple),0 0 50px var(--pink)"></div>
+        </div>
+        <div class="mouth" aria-hidden="true"><div class="arc"></div></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

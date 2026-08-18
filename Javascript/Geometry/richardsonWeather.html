@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Simulacija Navier-Stokesovih enačb</title>
+    <style>
+        body { margin: 0; background: #111; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+        canvas { border: 1px solid #444; background: #000; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
+        #info { margin-bottom: 10px; font-size: 14px; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div id="info">
+        <strong>Simulacija gibanja zraka (Navier-Stokes)</strong><br>
+        Premikaj miško po platnu, da ustvariš veter in spremeniš tlak zraka.
+    </div>
+    
+    <canvas id="canvas" width="600" height="600"></canvas>
+
+    <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    // Velikost računske mreže (npr. 60x60 celic za hitro računanje)
+    const N = 60;
+    const SIZE = (N + 2) * (N + 2);
+    const SCALE = canvas.width / N;
+
+    // Polja za hitrost vetra (u = x-smer, v = y-smer) in tlak (p)
+    let u = new Float32Array(SIZE);     // Trenutna hitrost X
+    let v = new Float32Array(SIZE);     // Trenutna hitrost Y
+    let u_prev = new Float32Array(SIZE);// Prejšnja hitrost X
+    let v_prev = new Float32Array(SIZE);// Prejšnja hitrost Y
+    
+    let d = new Float32Array(SIZE);     // Gostota / Vlaga (za vizualizacijo)
+    let d_prev = new Float32Array(SIZE);
+
+    // Fizikalne konstante za simulacijo
+    const dt = 0.1;       // Časovni korak (delta t)
+    const diff = 0.0001;  // Koeficient difuzije vlage
+    const visc = 0.0001;  // Viskoznost zraka (trenje F_v)
+
+    // Pomožna funkcija za pretvorbo 2D koordinat (x, y) v 1D indeks matrike
+    function IX(x, y) {
+        return x + (N + 2) * y;
+    }
+
+    // --- ČLEN F_v: Trenje in difuzija (Razpršitev hitrosti in vlage) ---
+    function diffuse(b, x, x0, diff, dt) {
+        const a = dt * diff * N * N;
+        for (let k = 0; k < 20; k++) { // Gauss-Seidelova iteracija za stabilnost
+            for (let i = 1; i <= N; i++) {
+                for (let j = 1; j <= N; j++) {
+                    x[IX(i, j)] = (x0[IX(i, j)] + a * (x[IX(i - 1, j)] + x[IX(i + 1, j)] + x[IX(i, j - 1)] + x[IX(i, j + 1)])) / (1 + 4 * a);
+                }
+            }
+            set_bnd(b, x);
+        }
+    }
+
+    // --- ČLEN (u * nabla)u: Advekcija (Veter premika samega sebe in vlago) ---
+    function advect(b, d, d0, u, v, dt) {
+        const dt0 = dt * N;
+        for (let i = 1; i <= N; i++) {
+            for (let j = 1; j <= N; j++) {
+                // Sledenje delcu nazaj v času, da ugotovimo, od kod je zrak pritekel
+                let x = i - dt0 * u[IX(i, j)];
+                let y = j - dt0 * v[IX(i, j)];
+
+                // Omejitev robov mreže
+                if (x < 0.5) x = 0.5; if (x > N + 0.5) x = N + 0.5;
+                if (y < 0.5) y = 0.5; if (y > N + 0.5) y = N + 0.5;
+
+                let i0 = Math.floor(x), i1 = i0 + 1;
+                let j0 = Math.floor(y), j1 = j0 + 1;
+
+                let s1 = x - i0, s0 = 1 - s1;
+                let t1 = y - j0, t0 = 1 - t1;
+
+                // Bilinearna interpolacija vrednosti iz sosednjih celic
+                d[IX(i, j)] = s0 * (t0 * d0[IX(i0, j0)] + t1 * d0[IX(i0, j1)]) +
+                             s1 * (t0 * d0[IX(i1, j0)] + t1 * d0[IX(i1, j1)]);
+            }
+        }
+        set_bnd(b, d);
+    }
+
+    // --- ČLEN -1/rho * nabla p: Sila gradienta tlaka in kontinuiteta ---
+    // Ta del poskrbi, da se zrak ne kopiči na enem mestu (ohranitev mase)
+    function project(u, v, p, div) {
+        for (let i = 1; i <= N; i++) {
+            for (let j = 1; j <= N; j++) {
+                div[IX(i, j)] = -0.5 * (u[IX(i + 1, j)] - u[IX(i - 1, j)] + v[IX(i, j + 1)] - v[IX(i, j - 1)]) / N;
+                p[IX(i, j)] = 0;
+            }
+        }
+        set_bnd(0, div); set_bnd(0, p);
+
+        // Izračun pritiska (p) glede na stiskanje zraka
+        for (let k = 0; k < 20; k++) {
+            for (let i = 1; i <= N; i++) {
+                for (let j = 1; j <= N; j++) {
+                    p[IX(i, j)] = (div[IX(i, j)] + p[IX(i - 1, j)] + p[IX(i + 1, j)] + p[IX(i, j - 1)] + p[IX(i, j + 1)]) / 4;
+                }
+            }
+            set_bnd(0, p);
+        }
+
+        // Popravek hitrosti vetra - zrak steče v smeri nižjega tlaka
+        for (let i = 1; i <= N; i++) {
+            for (let j = 1; j <= N; j++) {
+                u[IX(i, j)] -= 0.5 * N * (p[IX(i + 1, j)] - p[IX(i - 1, j)]);
+                v[IX(i, j)] -= 0.5 * N * (p[IX(i, j + 1)] - p[IX(i, j - 1)]);
+            }
+        }
+        set_bnd(1, u); set_bnd(2, v);
+    }
+
+    // Urejanje odboja vetra na robovih (da zrak ne "pobegne" iz zaslona)
+    function set_bnd(b, x) {
+        for (let i = 1; i <= N; i++) {
+            x[IX(0, i)]     = b === 1 ? -x[IX(1, i)] : x[IX(1, i)];
+            x[IX(N + 1, i)] = b === 1 ? -x[IX(N, i)] : x[IX(N, i)];
+            x[IX(i, 0)]     = b === 2 ? -x[IX(i, 1)] : x[IX(i, 1)];
+            x[IX(i, N + 1)] = b === 2 ? -x[IX(i, N)] : x[IX(i, N)];
+        }
+        x[IX(0, 0)]         = 0.5 * (x[IX(1, 0)] + x[IX(0, 1)]);
+        x[IX(0, N + 1)]     = 0.5 * (x[IX(1, N + 1)] + x[IX(0, N)]);
+        x[IX(1, 0)]         = 0.5 * (x[IX(N, 0)] + x[IX(N + 1, 1)]);
+        x[IX(N + 1, N + 1)] = 0.5 * (x[IX(N, N + 1)] + x[IX(N + 1, N)]);
+    }
+
+    // --- GLAVNI KORAK SIMULACIJE (Združitev vseh členov enačbe) ---
+    function vel_step(u, v, u0, v0, visc, dt) {
+        // 1. Dodajanje sil (trenje F_v in zunanji vplivi)
+        diffuse(1, u0, u, visc, dt);
+        diffuse(2, v0, v, visc, dt);
+        project(u0, v0, u, v);
+        
+        // 2. Advekcija (premikanje vetra s samim seboj)
+        advect(1, u, u0, u0, v0, dt);
+        advect(2, v, v0, u0, v0, dt);
+        project(u, v, u0, v0);
+    }
+
+    function fm_step(d, d0, u, v, diff, dt) {
+        diffuse(0, d0, d, diff, dt);
+        advect(0, d, d0, u, v, dt);
+    }
+
+    // --- VIZUALIZACIJA (Risanje na zaslon) ---
+    function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        for (let i = 1; i <= N; i++) {
+            for (let j = 1; j <= N; j++) {
+                const density = d[IX(i, j)];
+                if (density > 0.01) {
+                    // Pretvorba gostote zraka v svetlo modro/belo barvo (vizualizacija vlage)
+                    let alpha = Math.min(density, 1);
+                    ctx.fillStyle = `rgba(100, 180, 255, ${alpha})`;
+                    ctx.fillRect((i - 1) * SCALE, (j - 1) * SCALE, SCALE, SCALE);
+                }
+            }
+        }
+    }
+
+    // --- INTERAKCIJA Z MIŠKO (Ustvarjanje vetra) ---
+    let lastX = 0, lastY = 0;
+    canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+
+        const i = Math.floor((mouseX / canvas.width) * N) + 1;
+        const j = Math.floor((mouseY / canvas.height) * N) + 1;
+
+        if (i > 0 && i <= N && j > 0 && j <= N) {
+            // Smer gibanja miške določa začetno hitrost (pospešek u in v)
+            u[IX(i, j)] = (mouseX - lastX) * 3;
+            v[IX(i, j)] = (mouseY - lastY) * 3;
+            d[IX(i, j)] = 5; // Dodajanje vlage na mestu miške
+        }
+
+        lastX = mouseX;
+        lastY = mouseY;
+    });
+
+    // Zanka, ki neprekinjeno poganja izračune (v realnem času)
+    function loop() {
+        vel_step(u, v, u_prev, v_prev, visc, dt);
+        fm_step(d, d_prev, u, v, diff, dt);
+        render();
+        requestAnimationFrame(loop);
+    }
+
+    // Zagon simulacije
+    loop();
+    </script>
+</body>
+</html>

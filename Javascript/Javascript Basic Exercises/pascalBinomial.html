@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binomial & Pascal Expansion</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #000000;
+            color: #39ff14; /* Neon Lime Green */
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .section {
+            background: #0a0a0a;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(148, 0, 211, 0.3); /* Neon Violet Shadow */
+            margin-bottom: 20px;
+            border: 2px solid #9400d3; /* Neon Violet Border */
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #9400d3; /* Neon Violet */
+            border-bottom: 1px solid #9400d3;
+            padding-bottom: 10px;
+            text-shadow: 0 0 8px rgba(148, 0, 211, 0.6);
+        }
+
+        .controls {
+            margin-bottom: 15px;
+            color: #39ff14; /* Neon Lime Green */
+            font-weight: bold;
+        }
+
+        input {
+            padding: 8px;
+            font-size: 16px;
+            width: 80px;
+            background-color: #111111;
+            color: #39ff14; /* Neon Lime Green */
+            border: 2px solid #9400d3; /* Neon Violet */
+            border-radius: 4px;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(57, 255, 20, 0.5);
+        }
+
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 10px #39ff14;
+        }
+
+        .expansion-box {
+            background-color: #111111;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 16px;
+            line-height: 1.6;
+            word-wrap: break-word;
+            overflow-x: auto;
+            border: 1px dashed #9400d3; /* Neon Violet */
+            color: #39ff14; /* Neon Lime Green */
+            text-shadow: 0 0 5px rgba(57, 255, 20, 0.5);
+        }
+
+        .triangle-scroll {
+            overflow: auto;
+            max-height: 500px;
+            background: #050505;
+            border: 1px solid #9400d3; /* Neon Violet */
+            border-radius: 6px;
+            padding: 15px 0;
+        }
+
+        .row-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 3px 0;
+            font-family: monospace;
+            white-space: nowrap;
+        }
+
+        .row-number {
+            color: #9400d3; /* Neon Violet */
+            font-size: 12px;
+            width: 50px;
+            text-align: right;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+
+        .cell-item {
+            display: inline-block;
+            background: #111111;
+            border: 1px solid #39ff14; /* Neon Lime Green */
+            border-radius: 3px;
+            padding: 2px 6px;
+            margin: 0 2px;
+            font-size: 13px;
+            color: #39ff14; /* Neon Lime Green */
+        }
+
+        .active-row {
+            background-color: rgba(148, 0, 211, 0.2); /* Soft Neon Violet Glow */
+        }
+
+        .active-row .cell-item {
+            background-color: #39ff14; /* Neon Lime Green background */
+            color: #000000; /* Black text for high contrast */
+            border-color: #39ff14;
+            font-weight: bold;
+            box-shadow: 0 0 8px #39ff14;
+        }
+
+        sup {
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- TOP SECTION: Binomial Theorem Controls & Formula Result -->
+    <div class="section">
+        <h2>Binomial (a + b)ⁿ Solver</h2>
+        <div class="controls">
+            <label for="exponent">Choose Exponent (0 - 30): </label>
+            <input type="number" id="exponent" min="0" max="30" value="30">
+        </div>
+        <div id="output-formula" class="expansion-box">
+            <!-- Output string goes here -->
+        </div>
+    </div>
+
+    <!-- BOTTOM SECTION: Generated Pascal Triangle Tree Visualization -->
+    <div class="section">
+        <h2>Pascal's Triangle Layout</h2>
+        <div id="triangle-box" class="triangle-scroll">
+            <!-- Dynamic rows injected here -->
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // Global variable matrix holding numbers safely
+    var pascalMatrix = [];
+
+    // Helper: Build the mathematical dataset matrix
+    function runPascalMath() {
+        pascalMatrix = [];
+        for (var i = 0; i <= 30; i++) {
+            var currentRow = [];
+            for (var j = 0; j <= i; j++) {
+                if (j === 0 || j === i) {
+                    currentRow.push(1);
+                } else {
+                    var leftNum = pascalMatrix[i - 1][j - 1];
+                    var rightNum = pascalMatrix[i - 1][j];
+                    currentRow.push(leftNum + rightNum);
+                }
+            }
+            pascalMatrix.push(currentRow);
+        }
+    }
+
+    // Helper: Generate visual DOM blocks for the structural triangle grid below
+    function buildTriangleGrid() {
+        var container = document.getElementById("triangle-box");
+        var htmlContent = "";
+
+        for (var r = 0; r <= 30; r++) {
+            var rowString = '<div class="row-wrapper" id="p-row-' + r + '">';
+            rowString += '<span class="row-number">n = ' + r + ':</span>';
+            
+            for (var c = 0; c <= r; c++) {
+                var cellVal = pascalMatrix[r][c];
+                rowString += '<span class="cell-item">' + cellVal + '</span>';
+            }
+            
+            rowString += '</div>';
+            htmlContent += rowString;
+        }
+
+        container.innerHTML = htmlContent;
+    }
+
+    // Helper: Compute algebraic combinations into single visual text block
+    function expandAlgebra(n) {
+        if (n < 0 || n > 30) return "Select an exponent between 0 and 30.";
+        
+        var selectedRow = pascalMatrix[n];
+        var trackingTerms = [];
+
+        for (var i = 0; i <= n; i++) {
+            var coefficient = selectedRow[i];
+            var powerA = n - i;
+            var powerB = i;
+            var componentTerm = "";
+
+            // Evaluate when to write out the numerical multiplier
+            if (coefficient > 1 || (powerA === 0 && powerB === 0)) {
+                componentTerm += coefficient.toLocaleString();
+            }
+
+            // Variable A handling
+            if (powerA > 0) {
+                componentTerm += "a";
+                if (powerA > 1) {
+                    componentTerm += "<sup>" + powerA + "</sup>";
+                }
+            }
+
+            // Variable B handling
+            if (powerB > 0) {
+                componentTerm += "b";
+                if (powerB > 1) {
+                    componentTerm += "<sup>" + powerB + "</sup>";
+                }
+            }
+
+            trackingTerms.push(componentTerm);
+        }
+
+        return "<strong>(a + b)<sup>" + n + "</sup></strong> = " + trackingTerms.join(" + ");
+    }
+
+    // Master handler to link user inputs with layouts
+    function processDisplay() {
+        var inputNode = document.getElementById("exponent");
+        var displayBox = document.getElementById("output-formula");
+        
+        var nValue = parseInt(inputNode.value, 10);
+        if (isNaN(nValue)) nValue = 0;
+        if (nValue > 30) nValue = 30;
+        if (nValue < 0) nValue = 0;
+
+        // Reset all row highlights
+        for (var idx = 0; idx <= 30; idx++) {
+            var targetRow = document.getElementById("p-row-" + idx);
+            if (targetRow) {
+                targetRow.className = "row-wrapper";
+            }
+        }
+
+        // Apply active highlight to target layout tier
+        var activeRow = document.getElementById("p-row-" + nValue);
+        if (activeRow) {
+            activeRow.className = "row-wrapper active-row";
+        }
+
+        // Inject the final generated text string smoothly
+        displayBox.innerHTML = expandAlgebra(nValue);
+    }
+
+    // DOM Setup Listener
+    window.onload = function() {
+        runPascalMath();
+        buildTriangleGrid();
+        processDisplay();
+
+        // Listen for realtime interactive number input updates
+        document.getElementById("exponent").oninput = processDisplay;
+    };
+</script>
+
+</body>
+</html>

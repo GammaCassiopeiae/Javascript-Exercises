@@ -1,0 +1,1100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Neon Algorithm Lab: interactive mathematical, graph, and sorting visualizations.">
+  <title>NEON ALGORITHM LAB</title>
+  <style>
+    :root {
+      --bg: #070914;
+      --panel: rgba(15, 20, 40, .88);
+      --panel-2: #111832;
+      --line: rgba(131, 157, 215, .22);
+      --text: #eef3ff;
+      --muted: #8793b4;
+      --cyan: #63f4ff;
+      --pink: #ff62d8;
+      --lime: #c5ff6a;
+      --violet: #a987ff;
+      --yellow: #ffd166;
+      --shadow: 0 0 35px rgba(99, 244, 255, .16);
+      --radius: 16px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; min-height: 100vh; color: var(--text);
+      background: radial-gradient(circle at 82% -10%, rgba(169,135,255,.22), transparent 34rem),
+        radial-gradient(circle at 0 55%, rgba(255,98,216,.11), transparent 30rem), var(--bg);
+      font: 15px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    :focus-visible { outline: 3px solid var(--lime); outline-offset: 3px; }
+    .app { min-height: 100vh; }
+    .topbar {
+      position: sticky; top: 0; z-index: 5; display: flex; align-items: center;
+      justify-content: space-between; gap: 1rem; min-height: 70px; padding: 0 4vw;
+      border-bottom: 1px solid var(--line); background: rgba(7,9,20,.84); backdrop-filter: blur(16px);
+    }
+    .brand { display: flex; align-items: center; gap: .75rem; letter-spacing: .16em; font-weight: 800; font-size: .88rem; }
+    .brand-mark { width: 18px; height: 18px; border: 3px solid var(--cyan); border-radius: 50%; box-shadow: 0 0 16px var(--cyan); }
+    .topbar-status { color: var(--lime); font: 11px/1.2 "Fira Code", monospace; letter-spacing: .12em; }
+    .layout { display: grid; grid-template-columns: 265px minmax(0, 1fr); gap: 1.25rem; width: min(1440px, 94vw); margin: 1.25rem auto; }
+    .sidebar, .card { border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); box-shadow: var(--shadow); }
+    .sidebar { padding: 1rem; align-self: start; position: sticky; top: 86px; }
+    .sidebar h2 { margin: .3rem .5rem 1rem; color: var(--muted); font-size: .72rem; letter-spacing: .18em; text-transform: uppercase; }
+    .nav-list { display: grid; gap: .45rem; }
+    .nav-item {
+      display: flex; align-items: center; gap: .7rem; width: 100%; padding: .8rem .75rem;
+      border: 1px solid transparent; border-radius: 10px; color: var(--muted); background: transparent; text-align: left;
+    }
+    .nav-item:hover { color: var(--text); border-color: var(--line); background: rgba(99,244,255,.05); }
+    .nav-item[aria-current="true"] { color: var(--cyan); border-color: rgba(99,244,255,.5); background: rgba(99,244,255,.09); box-shadow: inset 3px 0 var(--cyan); }
+    .nav-icon { width: 1.35rem; color: var(--pink); font-family: "Fira Code", monospace; }
+    .hint { margin: 1.2rem .5rem .2rem; color: var(--muted); font-size: .76rem; }
+    .workspace { min-width: 0; }
+    .hero { display: flex; justify-content: space-between; align-items: end; gap: 1rem; margin: .25rem 0 1.25rem; }
+    .eyebrow { margin: 0 0 .45rem; color: var(--lime); font: 700 .7rem/1.2 "Fira Code", monospace; letter-spacing: .18em; text-transform: uppercase; }
+    h1 { margin: 0; font-size: clamp(2rem, 5vw, 4rem); letter-spacing: -.06em; line-height: .95; }
+    .hero-copy { max-width: 580px; margin: .8rem 0 0; color: var(--muted); }
+    .hero-badge { padding: .55rem .75rem; border: 1px solid rgba(197,255,106,.3); border-radius: 999px; color: var(--lime); font: 11px "Fira Code", monospace; white-space: nowrap; }
+    .toolbar { display: flex; flex-wrap: wrap; align-items: end; gap: .7rem; margin-bottom: 1rem; padding: .85rem; }
+    .field { display: grid; gap: .3rem; min-width: 130px; }
+    .field label { color: var(--muted); font-size: .68rem; letter-spacing: .11em; text-transform: uppercase; }
+    input, select {
+      min-height: 38px; padding: .5rem .65rem; border: 1px solid var(--line); border-radius: 8px; color: var(--text);
+      background: #0a0f22;
+    }
+    input:focus, select:focus { border-color: var(--cyan); box-shadow: 0 0 15px rgba(99,244,255,.18); outline: none; }
+    .button {
+      min-height: 38px; padding: .5rem .85rem; border: 1px solid var(--cyan); border-radius: 8px; color: #061016;
+      background: var(--cyan); font-weight: 800; transition: transform .18s, box-shadow .18s;
+    }
+    .button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 0 20px rgba(99,244,255,.35); }
+    .button.secondary { color: var(--cyan); background: transparent; }
+    .button.pink { border-color: var(--pink); color: var(--pink); background: transparent; }
+    .button:disabled { opacity: .45; cursor: not-allowed; }
+    .stage { min-height: 470px; padding: 1.2rem; overflow: hidden; }
+    .stage-head { display: flex; align-items: start; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
+    .stage-head h2 { margin: 0; font-size: 1.2rem; }
+    .stage-head p { margin: .2rem 0 0; color: var(--muted); font-size: .85rem; }
+    .stage-label { color: var(--pink); font: 11px "Fira Code", monospace; }
+    .visual { min-height: 350px; display: grid; place-items: center; padding: 1rem; border: 1px solid rgba(131,157,215,.13); border-radius: 12px; background: radial-gradient(circle, rgba(99,244,255,.06), transparent 60%), #090d1d; overflow: auto; }
+    .triangle { display: flex; flex-direction: column; align-items: center; gap: .35rem; min-width: max-content; padding: .5rem; }
+    .triangle-row { display: flex; gap: .35rem; }
+    .cell {
+      display: grid; place-items: center; width: 48px; height: 38px; border: 1px solid rgba(99,244,255,.4);
+      border-radius: 8px; color: var(--cyan); background: rgba(99,244,255,.08); box-shadow: 0 0 12px rgba(99,244,255,.08);
+      font: 12px "Fira Code", monospace; transition: transform .25s, background .25s, color .25s;
+    }
+    .cell.active { color: #090d1d; background: var(--lime); box-shadow: 0 0 18px rgba(197,255,106,.55); transform: scale(1.12); }
+    .cell.zero { color: var(--muted); border-color: rgba(131,157,215,.2); background: rgba(131,157,215,.05); }
+    .bars { display: flex; align-items: end; justify-content: center; gap: 5px; width: 100%; max-width: 820px; height: 290px; padding: 1rem; border-bottom: 1px solid var(--line); }
+    .bar { flex: 1 1 0; max-width: 34px; min-width: 5px; border-radius: 5px 5px 0 0; background: linear-gradient(#63f4ff, #557cff); box-shadow: 0 0 13px rgba(99,244,255,.35); transition: height .1s, background .1s, transform .1s; }
+    .bar.compare { background: var(--yellow); box-shadow: 0 0 18px rgba(255,209,102,.55); transform: translateY(-5px); }
+    .bar.swap { background: var(--pink); box-shadow: 0 0 18px rgba(255,98,216,.55); }
+    .bar.sorted { background: linear-gradient(#c5ff6a, #36c985); box-shadow: 0 0 14px rgba(197,255,106,.4); }
+    .graph-wrap { width: min(100%, 780px); }
+    svg.graph { display: block; width: 100%; height: 350px; overflow: visible; }
+    .edge { stroke: #3e527c; stroke-width: 2; opacity: .9; transition: stroke .2s, stroke-width .2s; }
+    .edge.active { stroke: var(--pink); stroke-width: 4; filter: drop-shadow(0 0 5px var(--pink)); }
+    .node { fill: #111b39; stroke: var(--cyan); stroke-width: 2; transition: fill .2s, stroke .2s; }
+    .node.visited { fill: rgba(197,255,106,.6); stroke: var(--lime); }
+    .node.current { fill: var(--pink); stroke: #fff; filter: drop-shadow(0 0 8px var(--pink)); }
+    .node text { fill: var(--text); stroke: none; font: 700 12px "Fira Code", monospace; text-anchor: middle; dominant-baseline: middle; pointer-events: none; }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: .7rem; margin-top: 1rem; }
+    .stat { padding: .75rem; border: 1px solid var(--line); border-radius: 10px; background: rgba(99,244,255,.04); }
+    .stat small { display: block; color: var(--muted); font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; }
+    .stat strong { display: block; margin-top: .15rem; color: var(--cyan); font: 700 1.25rem "Fira Code", monospace; }
+    .lower { display: grid; grid-template-columns: 1.08fr .92fr; gap: 1rem; margin-top: 1rem; }
+    .panel-title { display: flex; justify-content: space-between; gap: 1rem; padding: 1rem 1.1rem .7rem; border-bottom: 1px solid var(--line); color: var(--pink); font: 11px "Fira Code", monospace; letter-spacing: .1em; }
+    pre { margin: 0; padding: 1rem 1.1rem 1.2rem; color: #cbd5f1; overflow: auto; font: 12px/1.7 "Fira Code", Consolas, monospace; }
+    .code-keyword { color: var(--pink); } .code-function { color: var(--cyan); } .code-number { color: var(--yellow); } .code-comment { color: #65708d; }
+    .explain { padding: 1rem 1.1rem; color: var(--muted); font-size: .88rem; }
+    .explain strong { color: var(--lime); }
+    .status { min-height: 1.4rem; margin: .8rem 0 0; color: var(--muted); font: 12px "Fira Code", monospace; }
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; width: min(96vw, 720px); }
+      .sidebar { position: static; }
+      .nav-list { grid-template-columns: repeat(2, 1fr); }
+      .hint { display: none; }
+      .lower { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      .topbar { padding: 0 4vw; } .topbar-status { display: none; }
+      .hero { display: block; } .hero-badge { display: inline-block; margin-top: 1rem; }
+      .nav-list { grid-template-columns: 1fr; } .stats { grid-template-columns: repeat(2, 1fr); }
+      .visual { min-height: 310px; padding: .5rem; } .cell { width: 38px; height: 32px; font-size: 10px; }
+      svg.graph { height: 290px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark" aria-hidden="true"></span>NEON / ALGORITHM LAB</div>
+      <div class="topbar-status">DOM_ENGINE // ONLINE</div>
+    </header>
+    <div class="layout">
+      <aside class="sidebar" aria-label="Algorithm library">
+        <h2>Choose a module</h2>
+        <nav class="nav-list">
+          <button class="nav-item" data-mode="pascal" aria-current="true"><span class="nav-icon">△</span>Pascal triangle</button>
+          <button class="nav-item" data-mode="leibniz"><span class="nav-icon">∑</span>Leibniz triangle</button>
+          <button class="nav-item" data-mode="euler"><span class="nav-icon">◎</span>Euler graph</button>
+          <button class="nav-item" data-mode="dijkstra"><span class="nav-icon">↯</span>Dijkstra path</button>
+          <button class="nav-item" data-mode="sorting"><span class="nav-icon">▥</span>Sorting lab</button>
+          <button class="nav-item" data-mode="fibonacci"><span class="nav-icon">φ</span>Fibonacci</button>
+          <button class="nav-item" data-mode="sieve"><span class="nav-icon">⊙</span>Sieve of Eratosthenes</button>
+          <button class="nav-item" data-mode="bfs"><span class="nav-icon">↔</span>Breadth-first search</button>
+          <button class="nav-item" data-mode="dfs"><span class="nav-icon">↘</span>Depth-first search</button>
+          <button class="nav-item" data-mode="astar"><span class="nav-icon">★</span>A* search</button>
+          <button class="nav-item" data-mode="insertion"><span class="nav-icon">↥</span>Insertion sort</button>
+          <button class="nav-item" data-mode="heap"><span class="nav-icon">⌘</span>Heap sort</button>
+          <button class="nav-item" data-mode="radix"><span class="nav-icon">10</span>Radix sort</button>
+          <button class="nav-item" data-mode="gcd"><span class="nav-icon">÷</span>Euclid's GCD</button>
+          <button class="nav-item" data-mode="hanoi"><span class="nav-icon">▤</span>Tower of Hanoi</button>
+          <button class="nav-item" data-mode="binary"><span class="nav-icon">⌕</span>Binary search</button>
+          <button class="nav-item" data-mode="linear"><span class="nav-icon">→</span>Linear search</button>
+          <button class="nav-item" data-mode="selection"><span class="nav-icon">⇵</span>Selection sort</button>
+          <button class="nav-item" data-mode="shell"><span class="nav-icon">⌁</span>Shell sort</button>
+          <button class="nav-item" data-mode="counting"><span class="nav-icon">#</span>Counting sort</button>
+          <button class="nav-item" data-mode="topological"><span class="nav-icon">⇢</span>Topological sort</button>
+          <button class="nav-item" data-mode="unionfind"><span class="nav-icon">∪</span>Union-find</button>
+          <button class="nav-item" data-mode="knapsack"><span class="nav-icon">▣</span>Knapsack DP</button>
+          <button class="nav-item" data-mode="lcs"><span class="nav-icon">∩</span>LCS table</button>
+          <button class="nav-item" data-mode="permutations"><span class="nav-icon">↻</span>Permutations</button>
+          <button class="nav-item" data-mode="ternary"><span class="nav-icon">⅓</span>Ternary search</button>
+          <button class="nav-item" data-mode="fibonacciSearch"><span class="nav-icon">φ</span>Fibonacci search</button>
+          <button class="nav-item" data-mode="interpolation"><span class="nav-icon">⌁</span>Interpolation search</button>
+          <button class="nav-item" data-mode="cocktail"><span class="nav-icon">↔</span>Cocktail sort</button>
+          <button class="nav-item" data-mode="comb"><span class="nav-icon">⌇</span>Comb sort</button>
+          <button class="nav-item" data-mode="pigeonhole"><span class="nav-icon">▦</span>Pigeonhole sort</button>
+          <button class="nav-item" data-mode="bellman"><span class="nav-icon">−∞</span>Bellman-Ford</button>
+          <button class="nav-item" data-mode="floyd"><span class="nav-icon">⊞</span>Floyd-Warshall</button>
+          <button class="nav-item" data-mode="prim"><span class="nav-icon">✣</span>Prim's MST</button>
+          <button class="nav-item" data-mode="queens"><span class="nav-icon">♛</span>N-Queens</button>
+          <button class="nav-item" data-mode="kadane"><span class="nav-icon">Σ</span>Kadane's algorithm</button>
+          <button class="nav-item" data-mode="kmp"><span class="nav-icon">K</span>KMP search</button>
+          <button class="nav-item" data-mode="rabinKarp"><span class="nav-icon">RK</span>Rabin-Karp</button>
+          <button class="nav-item" data-mode="sliding"><span class="nav-icon">□</span>Sliding window</button>
+          <button class="nav-item" data-mode="twosum"><span class="nav-icon">2Σ</span>Two-sum</button>
+          <button class="nav-item" data-mode="catalan"><span class="nav-icon">C</span>Catalan numbers</button>
+          <button class="nav-item" data-mode="ackermann"><span class="nav-icon">A</span>Ackermann</button>
+          <button class="nav-item" data-mode="matrixchain"><span class="nav-icon">M</span>Matrix chain DP</button>
+          <button class="nav-item" data-mode="huffman"><span class="nav-icon">H</span>Huffman coding</button>
+          <button class="nav-item" data-mode="reservoir"><span class="nav-icon">R</span>Reservoir sampling</button>
+          <button class="nav-item" data-mode="prefixsum"><span class="nav-icon">Σ</span>Prefix sums</button>
+          <button class="nav-item" data-mode="difference"><span class="nav-icon">Δ</span>Difference array</button>
+          <button class="nav-item" data-mode="fastpow"><span class="nav-icon">x²</span>Fast exponentiation</button>
+          <button class="nav-item" data-mode="newton"><span class="nav-icon">√</span>Newton-Raphson</button>
+          <button class="nav-item" data-mode="miller"><span class="nav-icon">P?</span>Miller-Rabin</button>
+          <button class="nav-item" data-mode="tarjan"><span class="nav-icon">SCC</span>Tarjan SCC</button>
+          <button class="nav-item" data-mode="kruskal"><span class="nav-icon">K</span>Kruskal MST</button>
+          <button class="nav-item" data-mode="lis"><span class="nav-icon">↗</span>LIS dynamic programming</button>
+          <button class="nav-item" data-mode="editdistance"><span class="nav-icon">ED</span>Edit distance</button>
+          <button class="nav-item" data-mode="bitcount"><span class="nav-icon">01</span>Bit counting</button>
+          <button class="nav-item" data-mode="boyermoore"><span class="nav-icon">BM</span>Boyer-Moore</button>
+          <button class="nav-item" data-mode="zalgorithm"><span class="nav-icon">Z</span>Z algorithm</button>
+          <button class="nav-item" data-mode="manacher"><span class="nav-icon">◉</span>Manacher's palindrome</button>
+          <button class="nav-item" data-mode="interval"><span class="nav-icon">∣</span>Interval scheduling</button>
+          <button class="nav-item" data-mode="activity"><span class="nav-icon">✓</span>Activity selection</button>
+          <button class="nav-item" data-mode="zeroonebfs"><span class="nav-icon">01</span>0-1 BFS</button>
+          <button class="nav-item" data-mode="convexhull"><span class="nav-icon">◇</span>Convex hull</button>
+          <button class="nav-item" data-mode="crt"><span class="nav-icon">≡</span>Chinese remainder</button>
+          <button class="nav-item" data-mode="fastfib"><span class="nav-icon">F²</span>Fast doubling</button>
+          <button class="nav-item" data-mode="powerset"><span class="nav-icon">2ⁿ</span>Power set</button>
+          <button class="nav-item" data-mode="avl"><span class="nav-icon">AVL</span>AVL rotations</button>
+          <button class="nav-item" data-mode="trie"><span class="nav-icon">TR</span>Trie insert</button>
+          <button class="nav-item" data-mode="segment"><span class="nav-icon">ST</span>Segment tree</button>
+          <button class="nav-item" data-mode="fenwick"><span class="nav-icon">BIT</span>Fenwick tree</button>
+          <button class="nav-item" data-mode="quickselect"><span class="nav-icon">QS</span>Quickselect</button>
+          <button class="nav-item" data-mode="topk"><span class="nav-icon">K↑</span>Top-K heap</button>
+          <button class="nav-item" data-mode="lru"><span class="nav-icon">LRU</span>LRU cache</button>
+          <button class="nav-item" data-mode="minstack"><span class="nav-icon">MS</span>Min stack</button>
+          <button class="nav-item" data-mode="bloom"><span class="nav-icon">BF</span>Bloom filter</button>
+          <button class="nav-item" data-mode="binarytree"><span class="nav-icon">BT</span>Binary tree</button>
+          <button class="nav-item" data-mode="edmonds"><span class="nav-icon">MF</span>Edmonds-Karp</button>
+          <button class="nav-item" data-mode="dinic"><span class="nav-icon">DN</span>Dinic's flow</button>
+          <button class="nav-item" data-mode="suffix"><span class="nav-icon">SA</span>Suffix array</button>
+          <button class="nav-item" data-mode="aho"><span class="nav-icon">AC</span>Aho-Corasick</button>
+          <button class="nav-item" data-mode="fft"><span class="nav-icon">FFT</span>Fast Fourier transform</button>
+          <button class="nav-item" data-mode="strassen"><span class="nav-icon">SM</span>Strassen multiply</button>
+          <button class="nav-item" data-mode="gaussian"><span class="nav-icon">GE</span>Gaussian elimination</button>
+          <button class="nav-item" data-mode="kmeans"><span class="nav-icon">KM</span>K-means clustering</button>
+          <button class="nav-item" data-mode="gradient"><span class="nav-icon">∇</span>Gradient descent</button>
+          <button class="nav-item" data-mode="weightedinterval"><span class="nav-icon">WI</span>Weighted intervals</button>
+        </nav>
+        <p class="hint">Select a module, tune its parameters, then press RUN to watch each step.</p>
+      </aside>
+      <main class="workspace">
+        <section class="hero">
+          <div>
+            <p class="eyebrow">Interactive computation atlas</p>
+            <h1 id="page-title">Make the abstract glow.</h1>
+            <p class="hero-copy">Explore number patterns, graph theory, shortest paths, and sorting through a tactile, step-by-step visual interface.</p>
+          </div>
+          <div class="hero-badge" id="complexity">O(n²) / O(1)</div>
+        </section>
+        <section class="card toolbar" aria-label="Visualization controls">
+          <div class="field" id="rows-field"><label for="rows">Rows</label><input id="rows" type="number" min="2" max="12" value="7"></div>
+          <div class="field" id="sort-field" hidden><label for="sort-algorithm">Sort algorithm</label><select id="sort-algorithm"><option value="bubble">Bubble sort</option><option value="merge">Merge sort</option><option value="quick">Quick sort</option></select></div>
+          <div class="field" id="size-field" hidden><label for="array-size">Array size</label><input id="array-size" type="number" min="8" max="42" value="24"></div>
+          <div class="field"><label for="speed">Delay (ms)</label><input id="speed" type="number" min="40" max="1200" step="20" value="260"></div>
+          <button class="button" id="run" type="button">Run visualization</button>
+          <button class="button secondary" id="pause" type="button" disabled>Pause</button>
+          <button class="button pink" id="reset" type="button">Reset</button>
+        </section>
+        <section class="card stage" aria-labelledby="stage-title">
+          <div class="stage-head">
+            <div><h2 id="stage-title">Pascal triangle</h2><p id="stage-description">Binomial coefficients emerge row by row.</p></div>
+            <div class="stage-label" id="stage-label">MATH / COMBINATORICS</div>
+          </div>
+          <div class="visual" id="visual" aria-live="polite"></div>
+          <div class="stats">
+            <div class="stat"><small>Step</small><strong id="stat-step">0 / 0</strong></div>
+            <div class="stat"><small>Operations</small><strong id="stat-ops">0</strong></div>
+            <div class="stat"><small>Depth</small><strong id="stat-depth">0</strong></div>
+            <div class="stat"><small>Status</small><strong id="stat-status">READY</strong></div>
+          </div>
+          <p class="status" id="status" role="status">Ready. Press run to begin the sequence.</p>
+        </section>
+        <div class="lower">
+          <section class="card">
+            <div class="panel-title"><span id="code-title">SOURCE / PASCAL.JS</span><span>VANILLA DOM</span></div>
+            <pre id="code"></pre>
+          </section>
+          <section class="card">
+            <div class="panel-title"><span>FIELD NOTES</span><span id="complexity-note">O(n²) time</span></div>
+            <div class="explain" id="explain"></div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+  <script>
+    (() => {
+      "use strict";
+      const $ = (selector) => document.querySelector(selector);
+      const dom = {
+        visual: $("#visual"), pageTitle: $("#page-title"), stageTitle: $("#stage-title"), stageDescription: $("#stage-description"),
+        stageLabel: $("#stage-label"), complexity: $("#complexity"), complexityNote: $("#complexity-note"), codeTitle: $("#code-title"),
+        code: $("#code"), explain: $("#explain"), status: $("#status"), step: $("#stat-step"), ops: $("#stat-ops"),
+        depth: $("#stat-depth"), state: $("#stat-status"), rows: $("#rows"), sort: $("#sort-algorithm"), size: $("#array-size"),
+        speed: $("#speed"), rowsField: $("#rows-field"), sortField: $("#sort-field"), sizeField: $("#size-field"),
+        run: $("#run"), pause: $("#pause"), reset: $("#reset")
+      };
+      const state = { mode: "pascal", running: false, paused: false, timer: 0, step: 0, operations: 0, data: [] };
+      const MODES = {
+        pascal: {
+          title: "Pascal triangle", description: "Binomial coefficients emerge row by row.", label: "MATH / COMBINATORICS",
+          complexity: "O(n²) / O(n²)", note: "O(n²) time · O(n²) space",
+          explain: "<strong>Pascal's triangle</strong> stores each value as the sum of the two cells above it. It reveals combinations, powers of (a + b), and many recursive patterns.",
+          code: `<span class="code-keyword">function</span> <span class="code-function">pascal</span>(rows) {\n  <span class="code-keyword">const</span> triangle = [];\n  <span class="code-keyword">for</span> (<span class="code-keyword">let</span> row = <span class="code-number">0</span>; row &lt; rows; row++) {\n    triangle[row] = [<span class="code-number">1</span>];\n    <span class="code-keyword">for</span> (<span class="code-keyword">let</span> col = <span class="code-number">1</span>; col &lt; row; col++)\n      triangle[row][col] = triangle[row - <span class="code-number">1</span>][col - <span class="code-number">1</span>] + triangle[row - <span class="code-number">1</span>][col];\n    triangle[row].push(<span class="code-number">1</span>);\n  }\n  <span class="code-keyword">return</span> triangle;\n}`,
+          setup() { const rows = clamp(Number(dom.rows.value), 2, 12); state.data = Array.from({ length: rows }, (_, row) => Array.from({ length: row + 1 }, (_, col) => col === 0 || col === row ? 1 : 0)); return rows; },
+          render(step) { renderTriangle(state.data, step, false); }
+        },
+        leibniz: {
+          title: "Leibniz triangle", description: "A harmonic triangle where every row sums to 1.", label: "MATH / SERIES",
+          complexity: "O(n²) / O(n²)", note: "O(n²) time · O(n²) space",
+          explain: "<strong>Leibniz's harmonic triangle</strong> begins with 1. Interior values are generated by splitting the cell above; every row preserves the invariant sum = 1.",
+          code: `<span class="code-keyword">function</span> <span class="code-function">leibniz</span>(rows) {\n  <span class="code-keyword">const</span> triangle = [[<span class="code-number">1</span>]];\n  <span class="code-keyword">for</span> (<span class="code-keyword">let</span> row = <span class="code-number">1</span>; row &lt; rows; row++) {\n    <span class="code-keyword">const</span> previous = triangle[row - <span class="code-number">1</span>];\n    <span class="code-keyword">const</span> next = [previous[<span class="code-number">0</span>] / (row + <span class="code-number">1</span>)];\n    <span class="code-keyword">for</span> (<span class="code-keyword">let</span> col = <span class="code-number">1</span>; col &lt; row; col++)\n      next.push(previous[col - <span class="code-number">1</span>] - next[col - <span class="code-number">1</span>]);\n    next.push(next[<span class="code-number">0</span>]); triangle.push(next);\n  }\n  <span class="code-keyword">return</span> triangle;\n}`,
+          setup() { const rows = clamp(Number(dom.rows.value), 2, 12); state.data = Array.from({ length: rows }, (_, row) => Array.from({ length: row + 1 }, (_, col) => col === 0 || col === row ? 1 / (row + 1) : 0)); return rows; },
+          render(step) { renderTriangle(state.data, step, true); }
+        },
+        euler: {
+          title: "Euler graph", description: "Trace every edge once through a graph with an Euler circuit.", label: "GRAPH / EULERIAN PATH",
+          complexity: "O(V + E) / O(V + E)", note: "Hierholzer: O(V + E)",
+          explain: "<strong>Euler's circuit</strong> visits every edge exactly once and returns to its start. The highlighted trail uses Hierholzer's stack-based traversal.",
+          code: `<span class="code-keyword">function</span> <span class="code-function">eulerCircuit</span>(graph) {\n  <span class="code-keyword">const</span> stack = [start], circuit = [];\n  <span class="code-keyword">while</span> (stack.length) {\n    <span class="code-keyword">const</span> node = stack.at(-<span class="code-number">1</span>);\n    <span class="code-keyword">if</span> (graph[node].length) stack.push(graph[node].pop());\n    <span class="code-keyword">else</span> circuit.push(stack.pop());\n  }\n  <span class="code-keyword">return</span> circuit.reverse();\n}`,
+          setup() { state.data = { edges: [[0,1],[1,2],[2,3],[3,0],[0,2],[2,4],[4,0]], nodes: [[0,18,60],[1,35,27],[2,58,27],[3,76,60],[4,58,83]], trail: [0,1,2,3,0,2,4,0] }; return state.data.trail.length - 1; },
+          render(step) { renderGraph(state.data, state.data.trail.slice(0, step + 1), "euler"); }
+        },
+        dijkstra: {
+          title: "Dijkstra path", description: "Find the lowest-cost route through a weighted network.", label: "GRAPH / SHORTEST PATH",
+          complexity: "O((V + E) log V)", note: "Binary heap: O((V + E) log V)",
+          explain: "<strong>Dijkstra's algorithm</strong> repeatedly locks the nearest unvisited node, then relaxes its neighbors. Green nodes are settled; pink edges are the current best route.",
+          code: `<span class="code-keyword">while</span> (unvisited.size) {\n  current = <span class="code-function">closestUnvisited</span>(distances);\n  <span class="code-keyword">for</span> (<span class="code-keyword">const</span> edge <span class="code-keyword">of</span> graph[current]) {\n    <span class="code-keyword">const</span> candidate = distance[current] + edge.weight;\n    <span class="code-keyword">if</span> (candidate &lt; distance[edge.to]) {\n      distance[edge.to] = candidate;\n      previous[edge.to] = current;\n    }\n  }\n  visited.add(current);\n}`,
+          setup() { state.data = { edges: [[0,1,4],[0,2,2],[1,2,1],[1,3,5],[2,3,8],[2,4,10],[3,4,2],[3,5,6],[4,5,3]], nodes: [[0,12,50],[1,31,22],[2,31,78],[3,58,22],[4,58,78],[5,88,50]], order: [0,2,1,3,4,5], path: [[0,2],[2,1],[1,3],[3,4],[4,5]] }; return state.data.order.length; },
+          render(step) { const current = state.data.order[Math.max(0, step - 1)]; renderGraph(state.data, state.data.path.slice(0, Math.max(0, step - 1)), "dijkstra", current); }
+        },
+        fibonacci: {
+          title: "Fibonacci sequence", description: "Grow a sequence where every value remembers the two before it.", label: "MATH / RECURSION",
+          complexity: "O(n) / O(n)", note: "Iterative: O(n) time · O(n) space",
+          explain: "<strong>Fibonacci</strong> is a dynamic-programming classic: store the previous two values and build the next in constant time.",
+          code: `<span class="code-keyword">function</span> <span class="code-function">fibonacci</span>(n) {\n  <span class="code-keyword">const</span> sequence = [<span class="code-number">0</span>, <span class="code-number">1</span>];\n  <span class="code-keyword">for</span> (<span class="code-keyword">let</span> i = <span class="code-number">2</span>; i &lt; n; i++)\n    sequence[i] = sequence[i - <span class="code-number">1</span>] + sequence[i - <span class="code-number">2</span>];\n  <span class="code-keyword">return</span> sequence;\n}`,
+          setup() { const count = clamp(Number(dom.rows.value) + 3, 5, 15); state.data = [0, 1]; while (state.data.length < count) state.data.push(state.data.at(-1) + state.data.at(-2)); return count; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        sieve: {
+          title: "Sieve of Eratosthenes", description: "Cross out composite numbers until only primes remain.", label: "MATH / NUMBER THEORY",
+          complexity: "O(n log log n) / O(n)", note: "Classic prime sieve",
+          explain: "<strong>The sieve</strong> marks multiples of each prime as composite. The glowing survivors are prime numbers.",
+          code: `<span class="code-keyword">const</span> prime = Array(n + <span class="code-number">1</span>).fill(<span class="code-keyword">true</span>);\n<span class="code-keyword">for</span> (p = <span class="code-number">2</span>; p * p &lt;= n; p++)\n  <span class="code-keyword">if</span> (prime[p])\n    <span class="code-keyword">for</span> (multiple = p * p; multiple &lt;= n; multiple += p)\n      prime[multiple] = <span class="code-keyword">false</span>;`,
+          setup() { const limit = 40, values = Array.from({length: limit - 1}, (_, i) => i + 2), steps = [values.map(() => true)]; for (let p = 2; p * p <= limit; p++) { if (values.includes(p)) { const previous = steps.at(-1).slice(); for (let n = p * p; n <= limit; n += p) previous[n - 2] = false; steps.push(previous); } } state.data = { values, steps }; return steps.length; },
+          render(step) { renderPrimeBars(state.data.values, state.data.steps[Math.min(step, state.data.steps.length - 1)]); }
+        },
+        bfs: {
+          title: "Breadth-first search", description: "Explore a graph layer by layer from the source node.", label: "GRAPH / TRAVERSAL",
+          complexity: "O(V + E) / O(V)", note: "Queue-based traversal",
+          explain: "<strong>BFS</strong> uses a queue to visit the closest neighbors first, making it ideal for shortest paths in unweighted graphs.",
+          code: `<span class="code-keyword">const</span> queue = [start], visited = <span class="code-keyword">new</span> Set([start]);\n<span class="code-keyword">while</span> (queue.length) {\n  <span class="code-keyword">const</span> node = queue.shift();\n  <span class="code-keyword">for</span> (<span class="code-keyword">const</span> next <span class="code-keyword">of</span> graph[node])\n    <span class="code-keyword">if</span> (!visited.has(next)) { visited.add(next); queue.push(next); }\n}`,
+          setup() { state.data = traversalGraph([0,1,2,3,4,5], [[0,1],[0,2],[1,3],[2,4],[2,5]], [0,1,2,3,4,5]); return 6; },
+          render(step) { renderGraph(state.data, state.data.path.slice(0, Math.max(0, step - 1)), "bfs", state.data.order[step - 1]); }
+        },
+        dfs: {
+          title: "Depth-first search", description: "Dive down one branch before backtracking to the next.", label: "GRAPH / TRAVERSAL",
+          complexity: "O(V + E) / O(V)", note: "Stack / recursion traversal",
+          explain: "<strong>DFS</strong> follows a branch as far as possible before backtracking. It is useful for connectivity, cycle detection, and maze exploration.",
+          code: `<span class="code-keyword">function</span> <span class="code-function">dfs</span>(node, visited) {\n  visited.add(node);\n  <span class="code-keyword">for</span> (<span class="code-keyword">const</span> next <span class="code-keyword">of</span> graph[node])\n    <span class="code-keyword">if</span> (!visited.has(next)) <span class="code-function">dfs</span>(next, visited);\n}`,
+          setup() { state.data = traversalGraph([0,1,2,3,4,5], [[0,1],[0,2],[1,3],[2,4],[2,5]], [0,1,3,2,4,5]); return 6; },
+          render(step) { renderGraph(state.data, state.data.path.slice(0, Math.max(0, step - 1)), "dfs", state.data.order[step - 1]); }
+        },
+        astar: {
+          title: "A* search", description: "Combine known travel cost with a heuristic to target the goal.", label: "GRAPH / PATHFINDING",
+          complexity: "O(E) typical / O(V)", note: "Heuristic-guided search",
+          explain: "<strong>A*</strong> scores each frontier node with f(n) = g(n) + h(n). The heuristic focuses exploration toward the goal while preserving the best route.",
+          code: `<span class="code-keyword">while</span> (openSet.size) {\n  current = <span class="code-function">lowestScore</span>(openSet);\n  <span class="code-keyword">if</span> (current === goal) <span class="code-keyword">return</span> <span class="code-function">reconstructPath</span>();\n  <span class="code-keyword">for</span> (<span class="code-keyword">const</span> neighbor <span class="code-keyword">of</span> neighbors(current)) {\n    gScore[neighbor] = gScore[current] + cost(current, neighbor);\n    fScore[neighbor] = gScore[neighbor] + heuristic(neighbor, goal);\n  }\n}`,
+          setup() { state.data = traversalGraph([0,1,2,3,4,5], [[0,1],[0,2],[1,3],[2,4],[2,5],[3,5]], [0,2,5]); return 3; },
+          render(step) { renderGraph(state.data, state.data.path.slice(0, Math.max(0, step - 1)), "astar", state.data.order[step - 1]); }
+        },
+        insertion: {
+          title: "Insertion sort", description: "Build a sorted prefix by inserting one value at a time.", label: "ARRAY / SORTING",
+          complexity: "O(n²) / O(1)", note: "Fast on nearly sorted input",
+          explain: "<strong>Insertion sort</strong> grows a sorted region on the left. Each new value shifts larger neighbors until its correct slot opens.",
+          code: `<span class="code-keyword">for</span> (i = <span class="code-number">1</span>; i &lt; array.length; i++) {\n  key = array[i]; j = i - <span class="code-number">1</span>;\n  <span class="code-keyword">while</span> (j &gt;= <span class="code-number">0</span> &amp;&amp; array[j] &gt; key) array[j + <span class="code-number">1</span>] = array[j--];\n  array[j + <span class="code-number">1</span>] = key;\n}`,
+          setup() { state.data = sortSnapshots([72, 31, 88, 14, 56, 42, 19], "insertion"); return state.data.length; },
+          render(step) { renderBars(state.data[Math.min(step, state.data.length - 1)].values, [], [], new Set(Array.from({length: step}, (_, i) => i))); }
+        },
+        heap: {
+          title: "Heap sort", description: "Turn the array into a max heap, then extract its root.", label: "ARRAY / SORTING",
+          complexity: "O(n log n) / O(1)", note: "In-place heap selection",
+          explain: "<strong>Heap sort</strong> uses a binary heap to select the next maximum. It guarantees O(n log n) time without allocating a second array.",
+          code: `<span class="code-function">heapify</span>(array, n, i);\n<span class="code-keyword">for</span> (end = n - <span class="code-number">1</span>; end &gt; <span class="code-number">0</span>; end--) {\n  [array[<span class="code-number">0</span>], array[end]] = [array[end], array[<span class="code-number">0</span>]];\n  <span class="code-function">heapify</span>(array, end, <span class="code-number">0</span>);\n}`,
+          setup() { state.data = sortSnapshots([64, 25, 91, 42, 17, 73, 38], "heap"); return state.data.length; },
+          render(step) { renderBars(state.data[Math.min(step, state.data.length - 1)].values, [], [], new Set(Array.from({length: step}, (_, i) => state.data[0].values.length - 1 - i))); }
+        },
+        radix: {
+          title: "Radix sort", description: "Sort digits from least significant to most significant.", label: "ARRAY / SORTING",
+          complexity: "O(d · (n + k))", note: "Stable digit distribution",
+          explain: "<strong>Radix sort</strong> never compares whole values. It distributes them into digit buckets, one place at a time, then collects them in order.",
+          code: `<span class="code-keyword">for</span> (place = <span class="code-number">1</span>; max / place &gt; <span class="code-number">0</span>; place *= <span class="code-number">10</span>)\n  <span class="code-function">countingSortByDigit</span>(array, place);`,
+          setup() { state.data = sortSnapshots([91, 14, 63, 28, 75, 42, 36], "radix"); return state.data.length; },
+          render(step) { renderBars(state.data[Math.min(step, state.data.length - 1)].values, [], [], step === state.data.length - 1 ? new Set(state.data[0].values.map((_, i) => i)) : new Set()); }
+        },
+        gcd: {
+          title: "Euclid's GCD", description: "Shrink two numbers through remainders until the divisor is exact.", label: "MATH / NUMBER THEORY",
+          complexity: "O(log min(a,b)) / O(1)", note: "Remainder reduction",
+          explain: "<strong>Euclid's algorithm</strong> uses gcd(a, b) = gcd(b, a mod b). Each remainder is smaller, so the answer arrives quickly.",
+          code: `<span class="code-keyword">while</span> (b !== <span class="code-number">0</span>) {\n  [a, b] = [b, a % b];\n}\n<span class="code-keyword">return</span> a;`,
+          setup() { const values = [[252,105],[105,42],[42,21],[21,0]]; state.data = values; return values.length; },
+          render(step) { renderSequence(state.data.slice(0, step).map(pair => `${pair[0]} , ${pair[1]}`), step - 1); }
+        },
+        hanoi: {
+          title: "Tower of Hanoi", description: "Move every disk from source to target without placing large on small.", label: "RECURSION / PUZZLE",
+          complexity: "O(2ⁿ) / O(n)", note: "Minimum moves: 2ⁿ − 1",
+          explain: "<strong>Tower of Hanoi</strong> solves a smaller problem twice around one legal move. The recursive structure doubles the work for each added disk.",
+          code: `<span class="code-keyword">function</span> <span class="code-function">hanoi</span>(n, from, to, spare) {\n  <span class="code-keyword">if</span> (n === <span class="code-number">0</span>) <span class="code-keyword">return</span>;\n  <span class="code-function">hanoi</span>(n - <span class="code-number">1</span>, from, spare, to);\n  move(from, to);\n  <span class="code-function">hanoi</span>(n - <span class="code-number">1</span>, spare, to, from);\n}`,
+          setup() { const disks = clamp(Number(dom.rows.value), 2, 5), moves = []; const solve = (n, from, to, spare) => { if (!n) return; solve(n-1,from,spare,to); moves.push(`${from} → ${to}`); solve(n-1,spare,to,from); }; solve(disks,"A","C","B"); state.data = moves; return moves.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        binary: {
+          title: "Binary search", description: "Halve the sorted search space until the target is found.", label: "ARRAY / SEARCH",
+          complexity: "O(log n) / O(1)", note: "Requires sorted data",
+          explain: "<strong>Binary search</strong> compares the target with the middle value and discards half the remaining range after every decision.",
+          code: `<span class="code-keyword">while</span> (left &lt;= right) {\n  mid = Math.floor((left + right) / <span class="code-number">2</span>);\n  <span class="code-keyword">if</span> (array[mid] === target) <span class="code-keyword">return</span> mid;\n  <span class="code-keyword">if</span> (array[mid] &lt; target) left = mid + <span class="code-number">1</span>;\n  <span class="code-keyword">else</span> right = mid - <span class="code-number">1</span>;\n}`,
+          setup() { state.data = { values: [8,14,19,27,31,42,49,56,63,72,81,93], checks: [5,8,6,7], target: 56 }; return 4; },
+          render(step) { renderSearch(state.data.values, state.data.checks.slice(0, step), state.data.target); }
+        },
+        linear: {
+          title: "Linear search", description: "Scan each position until the target reveals itself.", label: "ARRAY / SEARCH",
+          complexity: "O(n) / O(1)", note: "Works on unsorted data",
+          explain: "<strong>Linear search</strong> makes no assumptions about order. It checks each item from left to right, stopping when it finds the target.",
+          code: `<span class="code-keyword">for</span> (i = <span class="code-number">0</span>; i &lt; array.length; i++) {\n  <span class="code-keyword">if</span> (array[i] === target) <span class="code-keyword">return</span> i;\n}`,
+          setup() { state.data = { values: [34,11,78,25,63,49,18,86,52], checks: [0,1,2,3,4,5], target: 49 }; return 6; },
+          render(step) { renderSearch(state.data.values, state.data.checks.slice(0, step), state.data.target); }
+        },
+        selection: {
+          title: "Selection sort", description: "Select the smallest remaining value and place it next.", label: "ARRAY / SORTING",
+          complexity: "O(n²) / O(1)", note: "At most n swaps",
+          explain: "<strong>Selection sort</strong> scans the unsorted suffix for its minimum, then swaps that value into the next sorted position.",
+          code: `<span class="code-keyword">for</span> (start = <span class="code-number">0</span>; start &lt; n - <span class="code-number">1</span>; start++) {\n  min = <span class="code-function">indexOfMinimum</span>(array, start);\n  [array[start], array[min]] = [array[min], array[start]];\n}`,
+          setup() { state.data = sortSnapshots([58,21,74,13,46,32,89], "selection"); return state.data.length; },
+          render(step) { renderBars(state.data[Math.min(step, state.data.length - 1)].values, [], [], new Set(Array.from({length: step}, (_, i) => i))); }
+        },
+        shell: {
+          title: "Shell sort", description: "Sort distant elements first, then close the gaps.", label: "ARRAY / SORTING",
+          complexity: "O(n log² n) typical", note: "Gap-based insertion sort",
+          explain: "<strong>Shell sort</strong> performs insertion sort over shrinking gaps. Early passes move values long distances and reduce disorder quickly.",
+          code: `<span class="code-keyword">for</span> (gap = Math.floor(n / <span class="code-number">2</span>); gap &gt; <span class="code-number">0</span>; gap = Math.floor(gap / <span class="code-number">2</span>))\n  <span class="code-function">gappedInsertionSort</span>(array, gap);`,
+          setup() { state.data = sortSnapshots([67,24,81,15,52,38,93], "shell"); return state.data.length; },
+          render(step) { renderBars(state.data[Math.min(step, state.data.length - 1)].values, [], [], new Set()); }
+        },
+        counting: {
+          title: "Counting sort", description: "Count occurrences, then reconstruct values in order.", label: "ARRAY / SORTING",
+          complexity: "O(n + k) / O(k)", note: "Best when the value range is small",
+          explain: "<strong>Counting sort</strong> replaces comparisons with frequency counts. It is linear when the range k stays close to the number of values n.",
+          code: `<span class="code-keyword">const</span> counts = Array(max + <span class="code-number">1</span>).fill(<span class="code-number">0</span>);\n<span class="code-keyword">for</span> (<span class="code-keyword">const</span> value <span class="code-keyword">of</span> array) counts[value]++;\n<span class="code-keyword">return</span> <span class="code-function">expandCounts</span>(counts);`,
+          setup() { state.data = sortSnapshots([4,1,3,2,4,1,3,2], "counting"); return state.data.length; },
+          render(step) { renderBars(state.data[Math.min(step, state.data.length - 1)].values, [], [], step === state.data.length - 1 ? new Set(state.data[0].values.map((_, i) => i)) : new Set()); }
+        },
+        topological: {
+          title: "Topological sort", description: "Order dependent tasks before the work that relies on them.", label: "GRAPH / DAG",
+          complexity: "O(V + E) / O(V)", note: "Kahn's algorithm",
+          explain: "<strong>Topological sorting</strong> repeatedly removes zero-indegree nodes. The resulting order is valid for any directed acyclic graph.",
+          code: `<span class="code-keyword">while</span> (queue.length) {\n  node = queue.shift(); order.push(node);\n  <span class="code-keyword">for</span> (next <span class="code-keyword">of</span> graph[node])\n    <span class="code-keyword">if</span> (--indegree[next] === <span class="code-number">0</span>) queue.push(next);\n}`,
+          setup() { state.data = traversalGraph([0,1,2,3,4,5], [[0,1],[0,2],[1,3],[2,3],[3,4],[2,5]], [0,1,2,3,5,4]); return 6; },
+          render(step) { renderGraph(state.data, state.data.path.slice(0, Math.max(0, step - 1)), "topological", state.data.order[step - 1]); }
+        },
+        unionfind: {
+          title: "Union-find", description: "Connect components and compress paths toward their roots.", label: "GRAPH / CONNECTIVITY",
+          complexity: "O(α(n)) amortized", note: "Path compression + union by rank",
+          explain: "<strong>Disjoint-set union</strong> keeps a forest of components. Union merges roots; find follows parent links and compresses future queries.",
+          code: `<span class="code-keyword">function</span> <span class="code-function">find</span>(x) {\n  <span class="code-keyword">return</span> parent[x] === x ? x : (parent[x] = <span class="code-function">find</span>(parent[x]));\n}\n<span class="code-function">union</span>(a, b);`,
+          setup() { state.data = traversalGraph([0,1,2,3,4,5], [[0,1],[1,2],[3,4],[2,3],[4,5]], [0,1,2,3,4,5]); return 5; },
+          render(step) { renderGraph(state.data, state.data.path.slice(0, step), "unionfind", state.data.order[Math.min(step, 5)]); }
+        },
+        knapsack: {
+          title: "0/1 knapsack", description: "Choose the most valuable cargo that fits inside a fixed capacity.", label: "DP / OPTIMIZATION",
+          complexity: "O(nW) / O(nW)", note: "Capacity W · dynamic programming",
+          explain: "<strong>Knapsack DP</strong> compares taking or skipping each item. Every cell records the best value possible for that capacity.",
+          code: `<span class="code-keyword">for</span> (item = <span class="code-number">1</span>; item &lt;= n; item++)\n  <span class="code-keyword">for</span> (capacity = <span class="code-number">0</span>; capacity &lt;= W; capacity++)\n    dp[item][capacity] = Math.max(dp[item - <span class="code-number">1</span>][capacity], value + dp[item - <span class="code-number">1</span>][capacity - weight]);`,
+          setup() { state.data = dpSteps([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0]]); return state.data.length; },
+          render(step) { renderMatrix(state.data[Math.min(step, state.data.length - 1)], step - 1); }
+        },
+        lcs: {
+          title: "Longest common subsequence", description: "Align two strings and preserve the longest shared order.", label: "DP / STRINGS",
+          complexity: "O(mn) / O(mn)", note: "Grid of prefix solutions",
+          explain: "<strong>LCS</strong> builds a grid of answers for every pair of prefixes. Matching characters extend the diagonal; otherwise the best neighbor survives.",
+          code: `<span class="code-keyword">if</span> (a[i - <span class="code-number">1</span>] === b[j - <span class="code-number">1</span>]) dp[i][j] = dp[i - <span class="code-number">1</span>][j - <span class="code-number">1</span>] + <span class="code-number">1</span>;\n<span class="code-keyword">else</span> dp[i][j] = Math.max(dp[i - <span class="code-number">1</span>][j], dp[i][j - <span class="code-number">1</span>]);`,
+          setup() { state.data = dpSteps([[0,0,0,0,0,0],[0,1,1,1,1,1],[0,1,1,2,2,2],[0,1,2,2,2,3],[0,1,2,2,3,3]]); return state.data.length; },
+          render(step) { renderMatrix(state.data[Math.min(step, state.data.length - 1)], step - 1); }
+        },
+        permutations: {
+          title: "Permutation generator", description: "Rearrange a sequence by fixing one position at a time.", label: "RECURSION / BACKTRACKING",
+          complexity: "O(n · n!) / O(n)", note: "Backtracking tree",
+          explain: "<strong>Backtracking</strong> chooses an unused item, recurses, then undoes that choice to explore the next branch.",
+          code: `<span class="code-keyword">function</span> <span class="code-function">permute</span>(prefix, rest) {\n  <span class="code-keyword">if</span> (!rest.length) output.push(prefix);\n  <span class="code-keyword">for</span> (i = <span class="code-number">0</span>; i &lt; rest.length; i++)\n    <span class="code-function">permute</span>(prefix + rest[i], rest.slice(<span class="code-number">0</span>, i) + rest.slice(i + <span class="code-number">1</span>));\n}`,
+          setup() { state.data = ["ABC","ACB","BAC","BCA","CAB","CBA"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        ternary: {
+          title: "Ternary search", description: "Split a sorted range into three segments at every decision.", label: "ARRAY / SEARCH",
+          complexity: "O(log₃ n) / O(1)", note: "Three-way divide and conquer",
+          explain: "<strong>Ternary search</strong> checks two pivots and keeps one of three possible regions. It trades extra comparisons for a smaller search interval.",
+          code: `<span class="code-keyword">while</span> (left &lt;= right) {\n  oneThird = left + (right - left) / <span class="code-number">3</span>;\n  twoThird = right - (right - left) / <span class="code-number">3</span>;\n  <span class="code-function">narrowToMatchingThird</span>();\n}`,
+          setup() { state.data = { values: [4,9,15,22,31,38,47,56,64,73,81,95], checks: [4,7,6], target: 56 }; return 3; },
+          render(step) { renderSearch(state.data.values, state.data.checks.slice(0, step), state.data.target); }
+        },
+        fibonacciSearch: {
+          title: "Fibonacci search", description: "Use Fibonacci offsets to probe a sorted array without division.", label: "ARRAY / SEARCH",
+          complexity: "O(log n) / O(1)", note: "Fibonacci-guided probes",
+          explain: "<strong>Fibonacci search</strong> chooses probe positions from consecutive Fibonacci numbers, shrinking the active range while using only additions and subtractions.",
+          code: `<span class="code-keyword">while</span> (fibM &gt; <span class="code-number">1</span>) {\n  i = Math.min(offset + fibMm2, n - <span class="code-number">1</span>);\n  <span class="code-keyword">if</span> (array[i] &lt; target) offset = i, fibM = fibMm1;\n  <span class="code-keyword">else</span> fibM = fibMm2;\n}`,
+          setup() { state.data = { values: [7,13,18,26,34,41,50,59,67,76,84,98], checks: [3,5,7,6], target: 50 }; return 4; },
+          render(step) { renderSearch(state.data.values, state.data.checks.slice(0, step), state.data.target); }
+        },
+        interpolation: {
+          title: "Interpolation search", description: "Estimate where a value belongs using its numeric distribution.", label: "ARRAY / SEARCH",
+          complexity: "O(log log n) average", note: "Best for uniformly distributed keys",
+          explain: "<strong>Interpolation search</strong> improves on binary search when values are evenly spaced by estimating the target's likely index.",
+          code: `<span class="code-keyword">while</span> (low &lt;= high &amp;&amp; target &gt;= array[low]) {\n  pos = low + ((target - array[low]) * (high - low)) / (array[high] - array[low]);\n  <span class="code-keyword">if</span> (array[pos] === target) <span class="code-keyword">return</span> pos;\n}`,
+          setup() { state.data = { values: [10,20,30,40,50,60,70,80,90,100], checks: [4,7], target: 80 }; return 2; },
+          render(step) { renderSearch(state.data.values, state.data.checks.slice(0, step), state.data.target); }
+        },
+        cocktail: {
+          title: "Cocktail sort", description: "Bubble small values forward, then large values backward.", label: "ARRAY / SORTING",
+          complexity: "O(n²) / O(1)", note: "Bidirectional bubble sort",
+          explain: "<strong>Cocktail sort</strong> sweeps in both directions. The backward pass moves small elements left faster than a one-way bubble pass.",
+          code: `<span class="code-keyword">while</span> (swapped) {\n  <span class="code-function">forwardPass</span>(array);\n  <span class="code-function">backwardPass</span>(array);\n}`,
+          setup() { state.data = sortSnapshots([66,18,83,42,27,95,51], "cocktail"); return state.data.length; },
+          render(step) { renderBars(state.data[Math.min(step, state.data.length - 1)].values, [], [], new Set()); }
+        },
+        comb: {
+          title: "Comb sort", description: "Compare values across a shrinking gap to remove turtles.", label: "ARRAY / SORTING",
+          complexity: "O(n²) worst / O(n log n) typical", note: "Gap shrink factor 1.3",
+          explain: "<strong>Comb sort</strong> starts with distant comparisons, then reduces the gap until it becomes a final bubble-sort pass.",
+          code: `<span class="code-keyword">while</span> (gap !== <span class="code-number">1</span> || swapped) {\n  gap = Math.max(<span class="code-number">1</span>, Math.floor(gap / <span class="code-number">1.3</span>));\n  <span class="code-function">compareGapPairs</span>(array, gap);\n}`,
+          setup() { state.data = sortSnapshots([77,23,68,11,54,39,92], "comb"); return state.data.length; },
+          render(step) { renderBars(state.data[Math.min(step, state.data.length - 1)].values, [], [], new Set()); }
+        },
+        pigeonhole: {
+          title: "Pigeonhole sort", description: "Place each value into its matching hole, then read the holes.", label: "ARRAY / SORTING",
+          complexity: "O(n + range) / O(range)", note: "Integer keys with a compact range",
+          explain: "<strong>Pigeonhole sort</strong> creates one slot per possible value. It is simple and linear when the numeric range is small.",
+          code: `<span class="code-keyword">for</span> (<span class="code-keyword">const</span> value <span class="code-keyword">of</span> array) holes[value - min]++;\n<span class="code-keyword">return</span> <span class="code-function">expandHoles</span>(holes, min);`,
+          setup() { state.data = sortSnapshots([6,2,5,3,6,1,4,2], "pigeonhole"); return state.data.length; },
+          render(step) { renderBars(state.data[Math.min(step, state.data.length - 1)].values, [], [], step === state.data.length - 1 ? new Set(state.data[0].values.map((_, i) => i)) : new Set()); }
+        },
+        bellman: {
+          title: "Bellman-Ford", description: "Relax every edge repeatedly, even when negative weights exist.", label: "GRAPH / SHORTEST PATH",
+          complexity: "O(VE) / O(V)", note: "Detects negative cycles",
+          explain: "<strong>Bellman-Ford</strong> relaxes every edge V−1 times. Unlike Dijkstra, it remains correct with negative edge weights.",
+          code: `<span class="code-keyword">for</span> (i = <span class="code-number">1</span>; i &lt; V; i++)\n  <span class="code-keyword">for</span> (<span class="code-keyword">const</span> [u,v,w] <span class="code-keyword">of</span> edges)\n    distance[v] = Math.min(distance[v], distance[u] + w);`,
+          setup() { state.data = { edges: [[0,1,4],[0,2,5],[1,3,3],[2,3,1],[3,4,2],[1,4,9]], nodes: [[0,12,50],[1,32,22],[2,32,78],[3,58,50],[4,86,50]], order: [0,1,2,3,4], path: [[0,1],[0,2],[1,3],[2,3],[3,4]] }; return 5; },
+          render(step) { renderGraph(state.data, state.data.path.slice(0, step), "bellman", state.data.order[step - 1]); }
+        },
+        floyd: {
+          title: "Floyd-Warshall", description: "Improve every pairwise distance through each possible intermediate.", label: "GRAPH / ALL PAIRS",
+          complexity: "O(V³) / O(V²)", note: "In-place distance matrix",
+          explain: "<strong>Floyd-Warshall</strong> tests whether each intermediate node creates a shorter route between every pair. Its matrix exposes the whole distance universe.",
+          code: `<span class="code-keyword">for</span> (k = <span class="code-number">0</span>; k &lt; V; k++)\n  <span class="code-keyword">for</span> (i = <span class="code-number">0</span>; i &lt; V; i++)\n    <span class="code-keyword">for</span> (j = <span class="code-number">0</span>; j &lt; V; j++)\n      dist[i][j] = Math.min(dist[i][j], dist[i][k] + dist[k][j]);`,
+          setup() { state.data = dpSteps([[0,3,7,5],[3,0,4,2],[7,4,0,6],[5,2,6,0]]); return state.data.length; },
+          render(step) { renderMatrix(state.data[Math.min(step, state.data.length - 1)], step - 1); }
+        },
+        prim: {
+          title: "Prim's MST", description: "Grow the cheapest connected tree one edge at a time.", label: "GRAPH / SPANNING TREE",
+          complexity: "O(E log V)", note: "Priority-queue implementation",
+          explain: "<strong>Prim's algorithm</strong> starts at one node and repeatedly adds the lightest edge crossing from the tree to the outside.",
+          code: `<span class="code-keyword">while</span> (tree.size &lt; V) {\n  edge = <span class="code-function">cheapestCrossingEdge</span>(tree);\n  tree.add(edge.to); mst.push(edge);\n}`,
+          setup() { state.data = { edges: [[0,1,3],[0,2,5],[1,2,1],[1,3,4],[2,3,2],[2,4,6],[3,4,7]], nodes: [[0,14,52],[1,35,20],[2,35,82],[3,65,28],[4,82,58]], order: [0,1,2,3,4], path: [[0,1],[1,2],[2,3],[2,4]] }; return 4; },
+          render(step) { renderGraph(state.data, state.data.path.slice(0, step), "prim", state.data.order[step]); }
+        },
+        queens: {
+          title: "N-Queens", description: "Place queens so none can attack another on the same board.", label: "BACKTRACKING / CONSTRAINTS",
+          complexity: "O(n!) / O(n)", note: "Constraint pruning",
+          explain: "<strong>N-Queens</strong> places one queen per row, rejecting columns and diagonals already under attack before backtracking.",
+          code: `<span class="code-keyword">function</span> <span class="code-function">place</span>(row) {\n  <span class="code-keyword">for</span> (col = <span class="code-number">0</span>; col &lt; n; col++)\n    <span class="code-keyword">if</span> (<span class="code-function">safe</span>(row, col)) { board[row] = col; <span class="code-function">place</span>(row + <span class="code-number">1</span>); }\n}`,
+          setup() { state.data = [[0,0,0,0],[0,2,0,0],[0,2,0,1],[0,2,3,1],[2,0,3,1]]; return state.data.length; },
+          render(step) { renderQueens(state.data[Math.min(step, state.data.length - 1)]); }
+        },
+        kadane: {
+          title: "Kadane's algorithm", description: "Find the contiguous subarray with the greatest sum.", label: "ARRAY / OPTIMIZATION",
+          complexity: "O(n) / O(1)", note: "One-pass maximum subarray",
+          explain: "<strong>Kadane's algorithm</strong> keeps the best sum ending at the current position and restarts whenever extending the previous run would hurt.",
+          code: `best = current = array[<span class="code-number">0</span>];\n<span class="code-keyword">for</span> (value <span class="code-keyword">of</span> array.slice(<span class="code-number">1</span>)) {\n  current = Math.max(value, current + value);\n  best = Math.max(best, current);\n}`,
+          setup() { state.data = [-2,1,-3,4,-1,2,1,-5,4]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        kmp: {
+          title: "KMP search", description: "Skip known prefixes while matching a pattern in linear time.", label: "STRINGS / SEARCH",
+          complexity: "O(n + m) / O(m)", note: "Prefix-function matching",
+          explain: "<strong>Knuth-Morris-Pratt</strong> precomputes the pattern's failure links so a mismatch never makes the text pointer move backward.",
+          code: `<span class="code-function">buildPrefixTable</span>(pattern);\n<span class="code-keyword">while</span> (i &lt; text.length) {\n  <span class="code-keyword">if</span> (text[i] === pattern[j]) i++, j++;\n  <span class="code-keyword">else if</span> (j) j = prefix[j - <span class="code-number">1</span>];\n  <span class="code-keyword">else</span> i++;\n}`,
+          setup() { state.data = ["A","B","A","B","A","C","A","B","A"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        rabinKarp: {
+          title: "Rabin-Karp", description: "Compare rolling hashes before comparing candidate substrings.", label: "STRINGS / HASHING",
+          complexity: "O(n + m) average", note: "Rolling hash window",
+          explain: "<strong>Rabin-Karp</strong> updates a substring hash in constant time as the window moves, reserving exact comparisons for hash matches.",
+          code: `<span class="code-keyword">for</span> (i = <span class="code-number">0</span>; i &lt;= text.length - pattern.length; i++) {\n  hash = <span class="code-function">rollingHash</span>(hash, text[i], text[i + m]);\n  <span class="code-keyword">if</span> (hash === patternHash) <span class="code-function">verify</span>(i);\n}`,
+          setup() { state.data = ["C","A","T","A","L","O","G","A","L","G"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        sliding: {
+          title: "Sliding window", description: "Move a bounded window across data while maintaining its answer.", label: "ARRAY / WINDOW",
+          complexity: "O(n) / O(k)", note: "Each item enters and leaves once",
+          explain: "<strong>Sliding window</strong> turns repeated range work into incremental updates by adding the incoming value and removing the outgoing one.",
+          code: `<span class="code-keyword">for</span> (right = <span class="code-number">0</span>; right &lt; n; right++) {\n  sum += array[right];\n  <span class="code-keyword">if</span> (right &gt;= k) sum -= array[right - k];\n  best = Math.max(best, sum);\n}`,
+          setup() { state.data = [5,2,8,1,9,3,7,4,6]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        twosum: {
+          title: "Two-sum pointers", description: "Converge from both ends of a sorted array to hit a target sum.", label: "ARRAY / TWO POINTERS",
+          complexity: "O(n) / O(1)", note: "Sorted input",
+          explain: "<strong>Two pointers</strong> move inward: if the sum is too small, advance the left pointer; if too large, retreat the right pointer.",
+          code: `<span class="code-keyword">while</span> (left &lt; right) {\n  sum = array[left] + array[right];\n  <span class="code-keyword">if</span> (sum === target) <span class="code-keyword">return</span> [left, right];\n  sum &lt; target ? left++ : right--;\n}`,
+          setup() { state.data = { values: [3,8,12,17,21,29,34,41], checks: [0,7,1,7,2,6,3,5,3,4], target: 38 }; return 5; },
+          render(step) { renderSearch(state.data.values, state.data.checks.slice(0, step * 2), state.data.target); }
+        },
+        catalan: {
+          title: "Catalan numbers", description: "Count balanced structures, binary trees, and valid parentheses.", label: "MATH / COMBINATORICS",
+          complexity: "O(n²) / O(n)", note: "Convolution recurrence",
+          explain: "<strong>Catalan numbers</strong> count recursively nested choices. Each value is the sum of products of earlier values on both sides.",
+          code: `C[<span class="code-number">0</span>] = <span class="code-number">1</span>;\n<span class="code-keyword">for</span> (n = <span class="code-number">1</span>; n &lt;= N; n++)\n  C[n] = Σ(C[i] * C[n - <span class="code-number">1</span> - i]);`,
+          setup() { state.data = [1,1,2,5,14,42,132,429,1430]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        ackermann: {
+          title: "Ackermann function", description: "Watch a tiny input create extraordinary recursive depth.", label: "RECURSION / GROWTH",
+          complexity: "Non-primitive recursive", note: "Stack depth grows explosively",
+          explain: "<strong>Ackermann</strong> is a canonical example of a computable function that grows faster than every primitive-recursive function.",
+          code: `<span class="code-keyword">function</span> <span class="code-function">A</span>(m, n) {\n  <span class="code-keyword">if</span> (m === <span class="code-number">0</span>) <span class="code-keyword">return</span> n + <span class="code-number">1</span>;\n  <span class="code-keyword">if</span> (n === <span class="code-number">0</span>) <span class="code-keyword">return</span> <span class="code-function">A</span>(m - <span class="code-number">1</span>, <span class="code-number">1</span>);\n  <span class="code-keyword">return</span> <span class="code-function">A</span>(m - <span class="code-number">1</span>, <span class="code-function">A</span>(m, n - <span class="code-number">1</span>));\n}`,
+          setup() { state.data = ["A(0,1)=2","A(1,1)=3","A(2,2)=7","A(3,3)=61"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        matrixchain: {
+          title: "Matrix chain DP", description: "Choose parentheses that minimize scalar multiplications.", label: "DP / OPTIMIZATION",
+          complexity: "O(n³) / O(n²)", note: "Interval dynamic programming",
+          explain: "<strong>Matrix-chain multiplication</strong> never changes the result, only the grouping. DP finds the grouping with the least arithmetic work.",
+          code: `<span class="code-keyword">for</span> (length = <span class="code-number">2</span>; length &lt;= n; length++)\n  <span class="code-keyword">for</span> (left = <span class="code-number">0</span>; left &lt; n - length + <span class="code-number">1</span>; left++)\n    cost[left][right] = <span class="code-function">minimumSplitCost</span>(left, right);`,
+          setup() { state.data = dpSteps([[0,24,54,78],[0,0,36,58],[0,0,0,30],[0,0,0,0]]); return state.data.length; },
+          render(step) { renderMatrix(state.data[Math.min(step, state.data.length - 1)], step - 1); }
+        },
+        huffman: {
+          title: "Huffman coding", description: "Merge the two least frequent symbols into a prefix tree.", label: "GREEDY / COMPRESSION",
+          complexity: "O(n log n) / O(n)", note: "Optimal prefix-free codes",
+          explain: "<strong>Huffman coding</strong> repeatedly combines the rarest symbols. Frequent symbols end up closer to the root and receive shorter codes.",
+          code: `<span class="code-keyword">while</span> (queue.size &gt; <span class="code-number">1</span>) {\n  left = queue.pop(); right = queue.pop();\n  queue.push(<span class="code-function">merge</span>(left, right));\n}`,
+          setup() { state.data = ["E:000","T:001","A:010","O:011","I:10","N:11"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        reservoir: {
+          title: "Reservoir sampling", description: "Select a uniform random sample from a stream of unknown length.", label: "RANDOMIZED / STREAM",
+          complexity: "O(n) / O(k)", note: "One pass · constant stream memory",
+          explain: "<strong>Reservoir sampling</strong> keeps the first k items, then replaces a slot with probability k/i as the stream continues.",
+          code: `<span class="code-keyword">for</span> (i = k; i &lt; stream.length; i++) {\n  j = randomInt(<span class="code-number">0</span>, i);\n  <span class="code-keyword">if</span> (j &lt; k) reservoir[j] = stream[i];\n}`,
+          setup() { state.data = ["A","B","C","D","E","F","G","H"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        prefixsum: {
+          title: "Prefix sums", description: "Precompute cumulative totals for constant-time range queries.", label: "ARRAY / RANGE QUERIES",
+          complexity: "O(n) / O(n)", note: "Range sum after preprocessing: O(1)",
+          explain: "<strong>Prefix sums</strong> turn a range total into prefix[right] − prefix[left−1], trading one linear pass for instant queries.",
+          code: `prefix[<span class="code-number">0</span>] = array[<span class="code-number">0</span>];\n<span class="code-keyword">for</span> (i = <span class="code-number">1</span>; i &lt; n; i++) prefix[i] = prefix[i - <span class="code-number">1</span>] + array[i];`,
+          setup() { state.data = [3,7,2,9,4,6,1]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step).reduce((sum, value) => { sum.push((sum.at(-1) || 0) + value); return sum; }, []), step - 1); }
+        },
+        difference: {
+          title: "Difference array", description: "Apply range updates with two boundary changes.", label: "ARRAY / RANGE UPDATES",
+          complexity: "O(n + q) / O(n)", note: "Efficient batch updates",
+          explain: "<strong>Difference arrays</strong> encode a range increment at its start and end+1. A prefix pass reconstructs the final values.",
+          code: `diff[left] += value;\ndiff[right + <span class="code-number">1</span>] -= value;\n<span class="code-function">reconstructWithPrefixSum</span>(diff);`,
+          setup() { state.data = [0,2,2,0,-1,1,0]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step).map((value, index) => state.data.slice(0, index + 1).reduce((a,b) => a + b, 0)), step - 1); }
+        },
+        fastpow: {
+          title: "Fast exponentiation", description: "Square the base and halve the exponent at every step.", label: "MATH / DIVIDE AND CONQUER",
+          complexity: "O(log n) / O(1)", note: "Binary exponentiation",
+          explain: "<strong>Exponentiation by squaring</strong> replaces n multiplications with a logarithmic chain of squares, using the exponent's binary digits.",
+          code: `<span class="code-keyword">while</span> (exponent &gt; <span class="code-number">0</span>) {\n  <span class="code-keyword">if</span> (exponent % <span class="code-number">2</span>) result *= base;\n  base *= base; exponent = Math.floor(exponent / <span class="code-number">2</span>);\n}`,
+          setup() { state.data = ["3² = 9","9² = 81","81² = 6561","6561² = 43046721"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        newton: {
+          title: "Newton-Raphson", description: "Converge on a root by repeatedly following the tangent.", label: "NUMERICAL / ROOT FINDING",
+          complexity: "O(k) iterations / O(1)", note: "Quadratic convergence near the root",
+          explain: "<strong>Newton-Raphson</strong> improves an estimate with x − f(x)/f′(x). For x²−2, the estimates rapidly converge to √2.",
+          code: `x = initial;\n<span class="code-keyword">repeat</span> {\n  x = x - f(x) / derivative(f, x);\n} <span class="code-keyword">until</span> |f(x)| &lt; epsilon;`,
+          setup() { state.data = ["x₀ = 2.0000","x₁ = 1.5000","x₂ = 1.4167","x₃ = 1.4142","x₄ = 1.4142"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        miller: {
+          title: "Miller-Rabin", description: "Test probable primality through modular exponentiation witnesses.", label: "NUMBER THEORY / PROBABILISTIC",
+          complexity: "O(k log³ n) / O(1)", note: "Fast probable-prime test",
+          explain: "<strong>Miller-Rabin</strong> writes n−1 as d·2ˢ and checks witnesses. A composite number is exposed when no square root of 1 appears.",
+          code: `n - <span class="code-number">1</span> = d · <span class="code-number">2</span>ˢ;\n<span class="code-keyword">for</span> (base <span class="code-keyword">of</span> witnesses)\n  <span class="code-keyword">if</span> (!<span class="code-function">strongProbablePrime</span>(n, base, d, s)) <span class="code-keyword">return</span> <span class="code-keyword">false</span>;`,
+          setup() { state.data = ["n = 97","97−1 = 96 = 3 × 2⁵","witness 2 → pass","witness 3 → pass","witness 5 → pass"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        tarjan: {
+          title: "Tarjan SCC", description: "Discover strongly connected components with low-link values.", label: "GRAPH / CONNECTIVITY",
+          complexity: "O(V + E) / O(V)", note: "One DFS pass",
+          explain: "<strong>Tarjan's algorithm</strong> tracks discovery indices and low-link values. A node whose low-link equals its index closes a strongly connected component.",
+          code: `index[node] = low[node] = timer++;\n<span class="code-keyword">for</span> (next <span class="code-keyword">of</span> graph[node]) <span class="code-function">visit</span>(next);\n<span class="code-keyword">if</span> (low[node] === index[node]) <span class="code-function">popComponent</span>();`,
+          setup() { state.data = traversalGraph([0,1,2,3,4,5], [[0,1],[1,2],[2,0],[2,3],[3,4],[4,5],[5,3]], [0,1,2,3,4,5]); return 6; },
+          render(step) { renderGraph(state.data, state.data.path.slice(0, Math.max(0, step - 1)), "tarjan", state.data.order[step - 1]); }
+        },
+        kruskal: {
+          title: "Kruskal's MST", description: "Sort edges by weight and keep only those joining new components.", label: "GRAPH / SPANNING TREE",
+          complexity: "O(E log E)", note: "Greedy edges + union-find",
+          explain: "<strong>Kruskal's algorithm</strong> sorts all edges, accepting an edge only when it connects two different components, preventing cycles.",
+          code: `<span class="code-keyword">for</span> (edge <span class="code-keyword">of</span> edges.sort(byWeight))\n  <span class="code-keyword">if</span> (<span class="code-function">find</span>(edge.a) !== <span class="code-function">find</span>(edge.b)) {\n    <span class="code-function">union</span>(edge.a, edge.b); mst.push(edge);\n  }`,
+          setup() { state.data = { edges: [[0,1,3],[0,2,5],[1,2,1],[1,3,4],[2,3,2],[2,4,6],[3,4,7]], nodes: [[0,14,52],[1,35,20],[2,35,82],[3,65,28],[4,82,58]], order: [1,2,3,4], path: [[1,2],[2,3],[0,1],[2,4]] }; return 4; },
+          render(step) { renderGraph(state.data, state.data.path.slice(0, step), "kruskal", state.data.order[step - 1]); }
+        },
+        lis: {
+          title: "Longest increasing subsequence", description: "Track the best rising subsequence ending at every position.", label: "DP / SEQUENCES",
+          complexity: "O(n²) / O(n)", note: "Patience sorting can reach O(n log n)",
+          explain: "<strong>LIS</strong> compares each value with earlier smaller values and extends the longest compatible subsequence.",
+          code: `<span class="code-keyword">for</span> (i = <span class="code-number">1</span>; i &lt; n; i++)\n  <span class="code-keyword">for</span> (j = <span class="code-number">0</span>; j &lt; i; j++)\n    <span class="code-keyword">if</span> (a[j] &lt; a[i]) dp[i] = Math.max(dp[i], dp[j] + <span class="code-number">1</span>);`,
+          setup() { state.data = [10,22,9,33,21,50,41,60]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        editdistance: {
+          title: "Edit distance", description: "Transform one word into another with insert, delete, and replace.", label: "DP / STRINGS",
+          complexity: "O(mn) / O(mn)", note: "Levenshtein distance",
+          explain: "<strong>Edit distance</strong> fills a grid of prefix costs. Matching characters copy the diagonal; different characters add one edit to the cheapest neighbor.",
+          code: `<span class="code-keyword">if</span> (a[i] === b[j]) dp[i][j] = dp[i-<span class="code-number">1</span>][j-<span class="code-number">1</span>];\n<span class="code-keyword">else</span> dp[i][j] = <span class="code-number">1</span> + Math.min(dp[i-<span class="code-number">1</span>][j], dp[i][j-<span class="code-number">1</span>], dp[i-<span class="code-number">1</span>][j-<span class="code-number">1</span>]);`,
+          setup() { state.data = dpSteps([[0,1,2,3,4],[1,0,1,2,3],[2,1,1,2,3],[3,2,2,1,2],[4,3,3,2,2]]); return state.data.length; },
+          render(step) { renderMatrix(state.data[Math.min(step, state.data.length - 1)], step - 1); }
+        },
+        bitcount: {
+          title: "Bit counting", description: "Count set bits by repeatedly clearing the lowest 1-bit.", label: "BITS / LOW-LEVEL",
+          complexity: "O(number of set bits)", note: "Brian Kernighan's trick",
+          explain: "<strong>Bit counting</strong> uses n = n & (n−1) to erase one set bit per iteration, skipping all zero bits.",
+          code: `count = <span class="code-number">0</span>;\n<span class="code-keyword">while</span> (n) { n &amp;= n - <span class="code-number">1</span>; count++; }\n<span class="code-keyword">return</span> count;`,
+          setup() { state.data = ["110101", "110100", "110000", "100000", "000000"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        boyermoore: {
+          title: "Boyer-Moore", description: "Jump over mismatches using the pattern's last-occurrence table.", label: "STRINGS / SEARCH",
+          complexity: "O(n / m) best case", note: "Bad-character heuristic",
+          explain: "<strong>Boyer-Moore</strong> compares from the pattern's end and skips text using precomputed mismatch distances.",
+          code: `table = <span class="code-function">lastOccurrenceTable</span>(pattern);\n<span class="code-keyword">while</span> (index &lt;= text.length - pattern.length) {\n  j = pattern.length - <span class="code-number">1</span>;\n  <span class="code-keyword">while</span> (j &gt;= <span class="code-number">0</span> &amp;&amp; pattern[j] === text[index+j]) j--;\n  index += table[text[index + pattern.length - <span class="code-number">1</span>]] || pattern.length;\n}`,
+          setup() { state.data = ["T","H","E"," ","Q","U","I","C","K"," ","B","R","O","W","N"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        zalgorithm: {
+          title: "Z algorithm", description: "Reuse a matching prefix window to find every pattern occurrence.", label: "STRINGS / PREFIXES",
+          complexity: "O(n) / O(n)", note: "Linear prefix matching",
+          explain: "<strong>The Z algorithm</strong> stores the length of the longest substring starting at each position that matches the full string's prefix.",
+          code: `<span class="code-keyword">for</span> (i = <span class="code-number">1</span>; i &lt; n; i++) {\n  <span class="code-keyword">if</span> (i &lt; right) z[i] = Math.min(right - i + <span class="code-number">1</span>, z[i - left]);\n  <span class="code-function">extendMatch</span>(i); z[i] = matchLength;\n}`,
+          setup() { state.data = ["a","b","a","b","a","$","a","b","a","b","a"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        manacher: {
+          title: "Manacher's algorithm", description: "Find the longest palindromic substring in linear time.", label: "STRINGS / PALINDROMES",
+          complexity: "O(n) / O(n)", note: "Palindrome radii reuse",
+          explain: "<strong>Manacher's algorithm</strong> mirrors known palindrome radii around a center, expanding only when the mirrored information is insufficient.",
+          code: `<span class="code-keyword">for</span> (center = <span class="code-number">0</span>; center &lt; n; center++) {\n  mirror = <span class="code-number">2</span> * center - right;\n  radius[center] = Math.min(right - center, radius[mirror]);\n  <span class="code-function">expandAroundCenter</span>(center);\n}`,
+          setup() { state.data = ["a","b","a","c","a","b","a"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        interval: {
+          title: "Interval scheduling", description: "Keep the maximum number of non-overlapping time intervals.", label: "GREEDY / SCHEDULING",
+          complexity: "O(n log n) / O(1)", note: "Sort by earliest finish",
+          explain: "<strong>Interval scheduling</strong> proves that choosing the interval that finishes earliest leaves the most room for future compatible work.",
+          code: `intervals.sort((a, b) =&gt; a.end - b.end);\n<span class="code-keyword">for</span> (interval <span class="code-keyword">of</span> intervals)\n  <span class="code-keyword">if</span> (interval.start &gt;= lastEnd) select(interval);`,
+          setup() { state.data = ["09:00–10:00","09:30–11:00","10:00–11:30","11:00–12:00","11:30–13:00"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        activity: {
+          title: "Activity selection", description: "Select the most compatible activities with a single resource.", label: "GREEDY / OPTIMIZATION",
+          complexity: "O(n log n) / O(1)", note: "Earliest-finish greedy proof",
+          explain: "<strong>Activity selection</strong> is the canonical greedy exchange argument: accept the earliest-finishing compatible activity, then repeat.",
+          code: `<span class="code-keyword">for</span> (activity <span class="code-keyword">of</span> sortedByFinish) {\n  <span class="code-keyword">if</span> (activity.start &gt;= finish) {\n    chosen.push(activity); finish = activity.finish;\n  }\n}`,
+          setup() { state.data = ["A [1,4]","B [3,5]","C [0,6]","D [5,7]","E [8,9]","F [5,9]"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        zeroonebfs: {
+          title: "0-1 BFS", description: "Traverse a graph with edge costs restricted to zero or one.", label: "GRAPH / SHORTEST PATH",
+          complexity: "O(V + E) / O(V)", note: "Deque replaces a heap",
+          explain: "<strong>0-1 BFS</strong> pushes zero-cost edges to the front of a deque and one-cost edges to the back, preserving shortest-distance order.",
+          code: `<span class="code-keyword">if</span> (edge.weight === <span class="code-number">0</span>) deque.pushFront(next);\n<span class="code-keyword">else</span> deque.pushBack(next);`,
+          setup() { state.data = traversalGraph([0,1,2,3,4,5], [[0,1,0],[0,2,1],[1,3,1],[2,3,0],[3,4,1],[4,5,0]], [0,1,2,3,4,5]); return 6; },
+          render(step) { renderGraph(state.data, state.data.path.slice(0, Math.max(0, step - 1)), "0-1 bfs", state.data.order[step - 1]); }
+        },
+        convexhull: {
+          title: "Convex hull", description: "Wrap a point cloud with the smallest enclosing polygon.", label: "GEOMETRY / HULL",
+          complexity: "O(n log n)", note: "Monotonic chain",
+          explain: "<strong>Convex hull</strong> sorts points and removes right turns, leaving the outermost boundary of the entire set.",
+          code: `<span class="code-keyword">for</span> (point <span class="code-keyword">of</span> sortedPoints) {\n  <span class="code-keyword">while</span> (hull.length &gt; <span class="code-number">1</span> &amp;&amp; <span class="code-function">cross</span>(hull[-<span class="code-number">2</span>], hull[-<span class="code-number">1</span>], point) &lt;= <span class="code-number">0</span>) hull.pop();\n  hull.push(point);\n}`,
+          setup() { state.data = ["(1,2)","(3,1)","(6,2)","(5,6)","(2,7)"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        crt: {
+          title: "Chinese remainder theorem", description: "Reconstruct one number from several modular constraints.", label: "NUMBER THEORY / MODULAR",
+          complexity: "O(k log M)", note: "Pairwise coprime moduli",
+          explain: "<strong>CRT</strong> combines congruences such as x ≡ 2 mod 3 and x ≡ 3 mod 5 into one unique solution modulo the product.",
+          code: `<span class="code-keyword">for</span> (congruence <span class="code-keyword">of</span> system)\n  x += remainder * <span class="code-function">modInverse</span>(M / modulus, modulus) * (M / modulus);\n<span class="code-keyword">return</span> x % M;`,
+          setup() { state.data = ["x ≡ 2 (mod 3)","x ≡ 3 (mod 5)","x ≡ 2 (mod 7)","x = 23 (mod 105)"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        fastfib: {
+          title: "Fast doubling Fibonacci", description: "Compute Fibonacci values in logarithmic time with doubling identities.", label: "MATH / DIVIDE AND CONQUER",
+          complexity: "O(log n) / O(1)", note: "Pair recurrence",
+          explain: "<strong>Fast doubling</strong> calculates F(2k) and F(2k+1) from F(k), halving the remaining index at each recursive step.",
+          code: `<span class="code-keyword">function</span> <span class="code-function">fib</span>(n) {\n  <span class="code-keyword">if</span> (!n) <span class="code-keyword">return</span> [<span class="code-number">0</span>, <span class="code-number">1</span>];\n  [a,b] = <span class="code-function">fib</span>(Math.floor(n / <span class="code-number">2</span>));\n  c = a * (<span class="code-number">2</span> * b - a); d = a*a + b*b;\n}`,
+          setup() { state.data = ["F(13) → 233","F(6) → 8","F(3) → 2","F(1) → 1"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        powerset: {
+          title: "Power set", description: "Generate every subset by deciding include or exclude for each item.", label: "COMBINATORICS / BITMASKS",
+          complexity: "O(n · 2ⁿ) / O(2ⁿ)", note: "Bitmask enumeration",
+          explain: "<strong>Power set generation</strong> maps each subset to a binary mask. Bit i answers whether item i is included.",
+          code: `<span class="code-keyword">for</span> (mask = <span class="code-number">0</span>; mask &lt; (1 &lt;&lt; n); mask++) {\n  subset = items.filter((_, i) =&gt; mask &amp; (<span class="code-number">1</span> &lt;&lt; i));\n  output.push(subset);\n}`,
+          setup() { state.data = ["∅","A","B","C","AB","AC","BC","ABC"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        avl: {
+          title: "AVL rotations", description: "Restore balance after insertion with local tree rotations.", label: "TREES / BALANCING",
+          complexity: "O(log n) / O(n)", note: "Height-balanced BST",
+          explain: "<strong>AVL trees</strong> keep every node's balance factor between −1 and 1. Rotations repair the first imbalance on the path to the root.",
+          code: `<span class="code-keyword">if</span> (balance &gt; <span class="code-number">1</span>) <span class="code-keyword">return</span> <span class="code-function">rotateRight</span>(node);\n<span class="code-keyword">if</span> (balance &lt; -<span class="code-number">1</span>) <span class="code-keyword">return</span> <span class="code-function">rotateLeft</span>(node);`,
+          setup() { state.data = ["insert 30","insert 20","insert 10","rotate right","insert 25","balanced"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        trie: {
+          title: "Trie insert", description: "Share prefixes in a character-by-character search tree.", label: "TREES / STRINGS",
+          complexity: "O(L) per word / O(AL)", note: "L = word length",
+          explain: "<strong>A trie</strong> stores one edge per character. Words with the same prefix reuse the same path, making prefix queries fast.",
+          code: `<span class="code-keyword">for</span> (char <span class="code-keyword">of</span> word) {\n  node.children[char] ||= <span class="code-keyword">new</span> TrieNode();\n  node = node.children[char];\n}\nnode.end = <span class="code-keyword">true</span>;`,
+          setup() { state.data = ["c","ca","cat","ca t ✓","car","car ✓"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        segment: {
+          title: "Segment tree", description: "Answer range aggregates by splitting queries across tree nodes.", label: "TREES / RANGE QUERIES",
+          complexity: "O(log n) query / O(n) space", note: "Range sum with point updates",
+          explain: "<strong>Segment trees</strong> store an aggregate for every interval. A range query visits only the disjoint segments that cover the request.",
+          code: `<span class="code-keyword">function</span> <span class="code-function">query</span>(node, left, right) {\n  <span class="code-keyword">if</span> (inside) <span class="code-keyword">return</span> tree[node];\n  <span class="code-keyword">return</span> query(leftChild) + query(rightChild);\n}`,
+          setup() { state.data = ["[0..7] = 36","[0..3] = 10","[4..7] = 26","[2..5] = 18","answer = 18"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        fenwick: {
+          title: "Fenwick tree", description: "Encode prefix sums in least-significant-bit jumps.", label: "TREES / PREFIX QUERIES",
+          complexity: "O(log n) query/update / O(n) space", note: "Binary indexed tree",
+          explain: "<strong>Fenwick trees</strong> store partial sums at indices determined by i &amp; −i. Each query or update climbs a logarithmic number of ancestors.",
+          code: `<span class="code-keyword">while</span> (index &lt;= n) {\n  tree[index] += delta;\n  index += index &amp; -index;\n}`,
+          setup() { state.data = ["update(3,+5)","update(6,+2)","sum(6) → 7","update(2,+4)","sum(6) → 11"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        quickselect: {
+          title: "Quickselect", description: "Partition around pivots until the kth element lands in place.", label: "ARRAY / ORDER STATISTICS",
+          complexity: "O(n) average / O(1)", note: "Expected linear selection",
+          explain: "<strong>Quickselect</strong> uses the same partition idea as quicksort but recurses into only the side containing the requested rank.",
+          code: `<span class="code-keyword">while</span> (left &lt; right) {\n  pivot = <span class="code-function">partition</span>(array, left, right);\n  <span class="code-keyword">if</span> (pivot === k) <span class="code-keyword">return</span> array[pivot];\n  pivot &lt; k ? left = pivot + <span class="code-number">1</span> : right = pivot - <span class="code-number">1</span>;\n}`,
+          setup() { state.data = ["[9,4,7,2,8,1]","pivot 7 → [4,2,1] | 7 | [9,8]","pivot 4 → [2,1] | 4","k=3 → 4"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        topk: {
+          title: "Top-K heap", description: "Keep only the k largest values in a bounded min-heap.", label: "HEAPS / SELECTION",
+          complexity: "O(n log k) / O(k)", note: "Streaming-friendly selection",
+          explain: "<strong>Top-K heaps</strong> keep the smallest winner at the root. When a new value beats it, replace and restore heap order.",
+          code: `<span class="code-keyword">for</span> (value <span class="code-keyword">of</span> stream) {\n  heap.push(value);\n  <span class="code-keyword">if</span> (heap.length &gt; k) heap.pop();\n}`,
+          setup() { state.data = ["heap: [12]","heap: [12,18]","heap: [18,25]","heap: [25,31]","top 2 = [25,31]"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        lru: {
+          title: "LRU cache", description: "Evict the least recently used key in constant time.", label: "CACHE / LINKED LIST",
+          complexity: "O(1) get/put", note: "Hash map + doubly linked list",
+          explain: "<strong>LRU caches</strong> combine a map for direct lookup with a list for recency. Every access moves a key to the front.",
+          code: `get(key) {\n  <span class="code-keyword">if</span> (!map.has(key)) <span class="code-keyword">return</span> -<span class="code-number">1</span>;\n  <span class="code-function">moveToFront</span>(map.get(key)); <span class="code-keyword">return</span> node.value;\n}`,
+          setup() { state.data = ["put(A) → [A]","put(B) → [B,A]","get(A) → [A,B]","put(C) → evict B","cache = [C,A]"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        minstack: {
+          title: "Min stack", description: "Read the minimum stack value without scanning.", label: "STACKS / AUXILIARY STATE",
+          complexity: "O(1) push/pop/min", note: "Paired minimum stack",
+          explain: "<strong>Min stack</strong> stores the current minimum beside each value. Popping restores the exact previous minimum instantly.",
+          code: `push(value) {\n  stack.push(value); mins.push(Math.min(value, mins.at(-<span class="code-number">1</span>) ?? value));\n}\n<span class="code-function">getMin</span>() { <span class="code-keyword">return</span> mins.at(-<span class="code-number">1</span>); }`,
+          setup() { state.data = ["push 5 → min 5","push 2 → min 2","push 8 → min 2","pop → min 2","pop → min 5"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        bloom: {
+          title: "Bloom filter", description: "Test membership with compact probabilistic bit storage.", label: "HASHING / PROBABILISTIC",
+          complexity: "O(k) query/insert / O(m)", note: "False positives possible; false negatives are not",
+          explain: "<strong>Bloom filters</strong> hash each item to several bit positions. A missing bit proves absence; all set bits indicate probable presence.",
+          code: `<span class="code-keyword">for</span> (hash <span class="code-keyword">of</span> hashes(item)) bits[hash % m] = <span class="code-number">1</span>;\n<span class="code-keyword">return</span> hashes(item).every(hash =&gt; bits[hash % m]);`,
+          setup() { state.data = ["add neon → 010010","add lab → 110010","query neon → probably yes","query glow → no"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        binarytree: {
+          title: "Binary tree traversal", description: "Visit a tree in preorder, inorder, or postorder.", label: "TREES / TRAVERSAL",
+          complexity: "O(n) / O(h)", note: "Depth-first traversal",
+          explain: "<strong>Tree traversal</strong> changes the order of work without changing the structure. Inorder traversal of a BST emits sorted values.",
+          code: `<span class="code-keyword">function</span> <span class="code-function">inorder</span>(node) {\n  <span class="code-keyword">if</span> (!node) <span class="code-keyword">return</span>;\n  <span class="code-function">inorder</span>(node.left); visit(node); <span class="code-function">inorder</span>(node.right);\n}`,
+          setup() { state.data = ["visit 4","visit 2","visit 1","visit 3","visit 6","visit 5","visit 7"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        edmonds: {
+          title: "Edmonds-Karp", description: "Push augmenting flow along the shortest residual paths.", label: "GRAPH / MAX FLOW",
+          complexity: "O(VE²) / O(V + E)", note: "BFS residual paths",
+          explain: "<strong>Edmonds-Karp</strong> is Ford-Fulkerson with BFS. Each augmentation increases the source-to-sink flow while residual edges expose rerouting options.",
+          code: `<span class="code-keyword">while</span> ((path = <span class="code-function">bfsResidualPath</span>())) {\n  bottleneck = <span class="code-function">minCapacity</span>(path);\n  <span class="code-function">augment</span>(path, bottleneck); flow += bottleneck;\n}`,
+          setup() { state.data = traversalGraph([0,1,2,3,4,5], [[0,1,8],[0,2,6],[1,3,5],[2,3,4],[1,4,3],[4,5,7],[3,5,9]], [0,1,3,5,0,2,3,5]); return 4; },
+          render(step) { renderGraph(state.data, state.data.path.slice(0, Math.max(0, step - 1)), "edmonds", state.data.order[step - 1]); }
+        },
+        dinic: {
+          title: "Dinic's flow", description: "Build level graphs, then send blocking flows.", label: "GRAPH / MAX FLOW",
+          complexity: "O(V²E) / O(V + E)", note: "Level graph + DFS",
+          explain: "<strong>Dinic's algorithm</strong> separates flow into phases: BFS builds levels, then DFS saturates all useful paths in that level graph.",
+          code: `<span class="code-keyword">while</span> (<span class="code-function">buildLevelGraph</span>()) {\n  <span class="code-keyword">while</span> ((pushed = <span class="code-function">sendFlow</span>(source, infinity))) flow += pushed;\n}`,
+          setup() { state.data = traversalGraph([0,1,2,3,4], [[0,1,7],[0,2,5],[1,3,4],[2,3,6],[3,4,8]], [0,1,2,3,4]); return 5; },
+          render(step) { renderGraph(state.data, state.data.path.slice(0, Math.max(0, step - 1)), "dinic", state.data.order[step - 1]); }
+        },
+        suffix: {
+          title: "Suffix array", description: "Sort every suffix to expose fast substring order and search.", label: "STRINGS / INDEXING",
+          complexity: "O(n log n) typical", note: "Suffix ordering + LCP",
+          explain: "<strong>Suffix arrays</strong> store starting indices in lexicographic suffix order. Binary search over that order makes pattern queries efficient.",
+          code: `suffixes = indices.map(i =&gt; [text.slice(i), i]);\nsuffixes.sort(([a], [b]) =&gt; a.localeCompare(b));\n<span class="code-keyword">return</span> suffixes.map(([, index]) =&gt; index);`,
+          setup() { state.data = ["banana","anana","ana","ana","na","a"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        aho: {
+          title: "Aho-Corasick", description: "Match many patterns in one pass through a failure-link automaton.", label: "STRINGS / AUTOMATA",
+          complexity: "O(text + matches)", note: "Trie + failure links",
+          explain: "<strong>Aho-Corasick</strong> builds a trie of patterns, then failure links let the automaton continue after mismatches without rescanning text.",
+          code: `<span class="code-function">buildTrie</span>(patterns); <span class="code-function">buildFailureLinks</span>();\n<span class="code-keyword">for</span> (char <span class="code-keyword">of</span> text) {\n  node = node.next[char] || node.fail;\n  report(node.outputs);\n}`,
+          setup() { state.data = ["h","he","her","hers","she","she ✓","hers ✓"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        fft: {
+          title: "Fast Fourier transform", description: "Split a signal into even and odd frequencies recursively.", label: "SIGNALS / DIVIDE AND CONQUER",
+          complexity: "O(n log n) / O(n)", note: "Cooley-Tukey butterfly",
+          explain: "<strong>FFT</strong> converts a time-domain signal into frequency components by recursively combining two half-sized transforms.",
+          code: `<span class="code-keyword">const</span> even = <span class="code-function">fft</span>(values.filter((_, i) =&gt; !(i % <span class="code-number">2</span>)));\n<span class="code-keyword">const</span> odd = <span class="code-function">fft</span>(values.filter((_, i) =&gt; i % <span class="code-number">2</span>));\n<span class="code-keyword">return</span> <span class="code-function">butterflyCombine</span>(even, odd);`,
+          setup() { state.data = ["time: 1,0,1,0","split: 1,1 | 0,0","twiddle factors applied","frequency: 2,0,2,0"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        strassen: {
+          title: "Strassen multiplication", description: "Multiply matrices with seven recursive products instead of eight.", label: "MATRICES / RECURSION",
+          complexity: "O(n^log₂7) ≈ O(n²·⁸⁰⁷)", note: "Seven subproducts",
+          explain: "<strong>Strassen's method</strong> rearranges matrix products so one multiplication disappears at each recursive level, reducing asymptotic work.",
+          code: `M1 = (A11 + A22)(B11 + B22); M2 = (A21 + A22)B11;\nM3 = A11(B12 - B22); <span class="code-comment">// seven products total</span>`,
+          setup() { state.data = dpSteps([[19,22],[43,50]]); return state.data.length; },
+          render(step) { renderMatrix(state.data[Math.min(step, state.data.length - 1)], step - 1); }
+        },
+        gaussian: {
+          title: "Gaussian elimination", description: "Reduce a system to row-echelon form and solve it.", label: "LINEAR ALGEBRA / SOLVER",
+          complexity: "O(n³) / O(n²)", note: "Pivot and eliminate",
+          explain: "<strong>Gaussian elimination</strong> chooses a pivot, eliminates entries below it, and back-substitutes from the final triangular system.",
+          code: `<span class="code-keyword">for</span> (pivot = <span class="code-number">0</span>; pivot &lt; n; pivot++) {\n  <span class="code-function">swapBestPivotRow</span>();\n  <span class="code-function">eliminateBelow</span>(pivot);\n}`,
+          setup() { state.data = dpSteps([[2,1,5],[0,3,9],[0,0,1]]); return state.data.length; },
+          render(step) { renderMatrix(state.data[Math.min(step, state.data.length - 1)], step - 1); }
+        },
+        kmeans: {
+          title: "K-means clustering", description: "Alternate assigning points to centroids and recomputing centers.", label: "MACHINE LEARNING / CLUSTERING",
+          complexity: "O(nki) / O(k)", note: "i = iterations",
+          explain: "<strong>K-means</strong> alternates two steps: assign each point to its nearest center, then move centers to cluster means.",
+          code: `<span class="code-keyword">repeat</span> {\n  labels = <span class="code-function">nearestCentroid</span>(points, centroids);\n  centroids = <span class="code-function">meanByCluster</span>(points, labels);\n}`,
+          setup() { state.data = ["centers: 2,8","assign points → [A,A,B,B]","centers: 3,7","assign points → [A,A,B,B]","converged"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        gradient: {
+          title: "Gradient descent", description: "Walk downhill along the slope of a loss function.", label: "OPTIMIZATION / CALCULUS",
+          complexity: "O(ki) / O(1)", note: "Learning rate controls the step",
+          explain: "<strong>Gradient descent</strong> updates parameters opposite the gradient. Repeated small steps reduce the objective until the slope approaches zero.",
+          code: `<span class="code-keyword">repeat</span> {\n  gradient = <span class="code-function">derivative</span>(loss, theta);\n  theta -= learningRate * gradient;\n}`,
+          setup() { state.data = ["x=8.00 loss=64.00","x=4.80 loss=23.04","x=2.88 loss=8.29","x=1.73 loss=2.98","x=1.04 loss=1.08"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        weightedinterval: {
+          title: "Weighted intervals", description: "Choose compatible jobs for maximum total reward.", label: "DP / SCHEDULING",
+          complexity: "O(n log n) / O(n)", note: "Predecessor lookup + DP",
+          explain: "<strong>Weighted interval scheduling</strong> decides between taking a job plus its predecessor optimum or skipping it for the previous optimum.",
+          code: `dp[i] = Math.max(dp[i - <span class="code-number">1</span>], weight[i] + dp[previousCompatible(i)]);`,
+          setup() { state.data = ["A [1,3] w=5","B [2,5] w=6","C [4,6] w=5","D [6,7] w=4","best = 10"]; return state.data.length; },
+          render(step) { renderSequence(state.data.slice(0, step), step - 1); }
+        },
+        sorting: {
+          title: "Sorting lab", description: "Watch comparisons, swaps, and order emerge in real time.", label: "ARRAY / SORTING",
+          complexity: "O(n²) / O(1)", note: "Depends on selected algorithm",
+          explain: "<strong>Sorting</strong> turns an unordered sequence into a monotonic one. Yellow bars are compared, pink bars swap, and green bars are locked into place.",
+          code: `<span class="code-keyword">async function</span> <span class="code-function">bubbleSort</span>(array) {\n  <span class="code-keyword">for</span> (<span class="code-keyword">let</span> end = array.length - <span class="code-number">1</span>; end &gt; <span class="code-number">0</span>; end--)\n    <span class="code-keyword">for</span> (<span class="code-keyword">let</span> i = <span class="code-number">0</span>; i &lt; end; i++) {\n      <span class="code-keyword">if</span> (array[i] &gt; array[i + <span class="code-number">1</span>])\n        [array[i], array[i + <span class="code-number">1</span>]] = [array[i + <span class="code-number">1</span>], array[i]];\n      <span class="code-keyword">await</span> pause();\n    }\n}`,
+          setup() { const size = clamp(Number(dom.size.value), 8, 42); state.data = Array.from({ length: size }, () => Math.floor(Math.random() * 90) + 10); return size * 2; },
+          render() { renderBars(state.data, state.compare, state.swap, state.sorted); }
+        }
+      };
+      let modeConfig = MODES.pascal;
+      state.compare = []; state.swap = []; state.sorted = new Set();
+      function clamp(value, min, max) { return Number.isFinite(value) ? Math.min(max, Math.max(min, value)) : min; }
+      function sleep(ms) { return new Promise(resolve => { state.timer = window.setTimeout(resolve, ms); }); }
+      function setStats(step, total, operations, depth, status) { dom.step.textContent = `${step} / ${total}`; dom.ops.textContent = operations; dom.depth.textContent = depth; dom.state.textContent = status; }
+      function renderTriangle(rows, activeRow, harmonic) {
+        const triangle = document.createElement("div"); triangle.className = "triangle";
+        rows.forEach((row, rowIndex) => {
+          const line = document.createElement("div"); line.className = "triangle-row";
+          row.forEach(value => {
+            const cell = document.createElement("div"); cell.className = "cell" + (value === 0 ? " zero" : "") + (rowIndex === activeRow ? " active" : "");
+            cell.textContent = harmonic ? (value === 0 ? "·" : value.toFixed(3)) : String(value); line.appendChild(cell);
+          }); triangle.appendChild(line);
+        }); dom.visual.replaceChildren(triangle);
+      }
+      function renderSequence(values, activeIndex) {
+        const line = document.createElement("div"); line.className = "triangle-row";
+        values.forEach((value, index) => { const cell = document.createElement("div"); cell.className = "cell" + (index === activeIndex ? " active" : ""); cell.textContent = String(value); line.appendChild(cell); });
+        dom.visual.replaceChildren(line);
+      }
+      function renderSearch(values, checks, target) {
+        const bars = document.createElement("div"); bars.className = "bars";
+        values.forEach((value, index) => { const bar = document.createElement("div"); bar.className = "bar" + (checks.includes(index) ? " compare" : "") + (value === target && checks.includes(index) ? " sorted" : ""); bar.style.height = `${Math.max(20, value)}%`; bar.title = `${value}${value === target ? " (target)" : ""}`; bars.appendChild(bar); });
+        dom.visual.replaceChildren(bars);
+      }
+      function renderMatrix(matrix, activeRow) {
+        const table = document.createElement("div"); table.className = "triangle";
+        matrix.forEach((row, rowIndex) => { const line = document.createElement("div"); line.className = "triangle-row"; row.forEach(value => { const cell = document.createElement("div"); cell.className = "cell" + (rowIndex === activeRow ? " active" : ""); cell.textContent = String(value); line.appendChild(cell); }); table.appendChild(line); });
+        dom.visual.replaceChildren(table);
+      }
+      function renderQueens(board) {
+        const grid = document.createElement("div"); grid.className = "triangle";
+        board.forEach((queen, row) => { const line = document.createElement("div"); line.className = "triangle-row"; board.forEach((_, col) => { const cell = document.createElement("div"); cell.className = "cell" + ((row + col) % 2 ? " zero" : ""); cell.textContent = col === queen ? "♛" : "·"; line.appendChild(cell); }); grid.appendChild(line); });
+        dom.visual.replaceChildren(grid);
+      }
+      function renderPrimeBars(values, primeFlags) {
+        const bars = document.createElement("div"); bars.className = "bars";
+        values.forEach((value, index) => { const bar = document.createElement("div"); bar.className = "bar" + (primeFlags[index] ? " sorted" : " swap"); bar.style.height = `${primeFlags[index] ? 78 : 28}%`; bar.title = `${value}: ${primeFlags[index] ? "prime" : "composite"}`; bars.appendChild(bar); });
+        dom.visual.replaceChildren(bars);
+      }
+      function traversalGraph(nodes, edges, order) {
+        const positions = [[0,12,50],[1,30,22],[2,30,78],[3,53,18],[4,53,50],[5,78,50]];
+        const path = order.slice(1).map((node, index) => [order[index], node]);
+        return { nodes: positions.filter(node => nodes.includes(node[0])), edges, order, path };
+      }
+      function sortSnapshots(input, algorithm) {
+        const values = input.slice(), snapshots = [{ values: values.slice(), algorithm }];
+        const save = () => snapshots.push({ values: values.slice(), algorithm });
+        if (algorithm === "insertion") {
+          for (let i = 1; i < values.length; i++) { const key = values[i]; let j = i - 1; while (j >= 0 && values[j] > key) values[j + 1] = values[j--]; values[j + 1] = key; save(); }
+        } else if (algorithm === "selection") {
+          for (let start = 0; start < values.length - 1; start++) { let min = start; for (let i = start + 1; i < values.length; i++) if (values[i] < values[min]) min = i; [values[start], values[min]] = [values[min], values[start]]; save(); }
+        } else if (algorithm === "shell") {
+          for (let gap = Math.floor(values.length / 2); gap > 0; gap = Math.floor(gap / 2)) { for (let i = gap; i < values.length; i++) { const value = values[i]; let j = i; while (j >= gap && values[j-gap] > value) { values[j] = values[j-gap]; j -= gap; } values[j] = value; } save(); }
+        } else if (algorithm === "counting") {
+          const sorted = values.slice().sort((a,b) => a-b); sorted.forEach((value, index) => { values[index] = value; save(); });
+        } else if (algorithm === "cocktail") {
+          let start = 0, end = values.length - 1;
+          while (start < end) { for (let i = start; i < end; i++) if (values[i] > values[i+1]) [values[i], values[i+1]] = [values[i+1], values[i]]; end--; for (let i = end; i > start; i--) if (values[i-1] > values[i]) [values[i-1], values[i]] = [values[i], values[i-1]]; start++; save(); }
+        } else if (algorithm === "comb") {
+          for (let gap = values.length; gap > 1; gap = Math.floor(gap / 1.3)) { for (let i = 0; i + gap < values.length; i++) if (values[i] > values[i+gap]) [values[i], values[i+gap]] = [values[i+gap], values[i]]; save(); }
+          values.sort((a,b) => a-b); save();
+        } else if (algorithm === "heap") {
+          values.sort((a, b) => b - a); save(); values.reverse(); for (let i = 0; i < values.length; i++) { values.push(values.shift()); save(); }
+        } else {
+          const max = Math.max(...values); for (let place = 1; Math.floor(max / place) > 0; place *= 10) { values.sort((a, b) => ((Math.floor(a / place) % 10) - (Math.floor(b / place) % 10))); save(); }
+          values.sort((a, b) => a - b); save();
+        }
+        return snapshots;
+      }
+      function dpSteps(finalMatrix) {
+        return finalMatrix.map((_, rowIndex) => finalMatrix.map((row, index) => index <= rowIndex ? row.slice() : row.map(() => 0)));
+      }
+      function renderBars(values, compare = [], swap = [], sorted = new Set()) {
+        const bars = document.createElement("div"); bars.className = "bars";
+        const maxValue = Math.max(...values, 1);
+        values.forEach((value, index) => { const bar = document.createElement("div"); bar.className = "bar"; bar.style.height = `${Math.max(8, value / maxValue * 90)}%`; if (compare.includes(index)) bar.classList.add("compare"); if (swap.includes(index)) bar.classList.add("swap"); if (sorted.has(index)) bar.classList.add("sorted"); bar.title = String(value); bars.appendChild(bar); });
+        dom.visual.replaceChildren(bars);
+      }
+      function renderGraph(graph, activeEdges, type, current = -1) {
+        const wrap = document.createElement("div"); wrap.className = "graph-wrap";
+        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.classList.add("graph"); svg.setAttribute("viewBox", "0 0 100 100"); svg.setAttribute("role", "img"); svg.setAttribute("aria-label", `${type} graph visualization`);
+        const edgeKey = (a, b) => `${Math.min(a,b)}-${Math.max(a,b)}`;
+        graph.edges.forEach(([from, to, weight]) => {
+          const a = graph.nodes[from], b = graph.nodes[to], line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+          line.classList.add("edge"); if (activeEdges.some(([x,y]) => edgeKey(x,y) === edgeKey(from,to))) line.classList.add("active");
+          line.setAttribute("x1", a[1]); line.setAttribute("y1", a[2]); line.setAttribute("x2", b[1]); line.setAttribute("y2", b[2]); svg.appendChild(line);
+          if (weight) { const label = document.createElementNS("http://www.w3.org/2000/svg", "text"); label.setAttribute("x", (a[1]+b[1])/2); label.setAttribute("y", (a[2]+b[2])/2-2); label.textContent = weight; label.setAttribute("fill", "#ffd166"); label.setAttribute("font-size", "4"); label.setAttribute("text-anchor", "middle"); svg.appendChild(label); }
+        });
+        const visited = new Set(activeEdges.flat()); graph.nodes.forEach(([id, x, y]) => { const group = document.createElementNS("http://www.w3.org/2000/svg", "g"); const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle"); circle.classList.add("node"); if (visited.has(id)) circle.classList.add("visited"); if (id === current) circle.classList.add("current"); circle.setAttribute("cx", x); circle.setAttribute("cy", y); circle.setAttribute("r", "6"); group.appendChild(circle); const text = document.createElementNS("http://www.w3.org/2000/svg", "text"); text.setAttribute("x", x); text.setAttribute("y", y); text.textContent = String.fromCharCode(65 + id); group.appendChild(text); svg.appendChild(group); });
+        wrap.appendChild(svg); dom.visual.replaceChildren(wrap);
+      }
+      function resetVisualization() {
+        window.clearTimeout(state.timer); state.running = false; state.paused = false; state.step = 0; state.operations = 0; state.compare = []; state.swap = []; state.sorted = new Set();
+        modeConfig = MODES[state.mode]; state.total = modeConfig.setup(); modeConfig.render(0); setStats(0, state.total, 0, 0, "READY"); dom.status.textContent = "Ready. Press run to begin the sequence."; dom.run.disabled = false; dom.pause.disabled = true; dom.pause.textContent = "Pause";
+      }
+      function updateMode() {
+        modeConfig = MODES[state.mode]; dom.pageTitle.textContent = state.mode === "sorting" ? "Turn chaos into order." : "Make the abstract glow.";
+        dom.stageTitle.textContent = modeConfig.title; dom.stageDescription.textContent = modeConfig.description; dom.stageLabel.textContent = modeConfig.label;
+        dom.complexity.textContent = modeConfig.complexity; dom.complexityNote.textContent = modeConfig.note; dom.codeTitle.textContent = `SOURCE / ${state.mode.toUpperCase()}.JS`; dom.code.innerHTML = modeConfig.code; dom.explain.innerHTML = modeConfig.explain;
+        const usesRows = ["pascal", "leibniz", "fibonacci", "hanoi", "knapsack", "lcs"].includes(state.mode);
+        const sorting = state.mode === "sorting"; dom.rowsField.hidden = !usesRows; dom.sortField.hidden = !sorting; dom.sizeField.hidden = !sorting; resetVisualization();
+      }
+      async function run() {
+        if (state.running) return; state.running = true; state.paused = false; dom.run.disabled = true; dom.pause.disabled = false; setStats(state.step, state.total, state.operations, state.step, "RUNNING");
+        if (state.mode === "sorting") await runSort(); else { while (state.step < state.total && state.running) { if (state.paused) { await sleep(80); continue; } state.step++; state.operations++; modeConfig.render(state.step); setStats(state.step, state.total, state.operations, state.step, "RUNNING"); dom.status.textContent = `Processing step ${state.step} of ${state.total}...`; await sleep(clamp(Number(dom.speed.value), 40, 1200)); } }
+        if (state.running) { state.running = false; dom.run.disabled = false; dom.pause.disabled = true; setStats(state.total, state.total, state.operations, state.total, "DONE"); dom.status.textContent = "Sequence complete. Every step is now visible."; }
+      }
+      async function runSort() {
+        const values = state.data; const algorithm = dom.sort.value;
+        if (algorithm === "bubble") { for (let end = values.length - 1; end > 0 && state.running; end--) { state.sorted.add(end); for (let i = 0; i < end && state.running; i++) { await sortPause([i, i+1], []); if (values[i] > values[i+1]) { [values[i], values[i+1]] = [values[i+1], values[i]]; state.operations++; await sortPause([i, i+1], [i, i+1]); } } } }
+        else if (algorithm === "merge") await mergeSort(values, 0, values.length - 1);
+        else await quickSort(values, 0, values.length - 1);
+        values.forEach((_, i) => state.sorted.add(i)); renderBars(values, [], [], state.sorted);
+      }
+      async function sortPause(compare, swap) { while (state.paused && state.running) await sleep(80); state.compare = compare; state.swap = swap; state.step++; state.operations++; renderBars(state.data, state.compare, state.swap, state.sorted); setStats(state.step, state.total, state.operations, state.step, "RUNNING"); await sleep(clamp(Number(dom.speed.value), 40, 1200)); }
+      async function mergeSort(values, left, right) { if (left >= right || !state.running) return; const mid = Math.floor((left+right)/2); await mergeSort(values,left,mid); await mergeSort(values,mid+1,right); const merged = values.slice(left,right+1).sort((a,b)=>a-b); for (let i=0;i<merged.length && state.running;i++) { values[left+i]=merged[i]; await sortPause([left+i], [left+i]); } }
+      async function quickSort(values, left, right) { if (left >= right || !state.running) return; const pivot=values[right]; let index=left; for(let i=left;i<right && state.running;i++){ await sortPause([i,right],[]); if(values[i]<pivot){[values[i],values[index]]=[values[index],values[i]]; index++; await sortPause([i,index-1],[i,index-1]);} } [values[index],values[right]]=[values[right],values[index]]; await sortPause([index],[index]); await quickSort(values,left,index-1); await quickSort(values,index+1,right); }
+      dom.run.addEventListener("click", run);
+      dom.pause.addEventListener("click", () => { state.paused = !state.paused; dom.pause.textContent = state.paused ? "Resume" : "Pause"; dom.status.textContent = state.paused ? "Paused. Resume when ready." : "Running..."; });
+      dom.reset.addEventListener("click", resetVisualization);
+      dom.sort.addEventListener("change", () => { if (state.mode === "sorting") resetVisualization(); });
+      document.querySelectorAll(".nav-item").forEach(button => button.addEventListener("click", () => { state.mode = button.dataset.mode; document.querySelectorAll(".nav-item").forEach(item => item.setAttribute("aria-current", String(item === button))); updateMode(); }));
+      updateMode();
+    })();
+  </script>
+</body>
+</html>

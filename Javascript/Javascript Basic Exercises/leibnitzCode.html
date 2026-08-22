@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leibnizov Trikotnik - Neon Edition</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #0d0d1a;
+            color: #fff;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #00ffff;
+            text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #1a1a3a;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #ff00ff;
+            box-shadow: 0 0 15px #ff00ff, inset 0 0 15px #ff00ff;
+        }
+        
+        /* Stil za prikaz JavaScript kode na vrhu */
+        .code-display {
+            background-color: #050510;
+            border: 1px solid #39ff14;
+            box-shadow: 0 0 10px #39ff14;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            overflow-x: auto;
+        }
+        .code-display h3 {
+            margin-top: 0;
+            color: #39ff14;
+            text-shadow: 0 0 5px #39ff14;
+        }
+        .code-display pre {
+            color: #39ff14;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .controls {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        label {
+            color: #ff00ff;
+            text-shadow: 0 0 5px #ff00ff;
+        }
+        input {
+            padding: 8px;
+            width: 60px;
+            font-size: 16px;
+            text-align: center;
+            background: #0d0d1a;
+            border: 1px solid #00ffff;
+            color: #00ffff;
+            box-shadow: 0 0 5px #00ffff;
+            border-radius: 4px;
+        }
+        button {
+            padding: 8px 15px;
+            font-size: 16px;
+            background-color: transparent;
+            color: #00ffff;
+            border: 2px solid #00ffff;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 0 8px #00ffff;
+            text-shadow: 0 0 5px #00ffff;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #00ffff;
+            color: #0d0d1a;
+            box-shadow: 0 0 15px #00ffff;
+        }
+        .triangle {
+            text-align: center;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 18px;
+            line-height: 2.5;
+            margin-top: 20px;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        .row {
+            display: block;
+        }
+        .cell {
+            display: inline-block;
+            margin: 0 10px;
+            min-width: 60px;
+            color: #ff00ff;
+            text-shadow: 0 0 8px #ff00ff;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Izpis JavaScript kode na vrhu -->
+    <div class="code-display">
+        <h3>Uporabljena JavaScript koda:</h3>
+<pre>
+function kombinacija(n, k) {
+    if (k === 0 || k === n) return 1;
+    let produkt = 1;
+    for (let i = 1; i <= k; i++) {
+        produkt = produkt * (n - i + 1) / i;
+    }
+    return produkt;
+}
+
+function generirajTrikotnik() {
+    const štVrstic = parseInt(document.getElementById('rowsInput').value);
+    const kontejner = document.getElementById('triangleContainer');
+    kontejner.innerHTML = '';
+
+    for (let n = 0; n < štVrstic; n++) {
+        const vrsticaDiv = document.createElement('div');
+        vrsticaDiv.className = 'row';
+
+        for (let k = 0; k <= n; k++) {
+            const imenovalec = (n + 1) * kombinacija(n, k);
+            const ulomek = `1/${imenovalec}`;
+
+            const celicaSpan = document.createElement('span');
+            celicaSpan.className = 'cell';
+            celicaSpan.innerText = ulomek;
+            
+            vrsticaDiv.appendChild(celicaSpan);
+        }
+        kontejner.appendChild(vrsticaDiv);
+    }
+}
+</pre>
+    </div>
+
+    <h1>Leibnizov harmonični trikotnik</h1>
+    
+    <div class="controls">
+        <label for="rowsInput">Število vrstic: </label>
+        <input type="number" id="rowsInput" value="6" min="1" max="12">
+        <button onclick="generirajTrikotnik()">Prikaži</button>
+    </div>
+
+    <div class="triangle" id="triangleContainer"></div>
+</div>
+
+<script>
+    // Funkcija za izračun kombinacij (Pascalov trikotnik)
+    function kombinacija(n, k) {
+        if (k === 0 || k === n) return 1;
+        let produkt = 1;
+        for (let i = 1; i <= k; i++) {
+            produkt = produkt * (n - i + 1) / i;
+        }
+        return produkt;
+    }
+
+    // Glavna funktion za generiranje Leibnizovega trikotnika
+    function generirajTrikotnik() {
+        const štVrstic = parseInt(document.getElementById('rowsInput').value);
+        const kontejner = document.getElementById('triangleContainer');
+        kontejner.innerHTML = ''; // Izprazni prejšnji trikotnik
+
+        for (let n = 0; n < štVrstic; n++) {
+            const vrsticaDiv = document.createElement('div');
+            vrsticaDiv.className = 'row';
+
+            for (let k = 0; k <= n; k++) {
+                // Leibnizovo število = 1 / ((n + 1) * Kombinacija(n, k))
+                const imenovalec = (n + 1) * kombinacija(n, k);
+                
+                // Formatiran zapis ulomka
+                const ulomek = `1/${imenovalec}`;
+
+                const celicaSpan = document.createElement('span');
+                celicaSpan.className = 'cell';
+                celicaSpan.innerText = ulomek;
+                
+                vrsticaDiv.appendChild(celicaSpan);
+            }
+            kontejner.appendChild(vrsticaDiv);
+        }
+    }
+
+    // Začetni prikaz ob nalaganju strani
+    generirajTrikotnik();
+</script>
+
+</body>
+</html>

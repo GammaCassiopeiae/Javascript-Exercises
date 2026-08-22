@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Leibnizov Trikotnik</title>
+    <style>
+        body { background: #050508; color: #f0f4f8; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        h1 { color: #00f3ff; text-shadow: 0 0 10px #00f3ff; margin-bottom: 5px; }
+        .panel { background: #0d0f1a; border: 2px solid #ff007f; box-shadow: 0 0 15px rgba(255,0,127,0.2); border-radius: 8px; padding: 15px; width: 100%; max-width: 800px; text-align: center; margin-bottom: 20px; }
+        input { background: #000; border: 2px solid #00f3ff; color: #00f3ff; font-size: 1.1rem; padding: 5px; width: 60px; text-align: center; font-weight: bold; border-radius: 4px; }
+        .green { color: #39ff14; font-weight: bold; text-shadow: 0 0 5px #39ff14; }
+        .box { background: #0d0f1a; border: 2px solid #00f3ff; box-shadow: 0 0 15px rgba(0,243,255,0.15); border-radius: 8px; padding: 20px; overflow: auto; max-width: 95vw; }
+        .row { display: flex; justify-content: center; margin-bottom: 4px; }
+        .cell { width: 65px; height: 40px; margin: 0 2px; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid rgba(0,243,255,0.15); border-radius: 4px; font-size: 0.75rem; font-family: monospace; }
+        .denom { border-top: 1px solid #f0f4f8; width: 100%; text-align: center; }
+        .active { border: 2px solid #39ff14 !important; box-shadow: 0 0 10px #39ff14; color: #39ff14 !important; font-weight: bold; background: rgba(57,255,20,0.08); }
+        .active .denom { border-top-color: #39ff14; }
+    </style>
+</head>
+<body>
+
+    <h1>Leibnizov Trikotnik</h1>
+    
+    <div class="panel">
+        <label>Številka diagonale (1 - 20): <input type="number" id="diag" min="1" max="20" value="3"></label>
+        <p id="info">Izbrana je <span class="green">3. diagonala</span>. Vsota: <span class="green">1/2</span></p>
+    </div>
+
+    <div class="box" id="tri"></div>
+
+    <script>
+        const tri = document.getElementById("tri"), diag = document.getElementById("diag"), info = document.getElementById("info");
+
+        function binom(n, k) {
+            if (k < 0 || k > n) return 1n;
+            let res = 1n;
+            for (let i = 1n; i <= BigInt(Math.min(k, n - k)); i++) res = res * BigInt(n--) / i;
+            return res;
+        }
+
+        function render() {
+            tri.innerHTML = "";
+            let sel = parseInt(diag.value) || 3;
+            if (sel < 1) diag.value = sel = 1;
+            if (sel > 20) diag.value = sel = 20;
+
+            for (let r = 1; r <= 20; r++) {
+                let row = document.createElement("div");
+                row.className = "row";
+                for (let c = 1; c <= r; c++) {
+                    let cell = document.createElement("div"), den = BigInt(r) * binom(r - 1, c - 1);
+                    cell.className = c === sel ? "cell active" : "cell";
+                    cell.innerHTML = `<div>1</div><div class="denom" style="${den > 99999n ? 'font-size:0.65rem' : ''}">${den > 99999999n ? den.toExponential(1).replace('+','') : den}</div>`;
+                    row.appendChild(cell);
+                }
+                tri.appendChild(row);
+            }
+            info.innerHTML = `Izbrana je <span class="green">${sel}. diagonala</span>. Začetek: <span class="green">1/${sel}</span>. Vsota: <span class="green">${sel===1 ? 'neskončno' : '1/'+(sel-1)}</span>`;
+        }
+
+        diag.addEventListener("input", render);
+        render();
+    </script>
+</body>
+</html>

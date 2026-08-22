@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Vizualizacija Binomskega Izreka</title>
+    <style>
+        /* Osnovne nastavitve za neon temno ozadje */
+        body {
+            background-color: #0d0d1a;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        h1 {
+            color: #00ffff;
+            text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 40px #00ffff;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #ff00ff;
+            text-shadow: 0 0 8px #ff00ff;
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+        }
+
+        /* Kontrole za upravljanje */
+        .controls {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px 40px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+            border: 1px solid #00ffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        label {
+            font-size: 1.2rem;
+            color: #00ffff;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 250px;
+            height: 8px;
+            background: #1a1a3a;
+            border-radius: 5px;
+            outline: none;
+            border: 1px solid #ff00ff;
+            box-shadow: 0 0 8px #ff00ff;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ff00ff;
+            cursor: pointer;
+            box-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff;
+            transition: transform 0.1s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        /* Izpis enačbe */
+        .equation-container {
+            width: 90%;
+            max-width: 800px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid #ff00ff;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.2);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 40px;
+            word-wrap: break-word;
+        }
+
+        .math-text {
+            font-size: 1.6rem;
+            line-height: 2.2rem;
+            letter-spacing: 1px;
+        }
+
+        .neon-blue {
+            color: #00ffff;
+            text-shadow: 0 0 5px #00ffff;
+        }
+
+        .neon-magenta {
+            color: #ff00ff;
+            text-shadow: 0 0 5px #ff00ff;
+        }
+
+        .neon-green {
+            color: #39ff14;
+            text-shadow: 0 0 5px #39ff14;
+        }
+
+        /* Pascalov trikotnik */
+        .triangle-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            margin-top: 20px;
+            padding-bottom: 50px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .cell {
+            min-width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(13, 13, 26, 0.8);
+            border: 1px solid #39ff14;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #39ff14;
+            box-shadow: 0 0 5px rgba(57, 255, 20, 0.3);
+            transition: all 0.5s ease;
+            padding: 0 5px;
+        }
+
+        /* Stil za aktivno vrstico */
+        .row.active .cell {
+            color: #00ffff;
+            border-color: #00ffff;
+            box-shadow: 0 0 15px #00ffff, inset 0 0 5px #00ffff;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Binomski Izrek</h1>
+    <div class="subtitle">Interaktivna Neon Vizualizacija</div>
+
+    <!-- Kontrole -->
+    <div class="controls">
+        <label for="exponentRange">Eksponent (n) = <span id="exponentValue" class="neon-magenta">4</span></label>
+        <input type="range" id="exponentRange" min="0" max="8" value="4">
+    </div>
+
+    <!-- Izpis razvite enačbe -->
+    <div class="equation-container">
+        <div id="equationDisplay" class="math-text"></div>
+    </div>
+
+    <!-- Grafični prikaz Pascalovega trikotnika -->
+    <div class="triangle-container" id="triangleContainer"></div>
+
+    <script>
+        // DOM elementi
+        const rangeInput = document.getElementById('exponentRange');
+        const exponentValue = document.getElementById('exponentValue');
+        const equationDisplay = document.getElementById('equationDisplay');
+        const triangleContainer = document.getElementById('triangleContainer');
+
+        // Funkcija za izračun kombinacij (n nad k)
+        function nCr(n, r) {
+            if (r < 0 || r > n) return 0;
+            if (r === 0 || r === n) return 1;
+            if (r > n / 2) r = n - r;
+            
+            let res = 1;
+            for (let i = 1; i <= r; i++) {
+                res = res * (n - r + i) / i;
+            }
+            return Math.round(res);
+        }
+
+        // Generiranje celotnega Pascalovega trikotnika do maxN
+        function generateTriangle(maxN, activeN) {
+            triangleContainer.innerHTML = '';
+            
+            for (let n = 0; n <= maxN; n++) {
+                const rowDiv = document.createElement('div');
+                rowDiv.classList.add('row');
+                
+                // Označi trenutno izbrano vrstico
+                if (n === activeN) {
+                    rowDiv.classList.add('active');
+                }
+
+                for (let k = 0; k <= n; k++) {
+                    const cellDiv = document.createElement('div');
+                    cellDiv.classList.add('cell');
+                    cellDiv.innerText = nCr(n, k);
+                    rowDiv.appendChild(cellDiv);
+                }
+                
+                triangleContainer.appendChild(rowDiv);
+            }
+        }
+
+        // Generiranje besedila za binomsko enačbo
+        function updateEquation(n) {
+            let htmlHTML = `<span class="neon-blue">(a + b)<sup>${n}</sup></span> = `;
+            
+            if (n === 0) {
+                htmlHTML += `<span class="neon-green">1</span>`;
+                equationDisplay.innerHTML = htmlHTML;
+                return;
+            }
+
+            let terms = [];
+
+            for (let k = 0; k <= n; k++) {
+                const coeff = nCr(n, k);
+                const aPow = n - k;
+                const bPow = k;
+                
+                let termStr = '';
+
+                // Dodajanje koeficienta (izpustimo 1, razen če sta a in b na potenci 0)
+                if (coeff !== 1 || (aPow === 0 && bPow === 0)) {
+                    termStr += `<span class="neon-green">${coeff}</span>`;
+                }
+
+                // Dodajanje spremenljivke a
+                if (aPow > 0) {
+                    termStr += `a`;
+                    if (aPow > 1) {
+                        termStr += `<sup>${aPow}</sup>`;
+                    }
+                }
+
+                // Dodajanje spremenljivke b
+                if (bPow > 0) {
+                    termStr += `b`;
+                    if (bPow > 1) {
+                        termStr += `<sup>${bPow}</sup>`;
+                    }
+                }
+
+                terms.push(termStr);
+            }
+
+            // Združitev vseh členov s plusom
+            htmlHTML += terms.join(' + ');
+            equationDisplay.innerHTML = htmlHTML;
+        }
+
+        // Glavna funkcija za osveževanje prikaza
+        function render() {
+            const n = parseInt(rangeInput.value);
+            exponentValue.innerText = n;
+            updateEquation(n);
+            generateTriangle(8, n); // Omejeno na max 8 vrstic za lepši neon izris
+        }
+
+        // Poslušalci dogodkov (Event Listeners) za drsnik
+        rangeInput.addEventListener('input', render);
+
+        // Začetni izris ob nalaganju strani
+        render();
+    </script>
+</body>
+</html>

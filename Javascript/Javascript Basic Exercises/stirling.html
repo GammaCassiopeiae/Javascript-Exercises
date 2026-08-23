@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trikotnik Stirlingovih števil</title>
+    <style>
+        :root {
+            --primary-color: #00ffcc; /* Neonska turkizna */
+            --bg-color: #0a0a12;      /* Globoko temno neonsko ozadje */
+            --card-bg: #141424;       /* Temno ozadje za celice */
+            --text-color: #ffffff;    /* Bela za visoko čitljivost */
+            --border-color: #0055ff;  /* Neonska modra za robove */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 5px;
+            text-shadow: 0 0 10px var(--primary-color);
+        }
+
+        .description {
+            max-width: 600px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            color: #8fa0dd;
+        }
+
+        .controls {
+            margin-bottom: 30px;
+            background: var(--card-bg);
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 85, 255, 0.3);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #ff007f; /* Neonska roza */
+            text-shadow: 0 0 5px rgba(255, 0, 127, 0.5);
+        }
+
+        input[type="number"] {
+            width: 60px;
+            padding: 8px;
+            background-color: #0a0a12;
+            border: 1px solid var(--primary-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            color: var(--primary-color);
+            text-align: center;
+            text-shadow: 0 0 5px var(--primary-color);
+        }
+
+        button {
+            background-color: #ff007f;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            box-shadow: 0 0 10px #ff007f;
+        }
+
+        button:hover {
+            background-color: #ff3399;
+            box-shadow: 0 0 15px #ff3399;
+        }
+
+        .triangle-container {
+            width: 100%;
+            overflow-x: auto;
+            padding: 20px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .triangle {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            white-space: nowrap;
+        }
+
+        .cell {
+            min-width: 50px;
+            height: 40px;
+            padding: 0 8px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .cell:hover {
+            background-color: #1a1a3a;
+            border-color: #39ff14; /* Svetleče neonsko zelena ob premiku miške */
+            box-shadow: 0 0 12px #39ff14;
+            transform: scale(1.05);
+            z-index: 10;
+        }
+
+        .cell .indices {
+            font-size: 0.65rem;
+            color: #637bcf;
+            margin-bottom: 2px;
+        }
+
+        .cell .value {
+            font-weight: bold;
+            color: #39ff14; /* Neonsko zelena števila */
+            text-shadow: 0 0 3px rgba(57, 255, 20, 0.5);
+        }
+
+        /* Izpostavitev robnih vrednosti */
+        .cell.edge {
+            background-color: #1c1c3a;
+            border-color: #ff007f;
+        }
+        
+        .cell.edge .value {
+            color: #ff007f;
+            text-shadow: 0 0 3px rgba(255, 0, 127, 0.5);
+        }
+
+        /* Detajli ob kliku */
+        .info-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: #141424;
+            border: 1px solid #39ff14;
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.3);
+            border-radius: 6px;
+            max-width: 500px;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Trikotnik Stirlingovih števil</h1>
+    <p class="description">
+        Prikaz Stirlingovih števil druge vrste $S(n, k)$. Logika Trikotnika Stirlingovih števil druge vrste temelji na enem preprostem vprašanju iz kombinatorike: Na koliko načinov lahko \(n\) različnih predmetov razdelimo v \(k\) enakih (nerazločljivih) skupin, pri čemer nobena skupina ne sme ostati prazna?
+    </p>
+
+    <div class="controls">
+        <label for="rowsInput">Število vrstic (n):</label>
+        <input type="number" id="rowsInput" min="1" max="20" value="10">
+        <button onclick="generateTriangle()">Izračunaj</button>
+    </div>
+
+    <div class="triangle-container">
+        <div class="triangle" id="stirlingTriangle"></div>
+    </div>
+
+    <div class="info-box" id="infoBox"></div>
+
+    <script>
+        // Formula: S(n, k) = k * S(n-1, k) + S(n-1, k-1)
+        function calculateStirlingTriangle(maxN) {
+            let triangle = [];
+            
+            for (let n = 0; n <= maxN; n++) {
+                triangle[n] = new Array(n + 1);
+                for (let k = 0; k <= n; k++) {
+                    if (k === 0 && n === 0) {
+                        triangle[n][k] = 1n;
+                    } else if (k === 0 || k > n) {
+                        triangle[n][k] = 0n;
+                    } else if (k === 1 || k === n) {
+                        triangle[n][k] = 1n;
+                    } else {
+                        let term1 = BigInt(k) * triangle[n-1][k];
+                        let term2 = triangle[n-1][k-1];
+                        triangle[n][k] = term1 + term2;
+                    }
+                }
+            }
+            return triangle;
+        }
+
+        function generateTriangle() {
+            const rowsInput = document.getElementById('rowsInput');
+            let maxN = parseInt(rowsInput.value);
+            
+            if (isNaN(maxN) || maxN < 1) maxN = 1;
+            if (maxN > 20) maxN = 20;
+            rowsInput.value = maxN;
+
+            const triangleData = calculateStirlingTriangle(maxN);
+            const container = document.getElementById('stirlingTriangle');
+            container.innerHTML = ''; 
+            document.getElementById('infoBox').style.display = 'none';
+
+            for (let n = 1; n <= maxN; n++) {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'row';
+
+                for (let k = 1; k <= n; k++) {
+                    const val = triangleData[n][k];
+                    
+                    const cellDiv = document.createElement('div');
+                    cellDiv.className = 'cell';
+                    if (k === 1 || k === n) {
+                        cellDiv.className += ' edge';
+                    }
+
+                    let valStr = val.toString();
+                    if (valStr.length > 8) {
+                        cellDiv.style.fontSize = '0.7rem';
+                        cellDiv.style.minWidth = '70px';
+                    } else if (valStr.length > 5) {
+                        cellDiv.style.fontSize = '0.75rem';
+                        cellDiv.style.minWidth = '60px';
+                    }
+
+                    cellDiv.innerHTML = `
+                        <div class="indices">S(${n},${k})</div>
+                        <div class="value">${valStr}</div>
+                    `;
+
+                    cellDiv.onclick = function() {
+                        showDetails(n, k, valStr);
+                    };
+
+                    rowDiv.appendChild(cellDiv);
+                }
+                container.appendChild(rowDiv);
+            }
+        }
+
+        function showDetails(n, k, value) {
+            const infoBox = document.getElementById('infoBox');
+            infoBox.style.display = 'block';
+            infoBox.innerHTML = `<strong style="color: #00ffcc;">S(${n}, ${k}) = ${Number(value).toLocaleString('sl-SI')}</strong><br>
+            ${n} različnih predmetov lahko razdelimo v ${k} skupin na točno toliko načinov.`;
+        }
+
+        window.onload = generateTriangle;
+    </script>
+</body>
+</html>

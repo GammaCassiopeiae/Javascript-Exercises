@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Neon Pascal's Triangle + Binomial Expansion</title>
+  <style>
+    body {
+      background: #050510;
+      color: #00ffea;
+      font-family: "Consolas", monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #ff00ff;
+      text-shadow: 0 0 10px #ff00ff;
+    }
+
+    #triangle {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 18px;
+    }
+
+    .row {
+      margin: 4px 0;
+    }
+
+    .cell {
+      display: inline-block;
+      min-width: 32px;
+      padding: 4px 8px;
+      margin: 2px;
+      border-radius: 6px;
+      background: #111133;
+      color: #00ffea;
+      box-shadow: 0 0 8px #00ffea;
+    }
+
+    .cell:nth-child(odd) {
+      background: #221144;
+      box-shadow: 0 0 8px #ff00ff;
+      color: #ffddff;
+    }
+
+    #controls {
+      margin-top: 15px;
+    }
+
+    input[type="number"], input[type="text"] {
+      background: #050520;
+      border: 1px solid #00ffea;
+      color: #00ffea;
+      padding: 4px 8px;
+      border-radius: 4px;
+      width: 120px;
+    }
+
+    button {
+      background: #ff00ff;
+      border: none;
+      color: #050510;
+      padding: 6px 12px;
+      margin-left: 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 0 8px #ff00ff;
+    }
+
+    button:hover {
+      box-shadow: 0 0 14px #ff00ff;
+    }
+
+    #expansion {
+      margin-top: 30px;
+      max-width: 900px;
+      font-size: 20px;
+      color: #a0ffea;
+      text-align: center;
+      line-height: 1.8;
+    }
+
+    .term {
+      display: inline-block;
+      margin: 6px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      background: #111133;
+      box-shadow: 0 0 10px #00ffea;
+      color: #ffddff;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .term:hover {
+      transform: scale(1.15);
+      box-shadow: 0 0 16px #ff00ff;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Neon Pascal's Triangle + Binomial Expansion</h1>
+
+  <div id="controls">
+    <label>Rows:</label>
+    <input type="number" id="rows" min="1" max="20" value="8">
+    <button id="generate">Generate Triangle</button>
+  </div>
+
+  <div id="triangle"></div>
+
+  <h2 style="color:#ff00ff; margin-top:30px; text-shadow:0 0 10px #ff00ff;">
+    Binomial Expansion Visualizer
+  </h2>
+
+  <div id="controls2">
+    <label>(a + b)^n :</label>
+    <input type="text" id="a" value="a">
+    <input type="text" id="b" value="b">
+    <input type="number" id="n" min="0" max="15" value="5">
+    <button id="expand">Expand</button>
+  </div>
+
+  <div id="expansion"></div>
+
+  <script>
+    // Pascal triangle generation
+    function generatePascalTriangle(n) {
+      const triangle = [];
+      for (let i = 0; i < n; i++) {
+        const row = [];
+        for (let k = 0; k <= i; k++) {
+          row.push(binomial(i, k));
+        }
+        triangle.push(row);
+      }
+      return triangle;
+    }
+
+    function factorial(m) {
+      if (m === 0 || m === 1) return 1;
+      let result = 1;
+      for (let i = 2; i <= m; i++) result *= i;
+      return result;
+    }
+
+    function binomial(n, k) {
+      return factorial(n) / (factorial(k) * factorial(n - k));
+    }
+
+    function renderTriangle(triangle) {
+      const container = document.getElementById("triangle");
+      container.innerHTML = "";
+
+      triangle.forEach((row, rowIndex) => {
+        const rowDiv = document.createElement("div");
+        rowDiv.className = "row";
+        rowDiv.style.paddingLeft = (triangle.length - rowIndex) * 10 + "px";
+
+        row.forEach((value) => {
+          const cell = document.createElement("span");
+          cell.className = "cell";
+          cell.textContent = value;
+          rowDiv.appendChild(cell);
+        });
+
+        container.appendChild(rowDiv);
+      });
+    }
+
+    // Binomial expansion visualizer
+    function expandBinomial(a, b, n) {
+      const container = document.getElementById("expansion");
+      container.innerHTML = "";
+
+      for (let k = 0; k <= n; k++) {
+        const coeff = binomial(n, k);
+        const term = document.createElement("span");
+        term.className = "term";
+
+        const partA = `${a}<sup>${n - k}</sup>`;
+        const partB = `${b}<sup>${k}</sup>`;
+
+        term.innerHTML = `${coeff} · ${partA} · ${partB}`;
+        container.appendChild(term);
+      }
+    }
+
+    // Event listeners
+    document.getElementById("generate").addEventListener("click", () => {
+      const n = parseInt(document.getElementById("rows").value, 10);
+      renderTriangle(generatePascalTriangle(n));
+    });
+
+    document.getElementById("expand").addEventListener("click", () => {
+      const a = document.getElementById("a").value;
+      const b = document.getElementById("b").value;
+      const n = parseInt(document.getElementById("n").value, 10);
+      expandBinomial(a, b, n);
+    });
+
+    // Initial render
+    renderTriangle(generatePascalTriangle(8));
+    expandBinomial("a", "b", 5);
+  </script>
+
+</body>
+</html>

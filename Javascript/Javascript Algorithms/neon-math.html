@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Neon-noir math visualization: Pascal's Triangle, Leibniz Harmonic Series, Stirling & Bell Numbers, Fibonacci spiral and golden ratio, ratio explorer." />
+  <title>NEON.MATH // Combinatorics &amp; Series</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&amp;family=Rajdhani:wght@400;500;600;700&amp;family=Fira+Code:wght@400;500&amp;display=swap" rel="stylesheet" />
+
+  <style>
+    /* ---------- DESIGN TOKENS ---------- */
+    :root {
+      /* Surfaces */
+      --bg-0: #05010f;
+      --bg-1: #0a0418;
+      --bg-2: #110826;
+      --bg-3: #1a0d36;
+      --line: rgba(255, 43, 214, 0.18);
+
+      /* Neon palette */
+      --c-cyan: #00f0ff;
+      --c-pink: #ff2bd6;
+      --c-purple: #b026ff;
+      --c-lime: #c6ff00;
+      --c-orange: #ff6a00;
+      --c-amber: #ffd166;
+
+      /* Ink */
+      --ink-1: #f6e9ff;
+      --ink-2: #b6a4d6;
+      --ink-3: #6b5a8c;
+
+      /* Type */
+      --font-display: 'Orbitron', 'Segoe UI', system-ui, sans-serif;
+      --font-ui: 'Rajdhani', system-ui, sans-serif;
+      --font-mono: 'Fira Code', 'Courier New', monospace;
+
+      /* Motion */
+      --ease: cubic-bezier(.2, .8, .2, 1);
+
+      /* Layout */
+      --r-cell: 14px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* ---------- RESET ---------- */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-ui);
+      background:
+        radial-gradient(1200px 800px at 10% -10%, rgba(176,38,255,.15), transparent 60%),
+        radial-gradient(900px 600px at 110% 10%, rgba(0,240,255,.10), transparent 60%),
+        radial-gradient(800px 800px at 50% 120%, rgba(255,43,214,.12), transparent 60%),
+        var(--bg-1);
+      color: var(--ink-1);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      letter-spacing: .01em;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+    ul { list-style: none; }
+    h1, h2, h3 { font-family: var(--font-display); letter-spacing: .04em; }
+
+    /* ---------- SCANLINES ---------- */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 2px,
+        rgba(255,255,255,.012) 3px,
+        transparent 4px
+      );
+      mix-blend-mode: screen;
+      z-index: 1000;
+    }
+
+    /* ---------- LAYOUT ---------- */
+    .l-shell {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: clamp(1rem, 2.5vw, 2rem);
+    }
+
+    .c-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.25rem;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01));
+      backdrop-filter: blur(8px);
+      margin-bottom: 1.5rem;
+      box-shadow: 0 0 0 1px rgba(0,240,255,.06), 0 8px 40px rgba(176,38,255,.12);
+    }
+    .c-topbar__brand {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: clamp(1rem, 1.5vw + .5rem, 1.4rem);
+      color: var(--c-cyan);
+      text-shadow: 0 0 6px rgba(0,240,255,.6), 0 0 16px rgba(0,240,255,.25);
+    }
+    .c-topbar__brand span { color: var(--c-pink); text-shadow: 0 0 6px rgba(255,43,214,.6); }
+    .c-topbar__nav { display: flex; gap: .5rem; flex-wrap: wrap; }
+    .c-topbar__nav a {
+      padding: .35rem .8rem;
+      font-family: var(--font-mono);
+      font-size: .8rem;
+      color: var(--ink-2);
+      border: 1px solid transparent;
+      border-radius: 999px;
+      transition: all .25s var(--ease);
+    }
+    .c-topbar__nav a:hover {
+      color: var(--c-cyan);
+      border-color: rgba(0,240,255,.4);
+      text-shadow: 0 0 8px rgba(0,240,255,.5);
+    }
+
+    /* ---------- SECTION CARD ---------- */
+    .c-card {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.005));
+      backdrop-filter: blur(10px);
+      padding: clamp(1rem, 2vw, 1.75rem);
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+    .c-card::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(0,240,255,.5), transparent 30%, transparent 70%, rgba(255,43,214,.5));
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+              mask-composite: exclude;
+      pointer-events: none;
+      opacity: .55;
+    }
+    .c-card__header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    .c-card__title {
+      font-size: clamp(1.1rem, 1.4vw + .6rem, 1.6rem);
+      color: var(--c-cyan);
+      text-shadow: 0 0 8px rgba(0,240,255,.4);
+    }
+    .c-card__title em {
+      font-style: normal;
+      color: var(--c-pink);
+      text-shadow: 0 0 8px rgba(255,43,214,.5);
+    }
+    .c-card__tag {
+      font-family: var(--font-mono);
+      font-size: .75rem;
+      color: var(--ink-3);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .c-card__desc {
+      color: var(--ink-2);
+      margin-bottom: 1rem;
+      font-size: .95rem;
+      max-width: 70ch;
+    }
+    .c-card__formula {
+      font-family: var(--font-mono);
+      font-size: .9rem;
+      color: var(--c-amber);
+      text-shadow: 0 0 6px rgba(255,209,102,.3);
+      padding: .6rem .9rem;
+      border: 1px solid rgba(255,209,102,.25);
+      border-radius: 10px;
+      background: rgba(255,209,102,.04);
+      display: inline-block;
+      margin-bottom: 1rem;
+    }
+
+    /* ---------- CONTROLS ---------- */
+    .c-controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+      padding: .75rem 1rem;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(0,0,0,.25);
+    }
+    .c-controls__label {
+      font-family: var(--font-mono);
+      font-size: .8rem;
+      color: var(--ink-3);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+    .c-controls__value {
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: var(--c-cyan);
+      text-shadow: 0 0 8px rgba(0,240,255,.5);
+      min-width: 2.5ch;
+      text-align: center;
+    }
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: clamp(140px, 30vw, 280px);
+      height: 4px;
+      background: linear-gradient(90deg, var(--c-cyan), var(--c-pink));
+      border-radius: 999px;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px; height: 18px;
+      background: var(--bg-0);
+      border: 2px solid var(--c-cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--c-cyan), 0 0 16px rgba(0,240,255,.4);
+      cursor: pointer;
+      transition: transform .15s var(--ease);
+    }
+    input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+    input[type="range"]::-moz-range-thumb {
+      width: 18px; height: 18px;
+      background: var(--bg-0);
+      border: 2px solid var(--c-cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--c-cyan);
+      cursor: pointer;
+    }
+    .c-btn {
+      padding: .5rem 1rem;
+      font-family: var(--font-mono);
+      font-size: .8rem;
+      color: var(--c-cyan);
+      border: 1px solid rgba(0,240,255,.4);
+      border-radius: 8px;
+      background: rgba(0,240,255,.05);
+      letter-spacing: .08em;
+      transition: all .2s var(--ease);
+    }
+    .c-btn:hover {
+      color: var(--bg-0);
+      background: var(--c-cyan);
+      box-shadow: 0 0 12px var(--c-cyan), 0 0 24px rgba(0,240,255,.4);
+    }
+    .c-btn--pink { color: var(--c-pink); border-color: rgba(255,43,214,.4); background: rgba(255,43,214,.05); }
+    .c-btn--pink:hover { color: var(--bg-0); background: var(--c-pink); box-shadow: 0 0 12px var(--c-pink); }
+    .c-btn--lime { color: var(--c-lime); border-color: rgba(198,255,0,.4); background: rgba(198,255,0,.05); }
+    .c-btn--lime:hover { color: var(--bg-0); background: var(--c-lime); box-shadow: 0 0 12px var(--c-lime); }
+
+    /* ---------- PASCAL ---------- */
+    .c-triangle {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 1rem 0;
+      overflow-x: auto;
+    }
+    .c-triangle__row {
+      display: flex;
+      gap: 4px;
+      justify-content: center;
+    }
+    .c-cell {
+      --cell-color: var(--c-cyan);
+      min-width: var(--r-cell);
+      min-height: var(--r-cell);
+      padding: 6px 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: .85rem;
+      color: var(--cell-color);
+      background: rgba(255,255,255,.03);
+      border: 1px solid color-mix(in srgb, var(--cell-color) 30%, transparent);
+      border-radius: 6px;
+      text-shadow: 0 0 6px color-mix(in srgb, var(--cell-color) 60%, transparent);
+      transition: transform .2s var(--ease), box-shadow .2s var(--ease);
+      cursor: default;
+    }
+    .c-cell:hover {
+      transform: translateY(-2px) scale(1.1);
+      box-shadow: 0 0 10px var(--cell-color), 0 0 20px color-mix(in srgb, var(--cell-color) 40%, transparent);
+      z-index: 2;
+    }
+    .c-cell--pink { --cell-color: var(--c-pink); }
+    .c-cell--lime { --cell-color: var(--c-lime); }
+    .c-cell--purple { --cell-color: var(--c-purple); }
+    .c-cell--orange { --cell-color: var(--c-orange); }
+    .c-cell--amber { --cell-color: var(--c-amber); }
+    .c-cell--edge {
+      background: transparent;
+      border-color: rgba(0,240,255,.2);
+      color: var(--ink-3);
+    }
+
+    /* ---------- TOOLTIP ---------- */
+    .c-tooltip {
+      position: fixed;
+      pointer-events: none;
+      z-index: 100;
+      padding: .5rem .75rem;
+      background: rgba(5,1,15,.95);
+      border: 1px solid var(--c-cyan);
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: .8rem;
+      color: var(--ink-1);
+      box-shadow: 0 0 16px rgba(0,240,255,.4);
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity .15s var(--ease), transform .15s var(--ease);
+      white-space: nowrap;
+    }
+    .c-tooltip.is-visible { opacity: 1; transform: translateY(0); }
+
+    /* ---------- SERIES CHART ---------- */
+    .c-chart {
+      position: relative;
+      width: 100%;
+      height: 280px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background:
+        linear-gradient(rgba(0,240,255,.04) 1px, transparent 1px) 0 0 / 100% 20%,
+        linear-gradient(90deg, rgba(0,240,255,.04) 1px, transparent 1px) 0 0 / 10% 100%,
+        rgba(0,0,0,.4);
+      overflow: hidden;
+    }
+    .c-chart svg { display: block; width: 100%; height: 100%; }
+    .c-chart__legend {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      font-family: var(--font-mono);
+      font-size: .72rem;
+      color: var(--ink-2);
+      display: flex;
+      gap: 1rem;
+    }
+    .c-chart__legend-item { display: flex; align-items: center; gap: .35rem; }
+    .c-chart__legend-swatch {
+      width: 12px; height: 3px;
+      box-shadow: 0 0 6px currentColor;
+    }
+
+    /* ---------- FIBONACCI ---------- */
+    .c-fib {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    @media (min-width: 720px) {
+      .c-fib { grid-template-columns: 1.1fr 1fr; }
+    }
+    .c-fib__sequence {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 1rem;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(0,0,0,.3);
+    }
+    .c-fib__chip {
+      --chip-color: var(--c-cyan);
+      font-family: var(--font-mono);
+      font-size: .85rem;
+      padding: .35rem .7rem;
+      border-radius: 8px;
+      color: var(--chip-color);
+      border: 1px solid color-mix(in srgb, var(--chip-color) 40%, transparent);
+      background: color-mix(in srgb, var(--chip-color) 6%, transparent);
+      text-shadow: 0 0 6px color-mix(in srgb, var(--chip-color) 60%, transparent);
+      transition: transform .2s var(--ease);
+    }
+    .c-fib__chip:hover { transform: translateY(-3px); }
+    .c-fib__chart {
+      height: 220px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(0,0,0,.3);
+    }
+
+    /* ---------- RATIO EXPLORER ---------- */
+    .c-ratios {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    @media (min-width: 720px) {
+      .c-ratios { grid-template-columns: repeat(2, 1fr); }
+    }
+    .c-ratio-card {
+      padding: 1rem;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(0,0,0,.3);
+    }
+    .c-ratio-card h3 {
+      font-size: 1rem;
+      color: var(--c-lime);
+      margin-bottom: .5rem;
+      text-shadow: 0 0 6px rgba(198,255,0,.4);
+    }
+    .c-ratio-card p {
+      font-family: var(--font-mono);
+      font-size: .85rem;
+      color: var(--ink-2);
+      margin-bottom: .35rem;
+    }
+    .c-ratio-card .val {
+      color: var(--c-amber);
+      text-shadow: 0 0 6px rgba(255,209,102,.4);
+    }
+    .c-bar {
+      height: 6px;
+      background: rgba(255,255,255,.06);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: .5rem;
+    }
+    .c-bar__fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--c-cyan), var(--c-pink));
+      box-shadow: 0 0 8px var(--c-cyan);
+      width: 0%;
+      transition: width .4s var(--ease);
+    }
+
+    /* ---------- FOOTER ---------- */
+    .c-footer {
+      text-align: center;
+      padding: 1.5rem;
+      color: var(--ink-3);
+      font-family: var(--font-mono);
+      font-size: .8rem;
+      letter-spacing: .1em;
+    }
+    .c-footer span { color: var(--c-pink); }
+  </style>
+</head>
+
+<body>
+  <div class="l-shell">
+    <!-- =================== TOPBAR =================== -->
+    <header class="c-topbar">
+      <div class="c-topbar__brand">NEON<span>.</span>MATH</div>
+      <nav class="c-topbar__nav" aria-label="Section navigation">
+        <a href="#pascal">Pascal</a>
+        <a href="#leibniz">Leibniz</a>
+        <a href="#stirling">Stirling</a>
+        <a href="#bell">Bell</a>
+        <a href="#fibonacci">Fibonacci</a>
+        <a href="#ratios">Ratios</a>
+      </nav>
+    </header>
+
+    <!-- =================== PASCAL =================== -->
+    <section class="c-card" id="pascal">
+      <header class="c-card__header">
+        <h2 class="c-card__title">Pascal's <em>Triangle</em></h2>
+        <span class="c-card__tag">Binomial Coefficients</span>
+      </header>
+      <p class="c-card__desc">
+        Each entry is <code>C(n, k) = n! / (k!(n-k)!)</code>. The sum of row n equals 2<sup>n</sup>.
+        Edge cells are always 1; inner cells are the sum of the two parents above.
+      </p>
+      <div class="c-card__formula" id="pascalFormula">
+        C(n, k) = n! / (k! · (n − k)!)
+      </div>
+
+      <div class="c-controls">
+        <span class="c-controls__label">Rows</span>
+        <input type="range" id="pascalN" min="1" max="16" value="10" aria-label="Number of rows" />
+        <span class="c-controls__value" id="pascalNVal">10</span>
+        <button class="c-btn c-btn--pink" id="pascalAnimate" type="button">▶ Animate</button>
+      </div>
+
+      <div class="c-triangle" id="pascalTriangle" aria-label="Pascal's Triangle"></div>
+
+      <div class="c-controls" style="margin-top:1rem">
+        <span class="c-controls__label">Row sums Σ</span>
+        <span class="c-controls__value" id="pascalSum">—</span>
+        <span class="c-controls__label">= 2<sup>n</sup></span>
+      </div>
+    </section>
+
+    <!-- =================== LEIBNIZ =================== -->
+    <section class="c-card" id="leibniz">
+      <header class="c-card__header">
+        <h2 class="c-card__title">Leibniz <em>Harmonic Series</em></h2>
+        <span class="c-card__tag">Alternating · π/4</span>
+      </header>
+      <p class="c-card__desc">
+        The Leibniz series sums alternating reciprocals of odd numbers. Its partial sums oscillate around
+        and converge to <code>π/4</code>. Shown as signed rectangles whose total area approaches the limit.
+      </p>
+      <div class="c-card__formula">
+        π/4 = 1 − 1/3 + 1/5 − 1/7 + 1/9 − ...
+      </div>
+
+      <div class="c-controls">
+        <span class="c-controls__label">Terms n</span>
+        <input type="range" id="leibnizN" min="2" max="80" value="20" aria-label="Number of terms" />
+        <span class="c-controls__value" id="leibnizNVal">20</span>
+        <button class="c-btn c-btn--lime" id="leibnizAdd" type="button">+1</button>
+        <button class="c-btn c-btn--lime" id="leibnizReset" type="button">Reset</button>
+      </div>
+
+      <div class="c-chart" id="leibnizChart" aria-label="Leibniz partial sums chart">
+        <div class="c-chart__legend">
+          <span class="c-chart__legend-item" style="color:var(--c-cyan)">
+            <span class="c-chart__legend-swatch" style="background:var(--c-cyan)"></span>
+            Partial sums
+          </span>
+          <span class="c-chart__legend-item" style="color:var(--c-pink)">
+            <span class="c-chart__legend-swatch" style="background:var(--c-pink)"></span>
+            π/4 limit
+          </span>
+        </div>
+        <svg id="leibnizSvg" viewBox="0 0 800 280" preserveAspectRatio="none" role="img"></svg>
+      </div>
+    </section>
+
+    <!-- =================== STIRLING 2nd =================== -->
+    <section class="c-card" id="stirling">
+      <header class="c-card__header">
+        <h2 class="c-card__title">Stirling Numbers <em>(2nd Kind)</em></h2>
+        <span class="c-card__tag">S(n, k) · Set Partitions</span>
+      </header>
+      <p class="c-card__desc">
+        S(n, k) counts the ways to partition a set of n labeled elements into k non-empty unlabeled subsets.
+        Recurrence: <code>S(n, k) = k·S(n−1, k) + S(n−1, k−1)</code>.
+      </p>
+      <div class="c-card__formula">
+        S(n, k) = k · S(n−1, k) + S(n−1, k−1)
+      </div>
+
+      <div class="c-controls">
+        <span class="c-controls__label">n</span>
+        <input type="range" id="stirlingN" min="1" max="10" value="8" aria-label="Stirling n" />
+        <span class="c-controls__value" id="stirlingNVal">8</span>
+      </div>
+
+      <div class="c-triangle" id="stirlingTriangle" aria-label="Stirling triangle"></div>
+    </section>
+
+    <!-- =================== BELL =================== -->
+    <section class="c-card" id="bell">
+      <header class="c-card__header">
+        <h2 class="c-card__title">Bell <em>Numbers</em></h2>
+        <span class="c-card__tag">B(n) = Σ S(n, k)</span>
+      </header>
+      <p class="c-card__desc">
+        The Bell number B(n) counts all partitions of an n-element set — the row sum of the Stirling triangle.
+        Alternatively via the recurrence: <code>B(n+1) = Σ C(n, k) · B(k)</code>.
+      </p>
+      <div class="c-card__formula">
+        B(n+1) = Σ<sub>k=0..n</sub> C(n, k) · B(k)
+      </div>
+
+      <div class="c-chart" id="bellChart" aria-label="Bell numbers">
+        <div class="c-chart__legend">
+          <span class="c-chart__legend-item" style="color:var(--c-amber)">
+            <span class="c-chart__legend-swatch" style="background:var(--c-amber)"></span>
+            B(n) — log scale
+          </span>
+        </div>
+        <svg id="bellSvg" viewBox="0 0 800 280" preserveAspectRatio="none" role="img"></svg>
+      </div>
+
+      <div class="c-controls" style="margin-top:1rem">
+        <span class="c-controls__label">B(n)</span>
+        <span class="c-controls__value" id="bellCurrent">—</span>
+      </div>
+    </section>
+
+    <!-- =================== FIBONACCI =================== -->
+    <section class="c-card" id="fibonacci">
+      <header class="c-card__header">
+        <h2 class="c-card__title">Fibonacci <em>Spiral</em></h2>
+        <span class="c-card__tag">F(n) = F(n−1) + F(n−2)</span>
+      </header>
+      <p class="c-card__desc">
+        Each Fibonacci number is the sum of the two before it. Squares of side F(n) tile a rectangle whose
+        aspect ratio converges to the golden ratio φ ≈ 1.618. A logarithmic spiral is inscribed.
+      </p>
+      <div class="c-card__formula">
+        F(n) = F(n−1) + F(n−2), &nbsp; φ = (1 + √5) / 2
+      </div>
+
+      <div class="c-controls">
+        <span class="c-controls__label">n</span>
+        <input type="range" id="fibN" min="2" max="12" value="9" aria-label="Fibonacci length" />
+        <span class="c-controls__value" id="fibNVal">9</span>
+      </div>
+
+      <div class="c-fib">
+        <div class="c-fib__sequence" id="fibSequence" aria-label="Fibonacci sequence"></div>
+        <div class="c-fib__chart" id="fibChart" aria-label="Fibonacci squares with spiral">
+          <svg id="fibSvg" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet" role="img"></svg>
+        </div>
+      </div>
+
+      <div class="c-controls" style="margin-top:1rem">
+        <span class="c-controls__label">F(n)/F(n−1) →</span>
+        <span class="c-controls__value" id="fibRatio">—</span>
+        <span class="c-controls__label">φ = 1.618033988...</span>
+      </div>
+    </section>
+
+    <!-- =================== RATIOS =================== -->
+    <section class="c-card" id="ratios">
+      <header class="c-card__header">
+        <h2 class="c-card__title">Ratio <em>Explorer</em></h2>
+        <span class="c-card__tag">Live · Cross-theory</span>
+      </header>
+      <p class="c-card__desc">
+        Cross-theory ratios computed live from the current Fibonacci length and Pascal row.
+      </p>
+
+      <div class="c-ratios">
+        <div class="c-ratio-card">
+          <h3>Fib → φ</h3>
+          <p>F(n) / F(n−1) = <span class="val" id="rFib">—</span></p>
+          <p>F(n) / F(n−2) = <span class="val" id="rFib2">—</span></p>
+          <div class="c-bar"><div class="c-bar__fill" id="bFib"></div></div>
+        </div>
+        <div class="c-ratio-card">
+          <h3>Pascal → 2</h3>
+          <p>Row n / Row (n−1) max ≈ <span class="val" id="rPas">—</span></p>
+          <p>C(n, k) / C(n, k−1) (peak) ≈ <span class="val" id="rPasK">—</span></p>
+          <div class="c-bar"><div class="c-bar__fill" id="bPas"></div></div>
+        </div>
+        <div class="c-ratio-card">
+          <h3>Stirling → Bell</h3>
+          <p>B(n) / S(n, ⌊n/2⌋) = <span class="val" id="rBell">—</span></p>
+          <div class="c-bar"><div class="c-bar__fill" id="bBell"></div></div>
+        </div>
+        <div class="c-ratio-card">
+          <h3>Leibniz → π</h3>
+          <p>Partial sum / (π/4) = <span class="val" id="rLeib">—</span></p>
+          <div class="c-bar"><div class="c-bar__fill" id="bLeib"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="c-footer">
+      NEON.MATH · Combinatorics &amp; Infinite Series · <span>v1.0</span>
+    </footer>
+  </div>
+
+  <!-- =================== TOOLTIP =================== -->
+  <div class="c-tooltip" id="tooltip" role="tooltip" aria-hidden="true"></div>
+
+  <script>
+  (function () {
+    'use strict';
+
+    /* ---------- UTILITIES ---------- */
+    const $ = (sel, root = document) => root.querySelector(sel);
+    const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+    const frag = document.createDocumentFragment();
+    const PI4 = Math.PI / 4;
+    const PHI = (1 + Math.sqrt(5)) / 2;
+
+    // BigInt-safe binomial coefficient
+    function binom(n, k) {
+      if (k < 0 || k > n) return 0n;
+      if (k === 0 || k === n) return 1n;
+      k = Math.min(k, n - k);
+      let r = 1n;
+      for (let i = 1; i <= k; i++) {
+        r = r * BigInt(n - k + i) / BigInt(i);
+      }
+      return r;
+    }
+
+    // Stirling S2 via dynamic programming with BigInt
+    function stirlingS2(n) {
+      const S = [new Array(n + 2).fill(0n)];
+      S[0][0] = 1n;
+      for (let i = 1; i <= n; i++) {
+        S[i] = new Array(n + 2).fill(0n);
+        for (let k = 1; k <= i; k++) {
+          S[i][k] = BigInt(k) * S[i - 1][k] + S[i - 1][k - 1];
+        }
+      }
+      return S;
+    }
+
+    function bellRow(n) {
+      const S = stirlingS2(n);
+      const B = new Array(n + 1);
+      for (let i = 0; i <= n; i++) {
+        let sum = 0n;
+        for (let k = 0; k <= i; k++) sum += S[i][k];
+        B[i] = sum;
+      }
+      return B;
+    }
+
+    function fibBig(n) {
+      const out = [0n, 1n];
+      for (let i = 2; i <= n; i++) out.push(out[i - 1] + out[i - 2]);
+      return out;
+    }
+
+    function formatBig(b) {
+      const s = b.toString();
+      if (s.length <= 12) return s;
+      // Scientific for huge values
+      const exp = s.length - 1;
+      const mant = (parseInt(s.slice(0, 4)) / 1000).toFixed(3);
+      return `${mant} × 10^${exp}`;
+    }
+
+    /* ---------- TOOLTIP ---------- */
+    const tooltip = $('#tooltip');
+    function showTip(html, x, y) {
+      tooltip.innerHTML = html;
+      tooltip.style.left = (x + 12) + 'px';
+      tooltip.style.top = (y + 12) + 'px';
+      tooltip.classList.add('is-visible');
+      tooltip.setAttribute('aria-hidden', 'false');
+    }
+    function hideTip() {
+      tooltip.classList.remove('is-visible');
+      tooltip.setAttribute('aria-hidden', 'true');
+    }
+
+    /* =================================================
+       PASCAL
+       ================================================= */
+    const pascalRoot = $('#pascalTriangle');
+    const pascalN = $('#pascalN');
+    const pascalNVal = $('#pascalNVal');
+    const pascalSum = $('#pascalSum');
+    const pascalAnimate = $('#pascalAnimate');
+
+    let pascalRows = [];
+
+    function buildPascal(n) {
+      pascalRoot.innerHTML = '';
+      pascalRows = [];
+      const f = document.createDocumentFragment();
+
+      for (let r = 0; r < n; r++) {
+        const row = document.createElement('div');
+        row.className = 'c-triangle__row';
+        const cells = [];
+        for (let k = 0; k <= r; k++) {
+          const cell = document.createElement('span');
+          cell.className = 'c-cell';
+          const v = binom(r, k);
+          cell.textContent = v.toString();
+          cell.dataset.n = r;
+          cell.dataset.k = k;
+          cell.dataset.value = v.toString();
+
+          if (k === 0 || k === r) cell.classList.add('c-cell--edge');
+          else {
+            // Hue based on position for that "rainbow pascal" feel
+            const palette = ['c-cell--pink', 'c-cell--purple', 'c-cell--lime', 'c-cell--orange', 'c-cell--amber'];
+            cell.classList.add(palette[(r + k) % palette.length]);
+          }
+          cells.push(cell);
+          row.appendChild(cell);
+        }
+        f.appendChild(row);
+        pascalRows.push(cells);
+      }
+
+      pascalRoot.appendChild(f);
+      // Sum row (last row)
+      const last = pascalRows[pascalRows.length - 1] || [];
+      const total = last.reduce((acc, el) => acc + BigInt(el.dataset.value), 0n);
+      pascalSum.textContent = formatBig(total);
+    }
+
+    function animatePascal(n) {
+      pascalRoot.innerHTML = '';
+      pascalRows = [];
+      let r = 0;
+      pascalSum.textContent = '...';
+
+      function step() {
+        if (r >= n) {
+          const last = pascalRows[pascalRows.length - 1] || [];
+          const total = last.reduce((acc, el) => acc + BigInt(el.dataset.value), 0n);
+          pascalSum.textContent = formatBig(total);
+          return;
+        }
+        const row = document.createElement('div');
+        row.className = 'c-triangle__row';
+        const cells = [];
+        for (let k = 0; k <= r; k++) {
+          const cell = document.createElement('span');
+          cell.className = 'c-cell';
+          const v = binom(r, k);
+          cell.textContent = v.toString();
+          cell.dataset.n = r;
+          cell.dataset.k = k;
+          cell.dataset.value = v.toString();
+          if (k === 0 || k === r) cell.classList.add('c-cell--edge');
+          else {
+            const palette = ['c-cell--pink', 'c-cell--purple', 'c-cell--lime', 'c-cell--orange', 'c-cell--amber'];
+            cell.classList.add(palette[(r + k) % palette.length]);
+          }
+          cells.push(cell);
+          row.appendChild(cell);
+        }
+        pascalRoot.appendChild(row);
+        pascalRows.push(cells);
+        r++;
+        setTimeout(step, 80);
+      }
+      step();
+    }
+
+    // Event delegation for pascal hover tooltips
+    pascalRoot.addEventListener('mouseover', (e) => {
+      const cell = e.target.closest('.c-cell');
+      if (!cell) return;
+      const n = cell.dataset.n;
+      const k = cell.dataset.k;
+      const v = cell.dataset.value;
+      showTip(`<strong style="color:var(--c-cyan)">C(${n}, ${k})</strong> = ${v}`, e.clientX, e.clientY);
+    });
+    pascalRoot.addEventListener('mousemove', (e) => {
+      if (tooltip.classList.contains('is-visible')) {
+        tooltip.style.left = (e.clientX + 12) + 'px';
+        tooltip.style.top = (e.clientY + 12) + 'px';
+      }
+    });
+    pascalRoot.addEventListener('mouseout', (e) => {
+      if (!e.relatedTarget || !e.relatedTarget.closest('.c-cell')) hideTip();
+    });
+
+    pascalN.addEventListener('input', () => {
+      const n = parseInt(pascalN.value, 10);
+      pascalNVal.textContent = n;
+      buildPascal(n);
+      updateRatios();
+    });
+    pascalAnimate.addEventListener('click', () => {
+      animatePascal(parseInt(pascalN.value, 10));
+    });
+
+    /* =================================================
+       LEIBNIZ
+       ================================================= */
+    const leibnizSvg = $('#leibnizSvg');
+    const leibnizN = $('#leibnizN');
+    const leibnizNVal = $('#leibnizNVal');
+    const leibnizAdd = $('#leibnizAdd');
+    const leibnizReset = $('#leibnizReset');
+    let leibnizTerms = 20;
+
+    function computeLeibniz(n) {
+      const sums = [0];
+      let acc = 0;
+      for (let k = 0; k < n; k++) {
+        const sign = k % 2 === 0 ? 1 : -1;
+        acc += sign / (2 * k + 1);
+        sums.push(acc);
+      }
+      return sums;
+    }
+
+    function drawLeibniz() {
+      leibnizNVal.textContent = leibnizTerms;
+      const sums = computeLeibniz(leibnizTerms + 1);
+      const W = 800, H = 280;
+      const padX = 30, padY = 20;
+      const minS = Math.min(...sums, -0.1);
+      const maxS = Math.max(...sums, PI4 + 0.1, 0.1);
+      const range = maxS - minS || 1;
+      const xStep = (W - padX * 2) / Math.max(1, sums.length - 1);
+      const yFor = (v) => H - padY - ((v - minS) / range) * (H - padY * 2);
+      const yLim = yFor(PI4);
+      const yZero = yFor(0);
+
+      let svg = '';
+      // axes
+      svg += `<line x1="${padX}" y1="${yZero}" x2="${W - padX}" y2="${yZero}" stroke="rgba(255,255,255,.1)" stroke-dasharray="3 3"/>`;
+      // π/4 limit
+      svg += `<line x1="${padX}" y1="${yLim}" x2="${W - padX}" y2="${yLim}" stroke="var(--c-pink)" stroke-width="1.5" stroke-dasharray="6 4" opacity=".8"/>`;
+      svg += `<text x="${W - padX - 4}" y="${yLim - 6}" text-anchor="end" fill="var(--c-pink)" font-family="Fira Code" font-size="11" style="text-shadow:0 0 6px var(--c-pink)">π/4 ≈ ${PI4.toFixed(6)}</text>`;
+
+      // area fill
+      let area = `M ${padX} ${yZero} `;
+      sums.forEach((s, i) => {
+        const x = padX + i * xStep;
+        const y = yFor(s);
+        area += `L ${x.toFixed(2)} ${y.toFixed(2)} `;
+      });
+      area += `L ${padX + (sums.length - 1) * xStep} ${yZero} Z`;
+      svg += `<path d="${area}" fill="url(#leibnizGrad)" opacity=".6"/>`;
+
+      // line
+      let line = '';
+      sums.forEach((s, i) => {
+        const x = padX + i * xStep;
+        const y = yFor(s);
+        line += (i === 0 ? 'M' : 'L') + ` ${x.toFixed(2)} ${y.toFixed(2)} `;
+      });
+      svg += `<path d="${line}" stroke="var(--c-cyan)" stroke-width="2" fill="none" style="filter:drop-shadow(0 0 6px var(--c-cyan))"/>`;
+
+      // dots
+      sums.forEach((s, i) => {
+        const x = padX + i * xStep;
+        const y = yFor(s);
+        svg += `<circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="3" fill="var(--c-cyan)" style="filter:drop-shadow(0 0 4px var(--c-cyan))"/>`;
+      });
+
+      // gradient defs
+      const defs = `<defs>
+        <linearGradient id="leibnizGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="var(--c-cyan)" stop-opacity=".4"/>
+          <stop offset="100%" stop-color="var(--c-cyan)" stop-opacity="0"/>
+        </linearGradient>
+      </defs>`;
+
+      leibnizSvg.innerHTML = defs + svg;
+      leibnizSvg.dataset.lastSum = sums[sums.length - 1];
+      updateRatios();
+    }
+
+    leibnizN.addEventListener('input', () => {
+      leibnizTerms = parseInt(leibnizN.value, 10);
+      drawLeibniz();
+    });
+    leibnizAdd.addEventListener('click', () => {
+      leibnizTerms = Math.min(80, leibnizTerms + 1);
+      leibnizN.value = leibnizTerms;
+      drawLeibniz();
+    });
+    leibnizReset.addEventListener('click', () => {
+      leibnizTerms = 2;
+      leibnizN.value = leibnizTerms;
+      drawLeibniz();
+    });
+
+    /* =================================================
+       STIRLING
+       ================================================= */
+    const stirlingRoot = $('#stirlingTriangle');
+    const stirlingN = $('#stirlingN');
+    const stirlingNVal = $('#stirlingNVal');
+
+    function buildStirling(n) {
+      stirlingRoot.innerHTML = '';
+      stirlingNVal.textContent = n;
+      const S = stirlingS2(n);
+      const f = document.createDocumentFragment();
+
+      for (let r = 0; r <= n; r++) {
+        const row = document.createElement('div');
+        row.className = 'c-triangle__row';
+        for (let k = 0; k <= r; k++) {
+          const cell = document.createElement('span');
+          cell.className = 'c-cell c-cell--purple';
+          const v = S[r][k];
+          cell.textContent = formatBig(v);
+          cell.dataset.value = v.toString();
+          cell.dataset.n = r;
+          cell.dataset.k = k;
+          row.appendChild(cell);
+        }
+        f.appendChild(row);
+      }
+      stirlingRoot.appendChild(f);
+    }
+
+    stirlingRoot.addEventListener('mouseover', (e) => {
+      const cell = e.target.closest('.c-cell');
+      if (!cell) return;
+      const n = cell.dataset.n;
+      const k = cell.dataset.k;
+      const v = cell.dataset.value;
+      showTip(`<strong style="color:var(--c-purple)">S(${n}, ${k})</strong> = ${v}`, e.clientX, e.clientY);
+    });
+    stirlingRoot.addEventListener('mousemove', (e) => {
+      if (tooltip.classList.contains('is-visible')) {
+        tooltip.style.left = (e.clientX + 12) + 'px';
+        tooltip.style.top = (e.clientY + 12) + 'px';
+      }
+    });
+    stirlingRoot.addEventListener('mouseout', hideTip);
+
+    stirlingN.addEventListener('input', () => {
+      buildStirling(parseInt(stirlingN.value, 10));
+      updateRatios();
+    });
+
+    /* =================================================
+       BELL
+       ================================================= */
+    const bellSvg = $('#bellSvg');
+    const bellCurrent = $('#bellCurrent');
+
+    function drawBell(n) {
+      const B = bellRow(n);
+      const W = 800, H = 280;
+      const padX = 30, padY = 30;
+      const logs = B.map(b => Math.log10(Number(b > 0n ? b : 1n) || 1));
+      const maxLog = Math.max(...logs, 1);
+      const xStep = (W - padX * 2) / Math.max(1, B.length - 1);
+      const yFor = (v) => H - padY - (v / maxLog) * (H - padY * 2);
+
+      let svg = '';
+      // grid
+      for (let g = 1; g <= maxLog; g++) {
+        const y = yFor(g);
+        svg += `<line x1="${padX}" y1="${y.toFixed(2)}" x2="${W - padX}" y2="${y.toFixed(2)}" stroke="rgba(255,209,102,.08)" stroke-dasharray="2 4"/>`;
+        svg += `<text x="${padX - 6}" y="${(y + 4).toFixed(2)}" text-anchor="end" fill="var(--ink-3)" font-family="Fira Code" font-size="10">10^${g}</text>`;
+      }
+
+      // bars
+      B.forEach((b, i) => {
+        const x = padX + i * xStep - 6;
+        const y = yFor(Math.log10(Number(b > 0n ? b : 1n) || 1));
+        const h = (H - padY) - y;
+        svg += `<rect x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="12" height="${Math.max(0, h).toFixed(2)}" fill="var(--c-amber)" opacity=".85" style="filter:drop-shadow(0 0 6px var(--c-amber))"/>`;
+        svg += `<text x="${(x + 6).toFixed(2)}" y="${(H - padY + 16).toFixed(2)}" text-anchor="middle" fill="var(--ink-3)" font-family="Fira Code" font-size="10">${i}</text>`;
+      });
+
+      // line connecting tops
+      let line = '';
+      B.forEach((b, i) => {
+        const x = padX + i * xStep;
+        const y = yFor(Math.log10(Number(b > 0n ? b : 1n) || 1));
+        line += (i === 0 ? 'M' : 'L') + ` ${x.toFixed(2)} ${y.toFixed(2)} `;
+      });
+      svg += `<path d="${line}" stroke="var(--c-pink)" stroke-width="1.5" fill="none" opacity=".7" style="filter:drop-shadow(0 0 4px var(--c-pink))"/>`;
+
+      bellSvg.innerHTML = svg;
+      bellSvg.dataset.lastBell = B[B.length - 1].toString();
+      bellCurrent.textContent = formatBig(B[B.length - 1]);
+      updateRatios();
+    }
+
+    /* =================================================
+       FIBONACCI
+       ================================================= */
+    const fibSequence = $('#fibSequence');
+    const fibN = $('#fibN');
+    const fibNVal = $('#fibNVal');
+    const fibRatio = $('#fibRatio');
+    const fibSvg = $('#fibSvg');
+
+    function buildFib(n) {
+      fibSequence.innerHTML = '';
+      fibNVal.textContent = n;
+      const F = fibBig(n);
+      const f = document.createDocumentFragment();
+      F.forEach((v, i) => {
+        const chip = document.createElement('span');
+        chip.className = 'c-fib__chip';
+        if (i === 0) chip.style.setProperty('--chip-color', 'var(--c-amber)');
+        else if (i === 1) chip.style.setProperty('--chip-color', 'var(--c-cyan)');
+        else {
+          const palette = ['var(--c-pink)', 'var(--c-purple)', 'var(--c-lime)', 'var(--c-orange)'];
+          chip.style.setProperty('--chip-color', palette[(i - 2) % palette.length]);
+        }
+        chip.textContent = i === 0 ? '0' : formatBig(v);
+        f.appendChild(chip);
+      });
+      fibSequence.appendChild(f);
+
+      // ratio
+      if (n >= 2) {
+        const r = Number(F[n]) / Number(F[n - 1]);
+        fibRatio.textContent = r.toFixed(8);
+      } else {
+        fibRatio.textContent = '—';
+      }
+
+      drawFibSquares(n);
+      updateRatios();
+    }
+
+    function drawFibSquares(n) {
+      const F = fibBig(n);
+      // Limit pixel size to last 8 squares for legibility
+      const start = Math.max(2, n - 8 + 1);
+      const visible = [];
+      let max = 0n;
+      for (let i = start; i <= n; i++) {
+        visible.push(F[i]);
+        if (F[i] > max) max = F[i];
+      }
+      const unit = 380 / Math.max(1, Number(max)) * 0.95;
+      let svg = '';
+      let x = 10, y = 10;
+      let dir = 0; // 0 right, 1 down, 2 left, 3 up
+      let x0 = 10, y0 = 10;
+      const sizes = visible.map(v => Math.max(2, Number(v) * unit));
+
+      // spiral positions (standard Fibonacci tiling)
+      let cx = 10, cy = 10;
+      sizes.forEach((s, i) => {
+        const color = ['var(--c-cyan)', 'var(--c-pink)', 'var(--c-purple)', 'var(--c-lime)', 'var(--c-amber)'][i % 5];
+        if (i === 0) {
+          svg += `<rect x="${cx}" y="${cy}" width="${s}" height="${s}" fill="rgba(255,255,255,.02)" stroke="${color}" stroke-width="1.5" style="filter:drop-shadow(0 0 4px ${color})"/>`;
+          x = cx + s; y = cy;
+          dir = 1;
+        } else if (i === 1) {
+          svg += `<rect x="${cx}" y="${cy}" width="${s}" height="${s}" fill="rgba(255,255,255,.02)" stroke="${color}" stroke-width="1.5" style="filter:drop-shadow(0 0 4px ${color})"/>`;
+          y = cy + s;
+          dir = 2;
+        } else {
+          const prev = sizes[i - 1];
+          if (dir === 2) {
+            // place to left
+            svg += `<rect x="${cx - s}" y="${cy}" width="${s}" height="${s}" fill="rgba(255,255,255,.02)" stroke="${color}" stroke-width="1.5" style="filter:drop-shadow(0 0 4px ${color})"/>`;
+            cx = cx - s;
+            dir = 3;
+          } else if (dir === 3) {
+            // place above
+            svg += `<rect x="${cx}" y="${cy - s}" width="${s}" height="${s}" fill="rgba(255,255,255,.02)" stroke="${color}" stroke-width="1.5" style="filter:drop-shadow(0 0 4px ${color})"/>`;
+            cy = cy - s;
+            dir = 0;
+          } else if (dir === 0) {
+            svg += `<rect x="${cx}" y="${cy}" width="${s}" height="${s}" fill="rgba(255,255,255,.02)" stroke="${color}" stroke-width="1.5" style="filter:drop-shadow(0 0 4px ${color})"/>`;
+            cx = cx + s;
+            dir = 1;
+          } else if (dir === 1) {
+            svg += `<rect x="${cx}" y="${cy}" width="${s}" height="${s}" fill="rgba(255,255,255,.02)" stroke="${color}" stroke-width="1.5" style="filter:drop-shadow(0 0 4px ${color})"/>`;
+            cy = cy + s;
+            dir = 2;
+          }
+        }
+      });
+
+      // golden spiral (approximate via quarter arcs)
+      // Recompute centers & sizes based on the actual rect positions we just drew
+      // For simplicity draw arcs over the visible squares
+      const arcs = [];
+      let cx2 = 10, cy2 = 10, dir2 = 0;
+      for (let i = 0; i < sizes.length; i++) {
+        const s = sizes[i];
+        let ax, ay, r, a0, a1;
+        if (i === 0) {
+          ax = cx2 + s; ay = cy2 + s; r = s;
+          a0 = Math.PI; a1 = 1.5 * Math.PI;
+          cx2 = cx2 + s; cy2 = cy2;
+        } else if (i === 1) {
+          ax = cx2; ay = cy2 + s; r = s;
+          a0 = 1.5 * Math.PI; a1 = 2 * Math.PI;
+          cx2 = cx2; cy2 = cy2 + s;
+        } else {
+          const prev = sizes[i - 1];
+          if (dir2 === 2) {
+            ax = cx2 + s; ay = cy2; r = s;
+            a0 = 0.5 * Math.PI; a1 = Math.PI;
+            cx2 = cx2 - s; cy2 = cy2;
+          } else if (dir2 === 3) {
+            ax = cx2 + s; ay = cy2 + s; r = s;
+            a0 = 0; a1 = 0.5 * Math.PI;
+            cx2 = cx2; cy2 = cy2 - s;
+          } else if (dir2 === 0) {
+            ax = cx2; ay = cy2; r = s;
+            a0 = 0.5 * Math.PI; a1 = Math.PI;
+            cx2 = cx2 + s; cy2 = cy2;
+          } else {
+            ax = cx2; ay = cy2; r = s;
+            a0 = 0; a1 = 0.5 * Math.PI;
+            cx2 = cx2; cy2 = cy2 + s;
+          }
+          if (dir2 === 0) dir2 = 1;
+          else if (dir2 === 1) dir2 = 2;
+          else if (dir2 === 2) dir2 = 3;
+          else dir2 = 0;
+        }
+        if (i === 0) dir2 = 1;
+        else if (i === 1) dir2 = 2;
+        // Build arc path
+        const p0x = ax + r * Math.cos(a0);
+        const p0y = ay + r * Math.sin(a0);
+        const p1x = ax + r * Math.cos(a1);
+        const p1y = ay + r * Math.sin(a1);
+        arcs.push(`M ${p0x.toFixed(2)} ${p0y.toFixed(2)} A ${r.toFixed(2)} ${r.toFixed(2)} 0 0 1 ${p1x.toFixed(2)} ${p1y.toFixed(2)}`);
+      }
+
+      const path = arcs.join(' ');
+      svg += `<path d="${path}" stroke="var(--c-pink)" stroke-width="1.5" fill="none" opacity=".9" style="filter:drop-shadow(0 0 6px var(--c-pink))"/>`;
+      fibSvg.innerHTML = svg;
+    }
+
+    fibN.addEventListener('input', () => {
+      buildFib(parseInt(fibN.value, 10));
+    });
+
+    /* =================================================
+       RATIOS EXPLORER
+       ================================================= */
+    const rFib = $('#rFib');
+    const rFib2 = $('#rFib2');
+    const bFib = $('#bFib');
+    const rPas = $('#rPas');
+    const rPasK = $('#rPasK');
+    const bPas = $('#bPas');
+    const rBell = $('#rBell');
+    const bBell = $('#bBell');
+    const rLeib = $('#rLeib');
+    const bLeib = $('#bLeib');
+
+    function updateRatios() {
+      // Fib
+      const fn = parseInt(fibN.value, 10);
+      const F = fibBig(fn);
+      if (fn >= 2) {
+        const r1 = Number(F[fn]) / Number(F[fn - 1]);
+        rFib.textContent = r1.toFixed(8);
+        bFib.style.width = Math.min(100, (r1 / PHI) * 100) + '%';
+      }
+      if (fn >= 3) {
+        const r2 = Number(F[fn]) / Number(F[fn - 2]);
+        rFib2.textContent = r2.toFixed(8);
+      } else {
+        rFib2.textContent = '—';
+      }
+
+      // Pascal: ratio of last row max vs previous row max; consecutive C(n,k) ratio peak
+      const pn = parseInt(pascalN.value, 10);
+      if (pn >= 1) {
+        let lastMax = 0n, prevMax = 0n;
+        for (let k = 0; k <= pn; k++) {
+          const v = binom(pn, k);
+          if (v > lastMax) lastMax = v;
+        }
+        if (pn >= 1) {
+          for (let k = 0; k <= pn - 1; k++) {
+            const v = binom(pn - 1, k);
+            if (v > prevMax) prevMax = v;
+          }
+        }
+        const ratio = prevMax === 0n ? 0 : Number(lastMax) / Number(prevMax);
+        rPas.textContent = ratio.toFixed(4);
+        // C(n,k)/C(n,k-1) at k where binomial is largest; converges to ~2 as k small, and 1+1/k for k around n/2
+        const kmid = Math.floor(pn / 2);
+        if (kmid >= 1) {
+          const peak = Number(binom(pn, kmid)) / Number(binom(pn, kmid - 1));
+          rPasK.textContent = peak.toFixed(6);
+        }
+        bPas.style.width = Math.min(100, ratio / 2 * 100) + '%';
+      }
+
+      // Bell / Stirling
+      const sn = parseInt(stirlingN.value, 10);
+      const S = stirlingS2(sn);
+      const B = bellRow(sn);
+      const peakK = Math.floor(sn / 2);
+      if (sn >= 1 && S[sn][peakK] > 0n) {
+        const r = Number(B[sn]) / Number(S[sn][peakK]);
+        rBell.textContent = r.toFixed(4);
+        bBell.style.width = Math.min(100, (r / Math.max(1, sn)) * 100) + '%';
+      }
+
+      // Leibniz
+      const lastLeib = parseFloat(leibnizSvg.dataset.lastSum || '0');
+      if (lastLeib) {
+        const r = lastLeib / PI4;
+        rLeib.textContent = r.toFixed(6);
+        bLeib.style.width = Math.min(100, r * 100) + '%';
+      }
+    }
+
+    /* =================================================
+       INIT
+       ================================================= */
+    function init() {
+      buildPascal(parseInt(pascalN.value, 10));
+      drawLeibniz();
+      buildStirling(parseInt(stirlingN.value, 10));
+      drawBell(parseInt(stirlingN.value, 10));
+      buildFib(parseInt(fibN.value, 10));
+      updateRatios();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+
+    // Update ratios on window resize too
+    window.addEventListener('resize', () => {
+      drawLeibniz();
+    });
+  })();
+  </script>
+</body>
+</html>

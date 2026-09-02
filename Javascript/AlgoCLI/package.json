@@ -1,0 +1,16 @@
+{
+  "name": "algorithm-tutorial-cli",
+  "version": "1.0.0",
+  "description": "A terminal tutorial app for learning sorting and searching algorithms.",
+  "type": "module",
+  "bin": {
+    "algorithm-tutorial": "./src/cli.js"
+  },
+  "scripts": {
+    "start": "node src/cli.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

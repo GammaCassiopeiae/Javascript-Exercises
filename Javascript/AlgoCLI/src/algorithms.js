@@ -8823,6 +8823,487 @@ function fordFulkerson(capacity, source, sink) {
  return maximumFlow;
 }
 
+function recursiveBinarySearch(values, target, low = 0, high = values.length - 1) {
+  if (low > high) return -1;
+
+  const middle = Math.floor((low + high) / 2);
+
+  if (values[middle] === target) return middle;
+  if (values[middle] > target) {
+    return recursiveBinarySearch(values, target, low, middle - 1);
+  }
+  return recursiveBinarySearch(values, target, middle + 1, high);
+}
+
+function recursiveSelectionSort(input, start = 0) {
+  const values = start === 0 ? [...input] : input;
+  if (start >= values.length - 1) return values;
+
+  let minIndex = start;
+  for (let index = start + 1; index < values.length; index += 1) {
+    if (values[index] < values[minIndex]) {
+      minIndex = index;
+    }
+  }
+
+  if (minIndex !== start) {
+    [values[start], values[minIndex]] = [values[minIndex], values[start]];
+  }
+
+  return recursiveSelectionSort(values, start + 1);
+}
+
+function recursiveInsertionSort(input, n = input.length) {
+  const values = n === input.length ? [...input] : input;
+  if (n <= 1) return values;
+
+  recursiveInsertionSort(values, n - 1);
+
+  const last = values[n - 1];
+  let position = n - 2;
+
+  while (position >= 0 && values[position] > last) {
+    values[position + 1] = values[position];
+    position -= 1;
+  }
+
+  values[position + 1] = last;
+  return values;
+}
+
+function recursiveQuickSort(input) {
+  const values = [...input];
+
+  function partition(low, high) {
+    const pivot = values[high];
+    let partitionIndex = low;
+
+    for (let index = low; index < high; index += 1) {
+      if (values[index] <= pivot) {
+        [values[partitionIndex], values[index]] = [values[index], values[partitionIndex]];
+        partitionIndex += 1;
+      }
+    }
+
+    [values[partitionIndex], values[high]] = [values[high], values[partitionIndex]];
+    return partitionIndex;
+  }
+
+  function sort(low, high) {
+    if (low >= high) return;
+    const pivotIndex = partition(low, high);
+    sort(low, pivotIndex - 1);
+    sort(pivotIndex + 1, high);
+  }
+
+  if (values.length > 1) {
+    sort(0, values.length - 1);
+  }
+
+  return values;
+}
+
+function recursiveMergeSort(input) {
+  const values = [...input];
+
+  function merge(low, middle, high) {
+    const left = values.slice(low, middle + 1);
+    const right = values.slice(middle + 1, high + 1);
+    let leftIndex = 0;
+    let rightIndex = 0;
+    let targetIndex = low;
+
+    while (leftIndex < left.length && rightIndex < right.length) {
+      if (left[leftIndex] <= right[rightIndex]) {
+        values[targetIndex] = left[leftIndex];
+        leftIndex += 1;
+      } else {
+        values[targetIndex] = right[rightIndex];
+        rightIndex += 1;
+      }
+      targetIndex += 1;
+    }
+
+    while (leftIndex < left.length) {
+      values[targetIndex] = left[leftIndex];
+      leftIndex += 1;
+      targetIndex += 1;
+    }
+
+    while (rightIndex < right.length) {
+      values[targetIndex] = right[rightIndex];
+      rightIndex += 1;
+      targetIndex += 1;
+    }
+  }
+
+  function sort(low, high) {
+    if (low >= high) return;
+    const middle = Math.floor((low + high) / 2);
+    sort(low, middle);
+    sort(middle + 1, high);
+    merge(low, middle, high);
+  }
+
+  if (values.length > 1) {
+    sort(0, values.length - 1);
+  }
+
+  return values;
+}
+
+function recursiveFractal(order = 3) {
+  function generate(n) {
+    if (n <= 0) return ["*"];
+    const prev = generate(n - 1);
+    const space = " ".repeat(2 ** (n - 1));
+    const top = prev.map((line) => space + line + space);
+    const bottom = prev.map((line) => line + " " + line);
+    return [...top, ...bottom];
+  }
+
+  return generate(Math.max(0, order)).join("\n");
+}
+
+function recursiveFactorial(n) {
+  if (n < 0) return null;
+  if (n <= 1) return 1;
+  return n * recursiveFactorial(n - 1);
+}
+
+function recursiveFibonacci(count) {
+  if (count <= 0) return [];
+  if (count === 1) return [0];
+  if (count === 2) return [0, 1];
+
+  const previous = recursiveFibonacci(count - 1);
+  return [...previous, previous.at(-1) + previous.at(-2)];
+}
+
+function recursiveGcd(first, second) {
+  let a = Math.abs(first);
+  let b = Math.abs(second);
+
+  if (b === 0) return a;
+  return recursiveGcd(b, a % b);
+}
+
+function recursiveFastPower(base, exponent) {
+  if (exponent === 0) return 1;
+  if (exponent < 0) return 1 / recursiveFastPower(base, -exponent);
+
+  const half = recursiveFastPower(base, Math.floor(exponent / 2));
+  if (exponent % 2 === 0) {
+    return half * half;
+  }
+  return base * half * half;
+}
+
+function recursiveSumOfNaturalNumbers(n) {
+  if (n <= 0) return 0;
+  return n + recursiveSumOfNaturalNumbers(n - 1);
+}
+
+function recursiveSumOfDigits(number) {
+  const absolute = Math.abs(number);
+  if (absolute < 10) return absolute;
+  return (absolute % 10) + recursiveSumOfDigits(Math.floor(absolute / 10));
+}
+
+function recursiveDecimalToBinary(number) {
+  if (number === 0) return "0";
+  if (number < 0) return `-${recursiveDecimalToBinary(-number)}`;
+  if (number === 1) return "1";
+
+  return `${recursiveDecimalToBinary(Math.floor(number / 2))}${number % 2}`;
+}
+
+function recursiveDecimalToHexadecimal(number) {
+  const digits = "0123456789ABCDEF";
+  if (number === 0) return "0";
+  if (number < 0) return `-${recursiveDecimalToHexadecimal(-number)}`;
+  if (number < 16) return digits[number];
+
+  return `${recursiveDecimalToHexadecimal(Math.floor(number / 16))}${digits[number % 16]}`;
+}
+
+function recursiveCountDigits(number) {
+  const absolute = Math.abs(number);
+  if (absolute < 10) return 1;
+  return 1 + recursiveCountDigits(Math.floor(absolute / 10));
+}
+
+function recursiveProduct(first, second) {
+  if (second === 0 || first === 0) return 0;
+  if (second < 0) return -recursiveProduct(first, -second);
+  if (second === 1) return first;
+
+  return first + recursiveProduct(first, second - 1);
+}
+
+function recursiveTowerOfHanoi(disks, source = "A", auxiliary = "B", destination = "C") {
+  if (disks <= 0) return [];
+  if (disks === 1) return [`Move disk 1 from ${source} to ${destination}`];
+
+  return [
+    ...recursiveTowerOfHanoi(disks - 1, source, destination, auxiliary),
+    `Move disk ${disks} from ${source} to ${destination}`,
+    ...recursiveTowerOfHanoi(disks - 1, auxiliary, source, destination),
+  ];
+}
+
+function recursiveAckermann(m, n) {
+  if (m === 0) return n + 1;
+  if (n === 0) return recursiveAckermann(m - 1, 1);
+  return recursiveAckermann(m - 1, recursiveAckermann(m, n - 1));
+}
+
+function recursiveJosephus(n, k) {
+  if (n <= 1) return 1;
+  return ((recursiveJosephus(n - 1, k) + k - 1) % n) + 1;
+}
+
+function recursiveIsPrime(n, divisor = 2) {
+  if (n <= 1) return false;
+  if (divisor * divisor > n) return true;
+  if (n % divisor === 0) return false;
+
+  return recursiveIsPrime(n, divisor + 1);
+}
+
+function recursiveCollatz(number) {
+  if (number < 1 || !Number.isInteger(number)) return [];
+  if (number === 1) return [1];
+
+  const next = number % 2 === 0 ? number / 2 : number * 3 + 1;
+  return [number, ...recursiveCollatz(next)];
+}
+
+function recursiveReverseString(input) {
+  if (input.length <= 1) return input;
+  return recursiveReverseString(input.slice(1)) + input[0];
+}
+
+function recursivePalindrome(input) {
+  const normalized = input.toLowerCase().replace(/[^a-z0-9]/g, "");
+
+  function check(str, left, right) {
+    if (left >= right) return true;
+    if (str[left] !== str[right]) return false;
+    return check(str, left + 1, right - 1);
+  }
+
+  return check(normalized, 0, normalized.length - 1);
+}
+
+function recursiveStringLength(input) {
+  if (input === "") return 0;
+  return 1 + recursiveStringLength(input.slice(1));
+}
+
+function recursiveStringPermutations(input) {
+  if (input.length <= 1) return [input];
+
+  const permutations = new Set();
+  for (let index = 0; index < input.length; index += 1) {
+    const char = input[index];
+    const remaining = input.slice(0, index) + input.slice(index + 1);
+    for (const sub of recursiveStringPermutations(remaining)) {
+      permutations.add(char + sub);
+    }
+  }
+
+  return [...permutations].sort();
+}
+
+function recursiveSubsequences(input) {
+  if (input.length === 0) return [""];
+
+  const first = input[0];
+  const restSubsequences = recursiveSubsequences(input.slice(1));
+  const withFirst = restSubsequences.map((sub) => first + sub);
+
+  return [...withFirst, ...restSubsequences].sort();
+}
+
+function recursiveCountVowels(input) {
+  if (input.length === 0) return 0;
+  const isVowel = "aeiouAEIOU".includes(input[0]) ? 1 : 0;
+  return isVowel + recursiveCountVowels(input.slice(1));
+}
+
+function recursiveFirstCapitalLetter(input, index = 0) {
+  if (index >= input.length) return null;
+  const character = input[index];
+  if (character >= "A" && character <= "Z") return character;
+  return recursiveFirstCapitalLetter(input, index + 1);
+}
+
+function recursiveTokenize(input, delimiter = " ") {
+  const trimmed = input.trim();
+  if (trimmed === "") return [];
+
+  const delimiterIndex = trimmed.indexOf(delimiter);
+  if (delimiterIndex === -1) return [trimmed];
+
+  const token = trimmed.slice(0, delimiterIndex).trim();
+  const rest = trimmed.slice(delimiterIndex + delimiter.length);
+
+  return token !== ""
+    ? [token, ...recursiveTokenize(rest, delimiter)]
+    : recursiveTokenize(rest, delimiter);
+}
+
+function recursiveParenthesisMatching(input) {
+  function match(index, openCount) {
+    if (openCount < 0) return false;
+    if (index >= input.length) return openCount === 0;
+
+    const char = input[index];
+    if (char === "(") return match(index + 1, openCount + 1);
+    if (char === ")") return match(index + 1, openCount - 1);
+    return match(index + 1, openCount);
+  }
+
+  return match(0, 0);
+}
+
+function recursiveLinearSearch(values, target, index = 0) {
+  if (index >= values.length) return -1;
+  if (values[index] === target) return index;
+  return recursiveLinearSearch(values, target, index + 1);
+}
+
+function recursiveBinarySearchDivideConquer(values, target, low = 0, high = values.length - 1) {
+  if (low > high) return -1;
+  const mid = low + Math.floor((high - low) / 2);
+
+  if (values[mid] === target) return mid;
+  if (values[mid] > target) {
+    return recursiveBinarySearchDivideConquer(values, target, low, mid - 1);
+  }
+  return recursiveBinarySearchDivideConquer(values, target, mid + 1, high);
+}
+
+function recursiveFindMax(values, index = 0) {
+  if (values.length === 0) return null;
+  if (index === values.length - 1) return values[index];
+
+  const maxOfRest = recursiveFindMax(values, index + 1);
+  return values[index] > maxOfRest ? values[index] : maxOfRest;
+}
+
+function recursiveFindMin(values, index = 0) {
+  if (values.length === 0) return null;
+  if (index === values.length - 1) return values[index];
+
+  const minOfRest = recursiveFindMin(values, index + 1);
+  return values[index] < minOfRest ? values[index] : minOfRest;
+}
+
+function recursiveSumArray(values, index = 0) {
+  if (index >= values.length) return 0;
+  return values[index] + recursiveSumArray(values, index + 1);
+}
+
+function recursiveReverseArray(values) {
+  const result = [...values];
+
+  function reverse(left, right) {
+    if (left >= right) return;
+    [result[left], result[right]] = [result[right], result[left]];
+    reverse(left + 1, right - 1);
+  }
+
+  reverse(0, result.length - 1);
+  return result;
+}
+
+function recursivePrintArray(values, index = 0) {
+  if (index >= values.length) return "";
+  const current = String(values[index]);
+  const rest = recursivePrintArray(values, index + 1);
+  return rest === "" ? current : `${current}, ${rest}`;
+}
+
+function recursiveIsSorted(values, index = 0) {
+  if (values.length <= 1 || index >= values.length - 1) return true;
+  if (values[index] > values[index + 1]) return false;
+  return recursiveIsSorted(values, index + 1);
+}
+
+function recursiveCountOccurrences(values, target, index = 0) {
+  if (index >= values.length) return 0;
+  const match = values[index] === target ? 1 : 0;
+  return match + recursiveCountOccurrences(values, target, index + 1);
+}
+
+function recursiveTraverseLinkedList(head) {
+  if (!head) return [];
+  return [head.value, ...recursiveTraverseLinkedList(head.next)];
+}
+
+function recursiveReverseLinkedList(head, prev = null) {
+  if (!head) return prev;
+  const nextNode = head.next;
+  return recursiveReverseLinkedList(nextNode, { value: head.value, next: prev });
+}
+
+function recursivePrintLinkedListReverse(head) {
+  if (!head) return "";
+  const rest = recursivePrintLinkedListReverse(head.next);
+  return rest === "" ? String(head.value) : `${rest} -> ${head.value}`;
+}
+
+function recursiveDeleteNode(head, target) {
+  if (!head) return null;
+  if (head.value === target) return head.next;
+
+  return {
+    value: head.value,
+    next: recursiveDeleteNode(head.next, target),
+  };
+}
+
+function recursiveInsertIntoSortedList(head, value) {
+  if (!head || value <= head.value) {
+    return { value, next: head };
+  }
+
+  return {
+    value: head.value,
+    next: recursiveInsertIntoSortedList(head.next, value),
+  };
+}
+
+function recursiveMergeTwoSortedLists(first, second) {
+  if (!first) return second;
+  if (!second) return first;
+
+  if (first.value <= second.value) {
+    return {
+      value: first.value,
+      next: recursiveMergeTwoSortedLists(first.next, second),
+    };
+  }
+
+  return {
+    value: second.value,
+    next: recursiveMergeTwoSortedLists(first, second.next),
+  };
+}
+
+function recursiveLengthLinkedList(head) {
+  if (!head) return 0;
+  return 1 + recursiveLengthLinkedList(head.next);
+}
+
+function recursiveSearchLinkedList(head, target, index = 0) {
+  if (!head) return -1;
+  if (head.value === target) return index;
+  return recursiveSearchLinkedList(head.next, target, index + 1);
+}
+
 export const algorithms = [
   {
     id: 1,
@@ -14610,5 +15091,517 @@ export const algorithms = [
     run: (capacity, source, sink) => fordFulkerson(capacity, source, sink),
     demo: { input: [[0, 3, 2, 0], [0, 0, 0, 2], [0, 0, 0, 3], [0, 0, 0, 0]], args: [0, 3] },
     summary: "Finds maximum network flow by repeatedly augmenting residual paths.",
+  },
+  {
+    id: 501,
+    name: "Recursive Binary Search",
+    type: "Searching",
+    complexity: "O(log n) time, O(log n) stack space",
+    requiresSortedInput: true,
+    source: recursiveBinarySearch.toString(),
+    run: (values, target) => recursiveBinarySearch(values, target),
+    summary: "Recursively halves the search range to locate a target in a sorted array.",
+  },
+  {
+    id: 502,
+    name: "Recursive Selection Sort",
+    type: "Sorting",
+    complexity: "O(n²) time, O(n) stack space",
+    requiresSortedInput: false,
+    source: recursiveSelectionSort.toString(),
+    run: (values) => recursiveSelectionSort(values),
+    summary: "Recursively selects the minimum remaining element and places it at the current index.",
+  },
+  {
+    id: 503,
+    name: "Recursive Insertion Sort",
+    type: "Sorting",
+    complexity: "O(n²) worst/average, O(n) best time, O(n) stack space",
+    requiresSortedInput: false,
+    source: recursiveInsertionSort.toString(),
+    run: (values) => recursiveInsertionSort(values),
+    summary: "Recursively sorts the first n - 1 elements, then inserts the last element into position.",
+  },
+  {
+    id: 504,
+    name: "Recursive Quicksort",
+    type: "Sorting",
+    complexity: "O(n log n) average, O(n²) worst time, O(log n) stack space",
+    requiresSortedInput: false,
+    source: recursiveQuickSort.toString(),
+    run: (values) => recursiveQuickSort(values),
+    summary: "Partitions the array around a pivot and recursively sorts subarrays on either side.",
+  },
+  {
+    id: 505,
+    name: "Recursive Merge Sort",
+    type: "Sorting",
+    complexity: "O(n log n) time in all cases, O(n) auxiliary space",
+    requiresSortedInput: false,
+    source: recursiveMergeSort.toString(),
+    run: (values) => recursiveMergeSort(values),
+    summary: "Recursively divides the array in half and merges the sorted subarrays.",
+  },
+  {
+    id: 506,
+    name: "Recursive Fractal",
+    type: "Recursion",
+    complexity: "O(3^order) time, O(order) stack space",
+    requiresSortedInput: false,
+    source: recursiveFractal.toString(),
+    run: (order) => recursiveFractal(order),
+    demo: { input: 3 },
+    summary: "Recursively constructs a self-similar Sierpinski triangle fractal pattern.",
+  },
+  {
+    id: 507,
+    name: "Recursive Factorial Calculation",
+    type: "Recursion",
+    complexity: "O(n) time, O(n) stack space",
+    requiresSortedInput: false,
+    source: recursiveFactorial.toString(),
+    run: (n) => recursiveFactorial(n),
+    demo: { input: 5 },
+    summary: "Recursively calculates n! by multiplying n by the factorial of n - 1.",
+  },
+  {
+    id: 508,
+    name: "Recursive Fibonacci Sequence",
+    type: "Recursion",
+    complexity: "O(n) time, O(n) stack space",
+    requiresSortedInput: false,
+    source: recursiveFibonacci.toString(),
+    run: (count) => recursiveFibonacci(count),
+    demo: { input: 8 },
+    summary: "Recursively builds the Fibonacci sequence array up to the specified term count.",
+  },
+  {
+    id: 509,
+    name: "Recursive Greatest Common Divisor (GCD)",
+    type: "Recursion",
+    complexity: "O(log(min(a, b))) time, O(log(min(a, b))) stack space",
+    requiresSortedInput: false,
+    source: recursiveGcd.toString(),
+    run: (first, second) => recursiveGcd(first, second),
+    demo: { input: 48, argument: 18, argumentLabel: "Second number" },
+    summary: "Recursively finds the greatest common divisor using Euclidean division remainders.",
+  },
+  {
+    id: 510,
+    name: "Recursive Fast Powering (Exponentiation)",
+    type: "Recursion",
+    complexity: "O(log exponent) time, O(log exponent) stack space",
+    requiresSortedInput: false,
+    source: recursiveFastPower.toString(),
+    run: (base, exponent) => recursiveFastPower(base, exponent),
+    demo: { input: 2, argument: 10, argumentLabel: "Exponent" },
+    summary: "Computes base^exponent in logarithmic steps using recursive squaring.",
+  },
+  {
+    id: 511,
+    name: "Recursive Sum of Natural Numbers",
+    type: "Recursion",
+    complexity: "O(n) time, O(n) stack space",
+    requiresSortedInput: false,
+    source: recursiveSumOfNaturalNumbers.toString(),
+    run: (n) => recursiveSumOfNaturalNumbers(n),
+    demo: { input: 10 },
+    summary: "Recursively computes the sum 1 + 2 + ... + n.",
+  },
+  {
+    id: 512,
+    name: "Recursive Sum of Digits",
+    type: "Recursion",
+    complexity: "O(log₁₀ n) time, O(log₁₀ n) stack space",
+    requiresSortedInput: false,
+    source: recursiveSumOfDigits.toString(),
+    run: (number) => recursiveSumOfDigits(number),
+    demo: { input: 12345 },
+    summary: "Recursively sums each digit of an integer using modulo and division.",
+  },
+  {
+    id: 513,
+    name: "Recursive Decimal to Binary Conversion",
+    type: "Recursion",
+    complexity: "O(log₂ n) time, O(log₂ n) stack space",
+    requiresSortedInput: false,
+    source: recursiveDecimalToBinary.toString(),
+    run: (number) => recursiveDecimalToBinary(number),
+    demo: { input: 13 },
+    summary: "Converts a decimal number to its binary string representation using recursion.",
+  },
+  {
+    id: 514,
+    name: "Recursive Decimal to Hexadecimal",
+    type: "Recursion",
+    complexity: "O(log₁₆ n) time, O(log₁₆ n) stack space",
+    requiresSortedInput: false,
+    source: recursiveDecimalToHexadecimal.toString(),
+    run: (number) => recursiveDecimalToHexadecimal(number),
+    demo: { input: 255 },
+    summary: "Converts a decimal number to its hexadecimal string representation using recursion.",
+  },
+  {
+    id: 515,
+    name: "Recursive Count Digits",
+    type: "Recursion",
+    complexity: "O(log₁₀ n) time, O(log₁₀ n) stack space",
+    requiresSortedInput: false,
+    source: recursiveCountDigits.toString(),
+    run: (number) => recursiveCountDigits(number),
+    demo: { input: 987654 },
+    summary: "Recursively counts the total number of digits in an integer.",
+  },
+  {
+    id: 516,
+    name: "Recursive Product of Two Numbers",
+    type: "Recursion",
+    complexity: "O(|second|) time, O(|second|) stack space",
+    requiresSortedInput: false,
+    source: recursiveProduct.toString(),
+    run: (first, second) => recursiveProduct(first, second),
+    demo: { input: 6, argument: 7, argumentLabel: "Multiplier" },
+    summary: "Computes the product of two numbers using recursive repeated addition.",
+  },
+  {
+    id: 517,
+    name: "Recursive Tower of Hanoi",
+    type: "Recursion",
+    complexity: "O(2^n) time, O(n) stack space",
+    requiresSortedInput: false,
+    source: recursiveTowerOfHanoi.toString(),
+    run: (disks, source, auxiliary, destination) => recursiveTowerOfHanoi(disks, source, auxiliary, destination),
+    demo: { input: 3 },
+    summary: "Generates the optimal sequence of moves to transfer disks between pegs.",
+  },
+  {
+    id: 518,
+    name: "Recursive Ackermann Function",
+    type: "Recursion",
+    complexity: "Non-primitive recursive, extremely fast growing",
+    requiresSortedInput: false,
+    source: recursiveAckermann.toString(),
+    run: (m, n) => recursiveAckermann(m, n),
+    demo: { input: 2, argument: 3, argumentLabel: "n argument" },
+    summary: "Evaluates the classic deep recursion benchmark function A(m, n).",
+  },
+  {
+    id: 519,
+    name: "Recursive Josephus Problem",
+    type: "Recursion",
+    complexity: "O(n) time, O(n) stack space",
+    requiresSortedInput: false,
+    source: recursiveJosephus.toString(),
+    run: (n, k) => recursiveJosephus(n, k),
+    demo: { input: 7, argument: 3, argumentLabel: "Step count (k)" },
+    summary: "Finds the 1-indexed position of the survivor in the Josephus elimination circle.",
+  },
+  {
+    id: 520,
+    name: "Recursive Is Prime Check",
+    type: "Recursion",
+    complexity: "O(√n) time, O(√n) stack space",
+    requiresSortedInput: false,
+    source: recursiveIsPrime.toString(),
+    run: (n, divisor) => recursiveIsPrime(n, divisor),
+    demo: { input: 29 },
+    summary: "Recursively tests potential divisors up to √n to check primality.",
+  },
+  {
+    id: 521,
+    name: "Recursive Collatz Conjecture Simulation",
+    type: "Recursion",
+    complexity: "O(steps) time, O(steps) stack space",
+    requiresSortedInput: false,
+    source: recursiveCollatz.toString(),
+    run: (number) => recursiveCollatz(number),
+    demo: { input: 6 },
+    summary: "Simulates the 3n + 1 sequence recursively from a starting value down to 1.",
+  },
+  {
+    id: 522,
+    name: "Recursive Reverse a String",
+    type: "Recursion",
+    complexity: "O(n²) time, O(n) stack space",
+    requiresSortedInput: false,
+    source: recursiveReverseString.toString(),
+    run: (input) => recursiveReverseString(input),
+    demo: { input: "algorithm" },
+    summary: "Recursively reverses a string by placing the first character at the end of the reversed tail.",
+  },
+  {
+    id: 523,
+    name: "Recursive Palindrome Verification",
+    type: "Recursion",
+    complexity: "O(n) time, O(n) stack space",
+    requiresSortedInput: false,
+    source: recursivePalindrome.toString(),
+    run: (input) => recursivePalindrome(input),
+    demo: { input: "racecar" },
+    summary: "Recursively checks boundary characters to determine whether a string is a palindrome.",
+  },
+  {
+    id: 524,
+    name: "Recursive String Length Calculation",
+    type: "Recursion",
+    complexity: "O(n) time, O(n) stack space",
+    requiresSortedInput: false,
+    source: recursiveStringLength.toString(),
+    run: (input) => recursiveStringLength(input),
+    demo: { input: "Algocli Tutorial" },
+    summary: "Calculates the length of a string recursively without using the .length property.",
+  },
+  {
+    id: 525,
+    name: "Recursive All Permutations of a String",
+    type: "Recursion",
+    complexity: "O(n! × n) time, O(n) stack space",
+    requiresSortedInput: false,
+    source: recursiveStringPermutations.toString(),
+    run: (input) => recursiveStringPermutations(input),
+    demo: { input: "abc" },
+    summary: "Recursively generates all distinct permutations of a string.",
+  },
+  {
+    id: 526,
+    name: "Recursive All Subsets/Subsequences",
+    type: "Recursion",
+    complexity: "O(2^n) time, O(n) stack space",
+    requiresSortedInput: false,
+    source: recursiveSubsequences.toString(),
+    run: (input) => recursiveSubsequences(input),
+    demo: { input: "abc" },
+    summary: "Recursively generates all subsets and subsequences of characters in a string.",
+  },
+  {
+    id: 527,
+    name: "Recursive Count Vowels",
+    type: "Recursion",
+    complexity: "O(n) time, O(n) stack space",
+    requiresSortedInput: false,
+    source: recursiveCountVowels.toString(),
+    run: (input) => recursiveCountVowels(input),
+    demo: { input: "Recursion in JavaScript" },
+    summary: "Recursively counts vowels by checking the first character and recursing on the tail.",
+  },
+  {
+    id: 528,
+    name: "Recursive First Capital Letter Search",
+    type: "Recursion",
+    complexity: "O(n) time, O(n) stack space",
+    requiresSortedInput: false,
+    source: recursiveFirstCapitalLetter.toString(),
+    run: (input, index) => recursiveFirstCapitalLetter(input, index),
+    demo: { input: "deepLearning" },
+    summary: "Recursively inspects characters by index until the first capital letter is found.",
+  },
+  {
+    id: 529,
+    name: "Recursive String Tokenization",
+    type: "Recursion",
+    complexity: "O(n) time, O(k) stack space",
+    requiresSortedInput: false,
+    source: recursiveTokenize.toString(),
+    run: (input, delimiter) => recursiveTokenize(input, delimiter),
+    demo: { input: "data structures and algorithms", argument: " ", argumentLabel: "Delimiter" },
+    summary: "Recursively splits a string into tokens around occurrences of a delimiter without .split().",
+  },
+  {
+    id: 530,
+    name: "Recursive Parenthesis Matching",
+    type: "Recursion",
+    complexity: "O(n) time, O(n) stack space",
+    requiresSortedInput: false,
+    source: recursiveParenthesisMatching.toString(),
+    run: (input) => recursiveParenthesisMatching(input),
+    demo: { input: "((2 + 3) * (5 - 1))" },
+    summary: "Recursively verifies that opening and closing parentheses are correctly balanced.",
+  },
+  {
+    id: 531,
+    name: "Recursive Linear Search",
+    type: "Recursion",
+    complexity: "O(n) time, O(n) stack space",
+    requiresSortedInput: false,
+    source: recursiveLinearSearch.toString(),
+    run: (values, target) => recursiveLinearSearch(values, target),
+    demo: { input: [14, 7, 22, 19, 31, 8], argument: 19, argumentLabel: "Target" },
+    summary: "Recursively scans elements one by one until the target value is found or the array ends.",
+  },
+  {
+    id: 532,
+    name: "Recursive Binary Search",
+    type: "Recursion",
+    complexity: "O(log n) time, O(log n) stack space",
+    requiresSortedInput: true,
+    source: recursiveBinarySearchDivideConquer.toString(),
+    run: (values, target) => recursiveBinarySearchDivideConquer(values, target),
+    demo: { input: [3, 7, 12, 18, 24, 32, 45], argument: 24, argumentLabel: "Target" },
+    summary: "Locates a target in a sorted array by recursively testing middle elements using divide-and-conquer.",
+  },
+  {
+    id: 533,
+    name: "Recursive Find Maximum Element",
+    type: "Recursion",
+    complexity: "O(n) time, O(n) stack space",
+    requiresSortedInput: false,
+    source: recursiveFindMax.toString(),
+    run: (values) => recursiveFindMax(values),
+    demo: { input: [3, 7, 2, 9, 5] },
+    summary: "Recursively compares the current element against the maximum of the rest of the array.",
+  },
+  {
+    id: 534,
+    name: "Recursive Find Minimum Element",
+    type: "Recursion",
+    complexity: "O(n) time, O(n) stack space",
+    requiresSortedInput: false,
+    source: recursiveFindMin.toString(),
+    run: (values) => recursiveFindMin(values),
+    demo: { input: [3, 7, 2, 9, 5] },
+    summary: "Recursively compares the current element against the minimum of the rest of the array.",
+  },
+  {
+    id: 535,
+    name: "Recursive Sum of Array Elements",
+    type: "Recursion",
+    complexity: "O(n) time, O(n) stack space",
+    requiresSortedInput: false,
+    source: recursiveSumArray.toString(),
+    run: (values) => recursiveSumArray(values),
+    demo: { input: [1, 2, 3, 4, 5] },
+    summary: "Recursively computes the sum of all elements in an array.",
+  },
+  {
+    id: 536,
+    name: "Recursive Reverse an Array",
+    type: "Recursion",
+    complexity: "O(n) time, O(n) stack space",
+    requiresSortedInput: false,
+    source: recursiveReverseArray.toString(),
+    run: (values) => recursiveReverseArray(values),
+    demo: { input: [1, 2, 3, 4, 5] },
+    summary: "Recursively swaps elements from the outside inward to reverse an array.",
+  },
+  {
+    id: 537,
+    name: "Recursive Print Array Elements",
+    type: "Recursion",
+    complexity: "O(n) time, O(n) stack space",
+    requiresSortedInput: false,
+    source: recursivePrintArray.toString(),
+    run: (values) => recursivePrintArray(values),
+    demo: { input: [10, 20, 30, 40, 50] },
+    summary: "Recursively traverses and formats array elements into a printed string representation.",
+  },
+  {
+    id: 538,
+    name: "Recursive Check if Array is Sorted",
+    type: "Recursion",
+    complexity: "O(n) time, O(n) stack space",
+    requiresSortedInput: false,
+    source: recursiveIsSorted.toString(),
+    run: (values) => recursiveIsSorted(values),
+    demo: { input: [2, 4, 6, 8, 10] },
+    summary: "Recursively verifies whether each adjacent pair is in non-decreasing order.",
+  },
+  {
+    id: 539,
+    name: "Recursive Count Occurrences of an Item",
+    type: "Recursion",
+    complexity: "O(n) time, O(n) stack space",
+    requiresSortedInput: false,
+    source: recursiveCountOccurrences.toString(),
+    run: (values, target) => recursiveCountOccurrences(values, target),
+    demo: { input: [1, 2, 3, 2, 4, 2, 5], argument: 2, argumentLabel: "Target element" },
+    summary: "Recursively counts how many times a target element appears in an array.",
+  },
+  {
+    id: 540,
+    name: "Recursive Traverse Linked List",
+    type: "Linked List",
+    complexity: "O(n) time, O(n) stack space",
+    requiresSortedInput: false,
+    source: recursiveTraverseLinkedList.toString(),
+    run: (head) => recursiveTraverseLinkedList(head),
+    demo: { input: { value: 1, next: { value: 2, next: { value: 3, next: { value: 4, next: null } } } } },
+    summary: "Recursively collects node values from head to tail of a linked list.",
+  },
+  {
+    id: 541,
+    name: "Recursive Reverse a Linked List",
+    type: "Linked List",
+    complexity: "O(n) time, O(n) stack space",
+    requiresSortedInput: false,
+    source: recursiveReverseLinkedList.toString(),
+    run: (head) => recursiveReverseLinkedList(head),
+    demo: { input: { value: 1, next: { value: 2, next: { value: 3, next: { value: 4, next: null } } } } },
+    summary: "Recursively reverses linked list node pointers using an accumulator.",
+  },
+  {
+    id: 542,
+    name: "Recursive Print Linked List in Reverse",
+    type: "Linked List",
+    complexity: "O(n) time, O(n) stack space",
+    requiresSortedInput: false,
+    source: recursivePrintLinkedListReverse.toString(),
+    run: (head) => recursivePrintLinkedListReverse(head),
+    demo: { input: { value: 1, next: { value: 2, next: { value: 3, next: { value: 4, next: null } } } } },
+    summary: "Recursively formats and displays linked list elements in reverse order.",
+  },
+  {
+    id: 543,
+    name: "Recursive Delete a Node",
+    type: "Linked List",
+    complexity: "O(n) time, O(n) stack space",
+    requiresSortedInput: false,
+    source: recursiveDeleteNode.toString(),
+    run: (head, target) => recursiveDeleteNode(head, target),
+    demo: { input: { value: 1, next: { value: 2, next: { value: 3, next: { value: 4, next: null } } } }, argument: 3, argumentLabel: "Target value" },
+    summary: "Recursively searches and removes the first node matching a target value.",
+  },
+  {
+    id: 544,
+    name: "Recursive Insert Node into Sorted List",
+    type: "Linked List",
+    complexity: "O(n) time, O(n) stack space",
+    requiresSortedInput: false,
+    source: recursiveInsertIntoSortedList.toString(),
+    run: (head, value) => recursiveInsertIntoSortedList(head, value),
+    demo: { input: { value: 1, next: { value: 2, next: { value: 4, next: { value: 5, next: null } } } }, argument: 3, argumentLabel: "Insert value" },
+    summary: "Recursively finds the correct position and inserts a node into an already sorted linked list.",
+  },
+  {
+    id: 545,
+    name: "Recursive Merge Two Sorted Lists",
+    type: "Linked List",
+    complexity: "O(n + m) time, O(n + m) stack space",
+    requiresSortedInput: false,
+    source: recursiveMergeTwoSortedLists.toString(),
+    run: (first, second) => recursiveMergeTwoSortedLists(first, second),
+    demo: { input: { value: 1, next: { value: 3, next: { value: 5, next: null } } }, argument: { value: 2, next: { value: 4, next: { value: 6, next: null } } }, argumentLabel: "Second list" },
+    summary: "Recursively splices together nodes from two sorted linked lists into one sorted list.",
+  },
+  {
+    id: 546,
+    name: "Recursive Length of Linked List",
+    type: "Linked List",
+    complexity: "O(n) time, O(n) stack space",
+    requiresSortedInput: false,
+    source: recursiveLengthLinkedList.toString(),
+    run: (head) => recursiveLengthLinkedList(head),
+    demo: { input: { value: 10, next: { value: 20, next: { value: 30, next: { value: 40, next: { value: 50, next: null } } } } } },
+    summary: "Recursively counts the number of nodes in a linked list.",
+  },
+  {
+    id: 547,
+    name: "Recursive Search in a Linked List",
+    type: "Linked List",
+    complexity: "O(n) time, O(n) stack space",
+    requiresSortedInput: false,
+    source: recursiveSearchLinkedList.toString(),
+    run: (head, target) => recursiveSearchLinkedList(head, target),
+    demo: { input: { value: 10, next: { value: 20, next: { value: 30, next: { value: 40, next: null } } } }, argument: 30, argumentLabel: "Search target" },
+    summary: "Recursively searches for a target value in a linked list, returning its 0-indexed position.",
   },
 ];

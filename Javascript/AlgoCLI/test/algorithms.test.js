@@ -6,10 +6,10 @@ const sortingAlgorithms = algorithms.filter(({ type }) => type === "Sorting");
 const searchingAlgorithms = algorithms.filter(({ type }) => type === "Searching");
 const input = [9, 2, 7, 2, -1, 5];
 
-test("provides five hundred algorithms", () => {
-  assert.equal(algorithms.length, 500);
-  assert.equal(sortingAlgorithms.length, 6);
-  assert.equal(searchingAlgorithms.length, 4);
+test("provides five hundred and forty-seven algorithms", () => {
+  assert.equal(algorithms.length, 547);
+  assert.equal(sortingAlgorithms.length, 10);
+  assert.equal(searchingAlgorithms.length, 5);
 });
 
 test("runs the added numerical methods and graph algorithms", () => {
@@ -1502,3 +1502,250 @@ test("runs two pointers, swinging window, sudoku, markov, and munchausen", () =>
   assert.ok(munch.includes(1));
   assert.ok(munch.includes(3435));
 });
+
+test("runs the added recursive searching and sorting algorithms", () => {
+  const find = (id) => algorithms.find((algorithm) => algorithm.id === id);
+
+  // 501: Recursive Binary Search
+  const sorted = [1, 3, 5, 7, 9, 11, 13];
+  assert.equal(find(501).run(sorted, 7), 3);
+  assert.equal(find(501).run(sorted, 1), 0);
+  assert.equal(find(501).run(sorted, 13), 6);
+  assert.equal(find(501).run(sorted, 4), -1);
+
+  // 502: Recursive Selection Sort
+  assert.deepEqual(find(502).run([5, 2, 4, 6, 1, 3]), [1, 2, 3, 4, 5, 6]);
+
+  // 503: Recursive Insertion Sort
+  assert.deepEqual(find(503).run([12, 11, 13, 5, 6]), [5, 6, 11, 12, 13]);
+
+  // 504: Recursive Quicksort
+  assert.deepEqual(find(504).run([10, 7, 8, 9, 1, 5]), [1, 5, 7, 8, 9, 10]);
+
+  // 505: Recursive Merge Sort
+  assert.deepEqual(find(505).run([38, 27, 43, 3, 9, 82, 10]), [3, 9, 10, 27, 38, 43, 82]);
+});
+
+test("runs the added recursive math and fractal algorithms", () => {
+  const find = (id) => algorithms.find((algorithm) => algorithm.id === id);
+
+  // 506: Recursive Fractal
+  const fractal = find(506).run(2);
+  assert.equal(typeof fractal, "string");
+  assert.ok(fractal.includes("*"));
+
+  // 507: Recursive Factorial Calculation
+  assert.equal(find(507).run(5), 120);
+  assert.equal(find(507).run(0), 1);
+  assert.equal(find(507).run(-1), null);
+
+  // 508: Recursive Fibonacci Sequence
+  assert.deepEqual(find(508).run(7), [0, 1, 1, 2, 3, 5, 8]);
+  assert.deepEqual(find(508).run(1), [0]);
+
+  // 509: Recursive Greatest Common Divisor (GCD)
+  assert.equal(find(509).run(48, 18), 6);
+  assert.equal(find(509).run(-48, 18), 6);
+  assert.equal(find(509).run(17, 13), 1);
+
+  // 510: Recursive Fast Powering (Exponentiation)
+  assert.equal(find(510).run(2, 10), 1024);
+  assert.equal(find(510).run(3, 5), 243);
+  assert.equal(find(510).run(2, -2), 0.25);
+  assert.equal(find(510).run(7, 0), 1);
+
+  // 511: Recursive Sum of Natural Numbers
+  assert.equal(find(511).run(10), 55);
+  assert.equal(find(511).run(1), 1);
+  assert.equal(find(511).run(0), 0);
+
+  // 512: Recursive Sum of Digits
+  assert.equal(find(512).run(12345), 15);
+  assert.equal(find(512).run(9), 9);
+  assert.equal(find(512).run(-482), 14);
+});
+
+test("runs the added recursive arithmetic, number-theory, and simulation algorithms", () => {
+  const find = (id) => algorithms.find((algorithm) => algorithm.id === id);
+
+  // 513: Recursive Decimal to Binary Conversion
+  assert.equal(find(513).run(13), "1101");
+  assert.equal(find(513).run(0), "0");
+  assert.equal(find(513).run(-5), "-101");
+
+  // 514: Recursive Decimal to Hexadecimal
+  assert.equal(find(514).run(255), "FF");
+  assert.equal(find(514).run(16), "10");
+  assert.equal(find(514).run(0), "0");
+  assert.equal(find(514).run(-42), "-2A");
+
+  // 515: Recursive Count Digits
+  assert.equal(find(515).run(987654), 6);
+  assert.equal(find(515).run(0), 1);
+  assert.equal(find(515).run(-42), 2);
+
+  // 516: Recursive Product of Two Numbers
+  assert.equal(find(516).run(6, 7), 42);
+  assert.equal(find(516).run(-4, 5), -20);
+  assert.equal(find(516).run(4, -5), -20);
+  assert.equal(find(516).run(5, 0), 0);
+
+  // 517: Recursive Tower of Hanoi
+  const hanoiMoves = find(517).run(3);
+  assert.equal(hanoiMoves.length, 7);
+  assert.equal(hanoiMoves[0], "Move disk 1 from A to C");
+  assert.equal(hanoiMoves[6], "Move disk 1 from A to C");
+
+  // 518: Recursive Ackermann Function
+  assert.equal(find(518).run(0, 5), 6);
+  assert.equal(find(518).run(1, 2), 4);
+  assert.equal(find(518).run(2, 3), 9);
+  assert.equal(find(518).run(3, 2), 29);
+
+  // 519: Recursive Josephus Problem
+  assert.equal(find(519).run(5, 2), 3);
+  assert.equal(find(519).run(7, 3), 4);
+  assert.equal(find(519).run(1, 2), 1);
+
+  // 520: Recursive Is Prime Check
+  assert.equal(find(520).run(29), true);
+  assert.equal(find(520).run(1), false);
+  assert.equal(find(520).run(2), true);
+  assert.equal(find(520).run(25), false);
+
+  // 521: Recursive Collatz Conjecture Simulation
+  assert.deepEqual(find(521).run(6), [6, 3, 10, 5, 16, 8, 4, 2, 1]);
+  assert.deepEqual(find(521).run(1), [1]);
+  assert.deepEqual(find(521).run(0), []);
+});
+
+test("runs the added recursive string and subsequence algorithms", () => {
+  const find = (id) => algorithms.find((algorithm) => algorithm.id === id);
+
+  // 522: Recursive Reverse a String
+  assert.equal(find(522).run("hello"), "olleh");
+  assert.equal(find(522).run("a"), "a");
+  assert.equal(find(522).run(""), "");
+
+  // 523: Recursive Palindrome Verification
+  assert.equal(find(523).run("racecar"), true);
+  assert.equal(find(523).run("A man, a plan, a canal: Panama"), true);
+  assert.equal(find(523).run("hello"), false);
+
+  // 524: Recursive String Length Calculation
+  assert.equal(find(524).run("hello"), 5);
+  assert.equal(find(524).run(""), 0);
+
+  // 525: Recursive All Permutations of a String
+  assert.deepEqual(find(525).run("abc"), ["abc", "acb", "bac", "bca", "cab", "cba"]);
+  assert.deepEqual(find(525).run("a"), ["a"]);
+
+  // 526: Recursive All Subsets/Subsequences
+  assert.deepEqual(find(526).run("ab"), ["", "a", "ab", "b"]);
+
+  // 527: Recursive Count Vowels
+  assert.equal(find(527).run("hello world"), 3);
+  assert.equal(find(527).run("rhythm"), 0);
+  assert.equal(find(527).run("AEIOU"), 5);
+
+  // 528: Recursive First Capital Letter Search
+  assert.equal(find(528).run("helloWorld"), "W");
+  assert.equal(find(528).run("Hello"), "H");
+  assert.equal(find(528).run("lowercase"), null);
+
+  // 529: Recursive String Tokenization
+  assert.deepEqual(find(529).run("hello world from algo cli", " "), ["hello", "world", "from", "algo", "cli"]);
+  assert.deepEqual(find(529).run("apple,banana,orange", ","), ["apple", "banana", "orange"]);
+});
+
+test("runs the added recursive array, search, and parenthesis algorithms", () => {
+  const find = (id) => algorithms.find((algorithm) => algorithm.id === id);
+
+  // 530: Recursive Parenthesis Matching
+  assert.equal(find(530).run("((a + b) * (c - d))"), true);
+  assert.equal(find(530).run("(()"), false);
+  assert.equal(find(530).run(")("), false);
+
+  // 531: Recursive Linear Search
+  assert.equal(find(531).run([10, 20, 30, 40], 30), 2);
+  assert.equal(find(531).run([10, 20, 30, 40], 50), -1);
+
+  // 532: Recursive Binary Search
+  assert.equal(find(532).run([3, 7, 12, 18, 24, 32, 45], 24), 4);
+  assert.equal(find(532).run([3, 7, 12, 18, 24, 32, 45], 100), -1);
+
+  // 533: Recursive Find Maximum Element
+  assert.equal(find(533).run([3, 7, 2, 9, 5]), 9);
+  assert.equal(find(533).run([-5, -2, -10]), -2);
+
+  // 534: Recursive Find Minimum Element
+  assert.equal(find(534).run([3, 7, 2, 9, 5]), 2);
+  assert.equal(find(534).run([-5, -2, -10]), -10);
+
+  // 535: Recursive Sum of Array Elements
+  assert.equal(find(535).run([1, 2, 3, 4, 5]), 15);
+  assert.equal(find(535).run([]), 0);
+
+  // 536: Recursive Reverse an Array
+  assert.deepEqual(find(536).run([1, 2, 3, 4, 5]), [5, 4, 3, 2, 1]);
+
+  // 537: Recursive Print Array Elements
+  assert.equal(find(537).run([10, 20, 30]), "10, 20, 30");
+  assert.equal(find(537).run([]), "");
+
+  // 538: Recursive Check if Array is Sorted
+  assert.equal(find(538).run([2, 4, 6, 8, 10]), true);
+  assert.equal(find(538).run([2, 4, 1, 8]), false);
+
+  // 539: Recursive Count Occurrences of an Item
+  assert.equal(find(539).run([1, 2, 3, 2, 4, 2, 5], 2), 3);
+  assert.equal(find(539).run([1, 2, 3], 7), 0);
+});
+
+test("runs the added recursive linked list algorithms", () => {
+  const find = (id) => algorithms.find((algorithm) => algorithm.id === id);
+
+  const list = { value: 1, next: { value: 2, next: { value: 3, next: { value: 4, next: null } } } };
+
+  // 540: Recursive Traverse Linked List
+  assert.deepEqual(find(540).run(list), [1, 2, 3, 4]);
+  assert.deepEqual(find(540).run(null), []);
+
+  // 541: Recursive Reverse a Linked List
+  const reversed = find(541).run(list);
+  assert.deepEqual(find(540).run(reversed), [4, 3, 2, 1]);
+
+  // 542: Recursive Print Linked List in Reverse
+  assert.equal(find(542).run(list), "4 -> 3 -> 2 -> 1");
+  assert.equal(find(542).run(null), "");
+
+  // 543: Recursive Delete a Node
+  const deleted = find(543).run(list, 3);
+  assert.deepEqual(find(540).run(deleted), [1, 2, 4]);
+  const deletedHead = find(543).run(list, 1);
+  assert.deepEqual(find(540).run(deletedHead), [2, 3, 4]);
+
+  // 544: Recursive Insert Node into Sorted List
+  const inserted = find(544).run({ value: 1, next: { value: 2, next: { value: 4, next: null } } }, 3);
+  assert.deepEqual(find(540).run(inserted), [1, 2, 3, 4]);
+
+  // 545: Recursive Merge Two Sorted Lists
+  const listA = { value: 1, next: { value: 3, next: null } };
+  const listB = { value: 2, next: { value: 4, next: null } };
+  const merged = find(545).run(listA, listB);
+  assert.deepEqual(find(540).run(merged), [1, 2, 3, 4]);
+
+  // 546: Recursive Length of Linked List
+  assert.equal(find(546).run(list), 4);
+  assert.equal(find(546).run(null), 0);
+
+  // 547: Recursive Search in a Linked List
+  assert.equal(find(547).run(list, 3), 2);
+  assert.equal(find(547).run(list, 99), -1);
+  assert.equal(find(547).run(null, 1), -1);
+});
+
+
+
+
+
